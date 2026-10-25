@@ -262,11 +262,35 @@ def verify(out_dir):
         ok(checks, "short_cards count == index shorts count")
 
     mar = sections.get("market", {})
-    if mar.get("hash") != section_hash({"snapshots": market.get("snapshots"),
-                                         "formulas_active": market.get("formulas_active")}):
+    # Phase 4: the market hash covers market_alerts when the file
+    # carries it (generator rule); files without the key keep the
+    # two-field view, so pre-Phase-4 edges still verify.
+    market_hash_view = {"snapshots": market.get("snapshots"),
+                        "formulas_active": market.get("formulas_active")}
+    if "market_alerts" in market:
+        market_hash_view["market_alerts"] = market.get("market_alerts")
+    if mar.get("hash") != section_hash(market_hash_view):
         fail(checks, "market hash mismatch (recomputed from market.json)")
     else:
         ok(checks, "market hash recomputes identically (%d snapshots)" % len(market.get("snapshots", [])))
+    # Phase 4: market_alerts, when present, must be null-or-number
+    # thresholds from admin settings — never a string, never a
+    # help-text example smuggled in as a literal. Absent = OFF.
+    alerts = market.get("market_alerts")
+    if alerts is not None:
+        for key in ("bubble_threshold_pct", "spread_threshold_pct"):
+            value = alerts.get(key)
+            if value is not None and not isinstance(value, (int, float)):
+                fail(checks, "market_alerts %s is not null-or-number: %r" % (key, value))
+        # "lab-fixture-only" is the explicitly labelled Phase 4
+        # fixture source (generate_phase4_fixtures.py); it is
+        # allowed here so the fixture edge verifies, and it is
+        # never written by the production generator (which always
+        # writes "admin-settings"). Any other source fails.
+        if alerts.get("source") not in (None, "admin-settings", "lab-fixture-only"):
+            fail(checks, "market_alerts source is not admin-settings: %r" % (alerts.get("source"),))
+        if not any(c[0] == "FAIL" for c in checks):
+            ok(checks, "market_alerts thresholds are null-or-number (null = OFF)")
     if mar.get("count") != len(market.get("snapshots", [])):
         fail(checks, "market count %r != snapshots %d" % (mar.get("count"), len(market.get("snapshots", []))))
     if mar.get("file") != "market.json":

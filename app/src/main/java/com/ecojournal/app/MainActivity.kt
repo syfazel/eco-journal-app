@@ -30,6 +30,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -143,7 +145,11 @@ class MainActivity : ComponentActivity() {
                     val pendingId = Notifications.openArticleId(intent)
                     val pendingChannelId = Notifications.openChannelId(intent)
                     val pendingBundleId = Notifications.openBundleId(intent)
-                    LaunchedEffect(pendingId, pendingChannelId, pendingBundleId) {
+                    // Phase 4: a market-alert tap opens the Market
+                    // tab (the banner snapshot is the latest one
+                    // the banner describes; the tab shows it).
+                    val pendingMarketId = Notifications.openMarketSnapshotId(intent)
+                    LaunchedEffect(pendingId, pendingChannelId, pendingBundleId, pendingMarketId) {
                         if (pendingId != null) {
                             nav.navigate("article/${Uri.encode(pendingId)}")
                         }
@@ -152,6 +158,9 @@ class MainActivity : ComponentActivity() {
                         }
                         if (pendingBundleId != null) {
                             nav.navigate("bundle/${Uri.encode(pendingBundleId)}")
+                        }
+                        if (pendingMarketId != null) {
+                            nav.navigate("market")
                         }
                     }
                     // The reader has its own top bar (M3, P1-08),
@@ -189,6 +198,28 @@ class MainActivity : ComponentActivity() {
                             .collectAsState(initial = 0)
                         val marketFormulaEntities by repo.dao.formulasFlow()
                             .collectAsState(initial = emptyList())
+                        // Phase 4: full orderable history, edge
+                        // thresholds (presence via meta flows),
+                        // and banner dismissals for the Market tab.
+                        val marketHistoryEntities by repo.dao.snapshotsOrderedFlow()
+                            .collectAsState(initial = emptyList())
+                        val p4BubbleMeta by repo.dao.metaValueFlow("p4_market_alerts_bubble")
+                            .collectAsState(initial = null)
+                        val p4SpreadMeta by repo.dao.metaValueFlow("p4_market_alerts_spread")
+                            .collectAsState(initial = null)
+                        val p4DismissBubble by repo.dao.metaValueFlow("p4_banner_dismissed_bubble")
+                            .collectAsState(initial = null)
+                        val p4DismissSpread by repo.dao.metaValueFlow("p4_banner_dismissed_spread")
+                            .collectAsState(initial = null)
+                        var marketRefreshTick by remember { mutableStateOf(0) }
+                        LaunchedEffect(marketRefreshTick) {
+                            if (marketRefreshTick > 0) {
+                                repo.syncOnly(
+                                    com.ecojournal.app.data.SyncSections.MARKET,
+                                    forceRefresh = true,
+                                )
+                            }
+                        }
                         var marketPreviousEntity by remember {
                             mutableStateOf<com.ecojournal.app.data.MarketSnapshotEntity?>(null)
                         }
@@ -308,6 +339,7 @@ class MainActivity : ComponentActivity() {
                             // duplication. No code referenced it (grep
                             // verified at deletion time).
                             composable("market") {
+                                val marketScope = rememberCoroutineScope()
                                 MarketScreen(
                                     latest = marketLatest,
                                     previous = marketPrevious,
@@ -316,6 +348,33 @@ class MainActivity : ComponentActivity() {
                                     seedDone = marketSeedDone,
                                     onRetry = { marketRetry++ },
                                     fontScale = settings.fontScale,
+                                    historySnapshots = marketHistoryEntities.map {
+                                        com.ecojournal.app.data.ArticleParsers.marketSnapshotFromEntity(it)
+                                    },
+                                    formulaDefs = marketFormulaEntities.map {
+                                        com.ecojournal.app.data.MarketFormula(
+                                            name = it.name,
+                                            version = it.version,
+                                            definition = it.definition,
+                                            inputs = it.inputs,
+                                            descriptionFa = it.descriptionFa,
+                                        )
+                                    },
+                                    thresholds = com.ecojournal.app.data.MarketThresholds(
+                                        bubblePct = p4BubbleMeta?.takeIf { it.isNotBlank() }?.toDoubleOrNull(),
+                                        spreadPct = p4SpreadMeta?.takeIf { it.isNotBlank() }?.toDoubleOrNull(),
+                                    ),
+                                    dismissedBubbleSnapshotId = p4DismissBubble?.takeIf { it.isNotBlank() },
+                                    dismissedSpreadSnapshotId = p4DismissSpread?.takeIf { it.isNotBlank() },
+                                    onDismissBanner = { metric ->
+                                        marketScope.launch {
+                                            repo.dismissMarketBanner(
+                                                metric,
+                                                marketLatest?.snapshotId ?: "",
+                                            )
+                                        }
+                                    },
+                                    onRefreshMarket = { marketRefreshTick++ },
                                 )
                             }
                             composable("bookmarks") {
@@ -339,6 +398,9 @@ class MainActivity : ComponentActivity() {
                                     store = store,
                                     fontScale = settings.fontScale,
                                     onDiagnostics = { nav.navigate("diagnostics") },
+                                    // Presence only — never the value.
+                                    marketThresholdSet = !p4BubbleMeta.isNullOrBlank() ||
+                                        !p4SpreadMeta.isNullOrBlank(),
                                 )
                             }
                             // M8 diagnostics: counts/status only,

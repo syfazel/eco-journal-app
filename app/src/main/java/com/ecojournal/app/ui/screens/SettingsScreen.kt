@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -52,6 +53,30 @@ import kotlinx.coroutines.launch
  * screen. M7: invite state is now the real gate — confirmed text,
  * a revocation note, and a manual re-lock button.
  */
+/** Phase 4 helper: "HH:MM" (Tehran wall clock) → minutes after midnight, or null. */
+private fun parseQuietTime(raw: String): Int? {
+    val latin = buildString {
+        for (c in raw.trim()) {
+            append(
+                when (c) {
+                    in '۰'..'۹' -> ('0' + (c - '۰'))
+                    in '٠'..'٩' -> ('0' + (c - '٠'))
+                    else -> c
+                }
+            )
+        }
+    }
+    val parts = latin.split(":")
+    if (parts.size != 2) return null
+    val hour = parts[0].toIntOrNull() ?: return null
+    val minute = parts[1].toIntOrNull() ?: return null
+    if (hour !in 0..23 || minute !in 0..59) return null
+    return hour * 60 + minute
+}
+
+private fun formatQuietTime(minutes: Int): String =
+    "%02d:%02d".format(minutes / 60, minutes % 60)
+
 @Composable
 fun SettingsScreen(
     settings: Settings,
@@ -59,6 +84,9 @@ fun SettingsScreen(
     onDiagnostics: () -> Unit = {},
     modifier: Modifier = Modifier,
     fontScale: Float = 1f,
+    // Phase 4: threshold PRESENCE only (never the value — the
+    // value belongs on the Market banner, not in Settings).
+    marketThresholdSet: Boolean = false,
 ) {
     val scope = rememberCoroutineScope()
     // M8: declared at the top so the Switch semantics below can
@@ -201,6 +229,159 @@ fun SettingsScreen(
                     )
                 }
             }
+        }
+        // ---- Phase 4: per-service toggles + quiet hours ----
+        // The master switch above remains the kill switch. Each
+        // row below is one DataStore key (spec §4.7); turning the
+        // master back ON restores per-service behaviour without
+        // re-firing suppressed items as a burst (dispatcher rule).
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.settings_notifications_heading_p4),
+            fontFamily = EcoFontFamily,
+            fontSize = 16.sp * fontScale,
+        )
+        Text(
+            text = stringResource(R.string.settings_notifications_master_desc),
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+        )
+        val p4Toggles: List<Triple<String, Boolean, (Boolean) -> Unit>> = listOf(
+            Triple(stringResource(R.string.settings_notify_urgent), settings.notifyUrgent) { v: Boolean ->
+                scope.launch { store.setNotifyUrgent(v) }
+            },
+            Triple(stringResource(R.string.settings_notify_market_alerts), settings.notifyMarketAlerts) { v: Boolean ->
+                scope.launch { store.setNotifyMarketAlerts(v) }
+            },
+            Triple(stringResource(R.string.settings_notify_bundles), settings.notifyBundles) { v: Boolean ->
+                scope.launch { store.setNotifyBundles(v) }
+            },
+            Triple(stringResource(R.string.settings_notify_sitrep), settings.notifySitrep) { v: Boolean ->
+                scope.launch { store.setNotifySitrep(v) }
+            },
+            Triple(stringResource(R.string.settings_notify_nightly), settings.notifyNightly) { v: Boolean ->
+                scope.launch { store.setNotifyNightly(v) }
+            },
+            Triple(stringResource(R.string.settings_notify_special_issues), settings.notifySpecialIssues) { v: Boolean ->
+                scope.launch { store.setNotifySpecialIssues(v) }
+            },
+            Triple(stringResource(R.string.settings_notify_radar), settings.notifyRadar) { v: Boolean ->
+                scope.launch { store.setNotifyRadar(v) }
+            },
+        )
+        for ((label, checked, onChange) in p4Toggles) {
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = label,
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+            )
+            Switch(checked = checked, onCheckedChange = onChange)
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = if (marketThresholdSet) {
+                stringResource(R.string.settings_threshold_status_set)
+            } else {
+                stringResource(R.string.settings_threshold_status_unset)
+            },
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.settings_quiet_heading),
+            fontFamily = EcoFontFamily,
+            fontSize = 16.sp * fontScale,
+        )
+        Switch(
+            checked = settings.quietHoursEnabled,
+            onCheckedChange = { v -> scope.launch { store.setQuietHoursEnabled(v) } },
+        )
+        var quietStartText by remember(settings.quietStartMin) {
+            mutableStateOf(formatQuietTime(settings.quietStartMin))
+        }
+        var quietEndText by remember(settings.quietEndMin) {
+            mutableStateOf(formatQuietTime(settings.quietEndMin))
+        }
+        var quietError by remember { mutableStateOf(false) }
+        OutlinedTextField(
+            value = quietStartText,
+            onValueChange = { quietStartText = it },
+            label = {
+                Text(
+                    text = stringResource(R.string.settings_quiet_start_label),
+                    fontFamily = EcoFontFamily,
+                )
+            },
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        OutlinedTextField(
+            value = quietEndText,
+            onValueChange = { quietEndText = it },
+            label = {
+                Text(
+                    text = stringResource(R.string.settings_quiet_end_label),
+                    fontFamily = EcoFontFamily,
+                )
+            },
+        )
+        if (quietError) {
+            Text(
+                text = stringResource(R.string.settings_quiet_invalid),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+            )
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+        Button(onClick = {
+            val start = parseQuietTime(quietStartText)
+            val end = parseQuietTime(quietEndText)
+            if (start == null || end == null) {
+                quietError = true
+            } else {
+                quietError = false
+                scope.launch {
+                    store.setQuietStartMin(start)
+                    store.setQuietEndMin(end)
+                }
+            }
+        }, modifier = Modifier.heightIn(min = 48.dp)) {
+            Text(text = "ذخیرهٔ ساعات سکوت", fontFamily = EcoFontFamily)
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = stringResource(R.string.settings_quiet_mute_urgent),
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+        )
+        Text(
+            text = stringResource(R.string.settings_quiet_mute_urgent_desc),
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+        )
+        Switch(
+            checked = settings.quietMuteUrgent,
+            onCheckedChange = { v -> scope.launch { store.setQuietMuteUrgent(v) } },
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(R.string.settings_system_notifications_desc),
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+        )
+        Button(onClick = {
+            context.startActivity(
+                Intent(
+                    SystemSettings.ACTION_APP_NOTIFICATION_SETTINGS,
+                    Uri.fromParts("package", context.packageName, null),
+                )
+            )
+        }, modifier = Modifier.heightIn(min = 48.dp)) {
+            Text(
+                text = stringResource(R.string.settings_system_notifications),
+                fontFamily = EcoFontFamily,
+            )
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(

@@ -1,0 +1,84 @@
+{
+ "war_room": {
+  "crisis_level": "L3",
+  "why_level": "LAB FIXTURE — خط چرایی سطح بحران آزمایشگاهی.",
+  "radar_interval_minutes": 60
+ },
+ "signals": [
+  {
+   "signal_id": "lab-p4-radar-high",
+   "story_id": "story-lab-lab-flash-day",
+   "title": "سیگنال آزمایشگاهی فاز ۴ — شدت بالا، داستان پیوندخورده",
+   "source_name": "منبع رادار آزمایشگاهی",
+   "severity": "high",
+   "matched_topics": [
+    "ژئوپلیتیک",
+    "انرژی"
+   ],
+   "first_seen_tehran": "2026-10-25T09:00:00+03:30",
+   "last_seen_tehran": "2026-10-25T11:30:00+03:30",
+   "linked_app_key": "lab-flash-day",
+   "status": "active",
+   "layer": 1,
+   "severity_rank": 3,
+   "detected_at_epoch": 1792906200,
+   "updated_at_epoch": 1792915200,
+   "content_hash": "62b68c702c73c1ec7110f055a0710ec1e107d31255d16db5df7e3b6844f88c1b"
+  },
+  {
+   "signal_id": "lab-p4-radar-medium",
+   "story_id": "story-lab-p4-unlinked",
+   "title": "سیگنال آزمایشگاهی فاز ۴ — شدت متوسط، داستان هنوز در برنامه نیست",
+   "source_name": "منبع رادار آزمایشگاهی",
+   "severity": "medium",
+   "matched_topics": [
+    "اقتصاد"
+   ],
+   "first_seen_tehran": "2026-10-25T10:00:00+03:30",
+   "last_seen_tehran": "2026-10-25T10:00:00+03:30",
+   "linked_app_key": null,
+   "status": "active",
+   "layer": 2,
+   "severity_rank": 2,
+   "detected_at_epoch": 1792909800,
+   "updated_at_epoch": 1792909800,
+   "content_hash": "368ab942be8d5361eed48eecd504cd6798088d2a43f0ad762c3889a5bec2dab6"
+  },
+  {
+   "signal_id": "lab-p4-radar-low",
+   "story_id": "story-lab-lab-flash-day",
+   "title": "سیگنال آزمایشگاهی فاز ۴ — شدت کم، مختومه",
+   "source_name": "منبع رادار آزمایشگاهی",
+   "severity": "low",
+   "matched_topics": [],
+   "first_seen_tehran": "2026-10-24T10:00:00+03:30",
+   "last_seen_tehran": "2026-10-24T12:00:00+03:30",
+   "linked_app_key": "lab-flash-day",
+   "status": "resolved",
+   "layer": 3,
+   "severity_rank": 1,
+   "detected_at_epoch": 1792823400,
+   "updated_at_epoch": 1792830600,
+   "content_hash": "d7f46ab36b7e3098799c51c2c0ba6c83568850f39279b55adc1443d40cbac82c"
+  },
+  {
+   "signal_id": "lab-p4-radar-orphan",
+   "title": "سیگنال آزمایشگاهی فاز ۴ — یتیم، بدون story_id",
+   "source_name": "منبع رادار آزمایشگاهی",
+   "severity": "low",
+   "matched_topics": [
+    "اقتصاد"
+   ],
+   "first_seen_tehran": "2026-10-25T12:00:00+03:30",
+   "last_seen_tehran": "2026-10-25T12:00:00+03:30",
+   "linked_app_key": null,
+   "status": "active",
+   "layer": 2,
+   "severity_rank": 1,
+   "detected_at_epoch": 1792917000,
+   "updated_at_epoch": 1792917000,
+   "content_hash": "6a304fce16635afbf58e64ff91262912150071234737cfad96eb230e5fc77282"
+  }
+ ],
+ "label": "LAB FIXTURE"
+}

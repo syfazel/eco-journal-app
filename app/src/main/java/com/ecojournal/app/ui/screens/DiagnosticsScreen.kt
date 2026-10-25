@@ -100,10 +100,33 @@ fun DiagnosticsScreen(
     val heldCount by repo.channelDao.heldCountFlow().collectAsState(initial = 0)
     var anomalyCounts by remember { mutableStateOf(emptyMap<String, Int>()) }
     var formatCounts by remember { mutableStateOf(emptyMap<String, Int>()) }
+    // Phase 4 Diagnostics (spec §4.9): market + radar per-section
+    // lines and notification counts/suppressions. Threshold
+    // VALUES never appear here — only presence (set / not set);
+    // the numeric value belongs on the Market banner itself.
+    var p4Thresholds by remember {
+        mutableStateOf(com.ecojournal.app.data.MarketThresholds(null, null))
+    }
+    var p4LatestTs by remember { mutableStateOf<Long?>(null) }
+    var p4Radar by remember { mutableStateOf(Triple(0, 0, 0)) }
+    var p4NotifStats by remember {
+        mutableStateOf(Pair(emptyMap<String, Int>(), emptyMap<String, Int>()))
+    }
+    var p4Alerts by remember {
+        mutableStateOf(emptyList<com.ecojournal.app.data.MarketAlertEventEntity>())
+    }
+    val loadPhase4: suspend () -> Unit = {
+        p4Thresholds = repo.marketThresholds()
+        p4LatestTs = repo.dao.marketLatest()?.tsEpoch
+        p4Radar = repo.radarCounts()
+        p4NotifStats = repo.notificationStatsToday()
+        p4Alerts = repo.phase4Dao.allAlertEvents()
+    }
     LaunchedEffect(Unit) {
         sectionStates = repo.sectionStates()
         anomalyCounts = repo.anomalyCountsToday()
         formatCounts = repo.formatCountsToday()
+        loadPhase4()
     }
     val sectionNames = mapOf(
         SyncSections.ARTICLES to stringResource(R.string.diagnostics_section_name_articles),
@@ -259,6 +282,91 @@ fun DiagnosticsScreen(
         listOf(stringResource(R.string.diagnostics_chain_title)) + stepLines + tail
     }
 
+    // Phase 4 lines, built once and used for BOTH display and
+    // copy, like phase2Lines/chainLines. Alert lines carry a
+    // timestamp ONLY per metric (spec §4.9) — no value, no
+    // threshold, no content.
+    val phase4Lines: List<String> = run {
+        val out = mutableListOf<String>()
+        out.add(stringResource(R.string.diagnostics_p4_title))
+        out.add(
+            context.getString(
+                R.string.diagnostics_p4_market_line,
+                marketCount.toString().toPersianDigits(),
+                formatEpoch(p4LatestTs?.toString()) ?: noValueEarly,
+                stringResource(
+                    if (p4Thresholds.bubbleSet) {
+                        R.string.diagnostics_p4_threshold_set
+                    } else {
+                        R.string.diagnostics_p4_threshold_unset
+                    }
+                ),
+                stringResource(
+                    if (p4Thresholds.spreadSet) {
+                        R.string.diagnostics_p4_threshold_set
+                    } else {
+                        R.string.diagnostics_p4_threshold_unset
+                    }
+                ),
+            )
+        )
+        out.add(
+            context.getString(
+                R.string.diagnostics_p4_radar_line,
+                p4Radar.first.toString().toPersianDigits(),
+                p4Radar.second.toString().toPersianDigits(),
+                p4Radar.third.toString().toPersianDigits(),
+            )
+        )
+        val (fired, suppressed) = p4NotifStats
+        out.add(
+            context.getString(
+                R.string.diagnostics_p4_notifications_line,
+                fired.values.sum().toString().toPersianDigits(),
+                suppressed.values.sum().toString().toPersianDigits(),
+            )
+        )
+        for ((type, n) in fired.entries.sortedBy { it.key }) {
+            out.add(
+                context.getString(
+                    R.string.diagnostics_p4_fired_line,
+                    type,
+                    n.toString().toPersianDigits(),
+                )
+            )
+        }
+        for ((reason, n) in suppressed.entries.sortedBy { it.key }) {
+            out.add(
+                context.getString(
+                    R.string.diagnostics_p4_suppressed_line,
+                    reason,
+                    n.toString().toPersianDigits(),
+                )
+            )
+        }
+        for (metric in listOf("bubble", "spread")) {
+            val latest = p4Alerts.firstOrNull { it.metric == metric }
+            if (latest == null) {
+                out.add(
+                    context.getString(
+                        R.string.diagnostics_p4_alert_line,
+                        metric,
+                        stringResource(R.string.diagnostics_p4_alert_none),
+                    )
+                )
+            } else {
+                out.add(
+                    context.getString(
+                        R.string.diagnostics_p4_alert_line,
+                        metric,
+                        formatEpoch(latest.firedAtEpoch.toString()) ?: noValueEarly,
+                    )
+                )
+            }
+        }
+        out
+    }
+
     val versionName = try {
         context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "?"
     } catch (_: Exception) {
@@ -383,6 +491,7 @@ fun DiagnosticsScreen(
                         sectionStates = repo.sectionStates()
                         anomalyCounts = repo.anomalyCountsToday()
                         formatCounts = repo.formatCountsToday()
+                        loadPhase4()
                         busySection = null
                     }
                 },
@@ -419,6 +528,16 @@ fun DiagnosticsScreen(
             )
             Spacer(modifier = Modifier.height(6.dp))
         }
+        // Phase 4 lines — displayed exactly as copied below.
+        Spacer(modifier = Modifier.height(16.dp))
+        for (line in phase4Lines) {
+            Text(
+                text = line,
+                fontFamily = EcoFontFamily,
+                fontSize = 16.sp * fontScale,
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+        }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             enabled = !syncing,
@@ -443,6 +562,7 @@ fun DiagnosticsScreen(
                     sectionStates = repo.sectionStates()
                     anomalyCounts = repo.anomalyCountsToday()
                     formatCounts = repo.formatCountsToday()
+                    loadPhase4()
                     syncing = false
                 }
             },
@@ -461,7 +581,7 @@ fun DiagnosticsScreen(
                 clipboard?.setPrimaryClip(
                     ClipData.newPlainText(
                         "ECO JOURNAL diagnostics",
-                        (lines + sectionLines + phase2Lines + chainLines).joinToString("\n"),
+                        (lines + sectionLines + phase2Lines + chainLines + phase4Lines).joinToString("\n"),
                     )
                 )
                 copied = true

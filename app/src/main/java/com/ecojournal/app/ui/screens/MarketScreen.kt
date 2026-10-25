@@ -1,28 +1,51 @@
 package com.ecojournal.app.ui.screens
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.gestures.detectTapGestures
 import com.ecojournal.app.R
+import com.ecojournal.app.data.AlertMetric
 import com.ecojournal.app.data.ComputedFormula
+import com.ecojournal.app.data.Jalali
+import com.ecojournal.app.data.MarketFormula
+import com.ecojournal.app.data.MarketHistory
+import com.ecojournal.app.data.MarketRange
+import com.ecojournal.app.data.MarketSeries
 import com.ecojournal.app.data.MarketSnapshot
+import com.ecojournal.app.data.MarketThresholds
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.util.formatPersianDouble
 import com.ecojournal.app.util.formatPersianInt
+import com.ecojournal.app.util.toPersianDigits
 
 /**
  * Market board (read-only display), M4.
@@ -108,6 +131,15 @@ private fun inputValueText(value: Double): String {
     }
 }
 
+/**
+ * Phase 4 additions (below the M4 board, never replacing it):
+ * alert banners (current STATE from the latest snapshot +
+ * edge thresholds; null threshold = OFF, never a fake "all
+ * clear") and history (one series at a time, gap-broken chart,
+ * tap/prev/next snapshot card). The board above is untouched.
+ * New params default so older call sites keep compiling; the
+ * MainActivity market route passes the full set.
+ */
 @Composable
 fun MarketScreen(
     latest: MarketSnapshot?,
@@ -118,7 +150,20 @@ fun MarketScreen(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
     fontScale: Float = 1f,
+    historySnapshots: List<MarketSnapshot> = emptyList(),
+    formulaDefs: List<MarketFormula> = emptyList(),
+    thresholds: MarketThresholds? = null,
+    dismissedBubbleSnapshotId: String? = null,
+    dismissedSpreadSnapshotId: String? = null,
+    onDismissBanner: (AlertMetric) -> Unit = {},
+    onRefreshMarket: () -> Unit = {},
 ) {
+    // Phase 4 history state, hoisted ABOVE the early returns below:
+    // remember calls must not sit behind a conditional return.
+    var historyRange by remember { mutableStateOf(MarketRange.ALL) }
+    var historySeries by remember { mutableStateOf(MarketSeries.ALL_SERIES.first { it.key == "xau_usd" }) }
+    var seriesMenuOpen by remember { mutableStateOf(false) }
+    var selectedSnapshotId by remember { mutableStateOf<String?>(null) }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -315,6 +360,380 @@ fun MarketScreen(
                     )
                 }
             }
+        }
+        // ---- Phase 4: alert banners (current state, not events) ----
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.market_alert_banner_title),
+            fontFamily = EcoFontFamily,
+            fontSize = 18.sp * fontScale,
+            fontWeight = FontWeight.Bold,
+        )
+        val bubbleValue = formulas.firstOrNull { it.name == "bubble_pct" }?.value
+        val spreadValue = formulas.firstOrNull { it.name == "spread_pct" }?.value
+        // Signed comparison, as in the dispatcher: a negative
+        // spread never banners against a positive threshold.
+        val bubbleOn = bubbleValue != null && thresholds?.bubblePct != null &&
+            bubbleValue >= thresholds.bubblePct &&
+            dismissedBubbleSnapshotId != latest.snapshotId
+        val spreadOn = spreadValue != null && thresholds?.spreadPct != null &&
+            spreadValue >= thresholds.spreadPct &&
+            dismissedSpreadSnapshotId != latest.snapshotId
+        if (thresholds == null || !thresholds.anySet) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.market_alert_off),
+                fontFamily = EcoFontFamily,
+                fontSize = 16.sp * fontScale,
+            )
+            Text(
+                text = stringResource(R.string.market_alert_off_detail),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            if (bubbleOn) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(
+                        R.string.market_alert_banner_bubble,
+                        formatPersianDouble(bubbleValue!!, 1),
+                        formatPersianDouble(thresholds.bubblePct!!, 1),
+                    ),
+                    fontFamily = EcoFontFamily,
+                    fontSize = 16.sp * fontScale,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.error,
+                )
+                Text(
+                    text = stringResource(R.string.market_alert_banner_snapshot, latest.tsTehran),
+                    fontFamily = EcoFontFamily,
+                    fontSize = 14.sp * fontScale,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                TextButton(onClick = { onDismissBanner(AlertMetric.BUBBLE) }) {
+                    Text(
+                        text = stringResource(R.string.market_alert_banner_dismiss),
+                        fontFamily = EcoFontFamily,
+                    )
+                }
+            }
+            if (spreadOn) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(
+                        R.string.market_alert_banner_spread,
+                        formatPersianDouble(spreadValue!!, 1),
+                        formatPersianDouble(thresholds.spreadPct!!, 1),
+                    ),
+                    fontFamily = EcoFontFamily,
+                    fontSize = 16.sp * fontScale,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.error,
+                )
+                Text(
+                    text = stringResource(R.string.market_alert_banner_snapshot, latest.tsTehran),
+                    fontFamily = EcoFontFamily,
+                    fontSize = 14.sp * fontScale,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                TextButton(onClick = { onDismissBanner(AlertMetric.SPREAD) }) {
+                    Text(
+                        text = stringResource(R.string.market_alert_banner_dismiss),
+                        fontFamily = EcoFontFamily,
+                    )
+                }
+            }
+            if (!bubbleOn && !spreadOn) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.market_alert_off_detail),
+                    fontFamily = EcoFontFamily,
+                    fontSize = 14.sp * fontScale,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(R.string.market_alert_latency_note),
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        // ---- Phase 4: history (below the board, never replacing it) ----
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.market_history_title),
+            fontFamily = EcoFontFamily,
+            fontSize = 18.sp * fontScale,
+            fontWeight = FontWeight.Bold,
+        )
+        val nowMs = System.currentTimeMillis()
+        val history = MarketHistory.seriesForRange(
+            historySnapshots, historySeries, formulaDefs, historyRange, nowMs,
+        )
+        val orderedHistory = historySnapshots
+            .filter { it.tsEpoch != null }.sortedBy { it.tsEpoch }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row {
+            for (range in MarketRange.entries) {
+                val label = when (range) {
+                    MarketRange.R24H -> stringResource(R.string.market_history_range_24h)
+                    MarketRange.D7 -> stringResource(R.string.market_history_range_7d)
+                    MarketRange.D30 -> stringResource(R.string.market_history_range_30d)
+                    MarketRange.ALL -> stringResource(R.string.market_history_range_all)
+                }
+                if (range == historyRange) {
+                    Button(onClick = { historyRange = range }) {
+                        Text(text = label, fontFamily = EcoFontFamily)
+                    }
+                } else {
+                    OutlinedButton(onClick = { historyRange = range }) {
+                        Text(text = label, fontFamily = EcoFontFamily)
+                    }
+                }
+                Spacer(modifier = Modifier.padding(horizontal = 2.dp))
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = { seriesMenuOpen = true }) {
+            Text(
+                text = stringResource(R.string.market_history_series_label, historySeries.labelFa),
+                fontFamily = EcoFontFamily,
+            )
+        }
+        DropdownMenu(
+            expanded = seriesMenuOpen,
+            onDismissRequest = { seriesMenuOpen = false },
+        ) {
+            for (series in MarketSeries.ALL_SERIES) {
+                DropdownMenuItem(
+                    text = { Text(text = series.labelFa, fontFamily = EcoFontFamily) },
+                    onClick = {
+                        historySeries = series
+                        seriesMenuOpen = false
+                    },
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        if (history.snapshotsInRange.isEmpty()) {
+            Text(
+                text = stringResource(R.string.market_history_empty),
+                fontFamily = EcoFontFamily,
+                fontSize = 16.sp * fontScale,
+                fontWeight = FontWeight.Bold,
+            )
+            if (orderedHistory.isNotEmpty()) {
+                Text(
+                    text = stringResource(
+                        R.string.market_history_empty_coverage,
+                        Jalali.formatShamsiDateTime(orderedHistory.first().tsEpoch!!),
+                        Jalali.formatShamsiDateTime(orderedHistory.last().tsEpoch!!),
+                    ),
+                    fontFamily = EcoFontFamily,
+                    fontSize = 14.sp * fontScale,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            if (historyRange != MarketRange.ALL) {
+                Button(onClick = { historyRange = MarketRange.ALL }) {
+                    Text(
+                        text = stringResource(R.string.market_history_range_all),
+                        fontFamily = EcoFontFamily,
+                    )
+                }
+            }
+        } else {
+            Text(
+                text = stringResource(
+                    R.string.market_history_coverage,
+                    history.points.size.toString().toPersianDigits(),
+                    Jalali.formatShamsiDateTime(history.firstSnapshot!!.tsEpoch!!),
+                    Jalali.formatShamsiDateTime(history.lastSnapshot!!.tsEpoch!!),
+                ),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            val includesLatest = history.lastSnapshot?.snapshotId == latest.snapshotId
+            if (includesLatest && stale) {
+                Text(
+                    text = stringResource(R.string.market_stale),
+                    fontFamily = EcoFontFamily,
+                    fontSize = 14.sp * fontScale,
+                )
+            }
+            // Gap-broken line chart: segments from MarketHistory;
+            // a tap selects the nearest point by x position.
+            val segments = MarketHistory.segments(history)
+            val minEpoch = history.entries.first().tsEpoch
+            val maxEpoch = history.entries.last().tsEpoch
+            val values = history.points.map { it.value!! }
+            val minV = values.minOrNull() ?: 0.0
+            val maxV = values.maxOrNull() ?: 0.0
+            val spanV = if (maxV > minV) maxV - minV else 1.0
+            val lineColor = MaterialTheme.colorScheme.primary
+            val pointColor = MaterialTheme.colorScheme.onSurface
+            Canvas(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .pointerInput(history) {
+                        detectTapGestures { offset ->
+                            val span = (maxEpoch - minEpoch).coerceAtLeast(1L)
+                            val frac = (offset.x / size.width).coerceIn(0f, 1f)
+                            val target = minEpoch + (span * frac).toLong()
+                            val nearest = history.points.minByOrNull {
+                                kotlin.math.abs(it.tsEpoch - target)
+                            }
+                            if (nearest != null) selectedSnapshotId = nearest.snapshot.snapshotId
+                        }
+                    },
+            ) {
+                val w = size.width
+                val h = size.height
+                val xFor: (Long) -> Float = { epoch ->
+                    if (maxEpoch == minEpoch) w / 2f
+                    else ((epoch - minEpoch).toFloat() / (maxEpoch - minEpoch).toFloat()) * w
+                }
+                val yFor: (Double) -> Float = { v ->
+                    h - ((v - minV) / spanV).toFloat() * h
+                }
+                for (segment in segments) {
+                    for (i in 0 until segment.size - 1) {
+                        drawLine(
+                            color = lineColor,
+                            start = Offset(xFor(segment[i].tsEpoch), yFor(segment[i].value!!)),
+                            end = Offset(xFor(segment[i + 1].tsEpoch), yFor(segment[i + 1].value!!)),
+                            strokeWidth = 4f,
+                            cap = StrokeCap.Round,
+                        )
+                    }
+                    for (point in segment) {
+                        drawCircle(
+                            color = pointColor,
+                            radius = 8f,
+                            center = Offset(xFor(point.tsEpoch), yFor(point.value!!)),
+                        )
+                    }
+                }
+            }
+            Text(
+                text = stringResource(R.string.market_history_gap_note),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            // Selected snapshot card: all 15 fields + formulas +
+            // change vs previous history snapshot where computable.
+            val selected = history.points.firstOrNull {
+                it.snapshot.snapshotId == selectedSnapshotId
+            }?.snapshot ?: history.points.lastOrNull()?.snapshot
+            if (selected != null) {
+                val selectedPrev = MarketHistory.previousOf(selected, orderedHistory)
+                val selectedFormulas = if (formulaDefs.isNotEmpty()) {
+                    com.ecojournal.app.data.MarketFormulas.evaluate(selected, formulaDefs)
+                } else {
+                    emptyList()
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = stringResource(R.string.market_history_point_title),
+                    fontFamily = EcoFontFamily,
+                    fontSize = 16.sp * fontScale,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = "${Jalali.formatShamsiDateTime(selected.tsEpoch ?: 0L)} • ${selected.snapshotId}",
+                    fontFamily = EcoFontFamily,
+                    fontSize = 14.sp * fontScale,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    text = stringResource(
+                        R.string.market_history_point_value,
+                        MarketSeries.seriesValue(selected, historySeries.key, formulaDefs)
+                            ?.let { formatPersianDouble(it, historySeries.decimals) } ?: "—",
+                    ),
+                    fontFamily = EcoFontFamily,
+                    fontSize = 16.sp * fontScale,
+                )
+                val detailFields = listOf(
+                    PriceField("برنت (دلار)", selected.brent, selectedPrev?.brent, 2),
+                    PriceField("انس طلا (دلار)", selected.xauUsd, selectedPrev?.xauUsd, 2),
+                    PriceField("شاخص دلار", selected.dxy, selectedPrev?.dxy, 2),
+                    PriceField("تتر (دلار)", selected.usdtUsd, selectedPrev?.usdtUsd, 5),
+                    PriceField("دلار آزاد (تومان)", selected.usdIrtFree, selectedPrev?.usdIrtFree, 0),
+                    PriceField("تتر (تومان)", selected.usdtIrt, selectedPrev?.usdtIrt, 0),
+                    PriceField("طلای ۱۸ عیار هر گرم (تومان)", selected.gold18kGram, selectedPrev?.gold18kGram, 0),
+                    PriceField("سکهٔ امامی (تومان)", selected.sekkeEmami, selectedPrev?.sekkeEmami, 0),
+                    PriceField("سکهٔ بهار آزادی (تومان)", selected.sekkeBahar, selectedPrev?.sekkeBahar, 0),
+                    PriceField("نیم‌سکه (تومان)", selected.nimSekke, selectedPrev?.nimSekke, 0),
+                    PriceField("ربع‌سکه (تومان)", selected.robSekke, selectedPrev?.robSekke, 0),
+                    PriceField("شاخص ترس (VIX)", selected.vix, selectedPrev?.vix, 2),
+                    PriceField("شاخص S&P 500", selected.sp500, selectedPrev?.sp500, 2),
+                )
+                for (field in detailFields) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    val changeCell = if (field.value == null) {
+                        "—"
+                    } else if (field.previous == null) {
+                        "—"
+                    } else {
+                        changeText(field.value, field.previous, field.decimals)
+                            ?: if (field.value == field.previous) {
+                                stringResource(R.string.market_no_change)
+                            } else {
+                                "—"
+                            }
+                    }
+                    Text(
+                        text = "${field.label}: " +
+                            if (field.value == null) "—" else formatPrice(field.value, field.decimals) +
+                            " ($changeCell)",
+                        fontFamily = EcoFontFamily,
+                        fontSize = 14.sp * fontScale,
+                    )
+                }
+                for (f in selectedFormulas) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "${f.name}: ${formulaValueText(f)}",
+                        fontFamily = EcoFontFamily,
+                        fontSize = 14.sp * fontScale,
+                    )
+                }
+                Row {
+                    val idx = history.points.indexOfFirst { it.snapshot.snapshotId == selected.snapshotId }
+                    if (idx > 0) {
+                        TextButton(onClick = {
+                            selectedSnapshotId = history.points[idx - 1].snapshot.snapshotId
+                        }) {
+                            Text(text = "◀ قبلی", fontFamily = EcoFontFamily)
+                        }
+                    }
+                    if (idx >= 0 && idx < history.points.size - 1) {
+                        TextButton(onClick = {
+                            selectedSnapshotId = history.points[idx + 1].snapshot.snapshotId
+                        }) {
+                            Text(text = "بعدی ▶", fontFamily = EcoFontFamily)
+                        }
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = onRefreshMarket,
+            modifier = Modifier.heightIn(min = 48.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.market_history_refresh),
+                fontFamily = EcoFontFamily,
+            )
         }
     }
 }

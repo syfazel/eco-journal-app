@@ -163,7 +163,20 @@ data class BundleEntity(
     val updatedAtEpoch: Long,
 )
 
-/** Phase 2 radar signal (spec section 2.4). */
+/** Phase 2 radar signal (spec section 2.4), extended in Phase 4
+ * with the graded-signal fields (phases4-5 spec §4.5). Phase 4
+ * fields default so Phase 2 rows keep compiling and keep their
+ * cache: [severity] now carries the graded value high / medium /
+ * low when the edge ships it (Phase 2 rows carry the opaque
+ * shipped string or null); [storyId] is the guid-derived join key
+ * (a signal without a resolvable story_id is held by the parser,
+ * never published as an orphan); [linkedAppKey] is the story's
+ * app article/short key when published in-app, null while
+ * unpublished (row lists with the honest "not yet in app"
+ * marker, never a dead link); [matchedTopics] are topic labels,
+ * never the raw keyword list verbatim. [layer]/[severityRank]
+ * are kept for Phase 2 fixture compatibility and are ignored by
+ * the Phase 4 graded UI when a grade is present. */
 @Entity(
     tableName = "radar_signals",
     indices = [Index(value = ["layer"]), Index(value = ["detectedAtEpoch"])],
@@ -181,6 +194,57 @@ data class RadarSignalEntity(
     val status: String,
     val contentHash: String?,
     val updatedAtEpoch: Long,
+    val storyId: String? = null,
+    val matchedTopics: List<String> = emptyList(),
+    val firstSeenTehran: String? = null,
+    val lastSeenTehran: String? = null,
+    val linkedAppKey: String? = null,
+)
+
+/**
+ * Phase 4 market alert event (spec §4.1). One row per metric per
+ * snapshot at most (dedup by eventId = "bubble|snapshotId" /
+ * "spread|snapshotId"). [notified] is 1 ONLY when a notification
+ * was actually posted (spec §4.6: the channel code records the
+ * cooldown BEFORE attempting the post, so a failed post still
+ * consumes it — the app must not copy that defect). Banner
+ * dismissal is per latest snapshot, stored in meta, not here.
+ */
+@Entity(
+    tableName = "market_alert_events",
+    indices = [Index(value = ["metric"]), Index(value = ["snapshotId"])],
+)
+data class MarketAlertEventEntity(
+    @PrimaryKey val eventId: String,
+    val metric: String,
+    val snapshotId: String,
+    val valuePct: Double,
+    val thresholdPct: Double,
+    val firedAtEpoch: Long,
+    val notified: Int,
+)
+
+/**
+ * Phase 4 notification history (spec §4.1). LOCAL ONLY: never
+ * synced, never in copy-diagnostics beyond its own shown lines,
+ * pruned to the newest 200 rows or 90 days, whichever is smaller.
+ * [targetKey] is an appKey / snapshotId / edition_id / bundle_id
+ * (nullable); [suppressedReason] is null for fired rows and one
+ * of quiet_hours / night_law / toggle_off / cooldown / master_off
+ * for suppressed rows (first failing check, spec §4.7).
+ */
+@Entity(
+    tableName = "notification_history",
+    indices = [Index(value = ["firedAtEpoch"]), Index(value = ["type"])],
+)
+data class NotificationHistoryEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val type: String,
+    val title: String,
+    val targetKey: String?,
+    val firedAtEpoch: Long,
+    val deferredFromEpoch: Long?,
+    val suppressedReason: String?,
 )
 
 /** Bundle bookmarks (spec 8.3): a bundle header bookmark is
@@ -348,10 +412,19 @@ interface ArticleDao {
     @Query("SELECT appKey FROM articles")
     suspend fun allAppKeys(): List<String>
 
-    @Query("SELECT * FROM market_snapshots ORDER BY tsEpoch DESC LIMIT 1")
+    /**
+     * Phase 4 note on the null-tsEpoch rule (spec §4.3): a row
+     * whose tsTehran cannot be parsed has tsEpoch = null and must
+     * NEVER become "latest". SQLite ORDER BY ... DESC already puts
+     * NULLs last (verified in the lab against SQLite itself), but
+     * these queries now also filter `tsEpoch IS NOT NULL`
+     * explicitly, so the rule holds regardless of engine nuance
+     * and the Phase 4 fixture test proves it literally.
+     */
+    @Query("SELECT * FROM market_snapshots WHERE tsEpoch IS NOT NULL ORDER BY tsEpoch DESC LIMIT 1")
     fun marketLatestFlow(): Flow<MarketSnapshotEntity?>
 
-    @Query("SELECT * FROM market_snapshots ORDER BY tsEpoch DESC LIMIT 1")
+    @Query("SELECT * FROM market_snapshots WHERE tsEpoch IS NOT NULL ORDER BY tsEpoch DESC LIMIT 1")
     suspend fun marketLatest(): MarketSnapshotEntity?
 
     @Query("SELECT COUNT(*) FROM market_snapshots")
@@ -360,6 +433,13 @@ interface ArticleDao {
     @Query("SELECT COUNT(*) FROM market_snapshots")
     fun marketCountFlow(): Flow<Int>
 
+    /** Phase 4 history: every orderable snapshot, oldest first. */
+    @Query("SELECT * FROM market_snapshots WHERE tsEpoch IS NOT NULL ORDER BY tsEpoch ASC")
+    fun snapshotsOrderedFlow(): Flow<List<MarketSnapshotEntity>>
+
+    @Query("SELECT * FROM market_snapshots WHERE tsEpoch IS NOT NULL ORDER BY tsEpoch ASC")
+    suspend fun snapshotsOrdered(): List<MarketSnapshotEntity>
+
     /**
      * The snapshot before the latest one: greatest timestamp
      * strictly below [latestEpoch]. Used for change-vs-previous.
@@ -367,7 +447,7 @@ interface ArticleDao {
      * no previous, never a fabricated comparison.
      */
     @Query(
-        "SELECT * FROM market_snapshots WHERE tsEpoch < :latestEpoch " +
+        "SELECT * FROM market_snapshots WHERE tsEpoch IS NOT NULL AND tsEpoch < :latestEpoch " +
             "ORDER BY tsEpoch DESC LIMIT 1"
     )
     suspend fun marketPrevious(latestEpoch: Long?): MarketSnapshotEntity?
@@ -530,6 +610,98 @@ interface ChannelDao {
             "AND status != 'retracted' ORDER BY publishedAtEpoch DESC, appKey ASC"
     )
     suspend fun bookmarkedChannelItems(): List<ChannelItemEntity>
+}
+
+@Dao
+interface Phase4Dao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertAlertEvent(event: MarketAlertEventEntity)
+
+    @Query("SELECT * FROM market_alert_events WHERE metric = :metric ORDER BY firedAtEpoch DESC LIMIT 1")
+    suspend fun latestAlertEvent(metric: String): MarketAlertEventEntity?
+
+    @Query("SELECT * FROM market_alert_events ORDER BY firedAtEpoch DESC")
+    suspend fun allAlertEvents(): List<MarketAlertEventEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNotificationHistory(row: NotificationHistoryEntity)
+
+    @Query("SELECT * FROM notification_history ORDER BY firedAtEpoch DESC LIMIT 200")
+    suspend fun recentNotificationHistory(): List<NotificationHistoryEntity>
+
+    /** Prune to newest 200 rows (spec §4.1: 200 rows or 90 days, whichever is smaller). */
+    @Query(
+        "DELETE FROM notification_history WHERE id NOT IN " +
+            "(SELECT id FROM notification_history ORDER BY firedAtEpoch DESC LIMIT 200)"
+    )
+    suspend fun pruneNotificationHistoryTo200()
+
+    @Query("DELETE FROM notification_history WHERE firedAtEpoch < :olderThanEpoch")
+    suspend fun pruneNotificationHistoryOlderThan(olderThanEpoch: Long)
+
+    @Query("SELECT COUNT(*) FROM notification_history WHERE suppressedReason IS NULL AND firedAtEpoch >= :fromEpoch")
+    suspend fun firedCountSince(fromEpoch: Long): Int
+
+    @Query(
+        "SELECT type, COUNT(*) AS count FROM notification_history " +
+            "WHERE suppressedReason IS NULL AND firedAtEpoch >= :fromEpoch GROUP BY type"
+    )
+    suspend fun firedCountsByTypeSince(fromEpoch: Long): List<NotificationTypeCount>
+
+    @Query(
+        "SELECT suppressedReason, COUNT(*) AS count FROM notification_history " +
+            "WHERE suppressedReason IS NOT NULL AND firedAtEpoch >= :fromEpoch GROUP BY suppressedReason"
+    )
+    suspend fun suppressedCountsByReasonSince(fromEpoch: Long): List<NotificationReasonCount>
+}
+
+/** GROUP BY result holder for notification_history counts by type. */
+data class NotificationTypeCount(
+    val type: String,
+    val count: Int,
+)
+
+/** GROUP BY result holder for notification_history counts by reason. */
+data class NotificationReasonCount(
+    val suppressedReason: String,
+    val count: Int,
+)
+
+// Version 5 -> 6 migration (Phase 4). Additive only: two new
+// tables + five new nullable/defaulted columns on radar_signals.
+// No existing table is altered in shape otherwise, so a v5 install
+// keeps its full cache. NOTE on the spec text: it says "Room v4 →
+// v5" because it was written against the Phase 1 baseline; Phase 2
+// already moved the database to v5, so Phase 4 is v5 → v6 — the
+// tables are exactly the spec's tables, only the version number
+// differs. A v4 install cannot jump here without MIGRATION_4_5,
+// which stays in the chain.
+val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `market_alert_events` (" +
+                "`eventId` TEXT NOT NULL, `metric` TEXT NOT NULL, " +
+                "`snapshotId` TEXT NOT NULL, `valuePct` REAL NOT NULL, " +
+                "`thresholdPct` REAL NOT NULL, `firedAtEpoch` INTEGER NOT NULL, " +
+                "`notified` INTEGER NOT NULL, PRIMARY KEY(`eventId`))"
+        )
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_market_alert_events_metric` ON `market_alert_events` (`metric`)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_market_alert_events_snapshotId` ON `market_alert_events` (`snapshotId`)")
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `notification_history` (" +
+                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "`type` TEXT NOT NULL, `title` TEXT NOT NULL, " +
+                "`targetKey` TEXT, `firedAtEpoch` INTEGER NOT NULL, " +
+                "`deferredFromEpoch` INTEGER, `suppressedReason` TEXT)"
+        )
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_notification_history_firedAtEpoch` ON `notification_history` (`firedAtEpoch`)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_notification_history_type` ON `notification_history` (`type`)")
+        db.execSQL("ALTER TABLE `radar_signals` ADD COLUMN `storyId` TEXT")
+        db.execSQL("ALTER TABLE `radar_signals` ADD COLUMN `matchedTopics` TEXT NOT NULL DEFAULT ''")
+        db.execSQL("ALTER TABLE `radar_signals` ADD COLUMN `firstSeenTehran` TEXT")
+        db.execSQL("ALTER TABLE `radar_signals` ADD COLUMN `lastSeenTehran` TEXT")
+        db.execSQL("ALTER TABLE `radar_signals` ADD COLUMN `linkedAppKey` TEXT")
+    }
 }
 
 // Version 4 -> 5 migration (Phase 2). Additive only: three new
@@ -757,12 +929,15 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
         BundleEntity::class,
         RadarSignalEntity::class,
         BundleBookmarkEntity::class,
+        MarketAlertEventEntity::class,
+        NotificationHistoryEntity::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = false,
 )
 @TypeConverters(StringListConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun articleDao(): ArticleDao
     abstract fun channelDao(): ChannelDao
+    abstract fun phase4Dao(): Phase4Dao
 }

@@ -1,0 +1,46 @@
+{
+ "generated_at_utc": "2026-10-25T19:11:15.535226+00:00",
+ "sources_read_only": [
+  "/home/hatch/workspace/econ-news-blog/data_core/data_core.db",
+  "/home/hatch/workspace/yasineco_bot/bot.db"
+ ],
+ "exported": {
+  "full_articles": 249,
+  "short_cards": 32,
+  "index_entries": 281,
+  "market_snapshots": 172,
+  "market_formulas_active": 4,
+  "channel_refs": 23,
+  "join_keys_entries": 281,
+  "manifest_version": 3
+ },
+ "phase1": {
+  "guid_fallbacks_to_extract_id": 0,
+  "shorts_category": "uncategorised",
+  "shorts_category_fa": "دسته‌بندی‌نشده",
+  "channel_message_id_non_null": 0,
+  "invite_hashes_source": "canonical edge/out (copied verbatim)",
+  "invite_hashes_count": 10,
+  "revocation_hashes_source": "canonical edge/out (copied verbatim)",
+  "revocation_hashes_count": 1
+ },
+ "summary_sources_full_articles": {
+  "from_items_summary": 249,
+  "from_body_excerpt_first_paragraph": 0
+ },
+ "excluded_never_shipped_as_articles": {
+  "extracts_pending": 2560,
+  "extracts_rejected": 277,
+  "extracts_approved_posted_without_body": 84,
+  "drafts_rejected": 52,
+  "channel_posts_without_body_text_in_data_core": 23
+ },
+ "rules": [
+  "No invented article text. Bodies and body_fa copied verbatim.",
+  "No .env file opened. No token printed or embedded.",
+  "Nothing written outside app/edge/out/ (or the --out dir inside the app root).",
+  "Shorts carry explicit category 'uncategorised'; channel_message_id is never fabricated (null until the bridge staging path populates it).",
+  "Invite/revocation files carry hashes only and are owned by bridge/control.py; this generator never rewrites the canonical copies."
+ ],
+ "label": "LAB FIXTURE"
+}

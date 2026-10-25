@@ -132,6 +132,7 @@ class EdgeRepository(context: Context) {
     private val db: AppDatabase = DatabaseProvider.get(context)
     val dao: ArticleDao = db.articleDao()
     val channelDao: ChannelDao = db.channelDao()
+    val phase4Dao: Phase4Dao = db.phase4Dao()
     private val appContext: Context = context.applicationContext
     private val settings = SettingsStore(context)
 
@@ -545,6 +546,11 @@ class EdgeRepository(context: Context) {
                         var formulasFresh = emptyList<MarketFormulaEntity>()
                         var corruptSnaps = 0
                         var marketFailed = false
+                        // Phase 4: admin thresholds from the edge
+                        // market_alerts object (spec §4.1). Null =
+                        // OFF. They are read here, never defaulted
+                        // and never taken from help-text examples.
+                        var marketThresholds: MarketThresholds? = null
                         try {
                             val marketObj = JSONObject(marketText)
                             val snaps = marketObj.optJSONArray("snapshots") ?: JSONArray()
@@ -580,6 +586,19 @@ class EdgeRepository(context: Context) {
                                 }
                             }
                             formulasFresh = parsedFormulas
+                            val alertsObj = marketObj.optJSONObject("market_alerts")
+                            marketThresholds = MarketThresholds(
+                                bubblePct = alertsObj?.let {
+                                    if (it.isNull("bubble_threshold_pct")) null
+                                    else it.optDouble("bubble_threshold_pct")
+                                        .takeIf { v -> v.isFinite() }
+                                },
+                                spreadPct = alertsObj?.let {
+                                    if (it.isNull("spread_threshold_pct")) null
+                                    else it.optDouble("spread_threshold_pct")
+                                        .takeIf { v -> v.isFinite() }
+                                },
+                            )
                         } catch (_: Exception) {
                             marketFailed = true
                         }
@@ -600,6 +619,24 @@ class EdgeRepository(context: Context) {
                                     dao.deleteAllFormulas()
                                     dao.upsertFormulas(formulasFresh)
                                 }
+                                // Phase 4 thresholds: stored in meta
+                                // on every successful market sync, so
+                                // the banner/alert logic always reads
+                                // the edge value, never a stale one.
+                                // Absent object = all null = OFF.
+                                val thresholds = marketThresholds ?: MarketThresholds(null, null)
+                                dao.upsertMeta(
+                                    MetaEntity(
+                                        "p4_market_alerts_bubble",
+                                        thresholds.bubblePct?.toString() ?: "",
+                                    )
+                                )
+                                dao.upsertMeta(
+                                    MetaEntity(
+                                        "p4_market_alerts_spread",
+                                        thresholds.spreadPct?.toString() ?: "",
+                                    )
+                                )
                                 recordSectionMeta(
                                     SyncSections.MARKET,
                                     if (complete) SectionStates.UP_TO_DATE
@@ -611,6 +648,12 @@ class EdgeRepository(context: Context) {
                                     if (complete) section.hash else null,
                                 )
                             }
+                            // Phase 4 alert evaluation (§4.6): on
+                            // every market-section sync completion
+                            // (and on manual market refresh, which
+                            // runs this same block via syncOnly).
+                            // No separate alert poll, no push.
+                            evaluateMarketAlerts(now)
                             if (!complete) anyIncomplete = true
                             outcomes.add(
                                 SectionOutcome(
@@ -771,7 +814,7 @@ class EdgeRepository(context: Context) {
         // accumulated for the day instead.
         persistPhase2Anomalies(now, phase2Anomalies, computePhase2Computed(now))
         if (onlySection == null) {
-            dispatchPhase2Notifications(now)
+            dispatchPhase4Notifications(now)
         }
 
         // Not-yet-published and gated sections: state comes from the
@@ -1299,10 +1342,226 @@ class EdgeRepository(context: Context) {
         )
     }
 
-    private suspend fun dispatchPhase2Notifications(now: Long) {
-        val enabled = settings.settings.first().notificationsEnabled
+    // ---- Phase 4: thresholds, alert evaluation, dispatcher ----
+
+    /** Edge thresholds as last stored by a market sync; null = OFF. */
+    suspend fun marketThresholds(): MarketThresholds {
+        val bubble = dao.metaValue("p4_market_alerts_bubble")
+            ?.takeIf { it.isNotBlank() }?.toDoubleOrNull()
+        val spread = dao.metaValue("p4_market_alerts_spread")
+            ?.takeIf { it.isNotBlank() }?.toDoubleOrNull()
+        return MarketThresholds(bubble, spread)
+    }
+
+    suspend fun dismissedBannerSnapshot(metric: AlertMetric): String? {
+        val key = if (metric == AlertMetric.BUBBLE) {
+            "p4_banner_dismissed_bubble"
+        } else {
+            "p4_banner_dismissed_spread"
+        }
+        return dao.metaValue(key)?.takeIf { it.isNotBlank() }
+    }
+
+    suspend fun dismissMarketBanner(metric: AlertMetric, snapshotId: String) {
+        val key = if (metric == AlertMetric.BUBBLE) {
+            "p4_banner_dismissed_bubble"
+        } else {
+            "p4_banner_dismissed_spread"
+        }
+        dao.upsertMeta(MetaEntity(key, snapshotId))
+    }
+
+    private suspend fun recordNotificationHistory(
+        type: NotificationType,
+        title: String,
+        targetKey: String?,
+        now: Long,
+        deferredFromEpoch: Long?,
+        suppressedReason: SuppressedReason?,
+    ) {
+        phase4Dao.insertNotificationHistory(
+            NotificationHistoryEntity(
+                type = type.key,
+                title = title,
+                targetKey = targetKey,
+                firedAtEpoch = now,
+                deferredFromEpoch = deferredFromEpoch,
+                suppressedReason = suppressedReason?.key,
+            )
+        )
+        // Spec §4.1 prune: newest 200 rows or 90 days, whichever
+        // is smaller (both applied; the smaller set survives).
+        phase4Dao.pruneNotificationHistoryTo200()
+        phase4Dao.pruneNotificationHistoryOlderThan(now - 90L * 24L * 60L * 60L * 1000L)
+    }
+
+    /** Phase 4 Diagnostics data (counts only, never content). */
+    suspend fun radarCounts(): Triple<Int, Int, Int> {
+        val all = channelDao.allRadar().filter { it.status != "retracted" }
+        return Triple(
+            all.size,
+            all.count { it.status == "active" },
+            all.count { it.status == "resolved" },
+        )
+    }
+
+    suspend fun notificationStatsToday(): Pair<Map<String, Int>, Map<String, Int>> {
+        val (start, _) = Jalali.tehranDayRangeEpoch(System.currentTimeMillis())
+        val fired = phase4Dao.firedCountsByTypeSince(start)
+            .associate { it.type to it.count }
+        val suppressed = phase4Dao.suppressedCountsByReasonSince(start)
+            .associate { it.suppressedReason to it.count }
+        return fired to suppressed
+    }
+
+    /**
+     * Phase 4 market-alert evaluation (§4.6). Runs on every
+     * market-section sync completion (see the market block) and
+     * therefore on manual market refresh too. No separate alert
+     * poll, no push; alert latency = sync latency.
+     *
+     * Banner state itself is NOT stored: the Market tab derives
+     * it from the latest snapshot + thresholds on every render,
+     * so a banner can never outlive the snapshot it describes.
+     * Event rows ARE stored (one per metric per snapshot): with
+     * notified = 1 only when a notification was actually posted
+     * — the cooldown timestamp is written only in that same
+     * branch, so a failed/suppressed post never consumes the
+     * cooldown (the channel code's defect, not copied).
+     */
+    private suspend fun evaluateMarketAlerts(now: Long) {
+        val thresholds = marketThresholds()
+        if (!thresholds.anySet) return
+        val latestEntity = dao.marketLatest() ?: return
+        val latest = ArticleParsers.marketSnapshotFromEntity(latestEntity)
+        val previous = dao.marketPrevious(latestEntity.tsEpoch)?.let {
+            ArticleParsers.marketSnapshotFromEntity(it)
+        }
+        val formulas = dao.formulas().map {
+            MarketFormula(
+                name = it.name,
+                version = it.version,
+                definition = it.definition,
+                inputs = it.inputs,
+                descriptionFa = it.descriptionFa,
+            )
+        }
+        val currentSettings = settings.settings.first()
+        val prefs = currentSettings.toNotificationPrefs()
+        val lastBubble = currentSettings.marketAlertLastBubbleMs
+        val lastSpread = currentSettings.marketAlertLastSpreadMs
+        val evals = MarketAlerts.evaluateAll(
+            latest, previous, formulas, thresholds,
+            lastBubble, lastSpread, now,
+        )
+        for ((metric, ev) in evals) {
+            if (!ev.bannerOn || ev.value == null || ev.threshold == null) continue
+            val decision = NotificationPolicy.decide(
+                prefs, NotificationType.MARKET_ALERTS, now,
+                cooldownOk = ev.cooldownOk,
+            )
+            var posted = false
+            if (ev.shouldNotify && decision.fire) {
+                val label = if (metric == AlertMetric.BUBBLE) {
+                    "حباب سکه"
+                } else {
+                    "اسپرد تتر/دلار"
+                }
+                val valueFa = com.ecojournal.app.util.formatPersianDouble(ev.value, 1)
+                val thrFa = com.ecojournal.app.util.formatPersianDouble(ev.threshold, 1)
+                Notifications.showMarketAlert(
+                    appContext,
+                    metric = if (metric == AlertMetric.BUBBLE) "bubble" else "spread",
+                    snapshotId = latest.snapshotId,
+                    title = "🔔 هشدار بازار: $label",
+                    text = "$label به $valueFa٪ رسید (آستانه: $thrFa٪) — ${latest.tsTehran}",
+                )
+                settings.setMarketAlertLastNotified(metric, now)
+                posted = true
+                recordNotificationHistory(
+                    NotificationType.MARKET_ALERTS, "هشدار بازار: $label",
+                    latest.snapshotId, now, null, null,
+                )
+            } else if (ev.shouldNotify && !decision.fire) {
+                // A fresh crossing that was suppressed is a
+                // diagnosable candidate (first failing check).
+                // A merely-above-threshold snapshot with no fresh
+                // crossing is NOT a candidate and records nothing.
+                recordNotificationHistory(
+                    NotificationType.MARKET_ALERTS, "هشدار بازار",
+                    latest.snapshotId, now, null, decision.suppressedReason,
+                )
+            }
+            phase4Dao.upsertAlertEvent(
+                MarketAlertEventEntity(
+                    eventId = MarketAlerts.eventId(metric, latest.snapshotId),
+                    metric = if (metric == AlertMetric.BUBBLE) "bubble" else "spread",
+                    snapshotId = latest.snapshotId,
+                    valuePct = ev.value,
+                    thresholdPct = ev.threshold,
+                    firedAtEpoch = now,
+                    notified = if (posted) 1 else 0,
+                )
+            )
+        }
+    }
+
+    /**
+     * Phase 4 notification dispatcher (full syncs only, as before).
+     * Replaces the Phase 2 dispatcher with the §4.7 check order
+     * (master → per-service toggle → Law 15 → quiet hours →
+     * cooldown) and the §4.8 precedence table. Phase 2 rules kept:
+     * an item that arrived while its toggle was off is marked
+     * notified WITHOUT firing (no retro-notification on toggle);
+     * Morning Bundle fires at most once per bundle, never before
+     * 08:00 Tehran, suppressed when already opened.
+     *
+     * Producer coverage, stated plainly: urgent, Morning Bundle,
+     * and market alerts (evaluated in the market block) are the
+     * wired producers. SITREP / nightly / special-issues / radar
+     * toggles are stored and shown in Settings, but no per-item
+     * producer fires for them in Phase 4 — Phase 2 deliberately
+     * fires no radar notification (P2-A8), SITREP cards arrive
+     * via the typed feed without a per-card notification, and
+     * the nightly edition is Phase 5. Wiring a producer for any
+     * of them is that phase's work, not a silent Phase 4 addition.
+     */
+    private suspend fun dispatchPhase4Notifications(now: Long) {
+        val prefs = settings.settings.first().toNotificationPrefs()
+        val isNight = Jalali.isNightTehran(now)
+        val inQuiet = prefs.quietHoursEnabled && NotificationPolicy.isInsideQuietHours(
+            NotificationPolicy.minuteOfDayTehran(now),
+            prefs.quietStartMin, prefs.quietEndMin,
+        )
+
+        // Deferred summary flush: first sync after quiet-hours end
+        // (and outside night), one summary for all deferred
+        // bundle/nightly items. If the user has since turned
+        // bundles off, the deferred set is dropped silently —
+        // the user's current choice wins over a burst.
+        val deferred = readMetaStringSet("p4_deferred_bundles")
+        if (deferred.isNotEmpty() && !isNight && !inQuiet) {
+            if (prefs.masterEnabled && prefs.notifyBundles) {
+                Notifications.showDeferredSummary(appContext, deferred.size)
+                recordNotificationHistory(
+                    NotificationType.BUNDLES, "خلاصهٔ موارد به‌تعویق‌افتاده",
+                    null, now,
+                    dao.metaValue("p4_deferred_since")?.toLongOrNull(), null,
+                )
+            }
+            writeMetaStringSet("p4_deferred_bundles", emptySet())
+            dao.upsertMeta(MetaEntity("p4_deferred_since", ""))
+        }
+
         for (item in channelDao.unnotifiedInstant()) {
-            if (enabled) {
+            // unnotifiedInstant returns nightLawResult = 'instant'
+            // rows only, so Law 15 eligibility holds by
+            // construction; decide() still applies master, toggle,
+            // and quiet-hours (with the urgent bypass) in order.
+            val decision = NotificationPolicy.decide(
+                prefs, NotificationType.URGENT, now, isLaw15Instant = true,
+            )
+            if (decision.fire) {
                 Notifications.showUrgent(
                     appContext,
                     articleId = item.appKey,
@@ -1310,14 +1569,24 @@ class EdgeRepository(context: Context) {
                     text = item.body,
                 )
                 markChainNotified(item.appKey, now)
+                recordNotificationHistory(
+                    NotificationType.URGENT, item.headline, item.appKey, now, null, null,
+                )
+            } else {
+                recordNotificationHistory(
+                    NotificationType.URGENT, item.headline, item.appKey, now, null,
+                    decision.suppressedReason,
+                )
             }
             channelDao.markNotified(item.appKey)
         }
+
         val todayKey = Jalali.shamsiDayKey(now)
-        val afterEight = !Jalali.isNightTehran(now)
         val notified = readMetaStringSet("p2_notified_bundles")
         val opened = readMetaStringSet("p2_opened_bundles")
         val freshNotified = notified.toMutableSet()
+        val freshDeferred = readMetaStringSet("p4_deferred_bundles").toMutableSet()
+        val suppressedNight = readMetaStringSet("p4_bundle_suppressed_night").toMutableSet()
         for (bundle in channelDao.allBundles()) {
             if (bundle.kind != BundleKinds.MORNING_BUNDLE) continue
             if (bundle.status == "retracted") continue
@@ -1325,18 +1594,73 @@ class EdgeRepository(context: Context) {
             val bundleDay = latinDigits(bundle.bundleDateShamsi)
             val pastDay = bundleDay < todayKey
             if (!pastDay && bundleDay != todayKey) continue
-            if (!pastDay && !afterEight) continue
+            if (!pastDay && isNight) {
+                // Night law: no instant bundle notification, ever.
+                // Recorded once per bundle (not every night sync);
+                // the 08:00 Morning Bundle notification is the
+                // deferred presentation, not a second summary.
+                if (bundle.bundleId !in suppressedNight) {
+                    suppressedNight.add(bundle.bundleId)
+                    recordNotificationHistory(
+                        NotificationType.BUNDLES, "بستهٔ صبح",
+                        bundle.bundleId, now, null, SuppressedReason.NIGHT_LAW,
+                    )
+                }
+                continue
+            }
+            val decision = NotificationPolicy.decide(
+                prefs, NotificationType.BUNDLES, now,
+            )
+            if (!decision.fire) {
+                if (decision.suppressedReason == SuppressedReason.NIGHT_LAW) {
+                    // Night-suppressed bundles stay PENDING (not
+                    // marked notified) so they can fire at 08:00;
+                    // recorded once per bundle, not every sync.
+                    if (bundle.bundleId !in suppressedNight) {
+                        suppressedNight.add(bundle.bundleId)
+                        recordNotificationHistory(
+                            NotificationType.BUNDLES, "بستهٔ صبح",
+                            bundle.bundleId, now, null, SuppressedReason.NIGHT_LAW,
+                        )
+                    }
+                    continue
+                }
+                recordNotificationHistory(
+                    NotificationType.BUNDLES, "بستهٔ صبح",
+                    bundle.bundleId, now, null, decision.suppressedReason,
+                )
+                if (decision.deferToSummary) {
+                    if (freshDeferred.isEmpty()) {
+                        dao.upsertMeta(MetaEntity("p4_deferred_since", now.toString()))
+                    }
+                    freshDeferred.add(bundle.bundleId)
+                }
+                // Suppressed-by-choice bundles are still marked
+                // notified (no retro burst when toggled back on);
+                // quiet-deferred bundles are marked too — the
+                // deferred summary is their presentation.
+                freshNotified.add(bundle.bundleId)
+                continue
+            }
             val heldCount = bundle.memberAppKeys.count { key ->
                 channelDao.channelByAppKey(key)?.wasHeld == true
             }
             val n = if (heldCount > 0) heldCount else bundle.memberAppKeys.size
-            if (enabled) {
-                Notifications.showMorningBundle(appContext, bundle.bundleId, n)
-            }
+            Notifications.showMorningBundle(appContext, bundle.bundleId, n)
+            recordNotificationHistory(
+                NotificationType.BUNDLES, "بستهٔ صبح",
+                bundle.bundleId, now, null, null,
+            )
             freshNotified.add(bundle.bundleId)
         }
         if (freshNotified != notified) {
             writeMetaStringSet("p2_notified_bundles", freshNotified)
+        }
+        if (freshDeferred != readMetaStringSet("p4_deferred_bundles")) {
+            writeMetaStringSet("p4_deferred_bundles", freshDeferred)
+        }
+        if (suppressedNight != readMetaStringSet("p4_bundle_suppressed_night")) {
+            writeMetaStringSet("p4_bundle_suppressed_night", suppressedNight)
         }
     }
 

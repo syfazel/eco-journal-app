@@ -305,19 +305,60 @@ object ChannelParsers {
             anomalies.add(Phase2Anomalies.BAD_RADAR_FIELD)
             0
         }
+        // Phase 4 graded shape (§4.5): severity is ONLY high /
+        // medium / low; any other shipped value is kept verbatim
+        // for display but never re-graded by the app. story_id is
+        // the join key: a signal WITHOUT a resolvable story_id is
+        // held (null), never published as an orphan. matched_topics
+        // are topic labels, never the raw keyword list. linked_app_key
+        // is null while the story is unpublished in-app — the row
+        // then lists with the "not yet in app" marker, never a dead
+        // link. Phase 2 fields (layer, severity_rank,
+        // linked_story_id, detected_at_epoch) are still read so
+        // Phase 2 fixture edges keep parsing unchanged.
+        val grade = optStringOrNull(obj, "severity")
+        // storyId comes ONLY from the spec §4.5 story_id key, so
+        // it stays a reliable graded-shape marker: legacy Phase 2
+        // signals (linked_story_id only) keep storyId == null and
+        // keep their existing button behaviour (P2-A8).
+        val storyId = optStringOrNull(obj, "story_id")
+        // Orphan rule, scoped so it cannot regress Phase 2: it
+        // applies ONLY to graded-shape signals (spec §4.5 rows,
+        // recognised by their graded keys). A graded signal without
+        // a resolvable story_id is held (null), never published as
+        // an orphan. Legacy Phase 2 layer signals carry no story
+        // id at all and keep parsing exactly as before.
+        val gradedShape = obj.has("matched_topics") ||
+            obj.has("first_seen_tehran") ||
+            obj.has("linked_app_key") ||
+            obj.has("story_id")
+        if (gradedShape && storyId == null) return null
+        val topics = mutableListOf<String>()
+        val topicsArr = obj.optJSONArray("matched_topics")
+        if (topicsArr != null) {
+            for (i in 0 until topicsArr.length()) {
+                topicsArr.optString(i).takeIf { it.isNotBlank() }?.let { topics.add(it) }
+            }
+        }
+        val statusRaw = obj.optString("status", "active")
         return RadarSignalEntity(
             signalId = signalId,
             title = obj.optString("title"),
             layer = layer,
-            severity = optStringOrNull(obj, "severity"),
+            severity = grade,
             severityRank = optIntOrNull(obj, "severity_rank"),
             sourceName = obj.optString("source_name"),
             sourceLink = optStringOrNull(obj, "source_link"),
-            linkedStoryId = optStringOrNull(obj, "linked_story_id"),
+            linkedStoryId = optStringOrNull(obj, "linked_story_id") ?: storyId,
             detectedAtEpoch = obj.optLong("detected_at_epoch", 0L),
-            status = obj.optString("status", "active"),
+            status = if (statusRaw == "active" || statusRaw == "resolved") statusRaw else "active",
             contentHash = optStringOrNull(obj, "content_hash"),
             updatedAtEpoch = obj.optLong("updated_at_epoch", 0L),
+            storyId = storyId,
+            matchedTopics = topics,
+            firstSeenTehran = optStringOrNull(obj, "first_seen_tehran"),
+            lastSeenTehran = optStringOrNull(obj, "last_seen_tehran"),
+            linkedAppKey = optStringOrNull(obj, "linked_app_key"),
         )
     }
 }

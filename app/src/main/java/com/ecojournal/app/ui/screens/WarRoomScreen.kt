@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -362,6 +363,9 @@ private fun RadarBlock(
 ) {
     val context = LocalContext.current
     val now = System.currentTimeMillis()
+    // Phase 4 severity filter state, hoisted ABOVE the empty-signals
+    // early return below: remember calls must not sit behind one.
+    var severityFilter by remember { mutableStateOf<String?>(null) }
     val todayKey = Jalali.shamsiDayKey(now)
     val todayCount = signals.count {
         Jalali.shamsiDayKey(it.detectedAtEpoch) == todayKey
@@ -398,10 +402,49 @@ private fun RadarBlock(
             )
             return
         }
+        // Phase 4: severity filter (spec §4.5). "All" shows every
+        // signal, including legacy Phase 2 rows with opaque
+        // severity strings; a grade filter shows only signals
+        // carrying exactly that grade (high/medium/low) — legacy
+        // rows are ungraded and are hidden by a grade filter,
+        // never re-graded by the app.
+        Row {
+            val filters = listOf(
+                null to stringResource(R.string.radar_severity_filter_all),
+                "high" to stringResource(R.string.radar_severity_high),
+                "medium" to stringResource(R.string.radar_severity_medium),
+                "low" to stringResource(R.string.radar_severity_low),
+            )
+            for ((grade, label) in filters) {
+                if (grade == severityFilter) {
+                    Button(onClick = { severityFilter = grade }) {
+                        Text(text = label, fontFamily = EcoFontFamily)
+                    }
+                } else {
+                    OutlinedButton(onClick = { severityFilter = grade }) {
+                        Text(text = label, fontFamily = EcoFontFamily)
+                    }
+                }
+                Spacer(modifier = Modifier.padding(horizontal = 2.dp))
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        val visibleSignals = if (severityFilter == null) {
+            signals
+        } else {
+            signals.filter { it.severity == severityFilter }
+        }
+        if (visibleSignals.isEmpty()) {
+            Text(
+                text = stringResource(R.string.radar_empty_p4),
+                fontFamily = EcoFontFamily,
+            )
+            return
+        }
         // Layers in numeric order; unclassified (layer 0) last.
         val layers = listOf(1, 2, 3, 0)
         for (layer in layers) {
-            val inLayer = signals.filter { it.layer == layer }
+            val inLayer = visibleSignals.filter { it.layer == layer }
             if (inLayer.isEmpty()) continue
             var expanded by remember(layer) { mutableStateOf(true) }
             Text(
@@ -454,9 +497,19 @@ private fun RadarRow(
 ) {
     Column(modifier = Modifier.padding(vertical = 6.dp)) {
         Row {
-            if (signal.severity != null) {
+            // Phase 4 graded badge: high/medium/low render their
+            // fixed strings; legacy opaque severity strings render
+            // verbatim, exactly as Phase 2 did. Never colour alone:
+            // the badge text is always present.
+            val severityText = when (signal.severity) {
+                "high" -> stringResource(R.string.radar_severity_high)
+                "medium" -> stringResource(R.string.radar_severity_medium)
+                "low" -> stringResource(R.string.radar_severity_low)
+                else -> signal.severity
+            }
+            if (severityText != null) {
                 Text(
-                    text = signal.severity,
+                    text = severityText,
                     fontSize = 13.sp,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -487,8 +540,50 @@ private fun RadarRow(
             fontFamily = EcoFontFamily,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        if (signal.linkedStoryId != null) {
-            TextButton(onClick = { onOpenStory(signal.linkedStoryId) }) {
+        // Phase 4 graded-signal details: first/last seen and
+        // topic labels, verbatim from the edge row. Staleness
+        // still comes only from the edge-supplied interval (the
+        // caller partitions fresh/stale); nothing here guesses.
+        if (signal.firstSeenTehran != null || signal.lastSeenTehran != null) {
+            Text(
+                text = stringResource(
+                    R.string.radar_first_last_seen,
+                    signal.firstSeenTehran ?: "—",
+                    signal.lastSeenTehran ?: "—",
+                ),
+                fontSize = 12.sp,
+                fontFamily = EcoFontFamily,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (signal.matchedTopics.isNotEmpty()) {
+            Text(
+                text = stringResource(
+                    R.string.radar_topics,
+                    signal.matchedTopics.joinToString("، "),
+                ),
+                fontSize = 12.sp,
+                fontFamily = EcoFontFamily,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        // Story link rule (Phase 4 §4.5 + Phase 2 P2-A8): a graded
+        // signal (storyId present) with linkedAppKey == null is
+        // UNPUBLISHED in-app — it lists with the honest marker
+        // and no dead affordance. A graded signal with a linked
+        // app key, or a legacy signal with linkedStoryId, opens
+        // its story via the story id (openStory resolves it to
+        // the latest typed version, or does nothing if absent).
+        val effectiveStoryId = signal.storyId ?: signal.linkedStoryId
+        if (signal.storyId != null && signal.linkedAppKey == null) {
+            Text(
+                text = stringResource(R.string.radar_not_yet_in_app),
+                fontSize = 12.sp,
+                fontFamily = EcoFontFamily,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else if (effectiveStoryId != null) {
+            TextButton(onClick = { onOpenStory(effectiveStoryId) }) {
                 Text(
                     text = stringResource(R.string.radar_open_story),
                     fontFamily = EcoFontFamily,

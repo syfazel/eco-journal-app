@@ -466,12 +466,43 @@ def main():
     formulas = [dict(r) for r in con.execute(
         "SELECT name, version, definition, inputs, description_fa "
         "FROM formulas WHERE is_active = 1 ORDER BY name").fetchall()]
+    # ---- Phase 4: market_alerts (spec §4.1). Thresholds are read
+    # READ-ONLY from the bot admin settings (alert_bubble /
+    # alert_spread) at publish time. Null = OFF. If the read fails
+    # or the keys do not exist (the real state, verified
+    # 2026-10-25: no such keys in bot.db), the object ships as
+    # all-null and Phase 4 alerts stay OFF. Thresholds are NEVER
+    # hard-coded here and NEVER taken from the /setalert help-text
+    # examples (bubble 15, spread 2 are EXAMPLES, not values).
+    def _admin_threshold(key):
+        try:
+            row = bot.execute(
+                "SELECT value FROM settings WHERE key = ?", (key,)).fetchone()
+        except Exception:
+            return None
+        if row is None:
+            return None
+        try:
+            value = float(row[0])
+        except (TypeError, ValueError):
+            return None
+        if value != value or value in (float("inf"), float("-inf")):
+            return None
+        return value
+
+    market_alerts = {
+        "bubble_threshold_pct": _admin_threshold("alert_bubble"),
+        "spread_threshold_pct": _admin_threshold("alert_spread"),
+        "source": "admin-settings",
+        "updated_at_tehran": None,
+    }
     market = {
         "snapshots": snaps,
         "snapshot_count": len(snaps),
         "first_ts": snaps[0]["ts_tehran"] if snaps else None,
         "last_ts": snaps[-1]["ts_tehran"] if snaps else None,
         "formulas_active": formulas,
+        "market_alerts": market_alerts,
         "lineage_note": ("Numbers are copied verbatim from data_core.prices; "
                          "derived values use data_core.formulas definitions "
                          "(implied_usd, intrinsic_emami, bubble_pct, spread_pct)."),
@@ -613,9 +644,15 @@ def main():
                 "count": len(short_entries),
                 "items": manifest_shorts,
             },
+            # Phase 4: the market hash covers market_alerts too
+            # (when present), so a threshold change re-downloads
+            # the market section exactly like a new snapshot does.
+            # Older market.json files without the key keep hashing
+            # the two-field view, so old edges still verify.
             "market": {
                 "hash": section_hash({"snapshots": snaps,
-                                      "formulas_active": formulas}),
+                                      "formulas_active": formulas,
+                                      "market_alerts": market_alerts}),
                 "count": len(snaps),
                 "file": "market.json",
             },
