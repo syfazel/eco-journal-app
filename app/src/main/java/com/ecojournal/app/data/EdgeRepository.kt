@@ -168,6 +168,20 @@ class EdgeRepository(context: Context) {
         }
     }
 
+    // v5 P1 trace helper: best-effort, never throws, never changes
+    // a sync outcome (SyncTrace swallows all failures). Section
+    // keys, fixed codes, counts and states ONLY — never content.
+    // Callers keep trace writes OUTSIDE Room transactions.
+    private suspend fun trace(
+        section: String,
+        code: String,
+        fetched: Int,
+        missing: Int,
+        state: String,
+    ) {
+        SyncTrace.record(dao, section, code, fetched, missing, state)
+    }
+
     // Phase 1 Update Engine: sync() fetches manifest.json (v3)
     // FIRST. A parseable v3 manifest takes the per-section path
     // below; a missing manifest (an older Pages deploy) falls back
@@ -186,8 +200,10 @@ class EdgeRepository(context: Context) {
                 val manifest = ManifestParser.parse(outcome.body)
                 if (manifest == null) {
                     recordAttempt("bad_manifest")
+                    trace("manifest", "bad_manifest", -1, -1, "failed")
                     SyncResult.Failed("bad_manifest")
                 } else {
+                    trace("manifest", "ok", -1, -1, "ok")
                     val res = syncV3(
                         base, manifest, forceRefresh, null,
                         if (forceRefresh) "manual" else "periodic_or_foreground",
@@ -205,13 +221,17 @@ class EdgeRepository(context: Context) {
             // as themselves.
             is HttpOutcome.NetworkError -> {
                 recordAttempt("network")
+                trace("manifest", "network", -1, -1, "failed")
                 SyncResult.Failed("network")
             }
             is HttpOutcome.HttpError -> {
-                if (outcome.status == 404) syncLegacy()
-                else {
+                if (outcome.status == 404) {
+                    trace("manifest", "http_404", -1, -1, "legacy_fallback")
+                    syncLegacy()
+                } else {
                     val code = outcome.toFailedCode()
                     recordAttempt(code)
+                    trace("manifest", code, -1, -1, "failed")
                     SyncResult.Failed(code)
                 }
             }
@@ -239,8 +259,10 @@ class EdgeRepository(context: Context) {
                 else -> outcome.toFailedCode()
             }
             recordAttempt(code)
+            trace("manifest", code, -1, -1, "failed")
             return SyncResult.Failed(code)
         }
+        trace("manifest", "ok", -1, -1, "ok")
         val res = syncV3(base, manifest, forceRefresh, sectionKey, "manual")
         _syncProgress.value = null
         return res
@@ -367,6 +389,24 @@ class EdgeRepository(context: Context) {
         val existingByKey = dao.all().associate { it.appKey to it }
         val existingKeys = existingByKey.keys
         val storedHashes = existingByKey.mapValues { it.value.contentHash }
+        // v5 P1 reconciliation (H4): cached article appKeys vs
+        // manifest article appKeys. Shorts are excluded (kind
+        // filter) so the short-card set cannot inflate "extra".
+        // A key mismatch shows as large missing AND extra counts;
+        // it duplicates rows, never hides them.
+        val articlesSection = manifest.sections[SyncSections.ARTICLES]
+        if (articlesSection != null) {
+            val localArticleKeys = existingByKey.values
+                .filter { it.kind == "article" }.map { it.appKey }.toSet()
+            val manifestKeys = articlesSection.items.map { it.appKey }.toSet()
+            SyncTrace.recordRecon(
+                dao,
+                localArticleKeys.size,
+                manifestKeys.size,
+                (manifestKeys - localArticleKeys).size,
+                (localArticleKeys - manifestKeys).size,
+            )
+        }
         val outcomes = mutableListOf<SectionOutcome>()
         val newKeys = mutableListOf<String>()
         var missingTotal = 0
@@ -379,6 +419,7 @@ class EdgeRepository(context: Context) {
             val section = manifest.sections[SyncSections.ARTICLES]
             if (section == null) {
                 outcomes.add(SectionOutcome(SyncSections.ARTICLES, SectionStates.UNKNOWN, 0))
+                trace(SyncSections.ARTICLES, "no_section", -1, -1, SectionStates.UNKNOWN)
             } else {
                 val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.ARTICLES))
                 // v4.0.1 self-healing hash guard (fix plan X7): a
@@ -394,6 +435,7 @@ class EdgeRepository(context: Context) {
                         articleCount, 0, now, null, null,
                     )
                     outcomes.add(SectionOutcome(SyncSections.ARTICLES, SectionStates.UP_TO_DATE, 0))
+                    trace(SyncSections.ARTICLES, "", 0, 0, SectionStates.UP_TO_DATE)
                 } else {
                     val plan = DeltaPlanner.plan(
                         section.items, storedHashes, existingKeys, requiresFile = true,
@@ -472,6 +514,12 @@ class EdgeRepository(context: Context) {
                             if (complete) section.hash else null,
                         )
                     }
+                    trace(
+                        SyncSections.ARTICLES,
+                        if (complete) "" else "partial",
+                        fresh.size, missing,
+                        if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
+                    )
                     newKeys.addAll(fresh.map { it.appKey })
                     missingTotal += missing
                     if (!complete) anyIncomplete = true
@@ -492,6 +540,7 @@ class EdgeRepository(context: Context) {
             val section = manifest.sections[SyncSections.SHORTS]
             if (section == null) {
                 outcomes.add(SectionOutcome(SyncSections.SHORTS, SectionStates.UNKNOWN, 0))
+                trace(SyncSections.SHORTS, "no_section", -1, -1, SectionStates.UNKNOWN)
             } else {
                 val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.SHORTS))
                 // v4.0.1 self-healing hash guard (fix plan X7).
@@ -505,6 +554,7 @@ class EdgeRepository(context: Context) {
                         count, 0, now, null, null,
                     )
                     outcomes.add(SectionOutcome(SyncSections.SHORTS, SectionStates.UP_TO_DATE, 0))
+                    trace(SyncSections.SHORTS, "", 0, 0, SectionStates.UP_TO_DATE)
                 } else {
                     val plan = DeltaPlanner.plan(
                         section.items, storedHashes, existingKeys, requiresFile = false,
@@ -584,6 +634,12 @@ class EdgeRepository(context: Context) {
                             if (complete) section.hash else null,
                         )
                     }
+                    trace(
+                        SyncSections.SHORTS,
+                        if (complete) "" else "partial",
+                        fresh.size, missing,
+                        if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
+                    )
                     newKeys.addAll(fresh.map { it.appKey })
                     missingTotal += missing
                     if (!complete) anyIncomplete = true
@@ -605,6 +661,7 @@ class EdgeRepository(context: Context) {
             val section = manifest.sections[SyncSections.MARKET]
             if (section == null) {
                 outcomes.add(SectionOutcome(SyncSections.MARKET, SectionStates.UNKNOWN, 0))
+                trace(SyncSections.MARKET, "no_section", -1, -1, SectionStates.UNKNOWN)
             } else {
                 val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.MARKET))
                 // v4.0.1 self-healing hash guard (fix plan X7).
@@ -617,6 +674,7 @@ class EdgeRepository(context: Context) {
                         marketCount, 0, now, null, null,
                     )
                     outcomes.add(SectionOutcome(SyncSections.MARKET, SectionStates.UP_TO_DATE, 0))
+                    trace(SyncSections.MARKET, "", 0, 0, SectionStates.UP_TO_DATE)
                 } else {
                     val marketOutcome = httpGet("$base/${section.file ?: "market.json"}")
                     val marketText = if (marketOutcome is HttpOutcome.Ok) {
@@ -630,6 +688,7 @@ class EdgeRepository(context: Context) {
                             SyncSections.MARKET, SectionStates.FAILED, code,
                             null, 0, now, null, null,
                         )
+                        trace(SyncSections.MARKET, code, -1, -1, SectionStates.FAILED)
                         anyIncomplete = true
                         outcomes.add(SectionOutcome(SyncSections.MARKET, SectionStates.FAILED, 0))
                     } else {
@@ -698,6 +757,7 @@ class EdgeRepository(context: Context) {
                                 SyncSections.MARKET, SectionStates.FAILED, "bad_market",
                                 null, 0, now, null, null,
                             )
+                            trace(SyncSections.MARKET, "bad_market", -1, -1, SectionStates.FAILED)
                             anyIncomplete = true
                             outcomes.add(
                                 SectionOutcome(SyncSections.MARKET, SectionStates.FAILED, 0)
@@ -739,6 +799,13 @@ class EdgeRepository(context: Context) {
                                     if (complete) section.hash else null,
                                 )
                             }
+                            trace(
+                                SyncSections.MARKET,
+                                if (complete) "" else "partial",
+                                marketFresh.size, corruptSnaps,
+                                if (complete) SectionStates.UP_TO_DATE
+                                else SectionStates.PARTIAL,
+                            )
                             // Phase 4 alert evaluation (§4.6): on
                             // every market-section sync completion
                             // (and on manual market refresh, which
@@ -768,6 +835,7 @@ class EdgeRepository(context: Context) {
             val section = manifest.sections[SyncSections.CHANNEL_REFS]
             if (section == null) {
                 outcomes.add(SectionOutcome(SyncSections.CHANNEL_REFS, SectionStates.UNKNOWN, 0))
+                trace(SyncSections.CHANNEL_REFS, "no_section", -1, -1, SectionStates.UNKNOWN)
             } else {
                 val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.CHANNEL_REFS))
                 if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
@@ -778,6 +846,7 @@ class EdgeRepository(context: Context) {
                     outcomes.add(
                         SectionOutcome(SyncSections.CHANNEL_REFS, SectionStates.UP_TO_DATE, 0)
                     )
+                    trace(SyncSections.CHANNEL_REFS, "", 0, 0, SectionStates.UP_TO_DATE)
                 } else {
                     val refsOutcome = httpGet("$base/${section.file ?: "channel_refs.json"}")
                     if (refsOutcome is HttpOutcome.Ok) {
@@ -798,6 +867,7 @@ class EdgeRepository(context: Context) {
                             SyncSections.CHANNEL_REFS, SectionStates.FAILED, code,
                             null, 0, now, null, null,
                         )
+                        trace(SyncSections.CHANNEL_REFS, code, -1, -1, SectionStates.FAILED)
                         anyIncomplete = true
                         outcomes.add(
                             SectionOutcome(SyncSections.CHANNEL_REFS, SectionStates.FAILED, 0)
@@ -841,6 +911,18 @@ class EdgeRepository(context: Context) {
                     }
                 }
                 if (wants(SyncSections.INVITES)) {
+                    trace(
+                        SyncSections.INVITES, "", inviteLists.first.size, 0,
+                        SectionStates.UP_TO_DATE,
+                    )
+                }
+                if (wants(SyncSections.REVOCATIONS)) {
+                    trace(
+                        SyncSections.REVOCATIONS, "", inviteLists.second.size, 0,
+                        SectionStates.UP_TO_DATE,
+                    )
+                }
+                if (wants(SyncSections.INVITES)) {
                     outcomes.add(SectionOutcome(SyncSections.INVITES, SectionStates.UP_TO_DATE, 0))
                 }
                 if (wants(SyncSections.REVOCATIONS)) {
@@ -856,6 +938,7 @@ class EdgeRepository(context: Context) {
                     )
                     anyIncomplete = true
                     outcomes.add(SectionOutcome(SyncSections.INVITES, SectionStates.FAILED, 0))
+                    trace(SyncSections.INVITES, "invite_fetch", -1, -1, SectionStates.FAILED)
                 }
                 if (wants(SyncSections.REVOCATIONS)) {
                     recordSectionMeta(
@@ -866,6 +949,7 @@ class EdgeRepository(context: Context) {
                     outcomes.add(
                         SectionOutcome(SyncSections.REVOCATIONS, SectionStates.FAILED, 0)
                     )
+                    trace(SyncSections.REVOCATIONS, "invite_fetch", -1, -1, SectionStates.FAILED)
                 }
             }
         }
@@ -974,6 +1058,7 @@ class EdgeRepository(context: Context) {
                 !InviteGate.stillValid(storedHash, inviteLists.first, inviteLists.second)
             ) {
                 settings.setInviteOk(false)
+                trace("invite_gate", "invite_relock", -1, -1, "relocked")
             }
         }
 
@@ -1019,6 +1104,7 @@ class EdgeRepository(context: Context) {
             // an up-to-date section still releases items whose
             // 08:00 has passed on a successful sync.
             channelDao.releaseHeld(now)
+            trace(key, "", 0, 0, SectionStates.UP_TO_DATE)
             return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
         }
         val existing = channelDao.allChannelItems().associateBy { it.appKey }
@@ -1123,6 +1209,12 @@ class EdgeRepository(context: Context) {
                 )
             )
         }
+        trace(
+            key,
+            if (complete) "" else "partial",
+            fresh.size, missing,
+            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
+        )
         return SectionOutcome(
             key,
             if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
@@ -1146,6 +1238,7 @@ class EdgeRepository(context: Context) {
                 key, SectionStates.UP_TO_DATE, "",
                 channelDao.allBundles().size, 0, now, null, null,
             )
+            trace(key, "", 0, 0, SectionStates.UP_TO_DATE)
             return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
         }
         val bundleOutcome = httpGet("$base/${section.file ?: "bundles.json"}")
@@ -1158,6 +1251,7 @@ class EdgeRepository(context: Context) {
                 key, SectionStates.FAILED, bundleOutcome.toFailedCode(),
                 null, 0, now, null, null,
             )
+            trace(key, bundleOutcome.toFailedCode(), -1, -1, SectionStates.FAILED)
             return SectionOutcome(key, SectionStates.FAILED, 0)
         }
         val parsed = mutableListOf<BundleEntity>()
@@ -1174,6 +1268,7 @@ class EdgeRepository(context: Context) {
             }
         } catch (_: Exception) {
             recordSectionMeta(key, SectionStates.FAILED, "bad_section", null, 0, now, null, null)
+            trace(key, "bad_section", -1, -1, SectionStates.FAILED)
             return SectionOutcome(key, SectionStates.FAILED, 0)
         }
         val complete = corrupt == 0
@@ -1189,6 +1284,12 @@ class EdgeRepository(context: Context) {
                 if (complete) section.hash else null,
             )
         }
+        trace(
+            key,
+            if (complete) "" else "partial",
+            parsed.size, corrupt,
+            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
+        )
         return SectionOutcome(
             key,
             if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
@@ -1212,6 +1313,7 @@ class EdgeRepository(context: Context) {
                 key, SectionStates.UP_TO_DATE, "",
                 channelDao.radarCount(), 0, now, null, null,
             )
+            trace(key, "", 0, 0, SectionStates.UP_TO_DATE)
             return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
         }
         val radarOutcome = httpGet("$base/${section.file ?: "radar.json"}")
@@ -1224,6 +1326,7 @@ class EdgeRepository(context: Context) {
                 key, SectionStates.FAILED, radarOutcome.toFailedCode(),
                 null, 0, now, null, null,
             )
+            trace(key, radarOutcome.toFailedCode(), -1, -1, SectionStates.FAILED)
             return SectionOutcome(key, SectionStates.FAILED, 0)
         }
         val parsed = mutableListOf<RadarSignalEntity>()
@@ -1259,6 +1362,7 @@ class EdgeRepository(context: Context) {
             }
         } catch (_: Exception) {
             recordSectionMeta(key, SectionStates.FAILED, "bad_section", null, 0, now, null, null)
+            trace(key, "bad_section", -1, -1, SectionStates.FAILED)
             return SectionOutcome(key, SectionStates.FAILED, 0)
         }
         if (interval == null) {
@@ -1277,6 +1381,12 @@ class EdgeRepository(context: Context) {
                 if (complete) section.hash else null,
             )
         }
+        trace(
+            key,
+            if (complete) "" else "partial",
+            parsed.size, corrupt,
+            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
+        )
         return SectionOutcome(
             key,
             if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
@@ -1300,6 +1410,7 @@ class EdgeRepository(context: Context) {
         // zero state, not a fetchable section — no fetch attempted.
         if (section.status == "not_yet_published" || section.status == "gated_frozen") {
             recordSectionMeta(key, SectionStates.NOT_YET_PUBLISHED, "", section.count, 0, now, null, null)
+            trace(key, "", 0, 0, SectionStates.NOT_YET_PUBLISHED)
             return SectionOutcome(key, SectionStates.NOT_YET_PUBLISHED, 0)
         }
         val storedHash = dao.metaValue(SyncSections.hashKey(key))
@@ -1309,6 +1420,7 @@ class EdgeRepository(context: Context) {
                 nightlyDao.latestEditionCount(), 0, now, null, null,
             )
             pruneNightlyEditions()
+            trace(key, "", 0, 0, SectionStates.UP_TO_DATE)
             return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
         }
         val indexOutcome = httpGet("$base/${section.file ?: "nightly.json"}")
@@ -1318,6 +1430,7 @@ class EdgeRepository(context: Context) {
         }
         if (indexText == null) {
             recordSectionMeta(key, SectionStates.FAILED, indexOutcome.toFailedCode(), null, 0, now, null, null)
+            trace(key, indexOutcome.toFailedCode(), -1, -1, SectionStates.FAILED)
             return SectionOutcome(key, SectionStates.FAILED, 0)
         }
         // Stored content hashes are per edition_id (manifest item
@@ -1474,6 +1587,12 @@ class EdgeRepository(context: Context) {
             )
         }
         pruneNightlyEditions()
+        trace(
+            key,
+            if (complete) "" else "partial",
+            parsedEditions.size, corrupt,
+            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
+        )
         return SectionOutcome(
             key,
             if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
@@ -2324,6 +2443,7 @@ class EdgeRepository(context: Context) {
                 !InviteGate.stillValid(storedHash, inviteLists.first, inviteLists.second)
             ) {
                 settings.setInviteOk(false)
+                trace("invite_gate", "invite_relock", -1, -1, "relocked")
             }
         }
         val total = dao.allIds().size

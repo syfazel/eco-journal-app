@@ -5,6 +5,20 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+// v5 P1 build fingerprint: the git short hash at build time, so a
+// phone screenshot/report can be tied to an exact build (gate G1
+// for defect A1 — the missing fingerprint left A1 undiagnosable
+// from screenshots). "unknown" when git is unavailable; the value
+// is hex-only or "unknown", never free text, and is exposed only
+// via BuildConfig.GIT_COMMIT on Diagnostics line 1.
+val v5GitCommit: String = try {
+    val raw = ProcessBuilder("git", "rev-parse", "--short", "HEAD")
+        .redirectErrorStream(true).start().inputStream.bufferedReader().readText().trim()
+    if (raw.matches(Regex("[0-9a-f]+"))) raw else "unknown"
+} catch (_: Exception) {
+    "unknown"
+}
+
 android {
     namespace = "com.ecojournal.app"
     compileSdk = 34
@@ -17,8 +31,11 @@ android {
         // docs/app-update-system-fix-plan.md). Never reused, never
         // reversed; the version manifest (v4-I) must name exactly
         // this name/code at publish time.
+        // v5 P1: versionName/versionCode UNCHANGED (P6 owns the
+        // 5.0.0 / 6 bump). Only the fingerprint field is added.
         versionCode = 5
         versionName = "4.0.1"
+        buildConfigField("String", "GIT_COMMIT", "\"$v5GitCommit\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -59,6 +76,9 @@ android {
     }
     buildFeatures {
         compose = true
+        // v5 P1: generates com.ecojournal.app.BuildConfig (for the
+        // GIT_COMMIT fingerprint field above). No other use.
+        buildConfig = true
     }
     // NOTE: no composeOptions block — with Kotlin 2.0 the Compose
     // compiler version is driven by the kotlin.plugin.compose plugin

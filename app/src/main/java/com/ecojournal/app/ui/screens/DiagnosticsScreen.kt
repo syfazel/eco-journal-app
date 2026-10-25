@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.pm.PackageInfoCompat
+import com.ecojournal.app.BuildConfig
 import com.ecojournal.app.R
 import com.ecojournal.app.data.ChainRecord
 import com.ecojournal.app.data.EdgeConfig
@@ -36,6 +37,7 @@ import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.SectionSyncState
 import com.ecojournal.app.data.SyncResult
 import com.ecojournal.app.data.SyncSections
+import com.ecojournal.app.data.SyncTrace
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.util.toPersianDigits
 import java.text.SimpleDateFormat
@@ -88,6 +90,13 @@ fun DiagnosticsScreen(
     val lastAttempt by repo.dao.metaValueFlow("last_sync_attempt_at").collectAsState(initial = null)
     val lastError by repo.dao.metaValueFlow("last_sync_error_code").collectAsState(initial = null)
     val indexHash by repo.dao.metaValueFlow("index_hash").collectAsState(initial = null)
+    // v5 P1 instrumentation (gate G1): sync trace, feed-branch
+    // trace and seed/manifest reconciliation, from the meta table.
+    // Counts/codes/epochs only — never content, titles, invite
+    // codes/hashes, tokens or device ids.
+    val syncTraceJson by repo.dao.metaValueFlow(SyncTrace.TRACE_KEY).collectAsState(initial = null)
+    val feedBranchJson by repo.dao.metaValueFlow(SyncTrace.BRANCH_KEY).collectAsState(initial = null)
+    val reconJson by repo.dao.metaValueFlow(SyncTrace.RECON_KEY).collectAsState(initial = null)
     var syncing by remember { mutableStateOf(false) }
     var syncResult by remember { mutableStateOf("") }
     var copied by remember { mutableStateOf(false) }
@@ -371,6 +380,80 @@ fun DiagnosticsScreen(
         out
     }
 
+    // v5 P1 lines: sync trace (newest 12), feed-branch trace
+    // (newest 12) and the latest seed/manifest reconciliation.
+    // Built once and used for BOTH display and copy, like the
+    // phase2/chain/phase4 lines. A -1 count renders as "not
+    // recorded", never as zero; an unknown section/state key
+    // renders verbatim rather than being dropped.
+    val traceEntries = remember(syncTraceJson) { SyncTrace.parseTrace(syncTraceJson) }
+    val traceLines: List<String> =
+        listOf(stringResource(R.string.diagnostics_trace_title)) +
+            if (traceEntries.isEmpty()) {
+                listOf(stringResource(R.string.diagnostics_trace_none))
+            } else {
+                traceEntries.takeLast(12).reversed().map { e ->
+                    context.getString(
+                        R.string.diagnostics_trace_line,
+                        formatEpoch(e.at.toString()) ?: noValueEarly,
+                        sectionNames[e.section] ?: e.section,
+                        e.code.takeIf { it.isNotBlank() } ?: noValueEarly,
+                        if (e.fetched < 0) noValueEarly
+                        else e.fetched.toString().toPersianDigits(),
+                        if (e.missing < 0) noValueEarly
+                        else e.missing.toString().toPersianDigits(),
+                        stateNames[e.state] ?: e.state,
+                    )
+                }
+            }
+    val branchNames = mapOf(
+        "loading" to "بارگذاری",
+        "empty" to "خالی",
+        "front_page" to "صفحهٔ اصلی",
+        "filter" to "فیلتر",
+        "search" to "جستجو",
+        "urgent_all" to "ریل فوری",
+    )
+    val branchEntries = remember(feedBranchJson) { SyncTrace.parseBranches(feedBranchJson) }
+    val branchLines: List<String> =
+        listOf(stringResource(R.string.diagnostics_branch_title)) +
+            if (branchEntries.isEmpty()) {
+                listOf(stringResource(R.string.diagnostics_branch_none))
+            } else {
+                branchEntries.takeLast(12).reversed().map { e ->
+                    context.getString(
+                        R.string.diagnostics_branch_line,
+                        formatEpoch(e.at.toString()) ?: noValueEarly,
+                        branchNames[e.branch] ?: e.branch,
+                        if (e.articles < 0) noValueEarly
+                        else e.articles.toString().toPersianDigits(),
+                        if (e.typed < 0) noValueEarly
+                        else e.typed.toString().toPersianDigits(),
+                    )
+                }
+            }
+    val recon = remember(reconJson) { SyncTrace.parseRecon(reconJson) }
+    val reconLines: List<String> =
+        listOf(stringResource(R.string.diagnostics_recon_title)) +
+            if (recon == null) {
+                listOf(stringResource(R.string.diagnostics_recon_none))
+            } else {
+                listOf(
+                    context.getString(
+                        R.string.diagnostics_recon_line,
+                        formatEpoch(recon.at.toString()) ?: noValueEarly,
+                        if (recon.local < 0) noValueEarly
+                        else recon.local.toString().toPersianDigits(),
+                        if (recon.manifest < 0) noValueEarly
+                        else recon.manifest.toString().toPersianDigits(),
+                        if (recon.missing < 0) noValueEarly
+                        else recon.missing.toString().toPersianDigits(),
+                        if (recon.extra < 0) noValueEarly
+                        else recon.extra.toString().toPersianDigits(),
+                    )
+                )
+            }
+
     val versionName = try {
         context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "?"
     } catch (_: Exception) {
@@ -384,7 +467,18 @@ fun DiagnosticsScreen(
         "?"
     }
     val noValue = stringResource(R.string.diagnostics_no_value)
+    // v5 P1 fingerprint, line 1: version + code (PackageManager,
+    // as before) + git commit (BuildConfig, set at build time) +
+    // edge URL, so one screenshot ties a phone report to an exact
+    // build. The old version line below is kept unchanged.
     val lines = listOf(
+        stringResource(
+            R.string.diagnostics_fingerprint,
+            versionName,
+            versionCode,
+            BuildConfig.GIT_COMMIT,
+            EdgeConfig.BASE_URL,
+        ),
         stringResource(R.string.diagnostics_version, versionName, versionCode),
         stringResource(R.string.diagnostics_articles, articles.toString().toPersianDigits()),
         stringResource(R.string.diagnostics_market, marketCount.toString().toPersianDigits()),
@@ -550,6 +644,16 @@ fun DiagnosticsScreen(
             )
             Spacer(modifier = Modifier.height(6.dp))
         }
+        // v5 P1 lines — displayed exactly as copied below.
+        Spacer(modifier = Modifier.height(16.dp))
+        for (line in traceLines + branchLines + reconLines) {
+            Text(
+                text = line,
+                fontFamily = EcoFontFamily,
+                fontSize = 16.sp * fontScale,
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+        }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             enabled = !syncing,
@@ -593,7 +697,7 @@ fun DiagnosticsScreen(
                 clipboard?.setPrimaryClip(
                     ClipData.newPlainText(
                         "ECO JOURNAL diagnostics",
-                        (lines + sectionLines + phase2Lines + chainLines + phase4Lines).joinToString("\n"),
+                        (lines + sectionLines + phase2Lines + chainLines + phase4Lines + traceLines + branchLines + reconLines).joinToString("\n"),
                     )
                 )
                 copied = true

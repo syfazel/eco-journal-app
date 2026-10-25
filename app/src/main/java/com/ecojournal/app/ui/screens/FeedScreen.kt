@@ -66,6 +66,7 @@ import com.ecojournal.app.data.Jalali
 import com.ecojournal.app.data.NightLaw
 import com.ecojournal.app.data.Slots
 import com.ecojournal.app.data.SyncResult
+import com.ecojournal.app.data.SyncTrace
 import com.ecojournal.app.data.TickerTopics
 import com.ecojournal.app.ui.components.AppUpdateCompactRow
 import com.ecojournal.app.ui.components.ArticleCard
@@ -221,6 +222,30 @@ fun FeedScreen(
         } finally {
             seeding = false
         }
+    }
+
+    // v5 P1 feed-branch trace (gate G1): the rendered region is
+    // recorded on every transition (branch + article/typed counts),
+    // so a phone report can prove whether feed rows were ever
+    // shown and then vanished (front_page -> empty, count falling)
+    // or never shown at all (empty throughout — the flash was not
+    // feed rows). The filter/search/urgent-all regions sit ABOVE
+    // the feed branch and return early, so they are branches here
+    // too: a filter-empty page with cached articles is not a feed
+    // failure. Count keys are included because rows land in one
+    // transaction per section, so count changes are transitions,
+    // not a per-row log flood. Best-effort; never shown on the
+    // feed itself, only on Diagnostics.
+    val feedBranch = when {
+        showUrgentAll -> "urgent_all"
+        selectedFormat != null && query.isBlank() -> "filter"
+        searchResults != null -> "search"
+        seeding && all.isEmpty() -> "loading"
+        all.isEmpty() && typedItems.isEmpty() -> "empty"
+        else -> "front_page"
+    }
+    LaunchedEffect(feedBranch, all.size, typedItems.size) {
+        SyncTrace.recordFeedBranch(repo.dao, feedBranch, all.size, typedItems.size)
     }
 
     // Hoisted sync runner (moved up from below the search field so

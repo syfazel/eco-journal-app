@@ -95,6 +95,19 @@
     <string name="diagnostics_title">تشخیص و وضعیت برنامه</string>
     <string name="diagnostics_back">بازگشت</string>
     <string name="diagnostics_version">نسخهٔ برنامه: %1$s (ساخت %2$s)</string>
+    <!-- v5 P1 (gate G1): build fingerprint line 1 — version + code
+         + git commit + edge URL on ONE line, so any phone
+         screenshot/report ties to an exact build. -->
+    <string name="diagnostics_fingerprint">ساخت: نسخهٔ %1$s (کد %2$s) • گیت %3$s • لبه: %4$s</string>
+    <string name="diagnostics_trace_title">رد همگام‌سازی (تازه‌ترین‌ها)</string>
+    <string name="diagnostics_trace_line">%1$s • %2$s • کد: %3$s • دریافت: %4$s • جا مانده: %5$s • %6$s</string>
+    <string name="diagnostics_trace_none">هنوز ردی ثبت نشده است</string>
+    <string name="diagnostics_branch_title">رد شاخهٔ فید (تازه‌ترین‌ها)</string>
+    <string name="diagnostics_branch_line">%1$s • شاخه: %2$s • مقالات: %3$s • آیتم‌های کانال: %4$s</string>
+    <string name="diagnostics_branch_none">هنوز ردی ثبت نشده است</string>
+    <string name="diagnostics_recon_title">تطابق بذر و فهرست انتشار</string>
+    <string name="diagnostics_recon_line">%1$s • کش‌شده: %2$s • در فهرست: %3$s • جا مانده: %4$s • اضافه: %5$s</string>
+    <string name="diagnostics_recon_none">هنوز تطابقی ثبت نشده است</string>
     <string name="diagnostics_articles">مقالات کش‌شده: %1$s</string>
     <string name="diagnostics_market">اسنپ‌شات‌های بازار: %1$s</string>
     <string name="diagnostics_formulas">فرمول‌های بازار: %1$s</string>
