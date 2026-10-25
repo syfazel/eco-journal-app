@@ -18,6 +18,11 @@
     <string name="sync_failed_offline">همگام‌سازی ناموفق بود: دستگاه آفلاین است یا شبکه در دسترس نیست. مقالات کش‌شده نمایش داده می‌شوند.</string>
     <string name="sync_failed_http">همگام‌سازی ناموفق بود: لبهٔ انتشار در دسترس نیست. بعداً دوباره تلاش کنید.</string>
     <string name="sync_failed_bad_index">همگام‌سازی ناموفق بود: فهرست انتشار خوانا نیست. بعداً دوباره تلاش کنید.</string>
+    <!-- v4.0.1 sync fix: manifest unparsable, fetch progress, honest empty state -->
+    <string name="sync_failed_bad_manifest">همگام‌سازی ناموفق بود: مانیفست انتشار (نسخهٔ ۳) خوانا نیست. بعداً دوباره تلاش کنید.</string>
+    <string name="sync_progress_articles">در حال دریافت مقالهٔ %1$s از %2$s…</string>
+    <string name="feed_empty_error">آخرین خطای ثبت‌شده: %1$s</string>
+    <string name="feed_empty_seed_failed">بذر آفلاین با خطا مواجه شد؛ همگام‌سازی دوباره را بزنید.</string>
     <string name="sync_retry">تلاش دوباره</string>
     <string name="sync_last_success">آخرین همگام‌سازی موفق: %1$s</string>
     <string name="sync_never_succeeded">هنوز همگام‌سازی موفقی ثبت نشده است؛ فقط مقالات کش‌شده نمایش داده می‌شوند.</string>
@@ -95,6 +100,10 @@
     <string name="diagnostics_formulas">فرمول‌های بازار: %1$s</string>
     <string name="diagnostics_bookmarks">ذخیره‌شده‌ها: %1$s</string>
     <string name="diagnostics_seed_version">نسخهٔ بذر: %1$s</string>
+    <!-- v4.0.1 sync fix: seed missing count + seed error, so a phone
+         report can distinguish seed-empty from seed-failed -->
+    <string name="diagnostics_seed_missing">بذر ناقص (تعداد): %1$s</string>
+    <string name="diagnostics_seed_error">خطای بذر: %1$s</string>
     <string name="diagnostics_edge_url">لبهٔ انتشار: %1$s</string>
     <string name="diagnostics_last_sync">آخرین همگام‌سازی موفق: %1$s</string>
     <string name="diagnostics_last_attempt">آخرین تلاش همگام‌سازی: %1$s</string>
@@ -389,6 +398,9 @@
     <string name="ticker_desc">نوار اخبار زندهٔ اتاق جنگ: %1$s</string>
     <string name="ticker_toggle">نوار اخبار زنده زیر نام اپ</string>
     <string name="sync_compact_up_to_date">به‌روز است</string>
+    <!-- v4.0.1 sync fix: neutral fallback — a blank status must never
+         read as "up to date" before any sync has run -->
+    <string name="sync_compact_idle">همگام‌سازی انجام نشده</string>
     <string name="sync_compact_new">%1$s خبر تازه</string>
     <string name="sync_compact_partial">همگام‌سازی ناقص ماند</string>
     <string name="sync_compact_failed">همگام‌سازی ناموفق بود</string>

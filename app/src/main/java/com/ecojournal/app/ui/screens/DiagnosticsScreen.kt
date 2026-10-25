@@ -80,6 +80,10 @@ fun DiagnosticsScreen(
     val formulas by repo.dao.formulasFlow().collectAsState(initial = emptyList())
     val bookmarks by repo.dao.bookmarkCountFlow().collectAsState(initial = 0)
     val seedVersion by repo.dao.metaValueFlow("seed_version").collectAsState(initial = null)
+    // v4.0.1 (fix plan X8): seed missing count + seed error, so a
+    // phone report can distinguish seed-empty from seed-failed.
+    val seedMissing by repo.dao.metaValueFlow("seed_missing_count").collectAsState(initial = null)
+    val seedError by repo.dao.metaValueFlow("seed_error").collectAsState(initial = null)
     val lastSync by repo.dao.metaValueFlow("last_sync_at").collectAsState(initial = null)
     val lastAttempt by repo.dao.metaValueFlow("last_sync_attempt_at").collectAsState(initial = null)
     val lastError by repo.dao.metaValueFlow("last_sync_error_code").collectAsState(initial = null)
@@ -389,6 +393,14 @@ fun DiagnosticsScreen(
         stringResource(
             R.string.diagnostics_seed_version,
             (seedVersion ?: noValue).toPersianDigits(),
+        ),
+        stringResource(
+            R.string.diagnostics_seed_missing,
+            (seedMissing ?: noValue).toPersianDigits(),
+        ),
+        stringResource(
+            R.string.diagnostics_seed_error,
+            (seedError ?: noValue).toPersianDigits(),
         ),
         stringResource(R.string.diagnostics_edge_url, EdgeConfig.BASE_URL),
         stringResource(

@@ -25,8 +25,14 @@ class EcoJournalApp : Application() {
         // feed's own seed call by an internal mutex, so the two
         // launch paths can no longer race. Startup must never crash
         // because a bundled file is unreadable.
+        // v4.0.1 (fix plan X1): an uncaught exception in this
+        // fire-and-forget launch used to crash startup. The seed
+        // is retried from the feed anyway; startup must survive it.
         CoroutineScope(Dispatchers.IO).launch {
-            BundledSeed.ensureSeed(this@EcoJournalApp)
+            try {
+                BundledSeed.ensureSeed(this@EcoJournalApp)
+            } catch (_: Exception) {
+            }
         }
         // M5 decision (docs/vnext-decisions.md §3): NO Firebase/FCM
         // for the vNext pilot — no project, no google-services.json,

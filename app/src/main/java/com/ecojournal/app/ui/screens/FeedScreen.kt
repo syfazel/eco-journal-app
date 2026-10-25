@@ -177,9 +177,17 @@ fun FeedScreen(
     var syncing by remember { mutableStateOf(false) }
     var syncFailed by remember { mutableStateOf(false) }
     var seeding by remember { mutableStateOf(true) }
+    // v4.0.1 (fix plan X1/X2): seed failure is state, not a stuck
+    // spinner; auto-sync runs once when the feed is still empty
+    // after the seed, so a dead worker can never strand the user.
+    var seedFailed by remember { mutableStateOf(false) }
+    var autoSyncAttempted by remember { mutableStateOf(false) }
+    val syncProgress by repo.syncProgress.collectAsState(initial = null)
     // Last successful sync (M5): reactive meta read, shown under
     // the sync row so "up to date" is always verifiable.
     val lastSyncAt by repo.dao.metaValueFlow("last_sync_at")
+        .collectAsState(initial = null)
+    val lastSyncError by repo.dao.metaValueFlow("last_sync_error_code")
         .collectAsState(initial = null)
     // v4-H RED path: article appKey -> story_id (join_keys), then
     // story_id -> newest typed format (visible typed items). An
@@ -201,9 +209,80 @@ fun FeedScreen(
     // TickerTopics for the inclusion rule).
     val tickerTopics = remember(instantItems) { TickerTopics.topics(instantItems) }
 
+    // v4.0.1 (fix plan X1): the seed must always resolve. Before
+    // this fix a throwing seed left `seeding` true forever (an
+    // eternal spinner) or crashed startup from Application.
     LaunchedEffect(Unit) {
-        BundledSeed.ensureSeed(context)
-        seeding = false
+        try {
+            BundledSeed.ensureSeed(context)
+        } catch (_: Exception) {
+            seedFailed = true
+            repo.recordSeedFailure()
+        } finally {
+            seeding = false
+        }
+    }
+
+    // Hoisted sync runner (moved up from below the search field so
+    // the auto-sync effect can use it): fixed-string messages only
+    // (P1-25). v4.0.1 (fix plan X3): the manual button and retry
+    // run a FORCE refresh — every section hash is re-checked on a
+    // tap, while per-item hash comparison still skips unchanged
+    // bodies, so a tap can never silently do nothing.
+    val syncInProgressText = stringResource(R.string.sync_in_progress)
+    val runSync: () -> Unit = {
+        scope.launch {
+            syncing = true
+            syncFailed = false
+            syncState = syncInProgressText
+            syncState = when (val r = repo.sync(forceRefresh = true)) {
+                is SyncResult.Ok -> {
+                    if (r.newArticleAppKeys.isEmpty()) {
+                        context.getString(
+                            R.string.sync_up_to_date,
+                            formatPersianInt(r.totalCached),
+                        )
+                    } else {
+                        context.getString(
+                            R.string.sync_new_articles,
+                            formatPersianInt(r.newArticleAppKeys.size),
+                        )
+                    }
+                }
+                is SyncResult.Partial -> {
+                    syncFailed = true
+                    context.getString(
+                        R.string.sync_partial,
+                        formatPersianInt(r.missingCount),
+                    )
+                }
+                is SyncResult.NotConfigured ->
+                    context.getString(R.string.sync_not_configured)
+                is SyncResult.Failed -> {
+                    syncFailed = true
+                    when (r.code) {
+                        "network" -> context.getString(R.string.sync_failed_offline)
+                        "http_404", "http_403", "http_other" ->
+                            context.getString(R.string.sync_failed_http)
+                        "bad_index" -> context.getString(R.string.sync_failed_bad_index)
+                        "bad_manifest" -> context.getString(R.string.sync_failed_bad_manifest)
+                        else -> context.getString(R.string.sync_failed)
+                    }
+                }
+            }
+            syncing = false
+        }
+    }
+
+    // v4.0.1 (fix plan X2): one foreground auto-sync when the feed
+    // is still empty after the seed. Guarded by state so it runs
+    // once per feed lifetime, never on every recomposition, and
+    // never when articles already exist (periodic cadence unchanged).
+    LaunchedEffect(seeding, all.isEmpty()) {
+        if (!seeding && all.isEmpty() && !autoSyncAttempted) {
+            autoSyncAttempted = true
+            runSync()
+        }
     }
 
     // Offline search, debounced: restarting this effect on each
@@ -397,55 +476,6 @@ fun FeedScreen(
                 .padding(horizontal = 16.dp),
         )
         Spacer(modifier = Modifier.height(8.dp))
-        // Hoisted out of the click handler: stringResource is a
-        // composable call and cannot run inside a coroutine launch.
-        val syncInProgressText = stringResource(R.string.sync_in_progress)
-        // M5: one sync runner shared by the sync button and the
-        // retry button, so a failed sync always has a retry path.
-        // Fixed-string messages only (P1-25): the failure code is
-        // mapped here, raw errors never reach the UI.
-        val runSync: () -> Unit = {
-            scope.launch {
-                syncing = true
-                syncFailed = false
-                syncState = syncInProgressText
-                syncState = when (val r = repo.sync()) {
-                    is SyncResult.Ok -> {
-                        if (r.newArticleAppKeys.isEmpty()) {
-                            context.getString(
-                                R.string.sync_up_to_date,
-                                formatPersianInt(r.totalCached),
-                            )
-                        } else {
-                            context.getString(
-                                R.string.sync_new_articles,
-                                formatPersianInt(r.newArticleAppKeys.size),
-                            )
-                        }
-                    }
-                    is SyncResult.Partial -> {
-                        syncFailed = true
-                        context.getString(
-                            R.string.sync_partial,
-                            formatPersianInt(r.missingCount),
-                        )
-                    }
-                    is SyncResult.NotConfigured ->
-                        context.getString(R.string.sync_not_configured)
-                    is SyncResult.Failed -> {
-                        syncFailed = true
-                        when (r.code) {
-                            "network" -> context.getString(R.string.sync_failed_offline)
-                            "http_404", "http_403", "http_other" ->
-                                context.getString(R.string.sync_failed_http)
-                            "bad_index" -> context.getString(R.string.sync_failed_bad_index)
-                            else -> context.getString(R.string.sync_failed)
-                        }
-                    }
-                }
-                syncing = false
-            }
-        }
         // v4-H (V12): ONE compact sync line instead of the old
         // button + status + last-sync + offline block. Same runner
         // (runSync), same messages, same retry; failures still
@@ -458,10 +488,22 @@ fun FeedScreen(
                 .format(Date(epoch)).toPersianDigits()
             context.getString(R.string.sync_last_compact, formatted)
         } ?: context.getString(R.string.sync_never_succeeded)
+        // v4.0.1 (fix plan X5): while the articles fetch runs, the
+        // sync line shows fetched/total instead of a bare spinner.
+        val progress = syncProgress
+        val shownSyncState = if (syncing && progress != null) {
+            context.getString(
+                R.string.sync_progress_articles,
+                formatPersianInt(progress.first),
+                formatPersianInt(progress.second),
+            )
+        } else {
+            syncState
+        }
         CompactSyncRow(
             syncing = syncing,
             syncFailed = syncFailed,
-            syncState = syncState,
+            syncState = shownSyncState,
             lastSyncText = lastSyncCompact,
             onSync = runSync,
             onRetry = runSync,
@@ -586,11 +628,40 @@ fun FeedScreen(
             // the empty message below, never a permanent spinner.
             CircularProgressIndicator(modifier = Modifier.padding(16.dp))
         } else if (all.isEmpty() && typedItems.isEmpty()) {
-            Text(
-                text = stringResource(R.string.feed_empty),
-                fontFamily = EcoFontFamily,
-                modifier = Modifier.padding(16.dp),
-            )
+            // v4.0.1 (fix plan X4): the empty state is no longer a
+            // dead end. It names the last error code (when one was
+            // recorded) and offers retry + Diagnostics, so a blank
+            // feed always has a way forward and a reportable cause.
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = stringResource(R.string.feed_empty),
+                    fontFamily = EcoFontFamily,
+                )
+                val errorCode = lastSyncError?.takeIf { it.isNotBlank() }
+                if (seedFailed) {
+                    Text(
+                        text = stringResource(R.string.feed_empty_seed_failed),
+                        fontFamily = EcoFontFamily,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
+                } else if (errorCode != null) {
+                    Text(
+                        text = stringResource(R.string.feed_empty_error, errorCode),
+                        fontFamily = EcoFontFamily,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
+                }
+                TextButton(onClick = runSync) {
+                    Text(stringResource(R.string.sync_retry), fontFamily = EcoFontFamily)
+                }
+                if (onOpenDiagnostics != null) {
+                    TextButton(onClick = onOpenDiagnostics) {
+                        Text(stringResource(R.string.sync_details), fontFamily = EcoFontFamily)
+                    }
+                }
+            }
         } else {
             // Typed day/slot groups for the «همه» page (spec 7):
             // newest day first, slots in fixed order within a day,

@@ -8,8 +8,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import org.json.JSONArray
 import org.json.JSONObject
 import com.ecojournal.app.util.Notifications
@@ -129,6 +133,13 @@ private fun edgeBase(): String? {
 }
 
 class EdgeRepository(context: Context) {
+    // v4.0.1 sync-progress signal (fix plan X5): while the articles
+    // section is fetching, (fetched, total); null otherwise. The
+    // feed shows it in the sync line so a long fetch reads as
+    // progress, never as a hang. Counts only, never content.
+    private val _syncProgress = MutableStateFlow<Pair<Int, Int>?>(null)
+    val syncProgress: StateFlow<Pair<Int, Int>?> = _syncProgress.asStateFlow()
+
     private val db: AppDatabase = DatabaseProvider.get(context)
     val dao: ArticleDao = db.articleDao()
     val channelDao: ChannelDao = db.channelDao()
@@ -144,6 +155,17 @@ class EdgeRepository(context: Context) {
         val now = System.currentTimeMillis()
         dao.upsertMeta(MetaEntity("last_sync_attempt_at", now.toString()))
         dao.upsertMeta(MetaEntity("last_sync_error_code", code))
+    }
+
+    // v4.0.1 (fix plan X1): a seed that throws must leave a trace,
+    // so Diagnostics and the empty state can tell "seed failed"
+    // from "seed empty". Failures here are swallowed on purpose:
+    // recording a failure must never itself crash the feed.
+    suspend fun recordSeedFailure() {
+        try {
+            dao.upsertMeta(MetaEntity("seed_error", "seed_failed"))
+        } catch (_: Exception) {
+        }
     }
 
     // Phase 1 Update Engine: sync() fetches manifest.json (v3)
@@ -166,13 +188,33 @@ class EdgeRepository(context: Context) {
                     recordAttempt("bad_manifest")
                     SyncResult.Failed("bad_manifest")
                 } else {
-                    syncV3(
+                    val res = syncV3(
                         base, manifest, forceRefresh, null,
                         if (forceRefresh) "manual" else "periodic_or_foreground",
                     )
+                    _syncProgress.value = null
+                    res
                 }
             }
-            else -> syncLegacy()
+            // v4.0.1 manifest-failure split (fix plan F6/X6): a
+            // network failure cannot be rescued by the legacy path
+            // (it needs the same network), so report it honestly
+            // instead of misreporting the index fetch's code. Only
+            // a 404 (an older Pages deploy without a manifest)
+            // falls back to legacy; other HTTP errors are reported
+            // as themselves.
+            is HttpOutcome.NetworkError -> {
+                recordAttempt("network")
+                SyncResult.Failed("network")
+            }
+            is HttpOutcome.HttpError -> {
+                if (outcome.status == 404) syncLegacy()
+                else {
+                    val code = outcome.toFailedCode()
+                    recordAttempt(code)
+                    SyncResult.Failed(code)
+                }
+            }
         }
     }
 
@@ -199,7 +241,9 @@ class EdgeRepository(context: Context) {
             recordAttempt(code)
             return SyncResult.Failed(code)
         }
-        return syncV3(base, manifest, forceRefresh, sectionKey, "manual")
+        val res = syncV3(base, manifest, forceRefresh, sectionKey, "manual")
+        _syncProgress.value = null
+        return res
     }
 
     // Per-section Diagnostics snapshot. Counts for articles, shorts
@@ -281,17 +325,27 @@ class EdgeRepository(context: Context) {
         }
     }
 
+    // v4.0.1 (fix plan X5): one retry on a NETWORK error only. A
+    // 404 is final (retrying it cannot help); a transient blip
+    // must not cost an article until the next sync pass.
     private fun fetchArticleFile(base: String, item: ManifestItem, now: Long): ArticleEntity? {
         val file = item.file ?: return null
-        val text = when (val outcome = httpGet("$base/$file")) {
-            is HttpOutcome.Ok -> outcome.body
-            else -> return null
+        repeat(2) { attempt ->
+            when (val outcome = httpGet("$base/$file")) {
+                is HttpOutcome.Ok -> {
+                    return try {
+                        ArticleParsers.entityFromArticleJson(JSONObject(outcome.body), now)
+                    } catch (_: Exception) {
+                        null
+                    }
+                }
+                is HttpOutcome.NetworkError -> {
+                    if (attempt == 0) return@repeat else return null
+                }
+                is HttpOutcome.HttpError -> return null
+            }
         }
-        return try {
-            ArticleParsers.entityFromArticleJson(JSONObject(text), now)
-        } catch (_: Exception) {
-            null
-        }
+        return null
     }
 
     // Manifest-v3 per-section sync. One Room transaction per
@@ -327,11 +381,17 @@ class EdgeRepository(context: Context) {
                 outcomes.add(SectionOutcome(SyncSections.ARTICLES, SectionStates.UNKNOWN, 0))
             } else {
                 val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.ARTICLES))
-                if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
-                    val count = dao.articleKindCount("article")
+                // v4.0.1 self-healing hash guard (fix plan X7): a
+                // stored hash with ZERO local rows while the
+                // manifest counts rows must not skip the section
+                // forever — re-plan it instead.
+                val articleCount = dao.articleKindCount("article")
+                val hashUpToDate = DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh) &&
+                    !(articleCount == 0 && section.count > 0)
+                if (hashUpToDate) {
                     recordSectionMeta(
                         SyncSections.ARTICLES, SectionStates.UP_TO_DATE, "",
-                        count, 0, now, null, null,
+                        articleCount, 0, now, null, null,
                     )
                     outcomes.add(SectionOutcome(SyncSections.ARTICLES, SectionStates.UP_TO_DATE, 0))
                 } else {
@@ -341,18 +401,39 @@ class EdgeRepository(context: Context) {
                     val fresh = mutableListOf<ArticleEntity>()
                     val missingKeys = mutableListOf<String>()
                     if (plan.toFetch.isNotEmpty()) {
-                        withContext(Dispatchers.IO) {
-                            coroutineScope {
-                                plan.toFetch.chunked(4).forEach { chunk ->
-                                    val results = chunk.map { item ->
-                                        async { item to fetchArticleFile(base, item, now) }
-                                    }.awaitAll()
-                                    for ((item, entity) in results) {
-                                        if (entity != null) fresh.add(entity)
-                                        else missingKeys.add(item.appKey)
+                        // v4.0.1 bounded fetch (fix plan X5): the
+                        // 249-file loop gets a 240 s deadline and a
+                        // progress signal. On timeout the fetched
+                        // rows still land and the rest are marked
+                        // missing (PARTIAL, hash not stored) —
+                        // never a hang, never a silent success.
+                        _syncProgress.value = 0 to plan.toFetch.size
+                        val fetched = withTimeoutOrNull(240_000L) {
+                            withContext(Dispatchers.IO) {
+                                coroutineScope {
+                                    plan.toFetch.chunked(4).forEach { chunk ->
+                                        val results = chunk.map { item ->
+                                            async { item to fetchArticleFile(base, item, now) }
+                                        }.awaitAll()
+                                        for ((item, entity) in results) {
+                                            if (entity != null) fresh.add(entity)
+                                            else missingKeys.add(item.appKey)
+                                        }
+                                        _syncProgress.value =
+                                            fresh.size + missingKeys.size to plan.toFetch.size
                                     }
                                 }
                             }
+                            true
+                        }
+                        if (fetched == null) {
+                            // Timed out mid-loop: everything not yet
+                            // fetched or failed is missing, so the
+                            // next pass retries exactly that set.
+                            val seen = fresh.map { it.appKey }.toSet() + missingKeys.toSet()
+                            missingKeys.addAll(
+                                plan.toFetch.map { it.appKey }.filter { it !in seen }
+                            )
                         }
                     }
                     val tombstoneRows = plan.tombstones.mapNotNull { item ->
@@ -413,8 +494,12 @@ class EdgeRepository(context: Context) {
                 outcomes.add(SectionOutcome(SyncSections.SHORTS, SectionStates.UNKNOWN, 0))
             } else {
                 val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.SHORTS))
-                if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
-                    val count = dao.articleKindCount("short")
+                // v4.0.1 self-healing hash guard (fix plan X7).
+                val shortCount = dao.articleKindCount("short")
+                if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh) &&
+                    !(shortCount == 0 && section.count > 0)
+                ) {
+                    val count = shortCount
                     recordSectionMeta(
                         SyncSections.SHORTS, SectionStates.UP_TO_DATE, "",
                         count, 0, now, null, null,
@@ -522,10 +607,14 @@ class EdgeRepository(context: Context) {
                 outcomes.add(SectionOutcome(SyncSections.MARKET, SectionStates.UNKNOWN, 0))
             } else {
                 val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.MARKET))
-                if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
+                // v4.0.1 self-healing hash guard (fix plan X7).
+                val marketCount = dao.marketCount()
+                if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh) &&
+                    !(marketCount == 0 && section.count > 0)
+                ) {
                     recordSectionMeta(
                         SyncSections.MARKET, SectionStates.UP_TO_DATE, "",
-                        dao.marketCount(), 0, now, null, null,
+                        marketCount, 0, now, null, null,
                     )
                     outcomes.add(SectionOutcome(SyncSections.MARKET, SectionStates.UP_TO_DATE, 0))
                 } else {

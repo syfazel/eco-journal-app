@@ -53,10 +53,13 @@ fun CompactSyncRow(
     fontScale: Float = 1f,
     modifier: Modifier = Modifier,
 ) {
+    // v4.0.1 (fix plan X4): a blank status must never read as
+    // "up to date". Before this fix a fresh launch with no sync
+    // ever run showed the up-to-date string next to an empty feed.
     val statusDesc = when {
         syncing -> stringResource(R.string.sync_compact_syncing)
         syncState.isNotBlank() -> syncState
-        else -> stringResource(R.string.sync_compact_up_to_date)
+        else -> stringResource(R.string.sync_compact_idle)
     }
     Row(
         verticalAlignment = Alignment.CenterVertically,
