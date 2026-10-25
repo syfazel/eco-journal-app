@@ -371,7 +371,10 @@ object Notifications {
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
-        val text = "$count مقالهٔ تازه منتشر شد."
+        // Phase 7 digit fix: the count used to leak Latin digits
+        // into Persian copy; neighbouring notifications already
+        // convert via toPersianDigits().
+        val text = "${count.toString().toPersianDigits()} مقالهٔ تازه منتشر شد."
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle("مقالات تازه")

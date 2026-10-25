@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ecojournal.app.R
@@ -116,10 +117,17 @@ fun BookmarksScreen(
             }
             items(savedBundles, key = { it.bundleId }) { bundle ->
                 Column(
+                    // Phase 7: bare ~45dp clickable bundle row
+                    // (aggregate row — no item bar by the same
+                    // ruling as Bundles list rows).
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onOpenBundle(bundle.bundleId) }
-                        .padding(8.dp),
+                        .clickable(
+                            role = Role.Button,
+                            onClickLabel = stringResource(R.string.open_bundle_desc, bundle.title),
+                            onClick = { onOpenBundle(bundle.bundleId) },
+                        )
+                        .padding(12.dp),
                 ) {
                     Text(
                         text = bundle.title,

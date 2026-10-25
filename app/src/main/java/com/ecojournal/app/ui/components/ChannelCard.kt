@@ -68,6 +68,13 @@ fun DomainBarStrip(
         DomainBar.YELLOW_ENERGY -> DomainBars.YELLOW_ARGB
         DomainBar.NONE -> return
     }
+    // Phase 7 contrast fix: the label used to be drawn IN the bar
+    // colour on the theme background — yellow on light/sepia was
+    // 1.78–1.97:1, a WCAG failure. The label now sits on a filled
+    // chip in the bar colour with contrasting text (black on
+    // yellow, white on red), the same pattern CrisisChip already
+    // used. Colour is still never the only cue: the label text
+    // names the category.
     val textColor = if (bar == DomainBar.YELLOW_ENERGY) Color.Black else Color.White
     Row(modifier = modifier.fillMaxWidth()) {
         Box(
@@ -82,7 +89,10 @@ fun DomainBarStrip(
             fontSize = 12.sp,
             fontFamily = EcoFontFamily,
             fontWeight = FontWeight.Bold,
-            color = Color(argb),
+            color = textColor,
+            modifier = Modifier
+                .background(Color(argb))
+                .padding(horizontal = 8.dp, vertical = 3.dp),
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
@@ -99,16 +109,23 @@ fun FormatBadge(item: ChannelItemEntity, modifier: Modifier = Modifier) {
     val info = Formats.info(item.formatType)
     val badgeText = info?.badgeText ?: item.formatType
     val bg = Color(info?.badgeArgb ?: 0xFF616161L)
+    // Phase 7 contrast fix: white on WATCH orange (#E65100) was
+    // 3.79:1 (fails AA normal text); black on the same orange is
+    // 5.54:1. Other badge colours keep white (all pass AA).
+    val textColor = if (info?.badgeArgb == 0xFFE65100L) Color.Black else Color.White
+    // Precomputed outside the semantics block: stringResource
+    // is composable-only and cannot run inside semantics {}.
+    val badgeDesc = stringResource(R.string.format_badge_desc, badgeText)
     Text(
         text = badgeText,
         fontSize = 12.sp,
         fontFamily = EcoFontFamily,
         fontWeight = FontWeight.Bold,
-        color = Color.White,
+        color = textColor,
         modifier = modifier
             .background(bg)
             .padding(horizontal = 8.dp, vertical = 3.dp)
-            .semantics { contentDescription = "format: $badgeText" },
+            .semantics { contentDescription = badgeDesc },
     )
 }
 
@@ -116,7 +133,10 @@ fun FormatBadge(item: ChannelItemEntity, modifier: Modifier = Modifier) {
 fun CrisisChip(level: String?, modifier: Modifier = Modifier) {
     if (level == null) return
     val bg = Color(CrisisLevels.COLORS[level] ?: 0xFF616161L)
-    val textColor = if (level == "L2") Color.Black else Color.White
+    // Phase 7 contrast fix: L3 shares WATCH orange, so it gets
+    // black text like L2 on yellow; L4 red keeps white (5.62:1).
+    val textColor = if (level == "L2" || level == "L3") Color.Black else Color.White
+    val levelDesc = stringResource(R.string.crisis_level_desc, level)
     Text(
         text = level,
         fontSize = 12.sp,
@@ -125,7 +145,8 @@ fun CrisisChip(level: String?, modifier: Modifier = Modifier) {
         color = textColor,
         modifier = modifier
             .background(bg)
-            .padding(horizontal = 8.dp, vertical = 3.dp),
+            .padding(horizontal = 8.dp, vertical = 3.dp)
+            .semantics { contentDescription = levelDesc },
     )
 }
 
@@ -214,6 +235,10 @@ fun TypedCard(
     positionTag: String? = null,
     bundleTag: (() -> Unit)? = null,
     heldTag: Boolean = false,
+    // Phase 7: an expired urgent pin (>6h) stays visible at the
+    // end of the rail by spec decision, but it used to render
+    // unlabelled — indistinguishable from a live pin.
+    expiredTag: Boolean = false,
     hasTimeline: Boolean = false,
     onOpenStory: ((String) -> Unit)? = null,
     onOpenMarket: (() -> Unit)? = null,
@@ -286,6 +311,16 @@ fun TypedCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = stringResource(R.string.morning_bundle_held_tag),
+                fontSize = 12.sp,
+                fontFamily = EcoFontFamily,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (expiredTag) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(R.string.expired_pin_label),
                 fontSize = 12.sp,
                 fontFamily = EcoFontFamily,
                 fontWeight = FontWeight.Bold,

@@ -25,6 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
@@ -157,6 +160,11 @@ fun MarketScreen(
     dismissedSpreadSnapshotId: String? = null,
     onDismissBanner: (AlertMetric) -> Unit = {},
     onRefreshMarket: () -> Unit = {},
+    // Phase 7: failed market syncs used to be invisible on this
+    // tab (Diagnostics only); MainActivity passes the market
+    // section state so the tab shows its own failed line.
+    marketSyncFailed: Boolean = false,
+    marketSyncErrorCode: String = "",
 ) {
     // Phase 4 history state, hoisted ABOVE the early returns below:
     // remember calls must not sit behind a conditional return.
@@ -175,7 +183,21 @@ fun MarketScreen(
             fontFamily = EcoFontFamily,
             fontSize = 20.sp * fontScale,
             fontWeight = FontWeight.Bold,
+            modifier = Modifier.semantics { heading() },
         )
+        if (marketSyncFailed) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(
+                    R.string.section_error_line,
+                    stringResource(R.string.diagnostics_section_name_market),
+                    marketSyncErrorCode.ifBlank { "network" },
+                ),
+                fontFamily = EcoFontFamily,
+                fontSize = 13.sp * fontScale,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
         Spacer(modifier = Modifier.height(12.dp))
         if (!seedDone) {
             Text(
@@ -577,10 +599,19 @@ fun MarketScreen(
             val spanV = if (maxV > minV) maxV - minV else 1.0
             val lineColor = MaterialTheme.colorScheme.primary
             val pointColor = MaterialTheme.colorScheme.onSurface
+            // Precomputed: stringResource cannot run inside
+            // the semantics {} block below.
+            val chartDesc = stringResource(R.string.market_chart_desc)
             Canvas(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
+                    // Phase 7: the chart used to be TalkBack-
+                    // invisible and tap-only. It now announces
+                    // what it is; the selected-snapshot card below
+                    // (plain text) plus prev/next buttons remain
+                    // the accessible representation of the data.
+                    .semantics { contentDescription = chartDesc }
                     .pointerInput(history) {
                         detectTapGestures { offset ->
                             val span = (maxEpoch - minEpoch).coerceAtLeast(1L)
@@ -712,14 +743,14 @@ fun MarketScreen(
                         TextButton(onClick = {
                             selectedSnapshotId = history.points[idx - 1].snapshot.snapshotId
                         }) {
-                            Text(text = "◀ قبلی", fontFamily = EcoFontFamily)
+                            Text(text = stringResource(R.string.market_prev), fontFamily = EcoFontFamily)
                         }
                     }
                     if (idx >= 0 && idx < history.points.size - 1) {
                         TextButton(onClick = {
                             selectedSnapshotId = history.points[idx + 1].snapshot.snapshotId
                         }) {
-                            Text(text = "بعدی ▶", fontFamily = EcoFontFamily)
+                            Text(text = stringResource(R.string.market_next), fontFamily = EcoFontFamily)
                         }
                     }
                 }

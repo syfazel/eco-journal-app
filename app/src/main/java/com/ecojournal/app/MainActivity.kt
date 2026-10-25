@@ -76,7 +76,7 @@ import com.ecojournal.app.util.Notifications
 
 private data class Tab(
     val route: String,
-    val label: String,
+    val labelRes: Int,
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
 )
 
@@ -86,22 +86,22 @@ private data class Tab(
 // 8.1): War Room is a SECTION, not a feed tab, and Bundles is
 // its own top-level entry — neither is a parallel service.
 private val TABS = listOf(
-    Tab("feed", "صفحه اصلی", Icons.Filled.Home),
-    Tab("warroom", "اتاق جنگ", Icons.Filled.Warning),
-    Tab("bundles", "بسته‌ها", Icons.Filled.List),
+    Tab("feed", R.string.tab_feed, Icons.Filled.Home),
+    Tab("warroom", R.string.tab_warroom, Icons.Filled.Warning),
+    Tab("bundles", R.string.tab_bundles, Icons.Filled.List),
     // Phase 5: Nightly section, top-level alongside Feed /
     // Market / War Room / Bundles (spec §5.14). It is the
     // edition section, not a parallel service and not a
     // separate tab for war-room/red-alert (bar rule §0).
-    Tab("nightly", "نسخهٔ شبانه", Icons.Filled.DarkMode),
+    Tab("nightly", R.string.tab_nightly, Icons.Filled.DarkMode),
     // Phase 6: Analysis is a standalone section (spec §2), and
     // the nightly edition links to the same story_id — two views
     // of one item, never two copies. Not a war-room tab: red-alert
     // items stay inside it with bar + badge (bar rule §0).
-    Tab("analysis", "تحلیل", Icons.Filled.Article),
-    Tab("market", "بازار", Icons.Filled.ShowChart),
-    Tab("bookmarks", "ذخیره‌شده‌ها", Icons.Filled.Bookmark),
-    Tab("settings", "تنظیمات", Icons.Filled.Settings),
+    Tab("analysis", R.string.tab_analysis, Icons.Filled.Article),
+    Tab("market", R.string.tab_market, Icons.Filled.ShowChart),
+    Tab("bookmarks", R.string.tab_bookmarks, Icons.Filled.Bookmark),
+    Tab("settings", R.string.tab_settings, Icons.Filled.Settings),
 )
 
 class MainActivity : ComponentActivity() {
@@ -237,6 +237,12 @@ class MainActivity : ComponentActivity() {
                         val p4DismissSpread by repo.dao.metaValueFlow("p4_banner_dismissed_spread")
                             .collectAsState(initial = null)
                         var marketRefreshTick by remember { mutableStateOf(0) }
+                        // Phase 7: the Market tab used to show no
+                        // failed-sync surface at all (failures were
+                        // visible only in Diagnostics), and the
+                        // refresh button's result was discarded.
+                        var marketSyncFailed by remember { mutableStateOf(false) }
+                        var marketSyncError by remember { mutableStateOf("") }
                         LaunchedEffect(marketRefreshTick) {
                             if (marketRefreshTick > 0) {
                                 repo.syncOnly(
@@ -244,6 +250,11 @@ class MainActivity : ComponentActivity() {
                                     forceRefresh = true,
                                 )
                             }
+                            val st = repo.sectionStates().firstOrNull {
+                                it.section == com.ecojournal.app.data.SyncSections.MARKET
+                            }
+                            marketSyncFailed = st?.state == "failed"
+                            marketSyncError = st?.lastErrorCode.orEmpty()
                         }
                         var marketPreviousEntity by remember {
                             mutableStateOf<com.ecojournal.app.data.MarketSnapshotEntity?>(null)
@@ -441,6 +452,8 @@ class MainActivity : ComponentActivity() {
                                         }
                                     },
                                     onRefreshMarket = { marketRefreshTick++ },
+                                    marketSyncFailed = marketSyncFailed,
+                                    marketSyncErrorCode = marketSyncError,
                                 )
                             }
                             composable("bookmarks") {
@@ -527,10 +540,10 @@ private fun BottomBar(nav: NavHostController) {
                 icon = {
                     Icon(
                         imageVector = tab.icon,
-                        contentDescription = tab.label,
+                        contentDescription = stringResource(tab.labelRes),
                     )
                 },
-                label = { Text(tab.label, fontFamily = EcoFontFamily) },
+                label = { Text(stringResource(tab.labelRes), fontFamily = EcoFontFamily) },
             )
         }
     }

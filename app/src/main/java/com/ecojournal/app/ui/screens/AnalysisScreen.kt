@@ -12,21 +12,26 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ecojournal.app.R
 import com.ecojournal.app.data.AnalysisItemParsed
 import com.ecojournal.app.data.AnalysisTypes
+import com.ecojournal.app.data.SyncSections
 import com.ecojournal.app.data.ConsensusRow
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.Phase6Bars
@@ -68,6 +73,17 @@ fun AnalysisScreen(
     modifier: Modifier = Modifier,
 ) {
     val editions by repo.nightlyDao.latestEditionsFlow().collectAsState(initial = emptyList())
+    // Phase 7: Analysis used to render stale items silently after
+    // a failed nightly sync — no failed line, no retry. It now
+    // surfaces the nightly section state (analysis travels in
+    // the nightly section since Phase 5).
+    var nightlyFailed by remember { mutableStateOf(false) }
+    var nightlyErrorCode by remember { mutableStateOf("") }
+    LaunchedEffect(Unit) {
+        val st = repo.sectionStates().firstOrNull { it.section == SyncSections.NIGHTLY }
+        nightlyFailed = st?.state == "failed"
+        nightlyErrorCode = st?.lastErrorCode.orEmpty()
+    }
     var selected by remember { mutableStateOf<AnalysisItemParsed?>(null) }
     val parsed = remember(editions) {
         val found = mutableListOf<AnalysisItemParsed>()
@@ -97,6 +113,19 @@ fun AnalysisScreen(
                 fontSize = 20.sp * fontScale,
                 fontWeight = FontWeight.Bold,
             )
+            if (nightlyFailed) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(
+                        R.string.section_error_line,
+                        stringResource(R.string.diagnostics_section_name_nightly),
+                        nightlyErrorCode.ifBlank { "network" },
+                    ),
+                    fontFamily = EcoFontFamily,
+                    fontSize = 13.sp * fontScale,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
             Spacer(modifier = Modifier.height(12.dp))
         }
         if (analysisItems.isEmpty()) {
@@ -118,8 +147,9 @@ fun AnalysisScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { selected = item }
-                        .padding(vertical = 8.dp),
+                        // Phase 7: bare clickable analysis row.
+                        .clickable(role = Role.Button) { selected = item }
+                        .padding(vertical = 12.dp),
                 ) {
                     if (label != null) {
                         DomainBarStrip(bar = bar, label = label)
@@ -294,11 +324,21 @@ private fun AnalysisDetailScreen(
             )
             // Source links render as text lines (never as blog
             // links — the parser already held any blog URL).
+            // Phase 7: they used to be inert text — untappable
+            // for sighted readers and unopenable for TalkBack.
+            // They are now real links (destination unchanged:
+            // the news source, never the blog).
+            val uriHandler = LocalUriHandler.current
             for (url in item.sourceLinks) {
                 Text(
                     text = url,
                     fontFamily = EcoFontFamily,
                     fontSize = 12.sp * fontScale,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable(
+                        role = Role.Button,
+                        onClickLabel = stringResource(R.string.article_open),
+                    ) { uriHandler.openUri(url) },
                 )
             }
         }

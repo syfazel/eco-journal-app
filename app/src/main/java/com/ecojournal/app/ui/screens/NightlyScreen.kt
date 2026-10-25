@@ -26,6 +26,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -134,6 +137,7 @@ fun NightlyScreen(
                     fontSize = 26.sp * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
+                    modifier = Modifier.semantics { heading() },
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 if (nightlyState?.state == "failed" && hero != null) {
@@ -203,8 +207,14 @@ fun NightlyScreen(
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable { onOpenEdition(item.editionId) }
-                                    .padding(vertical = 6.dp)
+                                    // Phase 7: bare clickable row
+                                    // (~35dp, no role/label).
+                                    .clickable(
+                                        role = Role.Button,
+                                        onClickLabel = stringResource(R.string.open_edition_desc, item.editionId),
+                                        onClick = { onOpenEdition(item.editionId) },
+                                    )
+                                    .padding(vertical = 12.dp)
                             ) {
                                 EditionItemBar(item)
                                 Text(
@@ -242,8 +252,12 @@ fun NightlyScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onOpenEdition(item.editionId) }
-                    .padding(horizontal = 16.dp, vertical = 6.dp)
+                    .clickable(
+                        role = Role.Button,
+                        onClickLabel = stringResource(R.string.open_edition_desc, item.editionId),
+                        onClick = { onOpenEdition(item.editionId) },
+                    )
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
                 EditionItemBar(item)
                 Text(
@@ -272,8 +286,12 @@ fun NightlyScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { onOpenDossier(dossier.dossierId) }
-                            .padding(vertical = 6.dp)
+                            .clickable(
+                                role = Role.Button,
+                                onClickLabel = stringResource(R.string.open_dossier_desc, dossier.topicTitleFa),
+                                onClick = { onOpenDossier(dossier.dossierId) },
+                            )
+                            .padding(vertical = 12.dp)
                     ) {
                         Text(
                             text = dossier.topicTitleFa,
@@ -319,8 +337,16 @@ private fun EditionRow(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onOpen() }
-            .padding(vertical = 6.dp)
+            // Phase 7: bare clickable edition row. No item bar is
+            // added here by ruling: an edition aggregates many
+            // categories, so a single RED/YELLOW bar would mislabel
+            // it; bars stay on item cards and item readers.
+            .clickable(
+                role = Role.Button,
+                onClickLabel = stringResource(R.string.open_edition_desc, edition.shamsiDate),
+                onClick = { onOpen() },
+            )
+            .padding(vertical = 12.dp)
     ) {
         Text(
             text = edition.shamsiDate,
@@ -471,10 +497,10 @@ fun EditionPageScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable {
+                    .clickable(role = Role.Button) {
                         expandedKey = if (expandedKey == item.editionKey) null else item.editionKey
                     }
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 12.dp)
             ) {
                 EditionItemBar(item)
                 Text(
@@ -948,8 +974,12 @@ fun DossierPageScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onOpenEdition(eid) }
-                    .padding(vertical = 4.dp)
+                    .clickable(
+                        role = Role.Button,
+                        onClickLabel = stringResource(R.string.open_edition_desc, eid),
+                        onClick = { onOpenEdition(eid) },
+                    )
+                    .padding(vertical = 12.dp)
             ) {
                 Text(
                     text = eid,

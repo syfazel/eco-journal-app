@@ -27,6 +27,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -121,6 +125,7 @@ fun WarRoomScreen(
                     fontSize = 26.sp * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
+                    modifier = Modifier.semantics { heading() },
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 // Header block (spec 4.1), always first, always visible.
@@ -212,7 +217,14 @@ fun WarRoomScreen(
                         Text(
                             text = context.getString(
                                 R.string.section_error_line,
-                                s.section,
+                                // Phase 7: the raw section key
+                                // ("radar", "channel_typed") used to
+                                // leak into reader-facing copy.
+                                when (s.section) {
+                                    SyncSections.CHANNEL_TYPED -> context.getString(R.string.diagnostics_section_name_channel_typed)
+                                    SyncSections.RADAR -> context.getString(R.string.diagnostics_section_name_radar)
+                                    else -> s.section
+                                },
                                 s.lastErrorCode.ifBlank { "network" },
                             ),
                             fontSize = 13.sp,
@@ -326,8 +338,14 @@ fun WarRoomScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { onOpenChannel(sitrep.appKey) }
-                                .padding(vertical = 6.dp),
+                                // Phase 7: bare clickable rows used to
+                                // be ~33dp with no role/label.
+                                .clickable(
+                                    role = Role.Button,
+                                    onClickLabel = stringResource(R.string.article_open),
+                                    onClick = { onOpenChannel(sitrep.appKey) },
+                                )
+                                .padding(vertical = 12.dp),
                         ) {
                             Text(
                                 text = Jalali.formatShamsiDateTime(sitrep.publishedAtEpoch),
@@ -447,6 +465,13 @@ private fun RadarBlock(
             val inLayer = visibleSignals.filter { it.layer == layer }
             if (inLayer.isEmpty()) continue
             var expanded by remember(layer) { mutableStateOf(true) }
+            // Precomputed in composable scope: stringResource
+            // cannot run inside the semantics {} block below.
+            val layerToggleDesc = if (expanded) {
+                stringResource(R.string.radar_layer_collapse, layer.toString().toPersianDigits())
+            } else {
+                stringResource(R.string.radar_layer_expand, layer.toString().toPersianDigits())
+            }
             Text(
                 text = if (layer == 0) {
                     stringResource(R.string.radar_layer_unclassified)
@@ -459,7 +484,11 @@ private fun RadarBlock(
                 fontSize = 16.sp * fontScale,
                 fontFamily = EcoFontFamily,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.clickable { expanded = !expanded },
+                // Phase 7: the layer header used to be a bare
+                // single-line Text.clickable (~24dp, no state).
+                modifier = Modifier
+                    .clickable(role = Role.Button) { expanded = !expanded }
+                    .semantics { contentDescription = layerToggleDesc },
             )
             Spacer(modifier = Modifier.height(4.dp))
             if (!expanded) continue
@@ -583,7 +612,15 @@ private fun RadarRow(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         } else if (effectiveStoryId != null) {
-            TextButton(onClick = { onOpenStory(effectiveStoryId) }) {
+            // Phase 7: a list of identical "open story" buttons was
+            // indistinguishable to TalkBack; the button now carries
+            // the story title in its description (precomputed:
+            // stringResource cannot run inside semantics {}).
+            val storyDesc = stringResource(R.string.open_story_desc, signal.title)
+            TextButton(
+                onClick = { onOpenStory(effectiveStoryId) },
+                modifier = Modifier.semantics { contentDescription = storyDesc },
+            ) {
                 Text(
                     text = stringResource(R.string.radar_open_story),
                     fontFamily = EcoFontFamily,

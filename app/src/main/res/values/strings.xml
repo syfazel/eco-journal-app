@@ -357,4 +357,31 @@
     <string name="settings_method_button">روش کار</string>
     <string name="settings_voices_button">صداهای مهم</string>
     <string name="settings_special_issues_button">ویژه‌نامه‌ها</string>
+    <!-- Phase 7 (accessibility + polish) -->
+    <string name="format_badge_desc">قالب: %1$s</string>
+    <string name="crisis_level_desc">سطح بحران %1$s</string>
+    <string name="tab_feed">صفحه اصلی</string>
+    <string name="tab_warroom">اتاق جنگ</string>
+    <string name="tab_bundles">بسته‌ها</string>
+    <string name="tab_nightly">نسخهٔ شبانه</string>
+    <string name="tab_analysis">تحلیل</string>
+    <string name="tab_market">بازار</string>
+    <string name="tab_bookmarks">ذخیره‌شده‌ها</string>
+    <string name="tab_settings">تنظیمات</string>
+    <string name="theme_system">سیستم</string>
+    <string name="theme_light">روشن</string>
+    <string name="theme_dark">تیره</string>
+    <string name="theme_sepia">سپیا</string>
+    <string name="market_prev">◀ قبلی</string>
+    <string name="market_next">بعدی ▶</string>
+    <string name="font_size_desc">اندازهٔ قلم</string>
+    <string name="market_chart_desc">نمودار تاریخچهٔ بازار؛ با لمس نمودار نزدیک‌ترین برداشت انتخاب می‌شود و جزئیات آن در کارت زیر نمودار خوانده می‌شود.</string>
+    <string name="open_story_desc">باز کردن داستان: %1$s</string>
+    <string name="open_bundle_desc">باز کردن بسته: %1$s</string>
+    <string name="open_edition_desc">باز کردن نسخه: %1$s</string>
+    <string name="open_dossier_desc">باز کردن پرونده: %1$s</string>
+    <string name="open_version_desc">باز کردن نسخهٔ %1$s</string>
+    <string name="expired_pin_label">پین منقضی (بیش از ۶ ساعت)</string>
+    <string name="radar_layer_expand">باز کردن لایهٔ رادار %1$s</string>
+    <string name="radar_layer_collapse">بستن لایهٔ رادار %1$s</string>
 </resources>

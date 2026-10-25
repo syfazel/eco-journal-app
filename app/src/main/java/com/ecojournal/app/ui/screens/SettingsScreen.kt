@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.mergeDescendants
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -123,6 +124,11 @@ fun SettingsScreen(
                 scope.launch { store.setFontScale(it) }
             },
             valueRange = 0.85f..1.3f,
+            // Phase 7: the value text above is a separate node, so
+            // the bare slider used to announce with no context.
+            modifier = Modifier.semantics {
+                contentDescription = context.getString(R.string.font_size_desc)
+            },
         )
         Text(
             text = stringResource(R.string.font_preview),
@@ -135,12 +141,13 @@ fun SettingsScreen(
             fontFamily = EcoFontFamily,
             fontSize = 16.sp * fontScale,
         )
-        for ((key, label) in listOf(
-            "system" to "سیستم",
-            "light" to "روشن",
-            "dark" to "تیره",
-            "sepia" to "سپیا",
+        for ((key, labelRes) in listOf(
+            "system" to R.string.theme_system,
+            "light" to R.string.theme_light,
+            "dark" to R.string.theme_dark,
+            "sepia" to R.string.theme_sepia,
         )) {
+            val label = stringResource(labelRes)
             Button(
                 onClick = { scope.launch { store.setTheme(key) } },
                 modifier = Modifier.heightIn(min = 48.dp),
@@ -276,12 +283,16 @@ fun SettingsScreen(
         )
         for ((label, checked, onChange) in p4Toggles) {
             Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = label,
-                fontFamily = EcoFontFamily,
-                fontSize = 14.sp * fontScale,
-            )
-            Switch(checked = checked, onCheckedChange = onChange)
+            // Phase 7: label + switch merge into one TalkBack node,
+            // so the switch is never announced unlabelled.
+            Column(modifier = Modifier.semantics(mergeDescendants = true) {}) {
+                Text(
+                    text = label,
+                    fontFamily = EcoFontFamily,
+                    fontSize = 14.sp * fontScale,
+                )
+                Switch(checked = checked, onCheckedChange = onChange)
+            }
         }
         Spacer(modifier = Modifier.height(12.dp))
         Text(
@@ -301,6 +312,9 @@ fun SettingsScreen(
         )
         Switch(
             checked = settings.quietHoursEnabled,
+            modifier = Modifier.semantics {
+                contentDescription = context.getString(R.string.settings_quiet_heading)
+            },
             onCheckedChange = { v -> scope.launch { store.setQuietHoursEnabled(v) } },
         )
         var quietStartText by remember(settings.quietStartMin) {
@@ -367,6 +381,9 @@ fun SettingsScreen(
         )
         Switch(
             checked = settings.quietMuteUrgent,
+            modifier = Modifier.semantics {
+                contentDescription = context.getString(R.string.settings_quiet_mute_urgent_desc)
+            },
             onCheckedChange = { v -> scope.launch { store.setQuietMuteUrgent(v) } },
         )
         Spacer(modifier = Modifier.height(8.dp))

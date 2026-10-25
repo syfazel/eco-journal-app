@@ -22,6 +22,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -171,8 +172,12 @@ private fun TimelineRow(
 ) {
     Row(
         modifier = Modifier
-            .clickable { onOpen() }
-            .padding(vertical = 6.dp),
+            .clickable(
+                role = Role.Button,
+                onClickLabel = stringResource(R.string.open_version_desc, item.headline),
+                onClick = { onOpen() },
+            )
+            .padding(vertical = 12.dp),
     ) {
         Text(
             text = Jalali.formatShamsiDateTime(item.publishedAtEpoch),

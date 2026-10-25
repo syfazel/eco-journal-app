@@ -32,13 +32,17 @@ import androidx.compose.ui.unit.sp
 import com.ecojournal.app.R
 import com.ecojournal.app.data.BundleEntity
 import com.ecojournal.app.data.BundleKinds
+import com.ecojournal.app.data.DomainBars
+import com.ecojournal.app.data.Formats
 import com.ecojournal.app.data.ChannelItemEntity
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.Jalali
 import com.ecojournal.app.data.SectionSyncState
 import com.ecojournal.app.data.Slots
 import com.ecojournal.app.data.SyncSections
+import com.ecojournal.app.ui.components.DomainBarStrip
 import com.ecojournal.app.ui.components.TypedCard
+import androidx.compose.ui.semantics.Role
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.util.toLatinDigits
 import com.ecojournal.app.util.toPersianDigits
@@ -104,7 +108,9 @@ fun BundlesScreen(
                     Text(
                         text = context.getString(
                             R.string.section_error_line,
-                            "bundles",
+                            // Phase 7: raw "bundles" key used to leak
+                            // into reader-facing copy.
+                            context.getString(R.string.diagnostics_section_name_bundles),
                             bundlesState.lastErrorCode.ifBlank { "network" },
                         ),
                         fontSize = 13.sp,
@@ -143,9 +149,17 @@ fun BundlesScreen(
         } else {
             items(bundles, key = { it.bundleId }) { bundle ->
                 Column(
+                    // Phase 7: bare clickable bundle row. No item
+                    // bar here by ruling: a bundle aggregates many
+                    // categories, so a single RED/YELLOW bar would
+                    // mislabel it; bars stay on item cards.
                     modifier = Modifier
-                        .clickable { onOpenBundle(bundle.bundleId) }
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                        .clickable(
+                            role = Role.Button,
+                            onClickLabel = stringResource(R.string.open_bundle_desc, bundle.title),
+                            onClick = { onOpenBundle(bundle.bundleId) },
+                        )
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                 ) {
                     Text(
                         text = bundle.title,
@@ -429,14 +443,29 @@ fun BundlePageScreen(
                     )
                 } else {
                     for (ndItem in ndItems) {
-                        Text(
-                            text = "• ${ndItem.headline}",
-                            fontSize = 15.sp * fontScale,
-                            fontFamily = EcoFontFamily,
+                        // Phase 7: night-desk headlines were bare
+                        // ~29dp clickable texts with no bar. They
+                        // are typed items, so they now carry the
+                        // RED bar + role + 48dp-friendly padding.
+                        Column(
                             modifier = Modifier
-                                .clickable { onOpenChannel(ndItem.appKey) }
-                                .padding(vertical = 4.dp),
-                        )
+                                .clickable(
+                                    role = Role.Button,
+                                    onClickLabel = stringResource(R.string.article_open),
+                                    onClick = { onOpenChannel(ndItem.appKey) },
+                                )
+                                .padding(vertical = 12.dp),
+                        ) {
+                            DomainBarStrip(
+                                bar = DomainBars.forChannelItem(),
+                                label = Formats.badgeText(ndItem.formatType),
+                            )
+                            Text(
+                                text = "• ${ndItem.headline}",
+                                fontSize = 15.sp * fontScale,
+                                fontFamily = EcoFontFamily,
+                            )
+                        }
                     }
                 }
             }

@@ -49,6 +49,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -211,6 +212,8 @@ fun FeedScreen(
             .background(MaterialTheme.colorScheme.background),
     ) {
         // Masthead: ECO JOURNAL only. No other publication name appears.
+        // Phase 7: headings were plain bold text, so TalkBack
+        // heading navigation found nothing on any screen.
         Text(
             text = stringResource(R.string.app_name),
             fontSize = 32.sp * fontScale,
@@ -220,7 +223,8 @@ fun FeedScreen(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 10.dp),
+                .padding(top = 16.dp, bottom = 10.dp)
+                .semantics { heading() },
         )
         NewspaperDoubleRule(
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -268,6 +272,7 @@ fun FeedScreen(
                         onClick = { onOpenChannel(item.appKey) },
                         onOpenMarket = onOpenMarket,
                         fontScale = fontScale,
+                        expiredTag = NightLaw.isPinExpired(item.publishedAtEpoch, railNow),
                     )
                 }
             }
@@ -293,6 +298,7 @@ fun FeedScreen(
                         onClick = { onOpenChannel(item.appKey) },
                         onOpenMarket = onOpenMarket,
                         fontScale = fontScale,
+                        expiredTag = NightLaw.isPinExpired(item.publishedAtEpoch, railNow),
                     )
                 }
                 if (railOrdered.size > 5) {
@@ -407,11 +413,15 @@ fun FeedScreen(
             }
             Spacer(modifier = Modifier.width(8.dp))
             if (syncState.isNotBlank()) {
+                // Phase 7: the status text used to have no weight,
+                // so a long Persian sync message at 1.3x could push
+                // past the row edge.
                 Text(
                     text = syncState,
                     fontFamily = EcoFontFamily,
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
                 )
             }
         }
@@ -477,7 +487,11 @@ fun FeedScreen(
                     label = {
                         Text(text = label, fontFamily = EcoFontFamily)
                     },
-                    modifier = Modifier.padding(end = 6.dp),
+                    // Phase 7: M3 chips sit at ~32dp; give the
+                    // format filter a 48dp touch target.
+                    modifier = Modifier
+                        .padding(end = 6.dp)
+                        .heightIn(min = 48.dp),
                 )
             }
         }
