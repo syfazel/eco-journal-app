@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399253/حسادت-همسایه-منجر-به-قتل-دختر-3-ساله-شد",
+ "app_key": "a-8d6d1876bde29a12010d",
  "kind": "article",
  "title": "قتل دختر ۳ ساله به دست همسایه حسود",
  "summary": "ردزنی‌های پلیس در پرونده گم شدن دو کودک و تماس آدم‌ربا برای دریافت پول، با پیدا شدن بدن نیمه‌جان قربانی‌ها در یک پارک و مرگ یکی از آنها رنگ جنایی گرفت.",
@@ -44,5 +45,8 @@
  "extracted_at": "2026-10-19T00:20:21.065914+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "278fd98b8e52cbf1de393b6eed326781394f049802b48deed4db87f87469c22c",
+ "updated_at_epoch": 1792356621065,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

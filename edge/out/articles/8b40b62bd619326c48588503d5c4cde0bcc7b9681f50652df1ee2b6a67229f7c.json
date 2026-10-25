@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t17",
+ "app_key": "a-8b40b62bd619326c4858",
  "kind": "article",
  "title": "بدهی‌ها چگونه بودجه توسعه کشورهای درحال‌توسعه را می‌بلعند؟",
  "summary": "هزینه خدمت بدهی در کشورهای درحال‌توسعه به‌طور متوسط به ۱۴ درصد درآمد دولت رسیده است. هم‌زمان، رشد اقتصادی پیش‌بینی‌شده این کشورها نیز به ۳.۶ درصد کاهش یافته است.",
@@ -26,5 +27,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "4922974b3321d2e2948d7549ce50ba4f608b07e71a02e8222cc176c36b6c6184",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

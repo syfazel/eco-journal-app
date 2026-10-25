@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t16",
+ "app_key": "a-a611aa204448a0f113ea",
  "kind": "article",
  "title": "قانون جدید چک ابلاغ شد / بدون رمز یکبارمصرف نمی‌شود",
  "summary": "بخشنامه تازه بانک مرکزی علاوه بر تقویت امنیت انتقال چک، امکان استفاده از رمز یکبارمصرف را به‌عنوان جایگزینی برای گواهی مهر سازمانی در برخی فرایندهای چک الکترونیکی پیش‌بینی کرده است.",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "c338992fe8529a04002c82c75ad22e16ccbfe7cb9103159ddf3b8094117a6073",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

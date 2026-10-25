@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t9",
+ "app_key": "a-c502b609c9ed986a6ec0",
  "kind": "article",
  "title": "بازار داغ فروش لنت دست دوم خودرو",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/Y6mzMsk4Fxln/9FYJYPbQ3kmeFGNWzgwvGKX-W2hP2SUzIUC9KeAB7Smf-DyI4RjwKqN-gsPCeJIdEY76TJHAPaYOwyWnvj8hc7cP58436NtEVJ7sosypIxwLyQHI_E4B-06PKGB43N2kvVinsky4ZeDuItovNEjNs3uGKVfOysUKTms9rSAdxZzVHfaVmpFDJ7PDQc13dY_V/%D8%AA%D8%AE%D9%84%D9%81%D8%A7%D8%AA+%D8%B1%D8%A7%D9%87%D9%86%D9%85%D8%A7%DB%8C%DB%8C+%D9%88+%D8%B1%D8%A7%D9%86%D9%86%D8%AF%DA%AF%DB%8C-%D9%85%D9%88%D8%AA%D9%88%D8%B1%D8%B3%D9%88%D8%A7%D8%B1%D8%A7%D9%86-%D8%AA%D9%87%D8%B1%D8%A7%D9%86.jpg\"> <div>چند ثانیه: انتشار آگهی فروش لنت ترمز استوک با قیمت حدود ۵۰۰ هزار تومان تصویری از فشار هزینه‌های نگهداری خودرو بر رانندگان ارائه می‌دهد.</div>",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "7add829d0eb03a1d1d0d31abfc464bf8a26a69b3a31b371ac8c33552a5a228bc",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

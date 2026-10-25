@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t16",
+ "app_key": "a-8ad121769175f5687bfb",
  "kind": "article",
  "title": "صادق: پرداخت تسهیلات ۲۰۰ میلیون تومانی مسکن نباید به تأخیر بیفتد",
  "summary": "وزیر راه و شهرسازی با تأکید بر ضرورت تسریع در روند پرداخت تسهیلات مسکن گفت: روند فعلی ثبت‌نام و پرداخت تسهیلات با سرعت مورد انتظار فاصله دارد و لازم است موانع موجود برطرف شود.",
@@ -40,5 +41,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "415122f3baabaf0dbda1e3498fc8922e39bd31ee8e0f5c20a2655c187c53289f",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p1-t4",
+ "app_key": "a-fd587cbd6ea92b5cb6e4",
  "kind": "article",
  "title": "بازار سرمایه زیر فشار نااطمینانی و موانع تأمین مالی",
  "summary": "بازار سرمایه هم‌زمان زیر فشار نااطمینانی‌های سیاسی، نوسانات پیش‌رو و محدودیت‌های تأمین مالی قرار دارد؛ این چالش‌ها امروز در نشست هم‌افزایی مدیران شرکت‌های تأمین سرمایه، با تأکید بر ضرورت اصلاح مقررات، تقویت رقابت و افزایش سهم بورس در تأمین مالی تولید مورد بررسی قرار گرفت.",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "f4b4592ff140573f8a06255f7cb2edc5fa09a6172d2a1aa8f9d669e56cdad9f0",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

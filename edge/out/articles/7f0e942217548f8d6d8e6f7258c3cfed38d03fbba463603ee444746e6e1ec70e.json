@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399649/هشدار-مقام-ارشد-نیروهای-مسلح-ایران-نسبت-به-آغاز-جنگ-جدید",
+ "app_key": "a-7f0e942217548f8d6d8e",
  "kind": "article",
  "title": "هشدار مقام ارشد نیروهای مسلح ایران نسبت به آغاز جنگ جدید",
  "summary": "رئیس ستادکل نیروهای مسلح و فرمانده قرارگاه مرکزی خاتم‌الانبیا در پیامی نسبت به آغاز جنگ جدید علیه ایران هشدار داد.",
@@ -30,5 +31,8 @@
  "extracted_at": "2026-10-22T02:08:35.377919+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "383cc8a48a31ac0387c0ac29c3f9af3e6a4d18cc6329c0acfb0141305cacfccc",
+ "updated_at_epoch": 1792622315377,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

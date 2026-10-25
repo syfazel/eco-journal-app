@@ -1,5 +1,6 @@
 {
  "id": "be4f7439d7384deea3276a70b210553d",
+ "app_key": "a-1234e7b17018153f49af",
  "kind": "article",
  "title": "حمله پهپادی به عربستان ؛ انفجارهای شدید در ریاض",
  "summary": "منابع عربی از شلیک چندین فروند پهپاد یمنی به سمت اهدافی در جنوب عربستان خبر دادند و ارتش سعودی نیز همچون اطلاعیه‌های تکراری گذشته مدعی رهگیری و انهدام این پهپادها شد.",
@@ -35,5 +36,8 @@
  "extracted_at": "2026-10-23T03:30:11.849793+00:00",
  "channel_message_id": null,
  "publish_status": "posted",
+ "status": "posted",
+ "content_hash": "2dfd3b2d033d00c033214c12d21b55cc4b0de0f6eb9eb9c7a3bc9203ec682efc",
+ "updated_at_epoch": 1792726211849,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

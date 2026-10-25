@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t27",
+ "app_key": "a-ada0198ec4d6c4972b5d",
  "kind": "article",
  "title": "قیمت طلای ۱۸ عیار، سکه و دلار امروز یکشنبه ۲۶ مهر | شیب کاهش نرخ دلار کم شد",
  "summary": "معاملات امروز در بازار طلا و ارز با تردید همراه بود. در بیشتر زمان بازار تغییرات قیمت‌ها کمتر از یک درصد بود و تا زمان مشخص شدن مسیر تهدید و مذاکره این درجا زدن ادامه دارد.",
@@ -28,5 +29,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "198f65807a83698f1a6cea30117633c26327618ffec3a1e44535c1871f93da85",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

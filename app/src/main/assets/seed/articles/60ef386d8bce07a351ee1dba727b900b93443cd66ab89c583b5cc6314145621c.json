@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t21",
+ "app_key": "a-60ef386d8bce07a351ee",
  "kind": "article",
  "title": "تشریح برنامه جدید شهرداری تهران برای مسکن پایتخت",
  "summary": "<p>شهردار تهران ابرنامه این نهاد برای ساماندهی بازار مسکن خبر داد.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d8%aa%d8%b4%d8%b1%db%8c%d8%ad-%d8%a8%d8%b1%d9%86%d8%a7%d9%85%d9%87-%d8%ac%d8%af%db%8c%d8%af-%d8%b4%d9%87%d8%b1%d8%af%d8%a7%d8%b1%db%8c-%d8%aa%d9%87%d8%b1%d8%a7%d9%86-%d8%a8%d8%b1%d8%a7%db%8c-%d9%85\">تشریح برنامه جدید شهرداری تهران برای مسکن پایتخت</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -40,5 +41,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "f1f42e19f862914d3c209b03a9735b6e5b0ac396a9786bba30eff32d5581e39a",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

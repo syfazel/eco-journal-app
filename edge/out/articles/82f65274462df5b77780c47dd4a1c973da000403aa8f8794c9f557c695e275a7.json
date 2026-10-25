@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t13",
+ "app_key": "a-82f65274462df5b77780",
  "kind": "article",
  "title": "خبر مهم درباره افزایش سقف وام مسکن خودمالکی",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/j1Hu50syNFGQ/zyKSePzUAGv7UD-9QIxe-xOzHKHo2MVifCWRcJYRNKZQFZLR7jb3sy04ALYODwMj3Zr0xl1mUiwW6PyxWwL1jPehR9ZCFQmgRJcvA3AuRy0gqV7LfC4R_1mwILePo0LsbMEEnbPoP2uh9TjdP2tJgAhlox_MF4EisxJbJkM_UL2F_6iSnAPEQaQwzPT1xo5H/%D9%85%D8%B3%DA%A9%D9%86.jpg\"> <div>مدیرکل دفتر پایش طرح‌های مسکن حمایتی وزارت راه و شهرسازی گفت: در حال حاضر، سقف تسهیلات مورد نظر حدود ۴۰۰ میلیون است، که برنامه‌ریزی برای افزایش آن به ۸۵۰ میلیون در حال بررسی و رایزنی است.\n\n</div>",
@@ -31,5 +32,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "1cc49d7aa4f79f9e372c504de513c12a46c9dbb763b3fbb8eabb8346bd9c9074",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

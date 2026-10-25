@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t8",
+ "app_key": "a-68cf4ea3582c1968099c",
  "kind": "article",
  "title": "خبر مهم برای مستاجران / این خانواده‌ها در اولویت مسکن حمایتی هستند",
  "summary": "مدیرعامل سازمان ملی زمین و مسکن از تأمین زمین برای ۱۶۳ هزار و ۶۵۲ خانوار دارای سه و چهار فرزند زیر ۲۰ سال خبر داد.",
@@ -29,5 +30,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "9fcc370f76a04bbc7659c7beecd0a6a84531cd5dc737966025a0b3c1e808333d",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

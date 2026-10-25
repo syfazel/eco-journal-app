@@ -1,5 +1,6 @@
 {
  "id": "7a67373bd1a44947af4e09889389903b",
+ "app_key": "a-1fc172852d244feab7eb",
  "kind": "article",
  "title": "ادعای ترامپ درباره جنگ با ایران؛ ما می توانیم عقب نشینی کنیم اما...",
  "summary": "دونالد ترامپ  در اظهاراتی درباره جنگ با ایران، بار دیگر تلاش کرد جنگ‌افروزی بی نتیجه خود را توجیه کند و با تکرار گزافه‌گویی‌های همیشگی، گفت: واشنگتن اکنون تضمین می‌کند که ایران به سلاح هسته‌ای دست پیدا نکند.",
@@ -29,5 +30,8 @@
  "extracted_at": "2026-10-22T03:30:04.337556+00:00",
  "channel_message_id": null,
  "publish_status": "posted",
+ "status": "posted",
+ "content_hash": "2ea013e0690d3dd7cd84941a5f759f68f866ec2a2435578c5d2f6f356af25c8f",
+ "updated_at_epoch": 1792639804337,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

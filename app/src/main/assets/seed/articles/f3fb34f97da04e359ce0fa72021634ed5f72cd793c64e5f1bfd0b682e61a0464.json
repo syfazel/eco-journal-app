@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.aljazeera.com/?t=1792530243",
+ "app_key": "a-f3fb34f97da04e359ce0",
  "kind": "article",
  "title": "پیروزی ۴-۲ پاری‌سن‌ژرمن برابر بارسلونا در لیگ قهرمانان اروپا",
  "summary": "Late strikes by Vitinha and Fabian Ruiz grab victory for PSG as they aim to win the UCL for third season running.",
@@ -39,5 +40,8 @@
  "extracted_at": "2026-10-22T02:08:32.717370+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "dba56b7a5509f2cbac4f65d4fe506b5bbbb7f2b1006d4511348a73d443d3124d",
+ "updated_at_epoch": 1792622312717,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

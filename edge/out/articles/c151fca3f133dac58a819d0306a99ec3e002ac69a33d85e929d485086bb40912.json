@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t34",
+ "app_key": "a-c151fca3f133dac58a81",
  "kind": "article",
  "title": "کاشفی: تعطیلی‌ها و اختلال‌های اجباری ۳۴ میلیارد دلار به اقتصاد ایران خسارت زد",
  "summary": "عضو هیئت‌رئیسه اتاق ایران با اعلام برآورد ۳۴ میلیارد دلاری خسارت تعطیلی‌ها و اختلال‌های اجباری در سال ۱۴۰۴، نسبت به افزایش این آسیب‌ها هشدار داد.",
@@ -49,5 +50,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "2669b69ab0889fcced9dbf26f455b2a997549e02236fa3e7ddefcce4645c1cc9",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

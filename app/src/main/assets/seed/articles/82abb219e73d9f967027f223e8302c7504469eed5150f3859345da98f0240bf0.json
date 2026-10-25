@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D9%87%D8%B1%D9%85%D8%B2%DA%AF%D8%A7%D9%86-155/4303035-%D8%B1%D9%88%DB%8C%DA%A9%D8%B1%D8%AF-%D8%AC%D8%AF%DB%8C%D8%AF-%D9%87%D8%B1%D9%85%D8%B2%DA%AF%D8%A7%D9%86-%D8%AF%D8%B1-%D8%AA%DA%A9%D9%85%DB%8C%D9%84-%D9%85%D8%B3%DA%A9%D9%86-%D9%85%D9%84%DB%8C",
+ "app_key": "a-82abb219e73d9f967027",
  "kind": "article",
  "title": "رویکرد جدید هرمزگان در تکمیل مسکن ملی",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/4FTHOulex83A/XoGH4NcusO1EI3cp45btVR6xvm3wDGRVv2qryt1nw9HlQ4n4Kd92s-pw_vNUE34e0enpz1sboQu7nMq0i4bFEucwYF0jtMaI4jyGt3_nfqKXPM_TaiX5QoRFWSZV5f6T6nbGV25m8bZgo-8f7pCzVFMWVrdiC6DSS8Z3K813AuauRyRajp4q68huCqLV-1iH/%D8%B9%DA%A9%D8%B3+%D8%B3%D8%A7%D8%AE%D8%AA+%D9%85%D8%B3%DA%A9%D9%86+%282%29.jpg\"> <div>استاندار هرمزگان از تصمیم‌گیری برای تعدیل قیمت ۸۹۶ واحد باقی‌مانده از یک پروژه نهضت ملی مسکن خبر داد و گفت: تعیین قیمت متعادل این واحدها با هدف کاهش فشار مالی بر متقاضیان و تسریع در تکمیل و تحویل آن‌ها در دستور کار قرار گرفته است.</div>",
@@ -27,5 +28,8 @@
  "extracted_at": "2026-10-20T11:27:09.696980+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "6cc4b0f4fb5e9403b8a5b5f3d726996d914afb5738b49ef872b4ec0a79b90f51",
+ "updated_at_epoch": 1792483029696,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

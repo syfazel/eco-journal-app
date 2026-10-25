@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.sedayebourse.ir/news/558130/%D8%B5%D9%86%D8%AF%D9%88%D9%82-%D8%A8%D8%A7-%D8%AF%D8%B1%D8%A2%D9%85%D8%AF-%D8%AB%D8%A7%D8%A8%D8%AA-%D8%A7%D8%B1%D8%B2%DB%8C-%D9%BE%D8%B3-%D8%A7%D8%B2-%DB%B1%DB%B0-%D8%B3%D8%A7%D9%84-%D9%BE%DB%8C%DA%AF%DB%8C%D8%B1%DB%8C-%D8%B1%D8%A7%D9%87-%D8%A7%D9%86%D8%AF%D8%A7%D8%B2%DB%8C-%D8%B4%D8%AF",
+ "app_key": "a-d06edf071e45b492f2f1",
  "kind": "article",
  "title": "صندوق با درآمد ثابت ارزی پس از ۱۰ سال پیگیری راه اندازی شد",
  "summary": "️ عیوضلو، مشاور رئیس سازمان بورس؛ صندوق با درآمد ثابت ارزی پس از پیگیری‌های متعدد از دهه ۹۰، سرانجام در بازار سرمایه راه‌اندازی شد.",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-22T02:07:26.640306+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "6b53a62a418bdad78ea8ae18bb6c5c64c4f43674941a7e9ae816786f0d139586",
+ "updated_at_epoch": 1792622246640,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

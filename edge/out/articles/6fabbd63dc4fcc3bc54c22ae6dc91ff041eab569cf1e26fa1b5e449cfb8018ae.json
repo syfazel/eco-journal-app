@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.eghtesadonline.com/fa/news/2170117/تشکیل-پرونده-برای-برخی-مسئولان-دولتی-ورود-قوه-قضاییه-به-ماجرای-کارت-های-بازرگانی",
+ "app_key": "a-6fabbd63dc4fcc3bc54c",
  "kind": "article",
  "title": "تشکیل پرونده برای برخی مسئولان دولتی / ورود قوه قضاییه به ماجرای کارت‌‌های بازرگانی",
  "summary": "سخنگوی قوه قضاییه اعلام کرد درباره کارت‌های بازرگانی برای برخی مسئولان دولتی از جمله معاون وزیر صمت پرونده تشکیل شده است و نتیجه نهایی در اینباره اطلاع رسانی خواهد شد.",
@@ -20,5 +21,8 @@
  "extracted_at": "2026-10-20T11:27:15.027565+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "88becbe1811f7c789ea186c49cbb9e4df680c19ea091fae45ef5fa82ede164d5",
+ "updated_at_epoch": 1792483035027,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

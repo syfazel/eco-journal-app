@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.mehrnews.com/news/6983637/%D8%B1%D8%B4%D8%AF-%D8%A8%DB%8C%D8%B4-%D8%A7%D8%B2-%DB%B8%DB%B8-%D9%87%D8%B2%D8%A7%D8%B1-%D9%88%D8%A7%D8%AD%D8%AF%DB%8C-%D8%B4%D8%A7%D8%AE%D8%B5-%DA%A9%D9%84-%DB%B1-%DB%B7-%D9%87%D9%85%D8%AA-%D9%BE%D9%88%D9%84-%D8%AD%D9%82%DB%8C%D9%82%DB%8C-%D8%A8%D9%87-%D8%B3%D9%87%D8%A7%D9%85-%D9%88%D8%A7%D8%B1%D8%AF",
+ "app_key": "a-24625e4bde6ee8d9e884",
  "kind": "article",
  "title": "رشد بیش از ۸۸ هزار واحدی شاخص کل؛ ۱.۷ همت پول حقیقی به سهام وارد شد",
  "summary": "شاخص کل بورس تهران در معاملات صبح سه‌شنبه ۲۸ مهر با رشد ۱.۰۷ درصدی به بیش از ۸ میلیون و ۳۴۱ هزار واحد رسید.",
@@ -28,5 +29,8 @@
  "extracted_at": "2026-10-20T11:27:17.915161+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "ca72ffc924e3a10a3412a4ad70e0fa315081d4f7a836b349c9633bbe033bfcd5",
+ "updated_at_epoch": 1792483037915,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

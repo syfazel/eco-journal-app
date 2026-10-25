@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p0-t3",
+ "app_key": "a-a6a9c975a5ef2c85b1e1",
  "kind": "article",
  "title": "من ۲۰ سال است که سناریوهای بمباران ایران را بررسی می‌کنم؛ بزرگ‌ترین نگرانی‌ام این بود...",
  "summary": "استاد علوم سیاسی دانشگاه شیکاگو گفت: بدترین کابوس من برگزاری انتخابات پرتنش در آمریکا در میانه جنگی پرهزینه و نامحبوب با ایران بود.",
@@ -22,5 +23,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "55c149b4a7e0bc36fe6c4779c4aa7fe592a26d57af856cf3e3dfe99dfc1df36a",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

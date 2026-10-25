@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.irib-news.ir/fa/news/5943960/کشف-4-هزار-و-200-لیتر-گازوئیل-قاچاق-در-بندرماهشهر",
+ "app_key": "a-50513adf1de648b5b101",
  "kind": "article",
  "title": "کشف ۴ هزار و ۲۰۰ لیتر گازوئیل قاچاق در بندرماهشهر",
  "summary": "فرمانده انتظامی بندر ماهشهر استان خوزستان از کشف ۴۲۰۰ لیتر سوخت قاچاق از نوع گازوئیل در این شهرستان خبر داد.",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-20T15:00:38.884445+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "3f028c0fe7744411e45797c1c0270e2f531ea0331223848791c013b1e37e41de",
+ "updated_at_epoch": 1792495838884,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.irib-news.ir/fa/news/5944172/افتتاح-چمن-مصنوعی-مدرسه-روستای-قزلقوپی-مهاباد-همزمان-با-هفته-تربیت-بدنی",
+ "app_key": "a-8f56190f08ed4814acad",
  "kind": "article",
  "title": "افتتاح چمن مصنوعی مدرسه روستای قزلقوپی مهاباد همزمان با هفته تربیت‌بدنی",
  "summary": "همزمان با گرامیداشت هفته تربیت‌بدنی، زمین چمن مصنوعی مدرسه روستای قزلقوپی مهاباد با هزینه‌کرد بیش از ۲ میلیارد تومان به بهره‌برداری رسید تا گامی دیگر برای توسعه زیرساخت‌های ورزشی و نشاط دانش‌آموزان روستایی برداشته شود.",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-20T18:30:32.599503+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "167ac8b8d176e9c57dbdb440c49df18c58fc44ef8f97f1a32b2fd7aee42f2982",
+ "updated_at_epoch": 1792508432599,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

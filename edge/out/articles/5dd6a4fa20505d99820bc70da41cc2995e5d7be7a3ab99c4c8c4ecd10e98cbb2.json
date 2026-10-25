@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p3-t1",
+ "app_key": "a-5dd6a4fa20505d99820b",
  "kind": "article",
  "title": "بورسی شدن شرکت‌های بنیاد مستضعفان ادامه دارد/ مردم را در دارایی‌های ارزشمند شریک می‌کنیم",
  "summary": "<img src=\"https://cdn.ilna.ir/thumbnail/Pszb4n6dC7Id/hT1wgU6r4Dn-G-__F98Jdhe68mFja-ogOnfmul807bSo8Th2l_1RVBvXRHY329rQ7aMuOgz68Xm-iEuAJua9XEa-GSM37fhiwl7LDnmSP2k2vmqcssj9ue2RvIiLk4w_IaYqeH3kAM3JwiIs8eTu50wAdVSwSPzFhFuqDHKj_jDfQrzelfRDBOgQRCEpvYdy/%D8%A8%D9%88%D8%B1%D8%B3.jpg\"> <div>معاون بنیاد مستضعفان با بیان اینکه بورسی شدن شرکت‌های زیر مجموعه بنیاد مستضعفان ادامه دارد، گفت: مردم را در دارایی‌های ارزشمند بنیاد مستضعفان شریک می‌کنیم.</div>",
@@ -27,5 +28,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "821fbd302f969f3f7a77b4ed8838ba7e7665b493935a9508d3a15fb0bd7abae7",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

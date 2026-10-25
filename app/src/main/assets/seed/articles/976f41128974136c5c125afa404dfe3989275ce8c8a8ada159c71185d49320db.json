@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p0-t2",
+ "app_key": "a-976f41128974136c5c12",
  "kind": "article",
  "title": "استراتژی جدید ایران برای حمله؛ قدرت مرگبار «یک تیر، یک هدف»",
  "summary": "رئیس ستاد کل نیروهای مسلح و فرمانده قرارگاه مرکزی خاتم‌الانبیا (ص) در سخنانی تعیین‌کننده، از آغاز فاز بازنگری اساسی در ساختار و شیوه‌های آمادگی دفاعی نیروهای مسلح متناسب با ماهیت جنگ‌های ترکیبی و فناورانه آینده خبر داد.",
@@ -38,5 +39,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "6cd4ddd49a2985cef9b1c3d5797346039fe56083871de4adc5c332aea8d9c432",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

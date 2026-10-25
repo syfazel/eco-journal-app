@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t10",
+ "app_key": "a-83d66c0ce557d08da70b",
  "kind": "article",
  "title": "ثبت درخواست تعیین تکلیف بیش از ۱.۷ میلیون حساب در سامانه حسام",
  "summary": "با مراجعه بیش از ۹۶ هزار متقاضی به سامانه حسام بانک مرکزی، درخواست بستن و تعیین تکلیف یک میلیون و ۷۰۶ هزار حساب سپرده ثبت شد.",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "7f2118a639e735ff5201c1165b01af9a22d2ceb3b166ce6b47015c73ddde756d",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

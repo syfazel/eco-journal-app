@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t15",
+ "app_key": "a-5aa192a0308099959afe",
  "kind": "article",
  "title": "جریمه‌های میلیاردی در بازار؛ پایتخت رکورددار تخلفات صنفی شد",
  "summary": "در نیمه نخست سال ۱۴۰۵، بیش از ۴۶۳ هزار نوبت بازرسی از واحدهای صنفی انجام شده که ماحصل آن، تشکیل حدود ۹۹ هزار پرونده تخلف با ارزش ریالی فراتر از ۲۶ هزار میلیارد ریال بوده است.",
@@ -30,5 +31,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "6aa9598440f76f27c74c465a507eb81c88b9d541787bff816129bd8e5eeb8390",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

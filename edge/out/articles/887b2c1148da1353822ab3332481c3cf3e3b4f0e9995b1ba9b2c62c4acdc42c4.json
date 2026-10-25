@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.hamshahrionline.ir/news/1078300/%D8%A8%D8%B2%D8%B1%DA%AF%D8%AA%D8%B1%DB%8C%D9%86-%D8%A2%D8%B2%D8%A7%D8%AF%D8%B3%D8%A7%D8%B2%DB%8C-%D8%B0%D8%AE%D8%A7%DB%8C%D8%B1-%D9%86%D9%81%D8%AA-%D8%AF%D8%B1-%D8%AA%D8%A7%D8%B1%DB%8C%D8%AE-%D8%A8%D9%87-%D8%AC%D8%B1%DB%8C%D8%A7%D9%86-%D8%A7%D9%81%D8%AA%D8%A7%D8%AF",
+ "app_key": "a-887b2c1148da1353822a",
  "kind": "article",
  "title": "بزرگترین آزادسازی ذخایر نفت در تاریخ به جریان افتاد",
  "summary": "آژانس بین‌المللی انرژی از عرضه فوری بیش از ۲۰ میلیون بشکه گازوئیل خبر داد؛ تاکنون حدود ۳۳۰ میلیون بشکه نفت از ذخایر اضطراری کشورهای عضو روانه بازار شده است.",
@@ -26,5 +27,8 @@
  "extracted_at": "2026-10-19T22:39:46.756611+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "f71d999e64fc6ecdcae77b103a7e8f1cb8b53adb9c3e8220cc9ffeda3c55e48c",
+ "updated_at_epoch": 1792436986756,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

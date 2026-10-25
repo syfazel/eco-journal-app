@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4303060-%D8%A8%D9%87%D8%B1%D9%87-%DA%AF%DB%8C%D8%B1%DB%8C-%D8%A7%D8%B2-%D8%B8%D8%B1%D9%81%DB%8C%D8%AA-%D8%AF%D8%A7%D8%B1%D8%A7%DB%8C%DB%8C-%D9%87%D8%A7%DB%8C-%D8%AF%DB%8C%D8%AC%DB%8C%D8%AA%D8%A7%D9%84-%D8%A8%D8%B1%D8%A7%DB%8C-%DA%A9%D8%A7%D9%87%D8%B4-%D8%A2%D8%AB%D8%A7%D8%B1-%D8%AA%D8%AD%D8%B1%DB%8C%D9%85-%D9%87%D8%A7",
+ "app_key": "a-4c98c04c37b5db1b109f",
  "kind": "article",
  "title": "بهره‌گیری از ظرفیت‌ دارایی‌های دیجیتال برای کاهش آثار تحریم‌ها",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/ZkJyZDrRhJsE/GHWjn9GGz3_odq0kA7fYVYrIsRr-cbNMx_te-YMGeMo7JXAz9LvWE79XfKazcD6Iv2m3Ciw0A12e2tyFXAjbG06y9DFlKaJhG0rny5GZxr4pDXVH49DcXcm5lDOQTeeHDk_RReJd0GwfM74-z9Fz4S3YrsOounmICBFypwH9SzPy-VwfkCGsreCGgWKmOBL4/%D8%AD%D9%85%DB%8C%D8%AF+%D9%82%D9%86%D8%A8%D8%B1%DB%8C.jpg\"> <div>معاون وزیر امور خارجه گفت: بهره‌گیری از ظرفیت‌ دارایی‌های دیجیتال برای کاهش آثار تحریم‌ها در دستور کار اس.</div>",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-20T14:04:43.649639+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "601a86dbfcf444d4ef49ea93b4bbff3840eee1561c252f6297b943d60f50bac6",
+ "updated_at_epoch": 1792492483649,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

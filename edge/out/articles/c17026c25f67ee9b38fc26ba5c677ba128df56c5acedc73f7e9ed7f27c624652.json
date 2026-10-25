@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t39",
+ "app_key": "a-c17026c25f67ee9b38fc",
  "kind": "article",
  "title": "قیمت جدید انواع ماشین لباسشویی دوقلو در بازار ۲۶ مهر ۱۴۰۵ / ماشین لباسشویی ارزان و باکیفیت را چند بخریم؟ + جدول",
  "summary": "هم‌زمان با جهش قیمت مدل‌های تمام‌اتوماتیک در بازار لوازم خانگی، ماشین‌های لباسشویی دوقلو و نیمه‌اتوماتیک به پرطرفدارترین گزینه‌های اقتصادی خریداران تبدیل شده‌اند.",
@@ -28,5 +29,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "4dfbbb248739ea6afcfb5de372a0ca778785c98343cfd60f78845e4418c37224",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

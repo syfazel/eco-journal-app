@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t29",
+ "app_key": "a-349dd9a0d4ac3cce0662",
  "kind": "article",
  "title": "پیش‌بینی جدید از قیمت طلا؛ احتمال ثبت رکورد تاریخی تا دو سال آینده",
  "summary": "شماری از سرمایه‌گذاران و مدیران صندوق‌های سرمایه‌گذاری پیش‌بینی می‌کنند قیمت جهانی طلا طی یک تا دو سال آینده رکوردهای جدیدی ثبت کند.",
@@ -36,5 +37,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "378744fc0000744b11e649e217808da8f015b5deb0e20e6f257ede81a57c8e38",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4303191-%D9%BE%D8%B2%D8%B4%DA%A9%DB%8C%D8%A7%D9%86-%D8%AA%D9%85%D8%A7%D9%85-%D9%85%D8%B4%DA%A9%D9%84%D8%A7%D8%AA-%D9%85%D9%86%D8%B7%D9%82%D9%87-%D9%86%D8%A7%D8%B4%DB%8C-%D8%A7%D8%B2-%D8%AE%D9%88%DB%8C-%D8%AC%D9%86%DA%AF-%D8%B7%D9%84%D8%A8%DB%8C-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7%D8%B3%D8%AA-%D8%A8%D8%B1%D8%A7%DB%8C-%D9%87%D8%B1%DA%AF%D9%88%D9%86%D9%87-%D9%85%D8%B0%D8%A7%DA%A9%D8%B1%D9%87-%D8%A7%D8%A8%D8%AA%D8%AF%D8%A7-%D8%A8%D8%A7%DB%8C%D8%AF-%D9%81%D8%B4%D8%A7%D8%B1%D9%87%D8%A7-%D8%AA%D9%87%D8%AF%DB%8C%D8%AF%D9%87%D8%A7-%D8%AA%D8%AD%D8%B1%DB%8C%D9%85-%D9%87%D8%A7-%D8%B1%D8%A7-%D8%A8%D8%B1%D8%AF%D8%A7%D8%B1%D9%86%D8%AF",
+ "app_key": "a-840b19706466a66b2a5b",
  "kind": "article",
  "title": "پزشکیان: تمام مشکلات منطقه ناشی از خوی جنگ طلبی آمریکاست/ برای هرگونه مذاکره ابتدا باید فشارها، تهدیدها تحریم‌ها را بردارند",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/ZDsjUBI4ejan/ffGAMrfzk5A0rawuw9bDzfHcOI45sIhVp-aHa1FHj4RNgrk3eDVY6oR86Q7NEDQke9GJR54mvoc0MVXm-XB2aGGJBWu0V0xB_TzqYBX7C2oWyS6Mwf3ZfJya9JfZ5RN5KiZ_4m7yGNZpY-7vbMGZJwNQnud0_rUJqbsMSHk912mbGNdiRn_UJMrhSz7rXdlP/Mur37yW8rek5.jpg\"> <div>رئیس جمهور با قدردانی از تلاش‌های پاکستان برای کاهش تنش‌ها و حل و فصل مسائل از مسیر دیپلماتیک با مرور بدعهدی آمریکا در حمله به کشورمان در میانه مذاکرات تأکید کرد که تمام مشکلات منطقه از خوی جنگ طلبی آمریکا نشأت می‌گیرد.</div>",
@@ -33,5 +34,8 @@
  "extracted_at": "2026-10-21T00:07:52.341031+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "0167466d9f1362ae7d9c50b706bf122de7c917baf93f6cfc10b875a374a587d6",
+ "updated_at_epoch": 1792528672341,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

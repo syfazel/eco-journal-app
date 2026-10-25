@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p0-t5",
+ "app_key": "a-695eabb801926711b1d3",
  "kind": "article",
  "title": "هشدار قاطع سپاه به کشتی‌های عبوری از تنگه هرمز / ماجرای سانحه یک کشتی در مسیر غیرمجاز",
  "summary": "دریایی سپاه علت سانحه یک کشتی در تنگه هرمز را تشریح کرد و درباره برخورد قاطع با شناورهایی که سامانه‌های ناوبری خود را خاموش کنند، هشدار داد.",
@@ -22,5 +23,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "070ec9234585c0c9bb35230b32ed2aea36a83bba4f04e02f113aa20626b81be8",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

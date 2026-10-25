@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t40",
+ "app_key": "a-43c1ff17612ab4a77bcd",
  "kind": "article",
  "title": "وام ۱.۲ میلیاردی برای نوسازی تاکسی‌های فرسوده پایتخت",
  "summary": "<p>رئیس هیات عامل ایدرو از پرداخت تسهیلات ۱۵ میلیارد تومانی برای جایگزینی اتوبوس‌های فرسوده، اعطای وام یک میلیارد و ۲۰۰ میلیون تومانی برای تاکسی‌های برقی تهران و تدارک تسهیلات کم‌بهره تا سقف ۵۰۰ میلیون تومان برای موتورسیکلت‌های شاغل در پلتفرم‌ها خبر داد.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d9%88%d8%a7%d9%85-%db%b1-%db%b2-%d9%85%db%8c%d9%84%db%8c%d8%a7%d8%b1%d8%af%db%8c-%d8%a8%d8%b1%d8%a7%db%8c-%d9%86%d9%88%d8%b3%d8%a7%d8%b2%db%8c-%d8%aa%d8%a7%da%a9%d8%b3%db%8c%d9%87%d8%a7\">وام ۱.۲ میلیاردی برای نوسازی تاکسی‌های فرسوده پایتخت</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -42,5 +43,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "9d4edd22fa91b16930445c8c3d67333c2e46a41535d4c471f93dc50bef5e8be3",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

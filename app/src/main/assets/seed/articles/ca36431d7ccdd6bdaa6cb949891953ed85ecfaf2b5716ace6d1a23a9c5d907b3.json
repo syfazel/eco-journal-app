@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t14",
+ "app_key": "a-ca36431d7ccdd6bdaa6c",
  "kind": "article",
  "title": "راز انباشت کم سابقه طلا در خزانه‌ طلای چین",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/OOs5bNjTYBgm/CRfJ4eZwAApzH0Kl_-_kYIZ87-HpgG8ekZ5aeY0hBwI3agnz9ZkQLSCiF1UlZp3q6peAzQ9DDgp6aSwjgj6_iF90Fw7aMYfj4KlmImea3Rl-K_CDsY_wd3al0alKeUUydRdNM91hD3w1zYQslWQ2yMyV7WiArbftush7XTR7K5vN68jEib3GiFy0_4JKWjxy/IMG_7751.jpg\"> <div>دنیای اقتصاد: خرید ادامه دار و کم‌سابقه طلا از سوی چین طی ماه‌های اخیر، بیش از آنکه واکنشی مقطعی به نوسانات بازار جهانی باشد، نشانه‌ای از تلاشی بلندمدت برای کاهش ریسک ذخایر عظیم این کشور به شمار می‌رود. </div>",
@@ -44,5 +45,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "a9605b5f8202b67e15c26ce2fd9c349f6495b4dd3faf6a9e8de8d908e047145f",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

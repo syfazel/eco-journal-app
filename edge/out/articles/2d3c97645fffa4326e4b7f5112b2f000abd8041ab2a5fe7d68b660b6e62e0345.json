@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399740/طلای-بازی-های-پاراآسیایی-بر-گردن-علیرضا-بخت",
+ "app_key": "a-2d3c97645fffa4326e4b",
  "kind": "article",
  "title": "طلای بازی‌های پاراآسیایی بر گردن علیرضا بخت",
  "summary": "علیرضا بخت با برتری ۲ بر صفر مقابل حریفی از کره‌‌جنوبی به مدال طلای وزن ۸۰- کیلوگرم رسید.",
@@ -20,5 +21,8 @@
  "extracted_at": "2026-10-22T02:07:33.335295+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "63ec360f0e3b4475262de6c52722fff7221d6cfa495df4f43046f3c746c71ffe",
+ "updated_at_epoch": 1792622253335,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

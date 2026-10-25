@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t17",
+ "app_key": "a-13608db6d88e988f2aca",
  "kind": "article",
  "title": "جلسه حراج شمش طلا ۲۸ مهر برگزار می شود",
  "summary": "<p>مرکز مبادله ارز و طلای ایران اعلام کرد: روز سه شنبه ۲۸ مهرماه یکصد و پنجاه و هشتمین حراج شمش طلا برای تامین طلای مورد نیاز فعالان صنف طلا برگزار می شود.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d8%ac%d9%84%d8%b3%d9%87-%d8%ad%d8%b1%d8%a7%d8%ac-%d8%b4%d9%85%d8%b4-%d8%b7%d9%84%d8%a7-%db%b2%db%b8-%d9%85%d9%87%d8%b1-%d8%a8%d8%b1%da%af%d8%b2%d8%a7%d8%b1-%d9%85%db%8c-%d8%b4%d9%88%d8%af\">جلسه حراج شمش طلا ۲۸ مهر برگزار می شود</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "946c563b78e722c2fb840858abf1ce49b116df891450f53ebe537f1c5dd77220",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

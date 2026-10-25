@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t7",
+ "app_key": "a-b27e8ac048ef053f7425",
  "kind": "article",
  "title": "رسیدگی ممیزمحور به اظهارنامه‌های مالیاتی اشخاص حقیقی به نیم درصد کاهش یافت",
  "summary": "<p>رییس‌کل سازمان امور مالیاتی کشور گفت: با هوشمندسازی فرآیندها، سهم رسیدگی‌های ممیزمحور به اظهارنامه‌های اشخاص حقیقی از حدود ۲۳ درصد در سال ۱۴۰۰ به حدود نیم درصد کاهش یافته است.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d8%b1%d8%b3%db%8c%d8%af%da%af%db%8c-%d9%85%d9%85%db%8c%d8%b2%d9%85%d8%ad%d9%88%d8%b1-%d8%a8%d9%87-%d8%a7%d8%b8%d9%87%d8%a7%d8%b1%d9%86%d8%a7%d9%85%d9%87%d9%87%d8%a7%db%8c-%d9%85%d8%a7%d9%84\">رسیدگی ممیزمحور به اظهارنامه‌های مالیاتی اشخاص حقیقی به نیم درصد کاهش یافت</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -32,5 +33,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "bd8873e0e944b2935d932110fa38c174e3a4f7642384d68486cfcf8eaad8ac15",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

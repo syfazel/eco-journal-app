@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p1-t2",
+ "app_key": "a-7f645bd45d1583dfb7d8",
  "kind": "article",
  "title": "سبزشدن نمادها هم بورس را نجات نداد",
  "summary": "بورس تهران در معاملات یکشنبه ۲۶ مهر، با وجود کاهش نسبی فشار فروش در جریان معاملات، همچنان در محدوده منفی باقی ماند. تداوم خروج نقدینگی در شرایط بی‌ثباتی سیاسی و افزایش نگرانی‌ها از تشدید تنش‌های منطقه‌ای نشان می‌دهد افت قیمت‌ها هنوز به بازگشت اعتماد سرمایه‌گذاران منجر نشده است.",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "cc22f7f1c124e1be63e2b446854011071074883f7bdd4d01aa680bfb5a09aa18",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

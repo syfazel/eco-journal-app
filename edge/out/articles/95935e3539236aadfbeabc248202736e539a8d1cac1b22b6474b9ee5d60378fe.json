@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.irib-news.ir/fa/news/5944165/تخلیه-گاز-از-خط-لوله-رشت-چلوند-در-آستارا-شهروندان-نگران-صدای-شدید-نباشند",
+ "app_key": "a-95935e3539236aadfbea",
  "kind": "article",
  "title": "تخلیه گاز از خط لوله رشت-چلوند در آستارا/ شهروندان نگران صدای شدید نباشند",
  "summary": "فرماندار آستارا از اجرای عملیات فنی تخلیه خط لوله گاز رشت به چلوند در این شهرستان از ساعت ۱۸ امروز خبر داد و گفت: صدا‌های ناهنجار ناشی از این عملیات ایمن است و شهروندان نگران نباشند.",
@@ -22,5 +23,8 @@
  "extracted_at": "2026-10-20T18:30:36.766795+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "e08ef3ef7429158fcc2642ca27432349501a8da7abafed28e8dbb412881482e4",
+ "updated_at_epoch": 1792508436766,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

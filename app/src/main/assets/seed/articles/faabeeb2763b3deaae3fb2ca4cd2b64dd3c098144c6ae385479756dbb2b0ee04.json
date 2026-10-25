@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4303216-%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF-%D8%AF%D9%88%D9%84%D8%AA%DB%8C-%D8%B4%D9%81%D8%A7%D8%A8%D8%AE%D8%B4-%D9%86%DB%8C%D8%B3%D8%AA-%D8%AC%D9%86%DA%AF-%D8%AB%D8%A7%D8%A8%D8%AA-%DA%A9%D8%B1%D8%AF-%DA%A9%D9%87-%D8%AF%D9%88%D9%84%D8%AA-%D8%A8%D9%87-%D8%AA%D9%86%D9%87%D8%A7%DB%8C%DB%8C-%D9%86%D9%85%DB%8C-%D8%AA%D9%88%D8%A7%D9%86%D8%AF-%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF-%DA%A9%D8%B4%D9%88%D8%B1-%D8%B1%D8%A7-%D8%A8%DA%86%D8%B1%D8%AE%D8%A7%D9%86%D8%AF",
+ "app_key": "a-faabeeb2763b3deaae3f",
  "kind": "article",
  "title": "اقتصاد دولتی شفابخش نیست",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/yQUxX0qNgFuK/fy6PKPOdRxu2GjEBoKtuS-_eWjjoGy6om1gfD34l_iVFrvmhbxcD3I9hDiCl1dAYxLlxot2bjUajOvrnsPAMzmPHmUwk3QBWj6CneN3OXtCT6gSXrsyHqzBoDzRGKOyOoLOpREmey0E9W3NuY_8IBpUzdoykUHR0-HvaYVy7lTB_B8Yl514VWf1Mm9EnlbIV/KrXqRTum93Ko.jpg\"> <div>دبیر انجمن کشتیرانی گفت: خواسته ما این است که دولت بپذیرد اقتصاد دولتی دیگر نسخه شفابخش نیست. این جنگ نامیمون ثابت کرد که دولت به‌تنهایی نمی‌تواند اقتصاد کشور را بچرخاند. </div>",
@@ -27,5 +28,8 @@
  "extracted_at": "2026-10-22T02:08:32.550664+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "6df963025839c95236494a22d0eb0c39255c5f773a4f4627ec3d5979ef7a40fd",
+ "updated_at_epoch": 1792622312550,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p7-t15",
+ "app_key": "a-6f9573f32a037d538b5d",
  "kind": "article",
  "title": "باتری خودروهای برقی دست دوم چگونه برق کارخانه‌ها و مراکز داده را تأمین می‌کنند؟",
  "summary": "<p>شرکت ردوود متریالز با همکاری ریویان قصد دارد باتری‌های دست دوم خودروهای برقی را به سیستم‌های ذخیره‌سازی انرژی تبدیل کند. این فناوری با ترکیب باتری‌های بازیافتی و انرژی خورشیدی می‌تواند به تأمین برق کارخانه‌ها و مراکز داده کمک کند.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d8%a8%d8%a7%d8%aa%d8%b1%db%8c-%d8%ae%d9%88%d8%af%d8%b1%d9%88%d9%87%d8%a7%db%8c-%d8%a8%d8%b1%d9%82%db%8c-%d8%af%d8%b3%d8%aa-%d8%af%d9%88%d9%85-%da%86%da%af%d9%88%d9%86%d9%87-%d8%a8%d8%b1%d9%82-%da%a9\">باتری خودروهای برقی دست دوم چگونه برق کارخانه‌ها و مراکز داده را تأمین می‌کنند؟</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -43,5 +44,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "b0c1e197d01792cd5249591ccea989fffec48065db34d88f1a83adf75bd86949",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

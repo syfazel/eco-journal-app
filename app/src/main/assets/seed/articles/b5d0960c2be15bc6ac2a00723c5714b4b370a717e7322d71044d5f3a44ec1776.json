@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.aljazeera.com/?t=1792517123",
+ "app_key": "a-b5d0960c2be15bc6ac2a",
  "kind": "article",
  "title": "ترامپ بیش از ۴۰۰ میلیون دلار برای انتخابات میان‌دوره‌ای هزینه می‌کند",
  "summary": "The president&#039;s Republican Party seeks to maintain its hold over both chambers of Congress, despite declining polls.",
@@ -42,5 +43,8 @@
  "extracted_at": "2026-10-22T02:08:32.877549+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "eae604fdd3f9265335633086ec43745e313e780fe6633250fa34e48eb0dc6071",
+ "updated_at_epoch": 1792622312877,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

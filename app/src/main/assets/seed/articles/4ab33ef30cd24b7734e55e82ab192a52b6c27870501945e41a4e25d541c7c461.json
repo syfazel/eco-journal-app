@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.mehrnews.com/news/6984393/%D9%87%D9%88%D8%B4-%D9%85%D8%B5%D9%86%D9%88%D8%B9%DB%8C-%D8%A8%D9%87-%D8%B2%DB%8C%D8%B1%D8%B3%D8%A7%D8%AE%D8%AA-%D9%85%D8%B9%D8%A7%D9%85%D9%84%D8%A7%D8%AA-%D8%A8%D8%B1%D8%AE%D8%B7-%D8%A8%D9%88%D8%B1%D8%B3-%D9%88%D8%A7%D8%B1%D8%AF-%D9%85%DB%8C-%D8%B4%D9%88%D8%AF",
+ "app_key": "a-4ab33ef30cd24b7734e5",
  "kind": "article",
  "title": "هوش مصنوعی به زیرساخت معاملات برخط بورس وارد می‌شود",
  "summary": "یک مقام مسئول از برنامه سازمان بورس و اوراق بهادار برای بهبود زیرساخت‌های معاملات برخط، بازنگری در الزامات و تسهیل فرایندهای مجوزدهی، توسعه هوش مصنوعی و معاملات الگوریتمی خبر داد.",
@@ -30,5 +31,8 @@
  "extracted_at": "2026-10-20T19:59:01.680335+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "fe0780ba8bec1a62f88b9ef5be166c8a29c7145dda562db7fc08683d12733bea",
+ "updated_at_epoch": 1792513741680,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

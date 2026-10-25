@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399281/کارشناس-بی-بی-سی-چگونه-به-دانشگاه-تهران-راه-یافت",
+ "app_key": "a-bc0698661e21c419a07d",
  "kind": "article",
  "title": "لغو تدریس مدرس مدعو دانشگاه تهران پس از حضور در بی‌بی‌سی",
  "summary": "تدریس زهرا بیرشک، معروف به سپیده بیرشک، در دانشگاه تهران پس از اطلاع مسئولان از حضور او در برنامه‌ای از شبکه بی‌بی‌سی لغو شد؛ تصمیمی که پرسش‌هایی درباره معیارهای انتخاب مدرسان مدعو مطرح کرده است.",
@@ -30,5 +31,8 @@
  "extracted_at": "2026-10-19T00:22:38.153140+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "b4a7f1f2b92debcc0667862392ad2dc7a8bedf72116b99e32780677a91ee40c0",
+ "updated_at_epoch": 1792356758153,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t25",
+ "app_key": "a-054740c01f0dc125c3ac",
  "kind": "article",
  "title": "موج سنگین گرانی در بازار لوازم یدکی خودرو / باتری پراید، سمند، پژو ۴۰۵، پژو ۲۰۶ و...چند شد؟ + جدول ۲۶ مهر ۱۴۰۵",
  "summary": "افزایش شتابان نرخ ارز و جهش هزینه‌های تولید، بازار لوازم یدکی و قطعات مصرفی را وارد دور جدیدی از نوسان کرده و قیمت انواع باتری خودرو را با شیب صعودی روبه‌رو ساخته است.",
@@ -33,5 +34,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "59880634e1e86a07c345e3274beac7b99e7892a1e01b67661dd73aa194a02294",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

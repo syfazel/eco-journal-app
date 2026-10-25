@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4302907-%D8%B1%D9%88%D8%A8%DB%8C%D9%88-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%A7%D9%87%D8%B1%D9%85-%D9%81%D8%B4%D8%A7%D8%B1-%D8%AE%D9%88%D8%AF-%D8%B1%D8%A7-%D8%A8%D8%B1-%D8%AA%D9%86%DA%AF%D9%87-%D9%87%D8%B1%D9%85%D8%B2-%D8%A7%D8%B2-%D8%AF%D8%B3%D8%AA-%D8%AF%D8%A7%D8%AF%D9%87-%D8%A7%D8%B3%D8%AA",
+ "app_key": "a-ef3888fb1daa5ece4495",
  "kind": "article",
  "title": "روبیو: ایران اهرم فشار خود را بر تنگه هرمز از دست داده است",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/nWgZrJIVaLb1/s9Ani5co5aXQOc8WE28tR4Y76vG0M58ysnoWQ5vfN8acZXUs1X960j0TFor9lYFVQul8EDrX_LHqypKrW5Dubp-cWzWa6PDHGffg_if3EvNVMlTNFFH9vdyPe5nAhoDNPegXZQuCAGESl7IQA54mDzMY9iRMaqnAxS61rNazklmFeyiNFkpg7qK4YpmuIKyf/%D8%B1%D9%88%D8%A8%DB%8C%D9%88.jpg\"> <div>وزیر امور خارجه آمریکا گفت: رئیس‌جمهور ترامپ به ایران اجازه نداد که به سلاح هسته‌ای دست یابد و آن را در پس پرده‌ ای از هزاران موشک و پهپاد پنهان کند!</div>",
@@ -23,5 +24,8 @@
  "extracted_at": "2026-10-20T00:13:30.660976+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "f788c4267b06ab7ca5d577394547eaacc3f8c52ab23018ee96e9d862ad95143e",
+ "updated_at_epoch": 1792442610660,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

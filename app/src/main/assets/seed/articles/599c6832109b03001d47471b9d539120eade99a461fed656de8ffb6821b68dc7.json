@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p7-t5",
+ "app_key": "a-599c6832109b03001d47",
  "kind": "article",
  "title": "از کریدور نفت تا کریدور تجارت؛ تبریز در آستانه یک تحول تاریخی",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/PjnYxB6gbyIj/3H7Cnela8CcxuBalEFWcxsfsSlJoslZNCjcgaCrmxBKnJiBVVTz4gPVMWLCndDba_DRecjXmxaZIioD6Lltrdl9Uohj211ClQ2Bd5o4KOOGA0FIG7hpnfSDZ6Vmk0kgt9xFWGCrL6YtUwvuk7Y0vAnluIIEvfm8LmYjeZgsQ49IXgeSprAeDCduFiQRib02g/5359.jpg\"> <div>مدیر روابط عمومی و رسانه اتاق بازرگانی تبریز با اشاره به ضرورت تغییر رویکرد اقتصاد کشور از وابستگی به کریدورهای جنوبی به سمت توسعه مسیرهای تجاری شمال‌غرب، بر جایگاه راهبردی آذربایجان‌شرقی در تجارت منطقه‌ای و بین‌المللی تأکید کرد.</div>",
@@ -61,5 +62,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "e9982faa18012c4a7142b87ee6b6135e71a1d0cb4a1f039e70e5cb7b6e0250e8",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

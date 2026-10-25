@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t35",
+ "app_key": "a-c73af013bd4f369ae09b",
  "kind": "article",
  "title": "ساعت جدید معاملات تتر در صرافی‌ها اعلام شد",
  "summary": "محدودیت معاملات تتر–تومان که پیش‌تر از ساعت ۲۱ شروع می‌شد حالا از ساعت ۲۳:۳۰ اعمال خواهد شد و تا ساعت ۱۱:۳۰ روز بعد ادامه خواهد داشت.",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "402ba49d31507ac58bb7061c3ba9bc6e902e9a5a2cd52abced75742bd3b91148",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

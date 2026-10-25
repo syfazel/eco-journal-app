@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t26",
+ "app_key": "a-8f6ee5874cf21e193905",
  "kind": "article",
  "title": "عقب‌نشینی قیمت دلار در بازار تهران/ مقایسه بازدهی یک‌ماهه دلار، بیت‌کوین و نقره",
  "summary": "بازار ارز در دومین روز هفته با افت قیمت‌ها کار خود را دنبال کرد؛ روندی که با کاهش ۳ هزار تومانی اسکناس آمریکایی و عقب‌نشینی یورو و درهم همراه شد، در حالی که تابلوی مرکز مبادله همچنان مدار صعودی نرخ حواله‌ها را ثبت می‌کند.",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "7da7db10d4816414a00fa36f6806906724012fe6fa300413361f4b871537d7d9",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

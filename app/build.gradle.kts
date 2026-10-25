@@ -62,6 +62,8 @@ dependencies {
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    // Real bottom-nav / reader icons (M3, P1-12): version from the BOM.
+    implementation("androidx.compose.material:material-icons-core")
     // XML window theme parent Theme.Material3.DayNight.NoActionBar
     // (themes.xml) comes from the Material XML library, NOT from
     // androidx.compose.material3 — without this, AAPT linking fails.

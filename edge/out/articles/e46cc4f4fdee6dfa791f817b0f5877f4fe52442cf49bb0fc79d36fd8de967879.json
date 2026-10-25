@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p3-t7",
+ "app_key": "a-e46cc4f4fdee6dfa791f",
  "kind": "article",
  "title": "افت بازارهای سهام آسیا در سایه نگرانی از هزینه‌های هوش مصنوعی",
  "summary": "نگرانی از هزینه‌های سنگین توسعه هوش مصنوعی و تردید درباره بازده سرمایه‌گذاری‌ها، معاملات روز دوشنبه بازارهای سهام آسیا را تحت فشار قرار داد.",
@@ -33,5 +34,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "33abf73fd50b4e2ecab0e21bf9784999374a5f26058290ea302dc77b0b1da56b",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

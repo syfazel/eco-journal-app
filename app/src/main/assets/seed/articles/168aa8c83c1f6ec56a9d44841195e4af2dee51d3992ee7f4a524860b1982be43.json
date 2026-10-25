@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p1-t1",
+ "app_key": "a-168aa8c83c1f6ec56a9d",
  "kind": "article",
  "title": "فرسایش توان تولیدی با تورم",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/Yzu5lwq76jJt/ewfUi_hLNp8cKZw-OeYxtK4vWmyrnPiRRvjwb4Mj_1cBDS5Ys5amEFhHvcTvhvyw6yUFUl3BIqZdBubbu9WvRWxRKDK4CD95k3-QYcor0OGRDFx-iVXoodD5UAJEq6KSrma0ETVJTFgzG-77uLt4NBy-hkUaeP5wxqGC_mRWLwTiTO7VfZWHjS20ENw-scLu/03+copy.jpg\"> <div>برآوردبازوی پژوهشی بانک مرکزی از وضعیت فعالیت‌های اقتصادی در سه‌ماهه منتهی به مرداد ۱۴۰۵ نشان می‌دهد که اگرچه از شدت افت فعالیت در بخش‌های خدمات و صنایع و معادن کاسته شده، اما این دو بخش همچنان با رشد منفی روبه‌رو هستند. بر اساس آخرین آمار پژوهشکده پولی و بانکی بانک مرکزی ایران، رشد بخش صنایع و معادن که در خرداد منفی 26.2 درصد بود، در مرداد به منفی ۸ درصد رسید؛ تغییری که از کاهش شدت افت حکایت دارد، اما هنوز نمی‌توان آن را نشانه خروج صنعت از رکود دانست. تداوم رشد منفی این بخش، در ایامی که صنایع با مسائلی مانند محدودیت تامین انرژی، دشواری دسترسی به منابع مالی و سرمایه در گردش، افزایش هزینه‌های تولید و ضعف تقاضا مواجه‌اند، ضرورت بررسی دقیق‌تر وضعیت تولید و موانع فعالیت بنگاه‌ها را برجسته می‌کند.</div>",
@@ -34,5 +35,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "1c247eb0f85941680b98c830fae8fca33eab4e021dbbc6487c5c124bd75cf416",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

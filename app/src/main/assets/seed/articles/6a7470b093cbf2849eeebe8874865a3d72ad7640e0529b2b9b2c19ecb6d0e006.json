@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.irib-news.ir/fa/news/5943610/اختصاص-161-میلیون-مترمکعب-گاز-برای-مقابله-با-بحران-انرژی",
+ "app_key": "a-6a7470b093cbf2849eee",
  "kind": "article",
  "title": "اختصاص ۱۶۱ میلیون مترمکعب گاز برای مقابله با بحران انرژی",
  "summary": "معاون برنامه‌ریزی و توسعه محیط کسب‌وکار وزارت صمت در شیراز از اختصاص ۱۶۱ میلیون مترمکعب گاز به بخش صنعت و معدن تا پایان فصل سرما خبر داد.",
@@ -21,5 +22,8 @@
  "extracted_at": "2026-10-20T11:26:54.941619+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "7d06744d75752a02d112cd53cb494b1e5a9ef90586e851343a9c4f4458063c81",
+ "updated_at_epoch": 1792483014941,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

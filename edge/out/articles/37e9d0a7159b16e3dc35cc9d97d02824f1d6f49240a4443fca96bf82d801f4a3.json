@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t24",
+ "app_key": "a-37e9d0a7159b16e3dc35",
  "kind": "article",
  "title": "قیمت سکه پارسیان امروز یکشنبه ۲۶ مهر ۱۴۰۵",
  "summary": "<p>قیمت سکه پارسیان امروز یکشنبه ۲۶ مهر ۱۴۰۵ از ۵۰ سوت تا یک گرم به ثبت رسید.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d9%82%db%8c%d9%85%d8%aa-%d8%b3%da%a9%d9%87-%d9%be%d8%a7%d8%b1%d8%b3%db%8c%d8%a7%d9%86-%d8%a7%d9%85%d8%b1%d9%88%d8%b2-%db%8c%da%a9%d8%b4%d9%86%d8%a8%d9%87-%db%b2%db%b6-%d9%85%d9%87%d8%b1-%db%b1%db%b4\">قیمت سکه پارسیان امروز یکشنبه ۲۶ مهر ۱۴۰۵</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -21,5 +22,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "e7a65796fd77321859411397e7ee041df60d7756ebc568ccced3b9e8e5dd7c3b",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

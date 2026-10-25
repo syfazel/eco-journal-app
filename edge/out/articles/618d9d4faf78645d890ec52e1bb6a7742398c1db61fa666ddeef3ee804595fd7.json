@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t11",
+ "app_key": "a-618d9d4faf78645d890e",
  "kind": "article",
  "title": "شرایط ثبت نام سایپا مهر ۱۴۰۵ / بدون قرعه‌کشی و فقط با ۸۵۰ میلیون تومان خودرو بخرید + لینک",
  "summary": "در این گزارش شرایط ثبت نام فروش فوق العاده و پیش فروش سایپا در مهر ۱۴۰۵ را بخوانید.",
@@ -42,5 +43,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "5be97bd40b2685062c40495b860a336f56e319d092883fec2265e6ad81199c56",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.irib-news.ir/fa/news/5944109/تولید-پلاستیک-با-کیفیت-در-واحد-تولیدی-یزد",
+ "app_key": "a-134a1c19f75169c09696",
  "kind": "article",
  "title": "تولید پلاستیک با کیفیت در واحد تولیدی یزد",
  "summary": "در حال حاضر سالانه بالغ بر ۱۳ هزار تن نایلون در این واحد تولید می شود که بیش از ۶۰ درصد آن صادر می شود.",
@@ -23,5 +24,8 @@
  "extracted_at": "2026-10-20T20:00:10.440456+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "f1d436c5675897f74fd277319f1dc80b85d77e67438b3dfa582ff03420067e40",
+ "updated_at_epoch": 1792513810440,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

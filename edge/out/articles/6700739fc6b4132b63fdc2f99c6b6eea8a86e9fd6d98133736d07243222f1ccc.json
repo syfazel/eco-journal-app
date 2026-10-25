@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p0-t4",
+ "app_key": "a-6700739fc6b4132b63fd",
  "kind": "article",
  "title": "عراقچی: مسکو در جنگ چهل روزه به ایران کمک کرده بود/ با روسیه و چین شراکت راهبردی داریم + فیلم",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/An6QG3S6whEX/QWdA977GVSYNKYQPwI_C-Y6EEdb8sRm7B5W8j3bo9pTUNt3Sy-6k7RXL98h6dYWTdOsuJNI1zDnbzkS9nfyyVvGIcoUPCvAXCxtST6BROv5yIoYZgQOAjvwMQZlwyWeAwWHarfiANRg-1-AFmkXw5asuOSbrrTARIF4MKwFEZ5l0TLIcZNdvrxCnC0lF0ynm/%D8%B9%D8%B1%D8%A7%D9%82%DA%86%DB%8C.jpg\"> <div>عراقچی گفت: روسیه قبل از جنگ ۱۲ روزه و در بین دو جنگ کمک‌هایی (نظامی) کرده بود در این جنگ (چهل روزه) هم برخی کمک‌ها را کردند.\n\n</div>",
@@ -23,5 +24,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "61c8a80c8b46883b7e06d1d59b4386dcb98536482050e72a57493cf0f23d160c",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

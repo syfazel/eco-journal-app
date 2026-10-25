@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.eghtesadonline.com/fa/news/2170197/بازار-جهانی-به-نفت-ایران-روی-خوش-نشان-داد-قیمت-هر-بشکه-به-107-دلار-رسید",
+ "app_key": "a-39ea698348832d2fba88",
  "kind": "article",
  "title": "بازار جهانی به نفت ایران روی خوش نشان داد / قیمت هر بشکه به ۱۰۷ دلار رسید",
  "summary": "قیمت انواع نفت ایران در بازار‌های جهانی با افزایش همراه شد و نفت سبک کشور در منطقه مدیترانه و اروپا نیز روند صعودی را تجربه کرد.",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-20T16:32:18.102928+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "c7658746b2eb48b7c25456174d0a551d2c492be1fd6b46e7239509ec84b82f25",
+ "updated_at_epoch": 1792501338102,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399310/تناقض-عجیب-در-فوتبال-زنان",
+ "app_key": "a-6aa207479a676a980d95",
  "kind": "article",
  "title": "تناقض در فوتبال زنان: داور مرد در اتاق VAR",
  "summary": "در فوتبال زنان، ظاهراً ورود مردان ممنوع است، حتی اگر خبرنگار، عکاس یا مدیر باشگاه باشند. با این حال، حضور یک داور مرد در اتاق VAR دیدار پرسپولیس و استقلال، تناقضی عجیب را رقم زده که سازمان لیگ باید درباره آن توضیح دهد.",
@@ -21,5 +22,8 @@
  "extracted_at": "2026-10-19T00:22:38.715529+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "aaf403c1d83a3c0219ac1e54e6748d7b9cf521c966e69dc77d6ad372e5152c17",
+ "updated_at_epoch": 1792356758715,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

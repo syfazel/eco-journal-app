@@ -1,5 +1,6 @@
 {
  "id": "draft:/بخش-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4302990-%D9%88%D9%86%D8%B3-%D8%A7%DA%AF%D8%B1-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%DA%A9%D9%86%D8%AA%D8%B1%D9%84-%D8%B9%D8%B1%D8%B6%D9%87-%D9%86%D9%81%D8%AA-%D8%AC%D9%87%D8%A7%D9%86-%D8%B1%D8%A7-%D8%A8%D9%87-%D8%AF%D8%B3%D8%AA-%DA%AF%DB%8C%D8%B1%D8%AF-%D8%AC%D9%86%DA%AF-%D9%BE%D8%A7%DB%8C%D8%A7%D9%86-%D9%85%DB%8C-%DB%8C%D8%A7%D8%A8%D8%AF",
+ "app_key": "a-ef105c017e1fcae8b671",
  "kind": "article",
  "title": "ونس: اگر ایران کنترل عرضه نفت جهان را به دست گیرد، جنگ پایان می یابد",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/dOwbzPfuDvtC/nyrvVxuFtZ-NVYs1IzUlQfhFOq-sriSHWYnWISkvG63F2rwCZBn-LuW_aoGta3iILGNGrnjGgzppSCecChngoKhTduirvAVs2NMDKhhJmrl4tnugne49v4qydg5bxNFoCa39xt5HJx2q9gJ3-KH4Gn-VZLE97mh1wGQCWWbJCg5P2zVDmFemurCjkQJCzDUi/oTZaVhTxlV1f.jpg\"> <div>معاون رئیس‌جمهوری آمریکا مدعی شد که هیچ آمریکایی نمی‌خواهد ایران کنترل عرضه نفت جهان را در دست بگیرد.</div>",
@@ -32,5 +33,8 @@
  "extracted_at": "2026-10-20T07:03:08.419175+00:00",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "3d515f8ab794803e772a03769a074ec247945afb642bd7e318412dc0fe060266",
+ "updated_at_epoch": 1792479788419,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

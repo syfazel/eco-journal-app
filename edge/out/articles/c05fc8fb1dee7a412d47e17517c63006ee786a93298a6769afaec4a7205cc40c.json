@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p1-t4",
+ "app_key": "a-c05fc8fb1dee7a412d47",
  "kind": "article",
  "title": "فشار سنگین تورم بر تولید؛ صنعت در آستانه تورم ۱۳۰ درصدی +فیلم",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/yJuKtGQedmL8/xfv9UrhOPg0cGjJOE97FjVdHivAOyXfRvKYGoXzw_hBoDi-YOQHbVpNmthdvqTKtzvC7Px3B_Pjiw62-GeWuo-aJAWK0MqH6Rcz-MTcU9VHoHjiypb9akUTVWy-qoLnOZLymV1_eK5_EDYcg8Za86lJxvvU4FMpYEPXC2hTnAJBTDuDLEIo3QQmt19jSgAV3/%D8%AA%D9%88%D8%B1%D9%85.jpg\"> <div> تازه‌ترین آمار بانک مرکزی از شاخص بهای تولیدکننده نشان می‌دهد که هزینه‌های تولید در اقتصاد ایران همچنان با فشار سنگینی روبه‌روست.</div>",
@@ -54,5 +55,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "eccd63c6e7221637f375712d3a5b153879f19dfb6232d9b4ef9e00533cb068c3",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

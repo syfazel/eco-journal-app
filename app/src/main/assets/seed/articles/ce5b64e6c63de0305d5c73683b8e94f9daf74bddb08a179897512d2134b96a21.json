@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p3-t1",
+ "app_key": "a-ce5b64e6c63de0305d5c",
  "kind": "article",
  "title": "تصویب کلیات گزارش تفریغ بودجه سال ۱۴۰۴ در هیئت عمومی دیوان محاسبات",
  "summary": "<img src=\"https://cdn.ilna.ir/thumbnail/fvfKne1Al8BL/lYAUaxYtdfyCNE3-cF7vKcOt4DU4B8O11JlsVbG_ULwisKX__IJx9df_dDwrL4YUBkBFOza4JYgkrLy99cOmrC6IHJw1-ZJTGO2K1aEZA6zpQydYRxCR_SsPvkpBpbKZy6lwgyXz-rhcun8xZRO10ezim2ObFvn6aikg_cxzegSlO2jVc15S7zk-kMwwvVTi/%DA%AF%D8%B1%D8%A7%D9%81+%D8%AF%DB%8C%D9%88%D8%A7%D9%86+%D9%85%D8%AD%D8%A7%D8%B3%D8%A8%D8%A7%D8%AA1_8.jpg\"> <div>کلیات گزارش تفریغ بودجه سال ۱۴۰۴ کل کشور در نخستین جلسه هیئت عمومی دیوان محاسبات کشور به تصویب رسید. رئیس کل دیوان محاسبات در این جلسه با تأکید بر ضرورت اصلاح ساختار نظام بودجه‌ریزی کشور، بر تأثیر ایرادات این ساختار بر سیاست‌گذاری اقتصادی و تورم تأکید کرد.\n\n</div>",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "c6e7cc824784b15f197d895abc010df356fb8d9aec3416646532e535a0584759",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

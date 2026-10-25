@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.mehrnews.com/news/6984304/%D9%87%D8%B4%D8%AF%D8%A7%D8%B1-%D8%B2%D8%B1%D8%AF-%D9%87%D9%88%D8%A7%D8%B4%D9%86%D8%A7%D8%B3%DB%8C-%D8%A8%D8%B1%D8%A7%DB%8C-%DB%B2%DB%B7-%D8%A7%D8%B3%D8%AA%D8%A7%D9%86-%D8%A8%D8%A7%D8%B1%D8%B4-%D8%A8%D8%A7%D8%B1%D8%A7%D9%86-%D9%88-%D8%B1%D8%B9%D8%AF%D9%88%D8%A8%D8%B1%D9%82-%D8%AF%D8%B1-%D8%B1%D8%A7%D9%87",
+ "app_key": "a-0be97473d843fb017ece",
  "kind": "article",
  "title": "هشدار زرد هواشناسی برای ۲۷ استان؛ بارش باران و رعدوبرق در راه است",
  "summary": "سازمان هواشناسی با صدور هشدار سطح زرد و پیش‌بینی فعالیت سامانه بارشی در ۲۷ استان کشور، از احتمال وقوع رگبار باران، رعدوبرق، وزش باد شدید موقت و در برخی مناطق خیزش گردوخاک تا یکشنبه خبر داد.",
@@ -33,5 +34,8 @@
  "extracted_at": "2026-10-20T18:30:29.728847+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "2c872eea7370f55985831b03011f002bd779e021f8af7f3cee031faba62c6853",
+ "updated_at_epoch": 1792508429728,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

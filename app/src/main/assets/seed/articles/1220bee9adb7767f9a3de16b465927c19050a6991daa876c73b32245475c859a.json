@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%DA%A9%D8%B3%D8%A8-%DA%A9%D8%A7%D8%B1-104/4303033-%D8%A8%D8%A7%D8%B2%D8%A7%D8%B1%D8%A7%DB%8C%DB%8C-%D9%86%D8%B8%D8%A7%D9%85-%D9%85%D8%A7%D9%84%DB%8C-%DA%AF%D8%B1%D9%88%D9%87-%D9%81%D9%88%D9%84%D8%A7%D8%AF%D9%85%D8%A8%D8%A7%D8%B1%DA%A9%D9%87",
+ "app_key": "a-1220bee9adb7767f9a3d",
  "kind": "article",
  "title": "بازارایی نظام مالی گروه فولادمبارکه",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/vuna5bxeVt64/q51rKx_poGxMemxrPH5QOdFQUJPMCDdUCWs8T3LX_lBsxYD6CMWnuyRWUQLn3fkoEdDSDZt8oT5O77FeT1j58k8B1H0QyPZs8c_YRR4vigJXBEiGZXfksi3hbyo8BvHM-yjSkacGKqjkvPXg4l1rdDumq8S692FDq2B7cDV19Yff_9row9fNZ68UmDytBuba/photo_2026-10-20_10-43-50.jpg\"> <div>مدیرعامل گروه فولاد مبارکه از اجرای نظام مالی یکپارچه، استقرار خزانه‌داری متمرکز و تدوین برنامه تأمین مالی برای هشت شرکت اصلی گروه خبر داد.</div>",
@@ -60,5 +61,8 @@
  "extracted_at": "2026-10-20T11:28:29.384661+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "1ea7826aa855def513e481fed861ecf8fb061e3f3249a093f77b3fd15030c582",
+ "updated_at_epoch": 1792483109384,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

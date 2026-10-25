@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.irib-news.ir/fa/news/5943942/افزایش-بهای-نفت-خام-برنت-و-نفت-خام-آمریکا",
+ "app_key": "a-2254ebd5438f4ac1bd73",
  "kind": "article",
  "title": "افزایش بهای نفت خام برنت و نفت خام آمریکا",
  "summary": "نفت خام آمریکا ۴ درصد افزایش یافت و بهای نفت خام برنت نیز به بشکه‌ای ۱۱۱ دلار رسید.",
@@ -21,5 +22,8 @@
  "extracted_at": "2026-10-20T15:00:35.067810+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "18de7d3aa134811621a1bb15ac40036e71995ea79a90a94b5c5c175d50a7df16",
+ "updated_at_epoch": 1792495835067,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

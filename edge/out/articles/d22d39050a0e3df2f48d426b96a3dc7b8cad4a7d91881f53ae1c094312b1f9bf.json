@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%A8%DB%8C%D9%86-%D8%A7%D9%84%D9%85%D9%84%D9%84-8/1854706-%D9%85%D9%85%D9%86%D9%88%D8%B9%DB%8C%D8%AA-%D9%BE%D8%AE%D8%B4-%D8%A7%D8%AE%D8%A8%D8%A7%D8%B1-%D9%86%D8%A7%DA%AF%D9%88%D8%A7%D8%B1-%D8%AF%D8%B1-%D9%BE%D8%A7%DA%A9%D8%B3%D8%AA%D8%A7%D9%86-%D9%85%D8%AD%D8%AF%D9%88%D8%AF%DB%8C%D8%AA-%D9%87%D8%A7%DB%8C-%D8%AA%D8%A7%D8%B2%D9%87-%D8%A8%D8%B1%D8%A7%DB%8C-%D8%B4%D8%A8%DA%A9%D9%87-%D9%87%D8%A7%DB%8C-%D8%AA%D9%84%D9%88%DB%8C%D8%B2%DB%8C%D9%88%D9%86%DB%8C",
+ "app_key": "a-d22d39050a0e3df2f48d",
  "kind": "article",
  "title": "ممنوعیت پخش اخبار «ناگوار» در پاکستان؛ محدودیت‌های تازه برای شبکه‌های تلویزیونی",
  "summary": "<img src=\"https://cdn.ilna.ir/thumbnail/OwNIS3Vqa3vN/FbpeEbFuND3RboSaYSfkdNlfCPdZkVXU53SDXFm0eClJ35fifrTKaehfGrHf2ax1iCiL2Tv2LgJpIpOcWmjcFg9Pi4SsKVUdDD87O1kl6UjvcLmPxcV6zk_KwP6uWmTxfEvwNF59QeHOWjcNW_hqtNmGjtfQFWBGEQB4zmGJXBfkyag2bJCUlcfBJyXB7UNO/Capture.jpg\"> <div>نهاد تنظیم مقررات رسانه‌های الکترونیکی پاکستان، پخش زنده یا بازپخش حوادثی مانند انفجار، تیراندازی و حملات مسلحانه را ممنوع کرده و شبکه‌ها را به انتشار اطلاعات تأییدشده از سوی نهادهای دولتی و امنیتی ملزم کرده است؛ تصمیمی که نگرانی‌ها درباره گسترش سانسور و محدود شدن فعالیت مستقل رسانه‌ها را برانگیخته است.</div>",
@@ -27,5 +28,8 @@
  "extracted_at": "2026-10-19T22:39:47.233674+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "54b9051c71f602418294bc12c4e75a9fb23802ede2209a8315e03272825fcde3",
+ "updated_at_epoch": 1792436987233,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t27",
+ "app_key": "a-ed176f282cc90e59c699",
  "kind": "article",
  "title": "قانون جدید چک ابلاغ شد/ الزام استفاده از رمز یک‌بارمصرف",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/93e6n27UNp63/Zhr13H_q7bA36ovi9TbT78LB6rhHNWHvgOKXb6d1Lzrf74tAi1DLf1WFMBimKl4vDmIu4YU9QIOePIG_AoYyQer04qmbg8vvH2gdDyibESJF_W7BX_AijoA3c5gtduy22cQkNJ_RRgKeL7OGjyb9Lcq0C7_DMhAJc1-q5Im1tXB62sqUzRt0KF4va3Ngl7cu/b3pvNG3dVCF9.jpg\"> <div>بانک مرکزی استفاده از رمز یک‌بارمصرف ارسال‌شده به سیم‌کارت متعلق به فرد اقدام‌کننده را برای انتقال چک‌های کاغذی و الکترونیکی الزامی کرده است.</div>",
@@ -26,5 +27,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "282497d49ade863e709e892e0720a7d3faff238ff2e96a41d41d763dc86b46ab",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "5798b6eb94004e36ac30f5c2af74028c",
+ "app_key": "a-e619218fba580c34ac0c",
  "kind": "article",
  "title": "Asia Needs $1 Trillion a Year to Secure Energy Supplies | OilPrice.com",
  "summary": "Asia will need as much as $1 trillion annually in energy investment over the next 15 years to meet rising demand and reduce its exposure to supply disruptions, according to a McKinsey report released Thursday. That amounts to $15 trillion through 2040, with the Iran war exposing just how vulnerable the region remains to disruptions in oil and gas shipments through the Strait of Hormuz. McKinsey now expects Asian energy demand to reach 370 million terajoules by 2040, a 15% increase over its forecast from just a year ago. The region is expected to…",
@@ -47,5 +48,8 @@
  "extracted_at": "2026-10-23T03:30:08.827480+00:00",
  "channel_message_id": null,
  "publish_status": "posted",
+ "status": "posted",
+ "content_hash": "521616c008205f90481dd20070c37a051caa733688c4bbed0718654b921d5f61",
+ "updated_at_epoch": 1792726208827,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

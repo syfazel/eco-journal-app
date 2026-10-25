@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.mehrnews.com/news/6983458/%D9%86%D9%88%D8%B3%D8%A7%D9%86-%D9%82%DB%8C%D9%85%D8%AA-%D9%86%D9%81%D8%AA-%D8%AF%D8%B1-%D8%A8%D8%A7%D8%B2%D8%A7%D8%B1%D9%87%D8%A7%DB%8C-%D8%AC%D9%87%D8%A7%D9%86%DB%8C-%D8%B1%D9%88%D9%86%D8%AF-%D8%A7%D9%81%D8%B2%D8%A7%DB%8C%D8%B4%DB%8C-%D8%A8%D8%B1%D9%86%D8%AA-%D9%88-%DA%A9%D8%A7%D9%87%D8%B4-%D8%B3%D8%A8%D8%AF",
+ "app_key": "a-0538a04f1f0b3ba31ddc",
  "kind": "article",
  "title": "نوسان قیمت نفت در بازارهای جهانی؛ روند افزایشی برنت و کاهش سبد اوپک",
  "summary": "بازارهای جهانی انرژی شاهد نوسانات قیمتی بودند؛ به‌طوری‌که نفت برنت و WTI افزایش یافته و سبد اوپک و گاز طبیعی با افت مواجه شدند.",
@@ -22,5 +23,8 @@
  "extracted_at": "2026-10-20T08:27:08.714878+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "6a2d41d2c9fcba576b8cca4232061adad6faac6134177282025a538ba01bb1e9",
+ "updated_at_epoch": 1792472228714,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

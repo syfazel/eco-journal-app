@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t15",
+ "app_key": "a-0b04e4a244f8fe160ec0",
  "kind": "article",
  "title": "جرایم مالیات بر ارزش افزوده بخشیده می‌شود",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/obc72zSoZlfc/N7WrP3v-GeB6SpY0hD0fOrnha5gkVYWv7o70-jtbRXjlEo93IoJ6nWZc59HVDfxabooWissSpN7-UmlnY5tEOQ2wrIIINjaFcd8wo9CHHAx6zKNrW4u3fCn8GfpBztlKBO_k-loD56gQpg-gkdG8Tpf3lBvnSLf_stAtaKFMJWis7tepEikQ4iJ0rpccj19o/%D8%B3%D8%A7%D8%B2%D9%85%D8%A7%D9%86+%D8%A7%D9%85%D9%88%D8%B1+%D9%85%D8%A7%D9%84%DB%8C%D8%A7%D8%AA%DB%8C.jpg\"> <div>طبق اعلام سازمان امور مالیاتی کشور، مودیانی که تا ۲۴ آبان‌ماه نسبت به تسویه یا ترتیب پرداخت بدهی و ذخیره نهایی خلاصه عملکرد اقدام کنند، از بخشودگی ۱۰۰ درصدی جرایم تاخیر برخوردار خواهند شد.\n\n</div>",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "94a8e0ac7392a2d9e8a601b95f35730ec55f11774d2db284b76692cc6ea9ba50",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

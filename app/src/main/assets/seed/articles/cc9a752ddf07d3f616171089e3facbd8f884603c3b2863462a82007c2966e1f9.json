@@ -1,5 +1,6 @@
 {
  "id": "68832e6e0a91420d8ed7f80e538162d6",
+ "app_key": "a-cc9a752ddf07d3f61617",
  "kind": "article",
  "title": "Trump suggests US may launch further attacks against Iran",
  "summary": "<article data-history-node-id=\"449809\" about=\"https://www.middleeasteye.net/live-blog/live-blog-update/trump-suggests-us-may-launch-further-attacks-against-iran\" class=\"live-blog-update default clearfix\">\n\n  \n      <h2>\n      <a href=\"https://www.middleeasteye.net/live-blog/live-blog-update/trump-suggests-us-may-launch-further-attacks-against-iran\" rel=\"bookmark\">\n<span class=\"field field-title\">Trump suggests US may launch further attacks against Iran</span>\n</a>\n    </h2>\n    \n\n        \n    <div class=\"content\">\n                <div class=\"field field-field-text\"><p>US president Donald Trump suggested that Washington may launch more attacks targeting Iran.&nbsp;</p>\n\n<p>\"This should have been done a long time ago by other presidents, the Iran war, and we’ve knocked the hell out of them, and we may do it a little bit further,\" he told reporters.&nbsp;</p>\n\n<p>In response to questions about the public reaction to the war on Ira, the US president said: \"Well, in one way they love it because I’m doing what should have been done by other presidents. In another way, maybe they don’t.\"</p>\n\n<p>\"There’s a price to pay, which I knew immediately when I did it. But we can’t let Iran have a nuclear weapon.\"</p>\n</div>\n      \n  </div>\n\n</article>",
@@ -27,5 +28,8 @@
  "extracted_at": "2026-10-23T03:30:07.914766+00:00",
  "channel_message_id": null,
  "publish_status": "posted",
+ "status": "posted",
+ "content_hash": "c156d5a63472767ce13f6596600d89bcca747522ba4bf69f4a21b50e9900321b",
+ "updated_at_epoch": 1792726207914,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

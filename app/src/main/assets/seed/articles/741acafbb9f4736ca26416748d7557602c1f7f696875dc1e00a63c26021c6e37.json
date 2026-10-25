@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t18",
+ "app_key": "a-741acafbb9f4736ca264",
  "kind": "article",
  "title": "رشد ۹۳ درصدی سهم ورزش و جوانان از عوارض ارزش افزوده",
  "summary": "طبق اعلام سازمان امور مالیاتی، در شش‌ماهه نخست ۱۴۰۵، بیش از ۶ هزار و ۹۰۰ میلیارد تومان از محل ۲۷ صدم درصد عوارض ارزش افزوده سهم وزارتخانه‌های «ورزش و جوانان» و «آموزش و پرورش» وصول شده است.",
@@ -22,5 +23,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "fce5aab88d93601c047dad0ca42fcbe3c6338c20bc4b59a93bad1d5b1493c568",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

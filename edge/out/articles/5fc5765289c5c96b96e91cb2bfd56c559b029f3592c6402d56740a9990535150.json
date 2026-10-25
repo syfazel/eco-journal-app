@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399432/قیمت-طلا-و-سکه-امروز-27-مهر-بازار-طلا-سبزپوش-شد",
+ "app_key": "a-5fc5765289c5c96b96e9",
  "kind": "article",
  "title": "قیمت طلا و سکه امروز ۲۷ مهر/ بازار طلا سبزپوش شد",
  "summary": "بازار طلا و سکه امروز، زخم‌های دیروزش را ترمیم کرد و پس از یک روز نزولی معاملات امروز رنگ دیگری به خود گرفت و مسیر بازار تغییر کرد، اما پشت این بازگشت، یک نیروی بیرونی ایستاده که همین چند روز پیش، درست در نقطه‌ی مقابل قرار داشت؛ نیرویی که رفتارش در روزهای آینده، می‌تواند همه‌چیز را دوباره زیر و رو کند.",
@@ -28,5 +29,8 @@
  "extracted_at": "2026-10-19T22:39:47.651771+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "67990ecbb79ca15f51eb8cac09647cf6ef078b7f3310482eca4f92f00f147686",
+ "updated_at_epoch": 1792436987651,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

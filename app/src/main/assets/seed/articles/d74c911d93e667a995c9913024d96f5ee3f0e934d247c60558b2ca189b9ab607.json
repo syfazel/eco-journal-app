@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t14",
+ "app_key": "a-d74c911d93e667a995c9",
  "kind": "article",
  "title": "هزینه بالای تأمین نقدینگی نرخ سود بین‌بانکی را روی ۲۴ درصد ثابت کرد",
  "summary": "<p>نرخ سود بین‌بانکی برای هفتمین هفته متوالی روی ۲۴ درصد ثابت ماند؛ اتفاقی که از تداوم هزینه بالای تأمین نقدینگی در شبکه بانکی حکایت دارد.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d9%87%d8%b2%db%8c%d9%86%d9%87-%d8%a8%d8%a7%d9%84%d8%a7%db%8c-%d8%aa%d8%a3%d9%85%db%8c%d9%86-%d9%86%d9%82%d8%af%db%8c%d9%86%da%af%db%8c-%d9%86%d8%b1%d8%ae-%d8%b3%d9%88%d8%af-%d8%a8%db%8c%d9%86\">هزینه بالای تأمین نقدینگی نرخ سود بین‌بانکی را روی ۲۴ درصد ثابت کرد</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -51,5 +52,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "9741b9c0765dffd4fb98efe8abd03e35c76a1577d6679af27842535d9c56c9d6",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

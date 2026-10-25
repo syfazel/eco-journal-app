@@ -1,6 +1,7 @@
 [
  {
   "id": "draft-87",
+  "app_key": "a-bd02d76d8f6960ff25d0",
   "kind": "short",
   "label": "گزیده",
   "title": "این است؛ واکنش ایران به حمله احتمالی آمریکا و اسرائیل",
@@ -8,10 +9,14 @@
   "source": "hamshahrionline.ir",
   "original_url": "https://www.hamshahrionline.ir/news/1079423/%D8%A7%DB%8C%D9%86-%D8%A7%D8%B3%D8%AA-%D9%88%D8%A7%DA%A9%D9%86%D8%B4-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%A8%D9%87-%D8%AD%D9%85%D9%84%D9%87-%D8%A7%D8%AD%D8%AA%D9%85%D8%A7%D9%84%DB%8C-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%D9%88-%D8%A7%D8%B3%D8%B1%D8%A7%D8%A6%DB%8C%D9%84",
   "decided_at": "2026-10-24T06:57:41.935067+00:00",
+  "status": "approved",
+  "content_hash": "2a6feed9d4a880c3d89d28f3835946b3475df3c10c88c0581c9f049b45e1097b",
+  "updated_at_epoch": 1792825061935,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-85",
+  "app_key": "a-e76252d72a6fea9ce4f6",
   "kind": "short",
   "label": "گزیده",
   "title": "Saudi-led coalition says ballistic missile aimed at Riyadh destroyed",
@@ -19,10 +24,14 @@
   "source": "middleeasteye.net",
   "original_url": "https://www.middleeasteye.net/live-blog/live-blog-update/saudi-led-coalition-says-ballistic-missile-aimed-riyadh-destroyed",
   "decided_at": "2026-10-24T05:01:55.865500+00:00",
+  "status": "approved",
+  "content_hash": "e8841160cfc0c1ec741fb3b2bcc4c9a713bdcd2e78bf9125453c582c5e68f1e5",
+  "updated_at_epoch": 1792818115865,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-79",
+  "app_key": "a-4ec943283428cec7268f",
   "kind": "short",
   "label": "گزیده",
   "title": "ما آماده پایان جنگ هستیم",
@@ -30,10 +39,14 @@
   "source": "hamshahrionline.ir",
   "original_url": "https://www.hamshahrionline.ir/news/1079430/%D9%85%D8%A7-%D8%A2%D9%85%D8%A7%D8%AF%D9%87-%D9%BE%D8%A7%DB%8C%D8%A7%D9%86-%D8%AC%D9%86%DA%AF-%D9%87%D8%B3%D8%AA%DB%8C%D9%85",
   "decided_at": "2026-10-24T05:01:48.885962+00:00",
+  "status": "approved",
+  "content_hash": "137654559c9eae0821e4bc804cf74abac7c6838ad6c6d671d8de3a89aa41a56d",
+  "updated_at_epoch": 1792818108885,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-75",
+  "app_key": "a-d3c64d666f4c89c85712",
   "kind": "short",
   "label": "گزیده",
   "title": "Argentina drops investigation into President Milei over crypto fraud",
@@ -41,10 +54,14 @@
   "source": "بی‌بی‌سی (جهان)",
   "original_url": "https://www.bbc.co.uk/news/articles/c64g1eplpvddo?at_medium=RSS&at_campaign=rss",
   "decided_at": "2026-10-23T22:57:24.646257+00:00",
+  "status": "approved",
+  "content_hash": "d06b647b13c3d067ab6a9d52838ce01f6f6b8af6a7006717eb1b8efec15da7e6",
+  "updated_at_epoch": 1792796244646,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-73",
+  "app_key": "a-e3374318d008939cb9ae",
   "kind": "short",
   "label": "گزیده",
   "title": "هزینه بیشتر برای انرژی کمتر",
@@ -52,10 +69,14 @@
   "source": "donya-e-eqtesad.com",
   "original_url": "https://donya-e-eqtesad.com/%D8%A8%D8%AE%D8%B4-%D9%85%D8%B9%D8%AF%D9%86-%D8%B5%D9%86%D8%A7%DB%8C%D8%B9-%D9%85%D8%B9%D8%AF%D9%86%DB%8C-4/4303751-%D9%87%D8%B2%DB%8C%D9%86%D9%87-%D8%A8%DB%8C%D8%B4%D8%AA%D8%B1-%D8%A8%D8%B1%D8%A7%DB%8C-%D8%A7%D9%86%D8%B1%DA%98%DB%8C-%DA%A9%D9%85%D8%AA%D8%B1",
   "decided_at": "2026-10-23T20:59:28.880946+00:00",
+  "status": "approved",
+  "content_hash": "44a60c58eebad6b98a73bdf47ac2015ad14c3d1abf9c23adeab454dc0896fd99",
+  "updated_at_epoch": 1792789168880,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-72",
+  "app_key": "a-2b6d400d147ed2631cc2",
   "kind": "short",
   "label": "گزیده",
   "title": "توییت معنادار سخنگوی سپاه درباره قیمت نفت و تنگه هرمز",
@@ -63,10 +84,14 @@
   "source": "donya-e-eqtesad.com",
   "original_url": "https://donya-e-eqtesad.com/%D8%A8%D8%AE%D8%B4-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4303771-%D8%AA%D9%88%DB%8C%DB%8C%D8%AA-%D9%85%D8%B9%D9%86%D8%A7%D8%AF%D8%A7%D8%B1-%D8%B3%D8%AE%D9%86%DA%AF%D9%88%DB%8C-%D8%B3%D9%BE%D8%A7%D9%87-%D8%AF%D8%B1%D8%A8%D8%A7%D8%B1%D9%87-%D9%82%DB%8C%D9%85%D8%AA-%D9%86%D9%81%D8%AA-%D8%AA%D9%86%DA%AF%D9%87-%D9%87%D8%B1%D9%85%D8%B2",
   "decided_at": "2026-10-23T20:59:28.737509+00:00",
+  "status": "approved",
+  "content_hash": "b65f6a7c0020707fb8ffbc46ca6b55984abe6e7547cf86f0dd113365d67a8200",
+  "updated_at_epoch": 1792789168737,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-61",
+  "app_key": "a-f789a7958f5704f57c4a",
   "kind": "short",
   "label": "گزیده",
   "title": "Trump suggests US may launch further attacks against Iran",
@@ -74,10 +99,14 @@
   "source": "middleeasteye.net",
   "original_url": "https://www.middleeasteye.net/live-blog/live-blog-update/trump-suggests-us-may-launch-further-attacks-against-iran",
   "decided_at": "2026-10-23T06:57:29.966324+00:00",
+  "status": "approved",
+  "content_hash": "e7c7308cbaff8c1f2b3490d7dd5301b49974cd50faf08e10a48519eacd9a1439",
+  "updated_at_epoch": 1792738649966,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-67",
+  "app_key": "a-e7ca08eaa68552aa9bac",
   "kind": "short",
   "label": "گزیده",
   "title": "Bitcoin, gold trim early losses as yen gives up gains. Oil stays near $100",
@@ -85,10 +114,14 @@
   "source": "coindesk.com",
   "original_url": "https://www.coindesk.com/markets/2026/10/23/bitcoin-gold-trim-early-losses-as-yen-gives-up-gains-oil-stays-near-usd100",
   "decided_at": "2026-10-23T04:58:53.712239+00:00",
+  "status": "approved",
+  "content_hash": "c0cab7c0bee83d43a4541293c9ae2cc790db61ee7b240cb9f3bff06a7f93aaec",
+  "updated_at_epoch": 1792731533712,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-65",
+  "app_key": "a-35653a5d416652ed7365",
   "kind": "short",
   "label": "گزیده",
   "title": "وعده ترامپ به آمریکایی‌ها درباره جنگ با ایران",
@@ -96,10 +129,14 @@
   "source": "hamshahrionline.ir",
   "original_url": "https://www.hamshahrionline.ir/news/1079259/%D9%88%D8%B9%D8%AF%D9%87-%D8%AA%D8%B1%D8%A7%D9%85%D9%BE-%D8%A8%D9%87-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7%DB%8C%DB%8C-%D9%87%D8%A7-%D8%AF%D8%B1%D8%A8%D8%A7%D8%B1%D9%87-%D8%AC%D9%86%DA%AF-%D8%A8%D8%A7-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86",
   "decided_at": "2026-10-23T04:58:49.675472+00:00",
+  "status": "approved",
+  "content_hash": "ea6dfeb6fa4fbd870d8910cd537f850891f571e7d85210233fa66d6e11b6593d",
+  "updated_at_epoch": 1792731529675,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-64",
+  "app_key": "a-c898b7a6b7d835a23057",
   "kind": "short",
   "label": "گزیده",
   "title": "هشدار؛ در صورت حمله مجدد آمریکا؛ ایران این اهداف را نابود خواهد کرد",
@@ -107,10 +144,14 @@
   "source": "hamshahrionline.ir",
   "original_url": "https://www.hamshahrionline.ir/news/1079258/%D9%87%D8%B4%D8%AF%D8%A7%D8%B1-%D8%AF%D8%B1-%D8%B5%D9%88%D8%B1%D8%AA-%D8%AD%D9%85%D9%84%D9%87-%D9%85%D8%AC%D8%AF%D8%AF-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%A7%DB%8C%D9%86-%D8%A7%D9%87%D8%AF%D8%A7%D9%81-%D8%B1%D8%A7-%D9%86%D8%A7%D8%A8%D9%88%D8%AF-%D8%AE%D9%88%D8%A7%D9%87%D8%AF",
   "decided_at": "2026-10-23T04:58:44.938764+00:00",
+  "status": "approved",
+  "content_hash": "d63f5db6c2e51049cb845e73a384a4fddd8d972eb492a7912937a699d41991a8",
+  "updated_at_epoch": 1792731524938,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-63",
+  "app_key": "a-78df3391b8e77ec67fd5",
   "kind": "short",
   "label": "گزیده",
   "title": "حمله پهپادی به عربستان ؛ انفجارهای شدید در ریاض",
@@ -118,10 +159,14 @@
   "source": "hamshahrionline.ir",
   "original_url": "https://www.hamshahrionline.ir/news/1079257/%D8%AD%D9%85%D9%84%D9%87-%D9%BE%D9%87%D9%BE%D8%A7%D8%AF%DB%8C-%D8%A8%D9%87-%D8%B9%D8%B1%D8%A8%D8%B3%D8%AA%D8%A7%D9%86-%D8%A7%D9%86%D9%81%D8%AC%D8%A7%D8%B1%D9%87%D8%A7%DB%8C-%D8%B4%D8%AF%DB%8C%D8%AF-%D8%AF%D8%B1-%D8%B1%DB%8C%D8%A7%D8%B6",
   "decided_at": "2026-10-23T04:58:38.976842+00:00",
+  "status": "approved",
+  "content_hash": "490b999af96a7cc15eeebdd9f96f84e20ccc1bc18c04cec893687be7701eca57",
+  "updated_at_epoch": 1792731518976,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-62",
+  "app_key": "a-8dce8258eb13003d8528",
   "kind": "short",
   "label": "گزیده",
   "title": "Asia Needs $1 Trillion a Year to Secure Energy Supplies | OilPrice.com",
@@ -129,10 +174,14 @@
   "source": "oilprice.com",
   "original_url": "https://oilprice.com/Latest-Energy-News/World-News/Asia-Needs-1-Trillion-a-Year-to-Secure-Energy-Supplies.html",
   "decided_at": "2026-10-23T04:58:34.494303+00:00",
+  "status": "approved",
+  "content_hash": "410b3c717d82d176eef3333a4d54fe5a58077d1892cfc6983d52bf29eb5dbb80",
+  "updated_at_epoch": 1792731514494,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-57",
+  "app_key": "a-8791236f0808fc32333d",
   "kind": "short",
   "label": "گزیده",
   "title": "U.S. refineries have been running at very high rates in 2026",
@@ -140,10 +189,14 @@
   "source": "اداره اطلاعات انرژی آمریکا (EIA)",
   "original_url": "https://www.eia.gov/todayinenergy/detail.php?id=68344",
   "decided_at": "2026-10-22T15:02:46.150016+00:00",
+  "status": "approved",
+  "content_hash": "c3117592045ab2b760d1b6421e7fc0053d6669c53b0894f5dd251c4aa95bf2f2",
+  "updated_at_epoch": 1792681366150,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-54",
+  "app_key": "a-02dfc4979de5719595b2",
   "kind": "short",
   "label": "گزیده",
   "title": "افزایش قیمت نفت در پی تشدید تنش‌های عربستان و انصارالله یمن",
@@ -151,10 +204,14 @@
   "source": "ilna.ir",
   "original_url": "https://www.ilna.ir/fa/tiny/news-1855735",
   "decided_at": "2026-10-22T06:58:34.212800+00:00",
+  "status": "approved",
+  "content_hash": "71e7086d44e40712fd241f5a16ea62d622fa2721333dd8ff24f5430725a002d3",
+  "updated_at_epoch": 1792652314212,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-53",
+  "app_key": "a-16657ad033fc9c3d0853",
   "kind": "short",
   "label": "گزیده",
   "title": "فوری | برنامه آمریکا و اسرائیل برای حمله به ایران",
@@ -162,10 +219,14 @@
   "source": "hamshahrionline.ir",
   "original_url": "https://www.hamshahrionline.ir/news/1079132/%D9%81%D9%88%D8%B1%DB%8C-%D8%A8%D8%B1%D9%86%D8%A7%D9%85%D9%87-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%D9%88-%D8%A7%D8%B3%D8%B1%D8%A7%D8%A6%DB%8C%D9%84-%D8%A8%D8%B1%D8%A7%DB%8C-%D8%AD%D9%85%D9%84%D9%87-%D8%A8%D9%87-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86",
   "decided_at": "2026-10-22T06:58:31.902985+00:00",
+  "status": "approved",
+  "content_hash": "5e039289fe9f2de46ab81576644581aa5b40728e38e000aadb547e34f7a47853",
+  "updated_at_epoch": 1792652311902,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-51",
+  "app_key": "a-62b96a280f49212a6cb6",
   "kind": "short",
   "label": "گزیده",
   "title": "Iran calls on UN to slam 'unlawful threats' from US, Israel",
@@ -173,10 +234,14 @@
   "source": "middleeasteye.net",
   "original_url": "https://www.middleeasteye.net/live-blog/live-blog-update/iran-calls-un-slam-us-naval-blockade-hormuz-strait",
   "decided_at": "2026-10-22T05:17:01.447227+00:00",
+  "status": "approved",
+  "content_hash": "6d5ee94e9ca88f4365fa224a6104f81e68b4af4a3069a449cbdc87199ac8fecf",
+  "updated_at_epoch": 1792646221447,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-47",
+  "app_key": "a-f727751ec9aa523791c8",
   "kind": "short",
   "label": "گزیده",
   "title": "پیش بینی فلاحت پیشه درباره زمان حمله به ایران/ عاصم منیر پیام آور ضرب الاجل آمریکا به ایران بود",
@@ -184,10 +249,14 @@
   "source": "donya-e-eqtesad.com",
   "original_url": "https://donya-e-eqtesad.com/%D8%A8%D8%AE%D8%B4-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4303445-%D9%BE%DB%8C%D8%B4-%D8%A8%DB%8C%D9%86%DB%8C-%D9%81%D9%84%D8%A7%D8%AD%D8%AA-%D9%BE%DB%8C%D8%B4%D9%87-%D8%AF%D8%B1%D8%A8%D8%A7%D8%B1%D9%87-%D8%B2%D9%85%D8%A7%D9%86-%D8%AD%D9%85%D9%84%D9%87-%D8%A8%D9%87-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%B9%D8%A7%D8%B5%D9%85-%D9%85%D9%86%DB%8C%D8%B1-%D9%BE%DB%8C%D8%A7%D9%85-%D8%A2%D9%88%D8%B1-%D8%B6%D8%B1%D8%A8-%D8%A7%D9%84%D8%A7%D8%AC%D9%84-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%D8%A8%D9%87-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%A8%D9%88%D8%AF",
   "decided_at": "2026-10-22T05:16:59.626430+00:00",
+  "status": "approved",
+  "content_hash": "e89fe7e807a0aabe033eb96e8639260945e5f97deed99b5f265e5daed9db9ca3",
+  "updated_at_epoch": 1792646219626,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-44",
+  "app_key": "a-833f1f098055022afd00",
   "kind": "short",
   "label": "گزیده",
   "title": "ادعای ترامپ درباره جنگ با ایران؛ ما می توانیم عقب نشینی کنیم اما...",
@@ -195,10 +264,14 @@
   "source": "hamshahrionline.ir",
   "original_url": "https://www.hamshahrionline.ir/news/1079124/%D8%A7%D8%AF%D8%B9%D8%A7%DB%8C-%D8%AA%D8%B1%D8%A7%D9%85%D9%BE-%D8%AF%D8%B1%D8%A8%D8%A7%D8%B1%D9%87-%D8%AC%D9%86%DA%AF-%D8%A8%D8%A7-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D9%85%D8%A7-%D9%85%DB%8C-%D8%AA%D9%88%D8%A7%D9%86%DB%8C%D9%85-%D8%B9%D9%82%D8%A8-%D9%86%D8%B4%DB%8C%D9%86%DB%8C-%DA%A9%D9%86%DB%8C%D9%85",
   "decided_at": "2026-10-22T05:16:57.281269+00:00",
+  "status": "approved",
+  "content_hash": "b9a7cd5229d9eb207a731a40cb2a46f90dba684193d16215aa00e3bc71e6fedb",
+  "updated_at_epoch": 1792646217281,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-39",
+  "app_key": "a-a14d1d5f1497b0b51226",
   "kind": "short",
   "label": "گزیده",
   "title": "آکسیوس: ترامپ برای اجبار زلنسکی به توافق، حمایت از اوکراین را محدود کرد",
@@ -206,10 +279,14 @@
   "source": "donya-e-eqtesad.com",
   "original_url": "https://donya-e-eqtesad.com/%D8%A8%D8%AE%D8%B4-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4302993-%D8%A2%DA%A9%D8%B3%DB%8C%D9%88%D8%B3-%D8%AA%D8%B1%D8%A7%D9%85%D9%BE-%D8%A8%D8%B1%D8%A7%DB%8C-%D8%A7%D8%AC%D8%A8%D8%A7%D8%B1-%D8%B2%D9%84%D9%86%D8%B3%DA%A9%DB%8C-%D8%A8%D9%87-%D8%AA%D9%88%D8%A7%D9%81%D9%82-%D8%AD%D9%85%D8%A7%DB%8C%D8%AA-%D8%A7%D8%B2-%D8%A7%D9%88%DA%A9%D8%B1%D8%A7%DB%8C%D9%86-%D8%B1%D8%A7-%D9%85%D8%AD%D8%AF%D9%88%D8%AF-%DA%A9%D8%B1%D8%AF",
   "decided_at": "2026-10-20T07:03:08.423674+00:00",
+  "status": "approved",
+  "content_hash": "b2d196c8f844c7d3b5b4489de53ea1133383e1b738e9987c2e331feddb8c15b4",
+  "updated_at_epoch": 1792479788423,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-33",
+  "app_key": "a-8e7a45659a1eca199b2f",
   "kind": "short",
   "label": "گزیده",
   "title": "ونس: اگر ایران کنترل عرضه نفت جهان را به دست گیرد، جنگ پایان می یابد",
@@ -217,10 +294,14 @@
   "source": "donya-e-eqtesad.com",
   "original_url": "https://donya-e-eqtesad.com/%D8%A8%D8%AE%D8%B4-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4302990-%D9%88%D9%86%D8%B3-%D8%A7%DA%AF%D8%B1-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%DA%A9%D9%86%D8%AA%D8%B1%D9%84-%D8%B9%D8%B1%D8%B6%D9%87-%D9%86%D9%81%D8%AA-%D8%AC%D9%87%D8%A7%D9%86-%D8%B1%D8%A7-%D8%A8%D9%87-%D8%AF%D8%B3%D8%AA-%DA%AF%DB%8C%D8%B1%D8%AF-%D8%AC%D9%86%DA%AF-%D9%BE%D8%A7%DB%8C%D8%A7%D9%86-%D9%85%DB%8C-%DB%8C%D8%A7%D8%A8%D8%AF",
   "decided_at": "2026-10-20T07:03:08.419175+00:00",
+  "status": "approved",
+  "content_hash": "f7d80f0d2ce06ef00c760bc0c9edb04be064d7ddbc13d0564ad1d1cd5b864165",
+  "updated_at_epoch": 1792479788419,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-34",
+  "app_key": "a-ea69bfa55b2cb802d14f",
   "kind": "short",
   "label": "گزیده",
   "title": "Watch: Iran's Araghchi says US the ‘main cause of insecurity’ in region",
@@ -228,10 +309,14 @@
   "source": "middleeasteye.net",
   "original_url": "https://www.middleeasteye.net/live-blog/live-blog-update/watch-irans-araghchi-says-us-main-cause-insecurity-region",
   "decided_at": "2026-10-20T05:00:12.009379+00:00",
+  "status": "approved",
+  "content_hash": "69a55f2a1456090097a0b187ddc22f1077af326fbc6e5acfb95983b83032cdeb",
+  "updated_at_epoch": 1792472412009,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-29",
+  "app_key": "a-13a52fb2ba0b418fff01",
   "kind": "short",
   "label": "گزیده",
   "title": "درخواست 5 سناتور آمریکایی از سنتکام/ هزینه واقعی جنگ علیه ایران شفاف سازی شود",
@@ -239,10 +324,14 @@
   "source": "donya-e-eqtesad.com",
   "original_url": "https://donya-e-eqtesad.com/%D8%A8%D8%AE%D8%B4-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4302994-%D8%AF%D8%B1%D8%AE%D9%88%D8%A7%D8%B3%D8%AA-%D8%B3%D9%86%D8%A7%D8%AA%D9%88%D8%B1-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7%DB%8C%DB%8C-%D8%A7%D8%B2-%D8%B3%D9%86%D8%AA%DA%A9%D8%A7%D9%85-%D9%87%D8%B2%DB%8C%D9%86%D9%87-%D9%88%D8%A7%D9%82%D8%B9%DB%8C-%D8%AC%D9%86%DA%AF-%D8%B9%D9%84%DB%8C%D9%87-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%B4%D9%81%D8%A7%D9%81-%D8%B3%D8%A7%D8%B2%DB%8C-%D8%B4%D9%88%D8%AF",
   "decided_at": "2026-10-20T04:59:55.629198+00:00",
+  "status": "approved",
+  "content_hash": "229bf52d631bb8b320cdf77b72b48bb8483adf45b6e2cf738affd28386709dbe",
+  "updated_at_epoch": 1792472395629,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-28",
+  "app_key": "a-a7b131ada29c5898b4a4",
   "kind": "short",
   "label": "گزیده",
   "title": "اطلاعیه سپاه و قدرت نمایی جدید در تنگه هرمز",
@@ -250,10 +339,14 @@
   "source": "hamshahrionline.ir",
   "original_url": "https://www.hamshahrionline.ir/news/1078382/%D8%A7%D8%B7%D9%84%D8%A7%D8%B9%DB%8C%D9%87-%D8%B3%D9%BE%D8%A7%D9%87-%D9%88-%D9%82%D8%AF%D8%B1%D8%AA-%D9%86%D9%85%D8%A7%DB%8C%DB%8C-%D8%AC%D8%AF%DB%8C%D8%AF-%D8%AF%D8%B1-%D8%AA%D9%86%DA%AF%D9%87-%D9%87%D8%B1%D9%85%D8%B2",
   "decided_at": "2026-10-20T04:59:53.488121+00:00",
+  "status": "approved",
+  "content_hash": "6983d80c76690f20e68e71e7b5ba772517fec21c2e35767dcc37f8880b31e3fb",
+  "updated_at_epoch": 1792472393488,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-27",
+  "app_key": "a-5087699ba4eab989568c",
   "kind": "short",
   "label": "گزیده",
   "title": "China’s Export Boom Fuels Growth Despite Slump at Home",
@@ -261,10 +354,14 @@
   "source": "نیویورک‌تایمز",
   "original_url": "https://www.nytimes.com/2026/10/18/business/china-economy-gdp.html",
   "decided_at": "2026-10-19T20:57:32.677647+00:00",
+  "status": "approved",
+  "content_hash": "b5e757f3a189e2d9be637b340a24f849e1d7ee5928c9a085056558bf3f26817d",
+  "updated_at_epoch": 1792443452677,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-26",
+  "app_key": "a-5a721bb9cb84c4bfa819",
   "kind": "short",
   "label": "گزیده",
   "title": "Hybrid sales rise while battery electric sales remain lower after tax credit expiration",
@@ -272,10 +369,14 @@
   "source": "اداره اطلاعات انرژی آمریکا (EIA)",
   "original_url": "https://www.eia.gov/todayinenergy/detail.php?id=68325",
   "decided_at": "2026-10-19T20:57:28.043523+00:00",
+  "status": "approved",
+  "content_hash": "75738f432f0430d4ed73be918fee4bb55ebd8418064f13a7746528014ff11703",
+  "updated_at_epoch": 1792443448043,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-24",
+  "app_key": "a-97f70688074933656eca",
   "kind": "short",
   "label": "گزیده",
   "title": "زاکانی: مترو تا پایان شرایط جنگی رایگان می‌ماند + فیلم",
@@ -283,10 +384,14 @@
   "source": "donya-e-eqtesad.com",
   "original_url": "https://donya-e-eqtesad.com/%D8%A8%D8%AE%D8%B4-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4302754-%D8%B2%D8%A7%DA%A9%D8%A7%D9%86%DB%8C-%D9%85%D8%AA%D8%B1%D9%88-%D8%AA%D8%A7-%D9%BE%D8%A7%DB%8C%D8%A7%D9%86-%D8%B4%D8%B1%D8%A7%DB%8C%D8%B7-%D8%AC%D9%86%DA%AF%DB%8C-%D8%B1%D8%A7%DB%8C%DA%AF%D8%A7%D9%86-%D9%85%DB%8C-%D9%85%D8%A7%D9%86%D8%AF-%D9%81%DB%8C%D9%84%D9%85",
   "decided_at": "2026-10-19T04:57:30.436854+00:00",
+  "status": "approved",
+  "content_hash": "2e574a0ced38aeec76b7d6a0219fc45efc5f4e5da0d0188e5013753a0fe3d0b4",
+  "updated_at_epoch": 1792385850436,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-20",
+  "app_key": "a-aa3244376ad429441a4b",
   "kind": "short",
   "label": "گزیده",
   "title": "Oklahoma Families Faced the Hottest Summer Ever and an Electricity Crisis",
@@ -294,10 +399,14 @@
   "source": "نیویورک‌تایمز",
   "original_url": "https://www.nytimes.com/2026/10/18/us/oklahoma-extreme-heat-electricity-crisis.html",
   "decided_at": "2026-10-18T21:02:29.095422+00:00",
+  "status": "approved",
+  "content_hash": "52eb6ba7f46e2aad3b56ed9e4e51baa9c2b69236f59846d7da9ad8378638484c",
+  "updated_at_epoch": 1792357349095,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-19",
+  "app_key": "a-678ad28f35be06937112",
   "kind": "short",
   "label": "گزیده",
   "title": "What is the Budget and what could be in it?",
@@ -305,10 +414,14 @@
   "source": "بی‌بی‌سی",
   "original_url": "https://www.bbc.co.uk/news/articles/c6x2zrjl7kjno?at_medium=RSS&at_campaign=rss",
   "decided_at": "2026-10-18T21:02:27.079802+00:00",
+  "status": "approved",
+  "content_hash": "dbba528f0efdc13a556d0efb46f154aed869162b67192d8cdbb175539ee62ad3",
+  "updated_at_epoch": 1792357347079,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-4",
+  "app_key": "a-b8a5a76aaac866425e65",
   "kind": "short",
   "label": "گزیده",
   "title": "هشدار مسکو درباره افزایش قیمت نفت در پی تداوم تنش‌ها در تنگه هرمز",
@@ -316,10 +429,14 @@
   "source": "donya-e-eqtesad.com",
   "original_url": "https://donya-e-eqtesad.com/%D8%A8%D8%AE%D8%B4-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4302510-%D9%87%D8%B4%D8%AF%D8%A7%D8%B1-%D9%85%D8%B3%DA%A9%D9%88-%D8%AF%D8%B1%D8%A8%D8%A7%D8%B1%D9%87-%D8%A7%D9%81%D8%B2%D8%A7%DB%8C%D8%B4-%D9%82%DB%8C%D9%85%D8%AA-%D9%86%D9%81%D8%AA-%D8%AF%D8%B1-%D9%BE%DB%8C-%D8%AA%D8%AF%D8%A7%D9%88%D9%85-%D8%AA%D9%86%D8%B4-%D9%87%D8%A7-%D8%AF%D8%B1-%D8%AA%D9%86%DA%AF%D9%87-%D9%87%D8%B1%D9%85%D8%B2",
   "decided_at": "2026-10-18T04:59:38.659225+00:00",
+  "status": "approved",
+  "content_hash": "a52af9ff2ba78d39c810905084d0710ab236479431993237ec23569ad91c4a25",
+  "updated_at_epoch": 1792299578659,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-5",
+  "app_key": "a-27e17b6abd6bfef446a6",
   "kind": "short",
   "label": "گزیده",
   "title": "تکذیب ادعای استفاده از پایگاه العدید علیه ایران/ الانصاری: ۶ میلیارد دلار ایران در قطر است/ آمریکا در مذاکرات تنگه هرمز کارشکنی می‌کند",
@@ -327,10 +444,14 @@
   "source": "donya-e-eqtesad.com",
   "original_url": "https://donya-e-eqtesad.com/%D8%A8%D8%AE%D8%B4-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4302512-%D8%AA%DA%A9%D8%B0%DB%8C%D8%A8-%D8%A7%D8%AF%D8%B9%D8%A7%DB%8C-%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87-%D8%A7%D8%B2-%D9%BE%D8%A7%DB%8C%DA%AF%D8%A7%D9%87-%D8%A7%D9%84%D8%B9%D8%AF%DB%8C%D8%AF-%D8%B9%D9%84%DB%8C%D9%87-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%A7%D9%84%D8%A7%D9%86%D8%B5%D8%A7%D8%B1%DB%8C-%D9%85%DB%8C%D9%84%DB%8C%D8%A7%D8%B1%D8%AF-%D8%AF%D9%84%D8%A7%D8%B1-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%AF%D8%B1-%D9%82%D8%B7%D8%B1-%D8%A7%D8%B3%D8%AA-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%D8%AF%D8%B1-%D9%85%D8%B0%D8%A7%DA%A9%D8%B1%D8%A7%D8%AA-%D8%AA%D9%86%DA%AF%D9%87-%D9%87%D8%B1%D9%85%D8%B2-%DA%A9%D8%A7%D8%B1%D8%B4%DA%A9%D9%86%DB%8C-%D9%85%DB%8C-%DA%A9%D9%86%D8%AF",
   "decided_at": "2026-10-18T04:57:40.485501+00:00",
+  "status": "approved",
+  "content_hash": "5df2c8c447959eeb4ecfc366e6c2a892841bf92a4921f0a3fec5ec35df67178d",
+  "updated_at_epoch": 1792299460485,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-3",
+  "app_key": "a-c3702a9422d2cc7dfe7d",
   "kind": "short",
   "label": "گزیده",
   "title": "ادعای وزیر جنگ آمریکا: ایران دو راه پیش رو دارد؛ یا مذاکره یا.../ترامپ مصمم است با تهدید بلندمدت ایران و جاه‌طلبی‌های هسته‌ای تهران مقابله کند",
@@ -338,10 +459,14 @@
   "source": "donya-e-eqtesad.com",
   "original_url": "https://donya-e-eqtesad.com/%D8%A8%D8%AE%D8%B4-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4302494-%D8%A7%D8%AF%D8%B9%D8%A7%DB%8C-%D9%88%D8%B2%DB%8C%D8%B1-%D8%AC%D9%86%DA%AF-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%AF%D9%88-%D8%B1%D8%A7%D9%87-%D9%BE%DB%8C%D8%B4-%D8%B1%D9%88-%D8%AF%D8%A7%D8%B1%D8%AF-%DB%8C%D8%A7-%D9%85%D8%B0%D8%A7%DA%A9%D8%B1%D9%87-%DB%8C%D8%A7-%D8%AA%D8%B1%D8%A7%D9%85%D9%BE-%D9%85%D8%B5%D9%85%D9%85-%D8%A7%D8%B3%D8%AA-%D8%A8%D8%A7-%D8%AA%D9%87%D8%AF%DB%8C%D8%AF-%D8%A8%D9%84%D9%86%D8%AF%D9%85%D8%AF%D8%AA-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%AC%D8%A7%D9%87-%D8%B7%D9%84%D8%A8%DB%8C-%D9%87%D8%A7%DB%8C-%D9%87%D8%B3%D8%AA%D9%87-%D8%A7%DB%8C-%D8%AA%D9%87%D8%B1%D8%A7%D9%86-%D9%85%D9%82%D8%A7%D8%A8%D9%84%D9%87-%DA%A9%D9%86%D8%AF",
   "decided_at": "2026-10-18T04:57:27.199681+00:00",
+  "status": "approved",
+  "content_hash": "3f5beffee49f20f333e1b5a8434f8e75bfa2a56d0da0fb6f9154f7a997f397ee",
+  "updated_at_epoch": 1792299447199,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  },
  {
   "id": "draft-2",
+  "app_key": "a-21e3128391f041094280",
   "kind": "short",
   "label": "گزیده",
   "title": "زنجیره شکست‌های سیاست خارجی دونالد ترامپ/ مرشایمر: ترامپ می‌خواهد از مسئولیت جنگ با ایران بگریزد",
@@ -349,6 +474,9 @@
   "source": "donya-e-eqtesad.com",
   "original_url": "https://donya-e-eqtesad.com/%D8%A8%D8%AE%D8%B4-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4302501-%D8%B2%D9%86%D8%AC%DB%8C%D8%B1%D9%87-%D8%B4%DA%A9%D8%B3%D8%AA-%D9%87%D8%A7%DB%8C-%D8%B3%DB%8C%D8%A7%D8%B3%D8%AA-%D8%AE%D8%A7%D8%B1%D8%AC%DB%8C-%D8%AF%D9%88%D9%86%D8%A7%D9%84%D8%AF-%D8%AA%D8%B1%D8%A7%D9%85%D9%BE-%D9%85%D8%B1%D8%B4%D8%A7%DB%8C%D9%85%D8%B1-%D8%AA%D8%B1%D8%A7%D9%85%D9%BE-%D9%85%DB%8C-%D8%AE%D9%88%D8%A7%D9%87%D8%AF-%D8%A7%D8%B2-%D9%85%D8%B3%D8%A6%D9%88%D9%84%DB%8C%D8%AA-%D8%AC%D9%86%DA%AF-%D8%A8%D8%A7-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%A8%DA%AF%D8%B1%DB%8C%D8%B2%D8%AF",
   "decided_at": "2026-10-18T01:03:50.775144+00:00",
+  "status": "approved",
+  "content_hash": "69a3ec89d5f69ccdf487278330901b1a0f6381709a0a7fd06052a108ea370dcd",
+  "updated_at_epoch": 1792285430775,
   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
  }
 ]

@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.eghtesadonline.com/fa/news/2170187/نجفی-عرب-اقتصاد-ایران-با-8-بحران-عمیق-روبه-روست-آسیب-به-کسب-وکارها-بحران-برای-تمام-جامعه-است",
+ "app_key": "a-154e79614838a073d60c",
  "kind": "article",
  "title": "نجفی‌عرب: اقتصاد ایران با ۸ بحران عمیق روبه‌روست | آسیب به کسب‌وکارها بحران برای تمام جامعه است",
  "summary": "رئیس اتاق بازرگانی تهران با اشاره به تشدید فشار‌های اقتصادی بر مردم و بنگاه‌ها، هشت چالش اصلی اقتصاد ایران را تشریح کرد و خواستار مهار تورم، کاهش نااطمینانی، تسهیل فعالیت بخش خصوصی و احیای اعتماد عمومی شد.",
@@ -53,5 +54,8 @@
  "extracted_at": "2026-10-20T16:32:12.809485+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "95afca159fb85fc489723f405ad776c05d34f3fa0b02f53cd603d69bf7ee343a",
+ "updated_at_epoch": 1792501332809,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

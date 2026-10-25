@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:449693 at https://www.middleeasteye.net/",
+ "app_key": "a-a271bbaf633ed9a80b08",
  "kind": "article",
  "title": "کارگر مذهبی حامی فلسطین در آمریکا با خطر اخراج به اسرائیل روبه‌روست",
  "summary": "<article data-history-node-id=\"449693\" about=\"https://www.middleeasteye.net/live-blog/live-blog-update/pro-palestinian-hasidic-religious-worker-accused-hate-crimes-faces-0\" class=\"live-blog-update default clearfix\">\n\n  \n      <h2>\n      <a href=\"https://www.middleeasteye.net/live-blog/live-blog-update/pro-palestinian-hasidic-religious-worker-accused-hate-crimes-faces-0\" rel=\"bookmark\">\n<span class=\"field field-title\">Pro-Palestinian Hasidic religious worker accused of hate crimes faces deportation to Israel</span>\n</a>\n    </h2>\n    \n\n        \n    <div class=\"content\">\n                <div class=\"field field-field-text\"><p>Hasidic religious worker Yehonatan Ovadia is currently being held at Metropolitan Detention Center in New York City and is facing potential deportation to&nbsp;<a href=\"https://www.middleeasteye.net/countries/israel\" target=\"_blank\">Israel</a>&nbsp;for his pro-Palestinian views.</p>\n\n<p>The 35-year-old originally came to the US in 2022 on a temporary religious worker visa from Israel, according to The Times of Israel.&nbsp;&nbsp;</p>\n\n<p>The US Department of Homeland Security (DHS) told Middle East Eye that Ovadia reentered the US in April of 2024 on a visa that later expired in November of 2025.</p>\n\n<p>His lawyers told MEE that when his congregation applied to renew his worker classification, United States Citizenship and Immigration Services (USCIS) initially approved it through 2028 and then, days later, denied the extension \"as a matter of discretion\".&nbsp;</p>\n\n<h3>Read more:&nbsp;<a href=\"https://www.middleeasteye.net/news/pro-palestinian-hasidic-religious-worker-accused-hate-crimes-faces-deportation-israel\">Pro-Palestinian Hasidic religious worker accused of hate crimes faces deportation to Israel</a></h3>\n\n  <figure role=\"group\" class=\"media-block\">\n  <div class=\"group-inner\">\n    <div alt=\"Outside view of the Metropolitan Detention Center on the eve of ousted Venezuelan President Nicolas Maduro's scheduled court appearance in New York C",
@@ -23,5 +24,8 @@
  "extracted_at": "2026-10-22T02:08:35.564006+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "a1aa816202dd676f7739f32b55b18b2b5e5b8f1887fb553cdec1bc5e44387a18",
+ "updated_at_epoch": 1792622315564,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

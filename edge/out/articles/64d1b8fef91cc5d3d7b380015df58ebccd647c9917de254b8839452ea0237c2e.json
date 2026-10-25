@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%A8%D8%A7%D8%B2%D8%A7%D8%B1-%D9%86%D9%81%D8%AA-126/4302793-%DA%86%D8%B4%D9%85-%D8%A7%D9%86%D8%AF%D8%A7%D8%B2-%D8%B3%D8%B1%D9%85%D8%A7%DB%8C%D9%87-%DA%AF%D8%B0%D8%A7%D8%B1%DB%8C-%D9%85%DB%8C%D9%84%DB%8C%D8%A7%D8%B1%D8%AF-%D8%AF%D9%84%D8%A7%D8%B1%DB%8C-%D8%AF%D8%B1-%D8%B5%D9%86%D8%B9%D8%AA-%D9%86%D9%81%D8%AA-%D9%88%D9%86%D8%B2%D9%88%D8%A6%D9%84%D8%A7",
+ "app_key": "a-64d1b8fef91cc5d3d7b3",
  "kind": "article",
  "title": "چشم‌انداز سرمایه‌گذاری ۷۶ میلیارد دلاری در صنعت نفت ونزوئلا",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/O6srpS2E65Nx/0lLi2NJyHZYPvYPgJJXvtL5TiEZYFdAXgNwlxdV_cMgqqzcY7JZf6nT7FWrPzfrX2F-qaTEkyMO5J2NMm_vOFMplvkz8cyHCo31ZGccZQbcU7zNtxoWI93GjUka2XKXMTNptTymPAt-C3MxYmhgMNvbAh4iERkztuXyVUL9_jTk0hB6IyIqgbky15xOAGkWD/IMG_7780.jpg\"> <div>دنیای اقتصاد: دولت ونزوئلا که در پی جذب سرمایه بخش خصوصی و بازگرداندن رونق به بخش انرژی است، پیش‌بینی می‌کند ظرف پنج سال حدود ۷۶میلیارد دلار در صنعت نفت و گاز این کشور سرمایه‌گذاری شود. </div>",
@@ -30,5 +31,8 @@
  "extracted_at": "2026-10-19T13:29:35.233498+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "f720aaa8b53699786af44f9637dcd8f1b661b5d34445e18d57b53830dec31553",
+ "updated_at_epoch": 1792403975233,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

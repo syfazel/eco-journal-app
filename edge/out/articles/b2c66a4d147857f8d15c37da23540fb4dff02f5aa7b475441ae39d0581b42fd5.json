@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%B3%D8%B1%D9%85%D9%82%D8%A7%D9%84%D9%87-28/4303026-%D8%A8%D8%AF%D8%B9%D8%AA-%D9%86%D8%A7%D8%AF%D8%B1%D8%B3%D8%AA",
+ "app_key": "a-b2c66a4d147857f8d15c",
  "kind": "article",
  "title": "بدعت نادرست؟",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/SdzLBjxp94tn/oaZwaBXg3zja7on8e2hcb96O26DI8KA_M_2_00RnzImJ1aoGStfR73dyMcphnQCd0eaKOtFNiRMl4omzFGnDefS3PY0pT3jJ1Fm6tnRcvH4tzBmhzjPLSbiwLuhTGYrpBSVFGuXIQnvOze6j4OPd-SvvE3zUnX667yCWwZtcaU1XO2bLWOBFSNVAKpuxn7Gb/%D8%B9%D9%84%DB%8C+%D8%B3%D8%B1%D8%B2%D8%B9%DB%8C%D9%85+copy.jpg\"> <div>دنیای اقتصاد:  دکتر علی سرزعیم؛ اقتصاددان در سرمقاله امروز روزنامه دنیای اقتصاد نوشت: عبدالصمد خرم‌آبادی، مشاور رئیس قوه قضائیه، با متهم کردن بانک مرکزی به تخلف در تعیین نرخ رسمی ارز و همسویی با دشمنان، مسوولان این بانک را تهدید به تعقیب کیفری کرده است.</div>",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-20T11:26:49.155903+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "c59efeea332c329dd0f0351c14d91005a4c0325a6bea1df1f5931cfc750352e1",
+ "updated_at_epoch": 1792483009155,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

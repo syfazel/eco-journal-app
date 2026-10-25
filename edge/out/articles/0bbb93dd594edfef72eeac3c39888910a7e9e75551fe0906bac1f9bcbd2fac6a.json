@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.irib-news.ir/fa/news/5943682/تکمیل-زنجیره-ارزش-ضرورت-ارتقای-تولید-گیاهان-دارویی",
+ "app_key": "a-0bbb93dd594edfef72ee",
  "kind": "article",
  "title": "تکمیل زنجیره ارزش ضرورت ارتقای تولید گیاهان دارویی",
  "summary": "مدیرکل دفتر گیاهان دارویی وزارت جهاد کشاورزی از صادرات ۲۳۰ میلیون دلاری گیاهان دارویی خبر داد و گفت: پیش بینی می‌کنیم این میزان تا ۵ سال آینده به ۲ تا ۳ برابرافزایش یابد.",
@@ -38,5 +39,8 @@
  "extracted_at": "2026-10-20T11:28:27.972093+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "6fafbcb12332ab604c133ee102b1fcb248b2f47c520ca3abb969289e0b849526",
+ "updated_at_epoch": 1792483107972,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

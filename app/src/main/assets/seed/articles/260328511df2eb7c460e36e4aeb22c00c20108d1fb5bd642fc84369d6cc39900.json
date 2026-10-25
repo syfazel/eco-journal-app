@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p3-t0",
+ "app_key": "a-260328511df2eb7c460e",
  "kind": "article",
  "title": "ما برای حمله به ایران درخواست کمک کردیم زیرا....| ادعای تازه ترامپ درباره ضربه زدن به ایران",
  "summary": "رئیس جمهوری آمریکا در گردهمایی جمهوری‌خواهان در کانزاس در حالیکه ادعاهایش با فریاد و اعتراض مخالفان بارها قطع شد، در پی رد درخواست او از ناتو برای مشارکت در جنگ و حملات تجاوزکارانه علیه ایران، ادعایی جدید مطرح کرد.",
@@ -39,5 +40,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "d25188f4f187db7a4c30589e7170e05d355e67bbaa679567adc26cdf898445d1",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t13",
+ "app_key": "a-eeb2a05ca7134e9d9f15",
  "kind": "article",
  "title": "زمان و شرایط شرکت در حراج جدید شمش طلا اعلام شد",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/kqw0Hdg8znrF/DsVsSxLvRppC4NuxDl_ksmnrmJGAb2CiDkvbleEFbr2VNTWQbb1I-8IuEDMVWZVfgqCACBR2eoedkZ2249178kZbF0X5epzeqc-9SJWrNURxuNxYJxZ3FuciN0e6H0oInrmutv0PA3ZJZGhj1Zpod4XcPcJolP_X83lfXnVYVtDrU9-HNA-eUawzngkeNwyh/%D9%85%D8%B1%DA%A9%D8%B2+%D8%AE%D8%B1%DB%8C%D8%AF+%D8%B4%D9%85%D8%B4.jpg\"> <div>دارا بودن پروانه کسب معتبر و ثبت‌شده در درگاه ملی مجوزها، قابلیت استعلام شناسه یکتای پروانه کسب متقاضی خرید از درگاه ملی مجوزهای کشور از الزامات شرکت در جلسه حراجی شمش طلا است.\n\n</div>",
@@ -26,5 +27,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "c055c8aca8c2a5cf7a3e61c21fe713eb7f00869110b91e514714fee56c800140",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

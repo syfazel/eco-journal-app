@@ -1,4 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ECO JOURNAL</string>
+    <!-- M3: UI strings moved out of hard-coded literals (P2-01). -->
+    <string name="search_label">جست‌وجو در عنوان، متن، منبع و دسته</string>
+    <string name="search_no_results">در مقالات ذخیره‌شده چیزی برای این جست‌وجو یافت نشد.</string>
+    <string name="search_results_count">%1$s نتیجه</string>
+    <string name="clear_search">پاک کردن جست‌وجو</string>
+    <string name="sync_button">همگام‌سازی</string>
+    <string name="sync_in_progress">در حال همگام‌سازی…</string>
+    <string name="sync_up_to_date">به‌روز است (%1$s مقاله در حافظه).</string>
+    <string name="sync_new_articles">%1$s مقالهٔ تازه دریافت شد.</string>
+    <string name="sync_partial">همگام‌سازی ناقص ماند؛ %1$s مقاله در تلاش بعدی دوباره دریافت می‌شوند.</string>
+    <string name="sync_not_configured">لبهٔ انتشار هنوز تنظیم نشده است. فقط مقالات کش‌شده نمایش داده می‌شوند.</string>
+    <string name="sync_failed">همگام‌سازی ناموفق بود: %1$s</string>
+    <string name="feed_empty">هنوز مقاله‌ای در حافظه نیست. دکمهٔ همگام‌سازی را بزنید تا پس از تنظیم لبهٔ انتشار، مقالات دریافت شوند.</string>
+    <string name="section_empty">در این بخش هنوز مقاله‌ای در حافظه نیست.</string>
+    <string name="article_not_found">مقاله یافت نشد. شاید هنوز همگام‌سازی نشده است.</string>
+    <string name="article_not_found_retry">تلاش دوباره (دریافت از لبه)</string>
+    <string name="article_back">بازگشت</string>
+    <string name="article_open">باز کردن مقاله</string>
+    <string name="article_bookmark">ذخیره شود</string>
+    <string name="article_unbookmark">از ذخیره‌شده‌ها حذف شود</string>
+    <string name="article_bookmarked_state">ذخیره شده است</string>
+    <string name="article_not_bookmarked_state">ذخیره نشده است</string>
+    <string name="key_points">نکات کلیدی</string>
+    <string name="why_matters">چرا مهم است</string>
+    <string name="open_source">مشاهدهٔ منبع اصلی</string>
+    <string name="open_source_failed">باز کردن منبع ممکن نشد.</string>
+    <string name="duplicate_title">تیتر تکراری</string>
+    <string name="bookmarks_empty">هنوز چیزی ذخیره نکرده‌اید.</string>
+    <string name="bookmarks_unavailable_title">ذخیره‌شده‌های دیگر در دسترس نیست</string>
+    <string name="bookmark_unavailable_row">این مقاله دیگر در دسترس نیست.</string>
+    <string name="bookmark_prune">حذف</string>
+    <string name="font_size_label">اندازهٔ فونت</string>
+    <string name="font_preview">این یک پاراگراف نمونه است تا اندازهٔ فونت انتخاب‌شده را همین‌جا ببینید.</string>
 </resources>

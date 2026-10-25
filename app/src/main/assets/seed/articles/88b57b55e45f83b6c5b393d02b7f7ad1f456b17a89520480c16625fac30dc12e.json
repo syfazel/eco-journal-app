@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p0-t1",
+ "app_key": "a-88b57b55e45f83b6c5b3",
  "kind": "article",
  "title": "خوشبختانه مذاکرات کنونی ایران و آمریکا محرمانه است؛ اسرائیل برای وارد کردن آمریکا به جنگ جدید فشار می‌آورد",
  "summary": "مقایسه پیشنهاد‌های ایران و پاسخ‌های ایالات متحده در مذاکرات کنونی دشوار است، زیرا محرمانه است و خوشبختانه همه‌چیز علنی نمی‌شود.",
@@ -36,5 +37,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "7428d06ba903f98066e24025b5a6d1298461cb23c52d85c17447d3f6be452b82",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

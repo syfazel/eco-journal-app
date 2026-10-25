@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p2-t5",
+ "app_key": "a-95d05b1a8826792ba685",
  "kind": "article",
  "title": "شناسه‌دار کردن کارت‌های اضطراری سوخت به سراسر کشور گسترش می‌یابد",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/oSXEhOhUVe4A/B2JfhtIFSOBrHos44pa5xYAK9MJnav3hx2ITABwXEZNXk-ZNi4yB9QMiFmcoYdbi-_ak8AHBPntaVWAnPf6LSkqHpISaKFmm95OPtIkzboS0oHTXuMAZxDQx9wPegJ-W86c7hxNThZheUCCWAusnMJ4QwMN_f4JHx9m8dwhafwe8QXpm61o1im5kakLNJsTk/%DA%A9%D8%A7%D8%B1%D8%AA+%D8%B3%D9%88%D8%AE%D8%AA.jpg\"> <div>مدیر سامانه هوشمند سوخت شرکت ملی پخش فرآورده‌های نفتی می‌گوید که ذخیره‌سازی کارت‌های سوخت تغییری نکرده است.</div>",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "dad05a3b3302af3a6c911b9137d4958bf647a5016862b9e2c1f152d985aceeb6",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

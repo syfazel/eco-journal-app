@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.mehrnews.com/news/6983501/%D9%BE%D8%A7%DB%8C%D8%A7%D9%86-%D9%84%D8%B1%D8%B2%D9%87-%D9%86%DA%AF%D8%A7%D8%B1%DB%8C-%D8%AF%D8%B4%D8%AA-%DA%AF%D8%B1%DA%AF%D8%A7%D9%86-%D8%A8%D8%B1%D9%86%D8%A7%D9%85%D9%87-%D8%B1%DB%8C%D8%B2%DB%8C-%D8%A8%D8%B1%D8%A7%DB%8C-%D8%AD%D9%81%D8%A7%D8%B1%DB%8C-%DA%86%D8%A7%D9%87-%D8%A7%DA%A9%D8%AA%D8%B4%D8%A7%D9%81%DB%8C",
+ "app_key": "a-154863c028ef23a9db52",
  "kind": "article",
  "title": "پایان لرزه‌نگاری دشت گرگان؛ برنامه‌ریزی برای حفاری چاه اکتشافی",
  "summary": "مدیرعامل شرکت نفت خزر از اتمام موفقیت‌آمیز پروژه لرزه‌نگاری زون انتقالی غرب دشت گرگان و برنامه‌ریزی برای حفاری اکتشافی خبر داد.",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-20T09:58:57.325091+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "eb932be77621ac9c4ba4a3d2746aa360d60c4c676135bd24b36a37ea182b5562",
+ "updated_at_epoch": 1792477737325,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.eghtesadonline.com/fa/news/2170155/تعیین-سقف-برای-مهریه-قانون-جدید-قوه-قضاییه",
+ "app_key": "a-0153b16560c33d084bee",
  "kind": "article",
  "title": "تعیین سقف برای مهریه / قانون جدید قوه قضاییه",
  "summary": "سیدعلی کاظمی سخنگوی قوه قضاییه، از وجود ملاحظاتی درباره تعیین سقف ۱۴ سکه برای تمام موارد مهریه خبر داد و به مشکلات ناشی از افزایش قیمت سکه و ناتوانی برخی محکومان مالی در پرداخت بدهی اشاره کرد.",
@@ -20,5 +21,8 @@
  "extracted_at": "2026-10-20T13:29:54.101151+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "c87910dcd31d338a9e127a723c380f44b873be670fbea1d8440d6059ff894cde",
+ "updated_at_epoch": 1792490394101,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

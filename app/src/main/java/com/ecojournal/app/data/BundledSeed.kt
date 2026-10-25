@@ -106,6 +106,12 @@ object BundledSeed {
                 missingIds.add("index-entry-$i")
                 continue
             }
+            // A retracted entry is a tombstone, not a missing
+            // article: the seed never counts it as missing and
+            // never inserts it. Retraction of an already-cached
+            // row is the edge sync's job (it flips the row's
+            // status); a fresh seed simply has nothing to add.
+            if (entry.optString("status", "approved") == "retracted") continue
             if (id in existingIds) continue
             if (entry.optString("kind") == "short") {
                 shortIds.add(id)

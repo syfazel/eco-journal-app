@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399309/اظهارات-جنجالی-ترامپ-درباره-فرانسه",
+ "app_key": "a-37c5f97fa56c614734dd",
  "kind": "article",
  "title": "ترامپ: مهاجرت عامل اعتراضات فرانسه است",
  "summary": "رئیس‌جمهور آمریکا بدون ارائه شواهدی، مهاجرت را عامل اعتراضات فرانسه و ناآرامی ناشی از آن دانست و خواستار بسته شدن مرزهای این کشور شد.",
@@ -26,5 +27,8 @@
  "extracted_at": "2026-10-19T00:22:38.880752+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "52f2a265fa9af16298d63bfbadd8421b7ee65d5b36353f0915f2b4ab702cec32",
+ "updated_at_epoch": 1792356758880,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

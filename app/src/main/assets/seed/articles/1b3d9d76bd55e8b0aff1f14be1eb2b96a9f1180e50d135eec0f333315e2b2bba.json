@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p7-t17",
+ "app_key": "a-1b3d9d76bd55e8b0aff1",
  "kind": "article",
  "title": "هشدار تازه یمن علیه آرامکو",
  "summary": "یک منبع نظامی ارتش یمن ضمن هشدار درباره نزدیک ‌شدن به تأسیسات نفتی اعلام کرد حریم هوایی عربستان سعودی به جزء مکه مکرمه و مدینه منوره، ناامن است.",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "dbb1eff09e4f28ef7170afaa3f54f1f8fae1e6061db883eacb6471496650bc8a",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

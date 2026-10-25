@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399385/هشدار-جنتی-درباره-انفجارهای-بزرگ-و-ترورها",
+ "app_key": "a-10c979fa2bfef8e6193b",
  "kind": "article",
  "title": "هشدار جنتی درباره انفجارهای بزرگ و ترورها",
  "summary": "به گفته علی جنتی، نتانیاهو برای به تعویق انداختن انتخابات داخلی و حفظ قدرت خود تلاش می‌کند. از این رو، او احتمالاً با انجام یک حمله غافلگیرانه به دنبال ترور مقامات رده‌بالای کشور است تا با تحریک پاسخ کوبنده ایران و ایجاد شرایط جنگی، انتخابات را لغو کند.",
@@ -35,5 +36,8 @@
  "extracted_at": "2026-10-20T00:13:32.386368+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "cc44548384c856ef3835e6ba7a71006633550bf1a6fb1d94b1c4a06cb076ad68",
+ "updated_at_epoch": 1792442612386,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

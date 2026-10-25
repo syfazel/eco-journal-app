@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p0-t1",
+ "app_key": "a-ce40230d4ddb24f770a4",
  "kind": "article",
  "title": "انهدام پنجاه و چهارمین پهپاد MQ-9 در آسمان تنگه هرمز",
  "summary": "<img src=\"https://cdn.ilna.ir/thumbnail/z7z78Pv6DErK/oASYcVNgV2wFhRGQt1NgEppGvxnSc-hBwV7ntogbBmO2a05Ln8dc7QV4n1ofQJmdesmVxDKj1p04DNxELfAqs7MecQEqGgeeyIKCkyXzv3O0E0-FGrAY3zUIruZtIuWWS9Wth_jKHVdDYrYw4zf-IFGac5377Yf83_g5auznPH5UTWdNhrAjhiPI5BoVeNbH/photo_2026-10-20_06-28-11.jpg\"> <div> روابط عمومی سپاه پاسداران اعلام کرد: پنجاه و چهارمین پهپاد MQ-9 ارتش تروریستی امریکا بامداد امروز در آسمان  تنگه هرمز رهگیری و منهدم شد.</div>",
@@ -20,5 +21,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "6283c438c3655dff2cce6416b7623e770304d45b9e37dc84b7ed76e862a025aa",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

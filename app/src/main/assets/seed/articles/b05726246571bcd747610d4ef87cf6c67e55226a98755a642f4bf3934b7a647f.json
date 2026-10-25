@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4302923-%D8%A7%D8%B1%D8%AF%D9%88%D8%BA%D8%A7%D9%86-%D8%AA%D8%B1%DA%A9%DB%8C%D9%87-%D8%AF%D8%B1-%D8%A7%D8%AD%D8%A7%D8%B7%D9%87-%D8%A8%D8%AD%D8%B1%D8%A7%D9%86-%D9%87%D8%A7%DB%8C%DB%8C-%D9%82%D8%B1%D8%A7%D8%B1-%D8%AF%D8%A7%D8%B1%D8%AF-%DA%A9%D9%87-%D8%B1%D9%88-%D8%A8%D9%87-%D9%88%D8%AE%D8%A7%D9%85%D8%AA%D9%86%D8%AF-%D9%88%D8%A7%DA%A9%D9%86%D8%B4-%D8%A8%D9%87-%D8%AD%D9%85%D9%84%D9%87-%DB%8C%D9%85%D9%86-%D8%A8%D9%87-%D9%81%D8%B1%D9%88%D8%AF%DA%AF%D8%A7%D9%87-%D8%B1%DB%8C%D8%A7%D8%B6",
+ "app_key": "a-b05726246571bcd74761",
  "kind": "article",
  "title": "اردوغان: ترکیه در احاطه بحران‌هایی است که رو به وخامت‌اند",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/y1Cdnbhm58vS/QUWoa7_jWBpgCE9_vN8DxuuGIK9fvCfb0i_SF6xfcwV9-kCpJYV5lbuRIcaoVB9qjdf3qUSXv_H7PlFfnzgQDnxQ58OCIXJMQNWyxzSCly2ULUQ8NkJMA7HZCyrGzzmXA81TQ7kVcud5E_nzrbFNY_pny3xqsHcYmfDZJoTlg8NpTSx8cYRy7EiU-UzpUaAk/%D8%A7%D8%B1%D8%AF%D9%88%D8%BA%D8%A7%D9%86.jpg\"> <div> اردوغان در مقر ریاست‌جمهوری در آنکارا گفت: «ما کشورمان را از درگیری‌های اطرافمان دور نگه داشته‌ایم. تسلیم تحریک‌ها نشده‌ایم. در تله‌ها نیفتاده‌ایم و به تحریک‌ها کشیده نشده‌ایم.»</div>",
@@ -31,5 +32,8 @@
  "extracted_at": "2026-10-20T00:13:30.465494+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "84a2d1bd7ea896b85677f0fa1a9847a15f4ead35fe223f82efe4ac2cf91fc882",
+ "updated_at_epoch": 1792442610465,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

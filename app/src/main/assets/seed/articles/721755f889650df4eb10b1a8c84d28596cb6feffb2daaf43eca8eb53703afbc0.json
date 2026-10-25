@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4303219-%D9%88%D8%A7%DA%A9%D9%86%D8%B4-%D9%88%D8%B2%D8%A7%D8%B1%D8%AA-%D8%AE%D8%A7%D8%B1%D8%AC%D9%87-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%A8%D9%87-%D8%AA%D8%AD%D8%B1%DB%8C%D9%85-%D9%87%D8%A7%DB%8C-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%D8%B9%D9%84%DB%8C%D9%87-%DA%A9%D9%88%D8%A8%D8%A7-%D8%A7%DB%8C%D9%86-%D8%A7%D9%82%D8%AF%D8%A7%D9%85%D8%A7%D8%AA-%D9%86%D8%A7%D9%82%D8%B6-%D9%85%D9%86%D8%B4%D9%88%D8%B1-%D8%B3%D8%A7%D8%B2%D9%85%D8%A7%D9%86-%D9%85%D9%84%D9%84-%D8%AD%D9%82%D9%88%D9%82-%D8%A8%D8%B4%D8%B1-%D8%A7%D8%B3%D8%AA",
+ "app_key": "a-721755f889650df4eb10",
  "kind": "article",
  "title": "واکنش وزارت خارجه ایران به تحریم‌های آمریکا علیه کوبا",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/cJUlcOayNaSc/4YMW7tBMxYNjSHzhv1D_2cpc7lTkJx0a0JzpYnRJUd-JD4ff96TjvQLKPXt0NL5v4IyvYf-EytuCnm5R2v3rNvg2I1-gs5W-BbNMdnsbKKf7d_tzJrK6MVJvEapgA2C5KBHCFXYrMKrMI__f1bS0hyqN_Sd6gHFkbzAWBx_SuPS9NbC9_hG0OHWKNtgQk28j/%D9%88%D8%B2%D8%A7%D8%B1%D8%AA+%D8%AE%D8%A7%D8%B1%D8%AC%D9%87.jpg\"> <div>وزارت امور خارجه ایران در بیانیه‌ای، تحریم‌های آمریکا علیه کوبا و اقدامات واشنگتن علیه مقام‌ها و شخصیت‌های این کشور را محکوم کرد و این اقدامات را ناقض منشور سازمان ملل متحد، حقوق بین‌الملل و حقوق بشر دانست.\n</div>",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-22T02:08:28.165734+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "879081f126f874f35e0e6cbb641163d81540b287860f9e526842d03754f2d217",
+ "updated_at_epoch": 1792622308165,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

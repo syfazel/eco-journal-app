@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t25",
+ "app_key": "a-f0af71ea541addd4bd19",
  "kind": "article",
  "title": "زارع: گرانی بنزین مصرف را کاهش نمی‌دهد",
  "summary": "<p>عضو کمیسیون برنامه و بودجه مجلس، با تأکید بر اینکه گرانی بنزین لزوماً مصرف سوخت را کاهش نمی‌دهد، خواستار واردات خودروهای باکیفیت و توسعه حمل‌ونقل عمومی شد.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d8%b2%d8%a7%d8%b1%d8%b9-%da%af%d8%b1%d8%a7%d9%86%db%8c-%d8%a8%d9%86%d8%b2%db%8c%d9%86-%d9%85%d8%b5%d8%b1%d9%81-%d8%b1%d8%a7-%da%a9%d8%a7%d9%87%d8%b4-%d9%86%d9%85%db%8c%d8%af%d9%87%d8%af\">زارع: گرانی بنزین مصرف را کاهش نمی‌دهد</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -26,5 +27,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "e736242cf984c042f4aa38ad3720cd70520c63710fcee1f3d31576a88b66927e",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

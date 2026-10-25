@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.hamshahrionline.ir/news/1078740/%D8%B1%D8%A6%DB%8C%D8%B3-%D8%B3%D8%AA%D8%A7%D8%AF-%D8%A7%D8%B1%D8%AA%D8%B4-%D8%B1%DA%98%DB%8C%D9%85-%D8%A8%D9%87-%D9%86%D8%B4%D8%B3%D8%AA-%D9%88%DB%8C%DA%98%D9%87-%D9%86%D8%AA%D8%A7%D9%86%DB%8C%D8%A7%D9%87%D9%88-%D9%88-%D9%87%DA%AF%D8%B3%D8%AA-%D8%AF%D8%B9%D9%88%D8%AA-%D9%86%D8%B4%D8%AF",
+ "app_key": "a-b859a56b28d641860b0f",
  "kind": "article",
  "title": "رئیس ستاد ارتش اسرائیل به نشست نتانیاهو و هگست دعوت نشد",
  "summary": "یک رسانه صهیونیستی فاش کرد که ایال زامیر، رئیس ستاد ارتش این رژیم برای حضور در نشست غیر معمول بنیامین نتانیاهو نخست‌وزیر اسرائیل و پیت هگست وزیر جنگ آمریکا به همراه شماری دیگر از مقام‌ها دعوت نشد.",
@@ -27,5 +28,8 @@
  "extracted_at": "2026-10-22T02:08:35.735696+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "edf0663d5135e9d0af4fe6d15b2228774daf332ae9d0a2e7c180b8afe45e8560",
+ "updated_at_epoch": 1792622315735,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.irib-news.ir/fa/news/5943518/پاراآسیایی-ناگویا-طلای-احمدی-و-نقره-جوانمردی-در-تپانچه-بادی-10-متر",
+ "app_key": "a-c34d19edb97a03de6729",
  "kind": "article",
  "title": "پاراآسیایی ناگویا؛ طلای احمدی و نقره جوانمردی در تپانچه بادی ۱۰ متر",
  "summary": "درخشش بانوان پاراتیرانداز ایران در فینال تپانچه بادی ۱۰ متر با کسب مدال‌های طلا و نقره همراه بود.",
@@ -20,5 +21,8 @@
  "extracted_at": "2026-10-20T10:00:11.985869+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "829ec991a634eb658c446661256d8f289e5a665047d1cfe38125228f27714e27",
+ "updated_at_epoch": 1792477811985,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

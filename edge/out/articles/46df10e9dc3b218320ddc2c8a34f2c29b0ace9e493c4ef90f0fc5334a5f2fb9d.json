@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t18",
+ "app_key": "a-46df10e9dc3b218320dd",
  "kind": "article",
  "title": "بازسازی واحدهای خسارت‌دیده جنگ رمضان در سه شهرستان البرز پایان یافت",
  "summary": "کرج _ مدیرکل بنیاد مسکن البرز گفت: بازسازی واحدهای خسارت‌دیده جنگ در نظرآباد، چهارباغ و اشتهارد به پایان رسیده و احداث واحدهای تخریب‌شده نیز آغاز شده است.",
@@ -30,5 +31,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "8d010b7b9126cfe301336972caac3129ed4a1c77843b84c286942fc9adc719d1",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

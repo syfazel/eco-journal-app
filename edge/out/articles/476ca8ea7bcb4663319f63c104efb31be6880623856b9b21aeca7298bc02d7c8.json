@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t19",
+ "app_key": "a-476ca8ea7bcb4663319f",
  "kind": "article",
  "title": "چطور با خرید و فروش طلا سود کنیم؟",
  "summary": "کسب سود از طلا صرفاً به رشد قیمت این فلز گران‌بها وابسته نیست؛ زمان ورود و خروج از بازار، نوع طلای خریداری‌شده، هزینه‌های معامله و شرایط اقتصادی نیز در تعیین سود خالص سرمایه‌گذار نقش دارند.",
@@ -41,5 +42,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "da705723bbe6c896fbca378ffecb955366185bd73db183dbe0fdcaf0146fac9d",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p7-t18",
+ "app_key": "a-6ba57f60102eda6e8ec5",
  "kind": "article",
  "title": "بهره‌وری و مدیریت هزینه‌ها در منطقه ۷ انتقال گاز",
  "summary": "مدیر منطقه ۷ عملیات انتقال گاز ایران از صرفه‌جویی بیش از ۱۵۳ میلیارد ریالی با اجرای پیشنهادهای کارکنان در قالب نظام مشارکت خبر داد.",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "a918f128bbccd3654d57b5ce9a48e58fb75c5d69ceeab161d2c065e425b3dcbc",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

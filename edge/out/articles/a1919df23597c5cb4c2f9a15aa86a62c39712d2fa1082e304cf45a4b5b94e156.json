@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%A8%DB%8C%D9%86-%D8%A7%D9%84%D9%85%D9%84%D9%84-8/1854918-%D8%AC%D9%86%DA%AF-%DB%8C%D9%85%D9%86-%DA%86%D8%B1%D8%A7-%D8%B9%D8%B1%D8%A8%D8%B3%D8%AA%D8%A7%D9%86-%D8%A7%D9%86%D8%B5%D8%A7%D8%B1%D8%A7%D9%84%D9%84%D9%87-%D8%A7%D8%B2-%D8%AA%D9%88%D8%A7%D9%81%D9%82-%D8%B3%DB%8C%D8%A7%D8%B3%DB%8C-%D8%AF%D9%88%D8%B1%D8%AA%D8%B1-%D8%B4%D8%AF%D9%87-%D8%A7%D9%86%D8%AF",
+ "app_key": "a-a1919df23597c5cb4c2f",
  "kind": "article",
  "title": "جنگ یمن؛ چرا عربستان و انصارالله از توافق سیاسی دورتر شده‌اند؟",
  "summary": "<img src=\"https://cdn.ilna.ir/thumbnail/BYXCMiW6HucE/88uEL4uOFmcnnsSFCvamcVVX1DwvAnk3cYr67qhhkH3h2wZYbELc62v9B3BL71NXepAKzPZW5YpFcALfnVmTJEjXVxTbDGacEujHBp1tSwGM5Nawj-h0TwRB-PHSWT3uzERwOo-AawaCDNjGz3i6OcYkVItG3t_zEz1dvr_Sh2bDE_-12NIWuLx2LJyXn0mw/%DB%8C%D9%85%D9%86.jpg\"> <div>با تشدید درگیری‌ها میان عربستان سعودی و جنبش انصارالله یمن و گسترش حملات به فرودگاه‌ها، تأسیسات نفتی و بنادر، چشم‌انداز حل‌وفصل سیاسی بحران بیش از گذشته تیره شده است؛ وضعیتی که علاوه بر امنیت خلیج فارس، تجارت جهانی و انتقال انرژی از دریای سرخ و تنگه باب‌المندب را نیز تحت تأثیر قرار می‌دهد.</div>",
@@ -33,5 +34,8 @@
  "extracted_at": "2026-10-20T19:59:00.190082+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "8dcaa1baa51647bc7f3dfe9ceb36d5c10925e82ca6a2b4d3ea65adf2ed6b289a",
+ "updated_at_epoch": 1792513740190,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

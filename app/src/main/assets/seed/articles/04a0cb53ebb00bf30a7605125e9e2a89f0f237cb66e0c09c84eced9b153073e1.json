@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.eghtesadonline.com/fa/news/2169916/فوری-انتشار-اطلاعیه-مهم-نیروی-دریایی-سپاه-درباره-درگیری-در-تنگه-هرمز",
+ "app_key": "a-04a0cb53ebb00bf30a76",
  "kind": "article",
  "title": "اطلاعیه نیروی دریایی سپاه: نفتکش متخلف در جنوب تنگه هرمز با مین دریایی دچار انفجار شد",
  "summary": "یک فروند نفتکش متخلف با اصابت به یک مین دریایی در محدوده جنوب تنگه هرمز دچار انفجار و آتش سوزی شد.",
@@ -23,5 +24,8 @@
  "extracted_at": "2026-10-20T00:13:30.096868+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "dd699183026a6727ce2a22657c5e898c9e0c4866144dcc9474085359c94fd3d6",
+ "updated_at_epoch": 1792442610096,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

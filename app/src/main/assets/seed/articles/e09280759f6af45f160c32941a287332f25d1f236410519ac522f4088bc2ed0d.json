@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.mehrnews.com/news/6983955/%D9%85%D8%B9%D8%A7%D9%81%DB%8C%D8%AA-%DB%B3-%D9%87%D8%B2%D8%A7%D8%B1-%D8%AF%D9%84%D8%A7%D8%B1%DB%8C-%D8%A8%D8%B1%D8%A7%DB%8C-%D9%85%D8%B3%D8%A7%D9%81%D8%B1%D8%A7%D9%86-%DA%A9%DB%8C%D8%B4",
+ "app_key": "a-e09280759f6af45f160c",
  "kind": "article",
  "title": "معافیت ۳ هزار دلاری برای مسافران کیش",
  "summary": "در پی پیگیری‌های سازمان منطقه آزاد کیش و موافقت دولت، سقف معافیت کالای همراه مسافر افزایش یافت؛ تصمیمی که می‌تواند نقش مؤثری در رونق تجارت و گردشگری جزیره داشته باشد.",
@@ -21,5 +22,8 @@
  "extracted_at": "2026-10-20T14:59:23.957771+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "ea62411090369da85504d529cf0a5b0496348c16723e331a02b851c3ca3101b5",
+ "updated_at_epoch": 1792495763957,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

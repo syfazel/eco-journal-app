@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.irib-news.ir/fa/news/5943285/امضای-قرارداد-خرید-خدمات-4-دکل-حفاری-فراساحلی",
+ "app_key": "a-0daef878d55799c25474",
  "kind": "article",
  "title": "امضای قرارداد خرید خدمات ۴ دکل حفاری فراساحلی",
  "summary": "مدیرعامل شرکت نفت فلات قاره ایران گفت: قرارداد‌های خرید خدمات چهار دستگاه دکل حفاری فراساحلی با ارزش بیش از یک میلیارد دلار، میان شرکت نفت فلات قاره ایران و چهار مجموعه سرمایه‌گذار داخلی امضا شد.",
@@ -35,5 +36,8 @@
  "extracted_at": "2026-10-19T22:39:47.786814+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "812ee2049bae72ee89516007931fb9b29490ded2982f997e77c43664efad3867",
+ "updated_at_epoch": 1792436987786,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4303222-%D8%A7%D8%AF%D8%B9%D8%A7%DB%8C-%D9%88%D8%B2%DB%8C%D8%B1-%D8%AC%D9%86%DA%AF-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%D8%AF%D8%B1%D8%A8%D8%A7%D8%B1%D9%87-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D9%87%DA%AF%D8%B3%D8%AA-%D8%A8%D8%B1%D8%A7%DB%8C-%D8%AC%D9%84%D9%88%DA%AF%DB%8C%D8%B1%DB%8C-%D8%A7%D8%B2-%D8%AF%D8%B3%D8%AA%DB%8C%D8%A7%D8%A8%DB%8C-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%A8%D9%87-%D8%B3%D9%84%D8%A7%D8%AD-%D9%87%D8%B3%D8%AA%D9%87-%D8%A7%DB%8C-%D9%85%D8%B5%D9%85%D9%85-%D9%87%D8%B3%D8%AA%DB%8C%D9%85",
+ "app_key": "a-1be2780933b22fd0fbe9",
  "kind": "article",
  "title": "هگست: برای جلوگیری از دستیابی ایران به سلاح هسته‌ای مصمم هستیم",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/geLubCfoDsAf/g31oTZ2d54Lt78mG54WOl4v_4dTbpmWVZFl2mC8LZ_Re6CjAHF13VmRRafaQLUDWy66MILyuUgRrqvZFIgenU7JoertMT8kyo6mTzP5WYgOdCKSZQU5DQz6dT8dhSHTSp4DHM55P5XNiPJhodtori3yho0tFcQEwdQkSWCOCaR8Gc78XnSltmw02hJGqyS96/UId4MY9fN7aH.jpg\"> <div>وزیر جنگ آمریکا (رئیس پنتاگون) در پی بازگشت از سفر به منطقه غرب آسیا (خاورمیانه) و دیدار با سران و مقامات اسرائیلی ادعا کرد: واشنگتن درباره جلوگیری از دستیابی ایران به سلاح هسته‌ای مصمم است.</div>",
@@ -33,5 +34,8 @@
  "extracted_at": "2026-10-22T02:08:32.225544+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "b9fd81717af3969bfc1a29527b83821aaf8373842f8d5129aa56f73935754616",
+ "updated_at_epoch": 1792622312225,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

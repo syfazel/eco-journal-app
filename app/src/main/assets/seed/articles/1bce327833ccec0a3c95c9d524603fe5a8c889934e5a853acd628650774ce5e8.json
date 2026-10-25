@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.aljazeera.com/?t=1792528212",
+ "app_key": "a-1bce327833ccec0a3c95",
  "kind": "article",
  "title": "شکایت واردکننده آمریکایی از ترامپ بر سر تعرفه ۵۰ درصدی کالاهای کانادایی",
  "summary": "The lawsuit argues Trump bypassed Congress and misused a Depression-era law to impose tariffs on Canadian imports.",
@@ -38,5 +39,8 @@
  "extracted_at": "2026-10-22T02:08:33.039390+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "4ddae9e2583a7f1d3ec42567850fb544fc8a6822557d63d121abd8f7c787e82e",
+ "updated_at_epoch": 1792622313039,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

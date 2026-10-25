@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t30",
+ "app_key": "a-cb791078e64194ee9f2c",
  "kind": "article",
  "title": "منطقه ۲۲؛ انتخاب ارزان‌تر یا دورتر؟",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/Wp3PvXENZU4u/QW44qyq2ohZTYO_conCs3JRufLtujPGSSMIjxW8zq7yMT5t60AUZzHElL_-MLedT1SxXGImNuIRYuOJT7PIKwGa8tD05_8WeLahtorY1UI7_II_1Lp10PENxuluisF32tBeUohysh65AOwdLNT5fDCotjiGipqofiKPUfwaGytGfFFNEzAHFd1cK7l3x1fQf/IMG_20261018_170916.jpg\"> <div>دنیای اقتصاد: قیمت آپارتمان‌های میانسال در مناطق متوسط‌نشین تهران با مناطق اداری مرکزی شهر چه تفاوتی دارد؟\n\n</div>",
@@ -23,5 +24,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "c3ee2e81fbf01088b8eed52516a91b3b41dcccbc9de8fbac3144910d0da221c6",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p2-t1",
+ "app_key": "a-9099ead3db76009db75a",
  "kind": "article",
  "title": "پیام قالیباف در پی قهرمانی تیم ملی کشتی آزاد ایران",
  "summary": "پیام قالیباف، رئیس مجلس شورای اسلامی در پی قهرمانی تیم ملی کشتی آزاد ایران در رقابت های زیر ۲۳ سال جهان را در ادامه می خوانید.",
@@ -22,5 +23,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "56c3a68812064f93147ae0aa5af8d4613803c09acc889ed7fbacea62208dc119",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

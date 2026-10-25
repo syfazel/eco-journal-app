@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p7-t32",
+ "app_key": "a-5d21edfce4aae2d6f466",
  "kind": "article",
  "title": "۱۷ هزار تانکر نفتکش به ردیاب هوشمند مجهز می‌شوند",
  "summary": "<p>مجری طرح پایش لحظه‌ای زنجیره تولید تا توزیع فرآورده‌های نفتی (میترینگ و مانیتورینگ) در شرکت ملی مهندسی و ساختمان نفت ایران از اقدام و برنامه‌ریزی برای تجهیز ۱۷ هزار تانکر نفتکش به ردیاب هوشمند خبر داد.</p>\n<p>پست <a href=\"https://tejaratnews.com/%db%b1%db%b7-%d9%87%d8%b2%d8%a7%d8%b1-%d8%aa%d8%a7%d9%86%da%a9%d8%b1-%d9%86%d9%81%d8%aa%da%a9%d8%b4-%d8%a8%d9%87-%d8%b1%d8%af%db%8c%d8%a7%d8%a8-%d9%87%d9%88%d8%b4%d9%85%d9%86%d8%af-%d9%85%d8%ac%d9%87\">۱۷ هزار تانکر نفتکش به ردیاب هوشمند مجهز می‌شوند</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "633cc360b25ba7bceb3447b4794f2742d737246e3b0feaeaa50556fedf72a49b",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399358/درگیری-دسته-جمعی-و-چاقوکشی-در-بیمارستان-ورامین",
+ "app_key": "a-ac73386561ed6dd7b44b",
  "kind": "article",
  "title": "درگیری دسته‌جمعی و چاقوکشی در بیمارستان ورامین",
  "summary": "رئیس کل دادگستری استان تهران ضمن قدردانی از سرعت عمل رئیس دادگستری و دادستان ورامین و نیرو‌های انتظامی در شناسایی و دستگیری متهم نزاع دسته‌جمعی و اخلال در نظم بیمارستان شهید مفتح ورامین، بر ضرورت ادامه تحقیقات برای شناسایی سایر افراد دخیل و برخورد قانونی با تمامی مرتکبان، تأکید کرد.",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-19T00:22:37.820053+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "a0953460c069f6269654b2950ab47f4496c378bb82fda57c1021567dda326c14",
+ "updated_at_epoch": 1792356757820,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

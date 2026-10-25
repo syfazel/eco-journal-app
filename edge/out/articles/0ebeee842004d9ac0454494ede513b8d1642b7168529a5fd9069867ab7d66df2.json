@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p3-t6",
+ "app_key": "a-0ebeee842004d9ac0454",
  "kind": "article",
  "title": "هشدار تند عراقچی به آمریکا و اسرائیل / ایران هنوز کارهای ناتمامی دارد",
  "summary": "وزیر امور خارجه ایران با اشاره به پیامدهای جنگ پیشین، درباره تکرار رویارویی نظامی هشدار داد و نتانیاهو را به کشاندن آمریکا به جنگی دیگر متهم کرد.",
@@ -22,5 +23,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "22b9098728767e69aa4dc689e8ea8fe23f6720d76fe9b00a749f47014b6c7daf",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

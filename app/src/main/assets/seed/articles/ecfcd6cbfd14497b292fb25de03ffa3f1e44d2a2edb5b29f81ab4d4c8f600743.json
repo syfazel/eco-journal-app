@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399246/ترکش-های-جنگ-در-اقتصاد-منطقه-روایت-imf-از-آثار-محاصره-دریایی",
+ "app_key": "a-ecfcd6cbfd14497b292f",
  "kind": "article",
  "title": "روایت IMF از آثار محاصره دریایی بر اقتصاد منطقه",
  "summary": "گزارش صندوق بین‌المللی پول نشان می‌دهد که ایران تنها کشوری نبود که در نتیجه جنگ و در ادامه محاصره و تنش‌های مربوط به تنگه هرمز آسیب دیده؛ برآورد‌ها نشان می‌دهد که دیگر کشور‌های خاورمیانه و به ویژه حوزه خلیج فارس از ناحیه جنگ ۴۰ روزه و بسته شدن تنگه هرمز متحمل آسیب‌های اقتصادی شده‌اند.",
@@ -29,5 +30,8 @@
  "extracted_at": "2026-10-19T00:22:40.498793+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "74924cb66f382ab5d54b05348a874f23d0d1c8a02921bd24f21d0cc6d3eb068d",
+ "updated_at_epoch": 1792356760498,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

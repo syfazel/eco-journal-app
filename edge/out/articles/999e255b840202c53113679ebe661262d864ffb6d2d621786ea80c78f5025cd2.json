@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399288/دست-زن-48-ساله-در-چرخ-گوشت-صنعتی-گیر-کرد",
+ "app_key": "a-999e255b840202c53113",
  "kind": "article",
  "title": "گیر کردن دست زن ۴۸ ساله در چرخ‌گوشت صنعتی",
  "summary": "دست یک زن ۴۸ ساله حین کار با چرخ‌گوشت صنعتی در یک مغازه تهیه غذا در خیابان فلسطین تهران، تا ناحیه مچ در دستگاه گیر کرد و عملیات رهاسازی دست او با تلاش آتش‌نشانان در بیمارستان انجام شد.",
@@ -29,5 +30,8 @@
  "extracted_at": "2026-10-19T00:20:20.907488+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "144880d67a19bb17f2ea7744316a4c0ff190c904f2b4ffef35170d4b991b5a62",
+ "updated_at_epoch": 1792356620907,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

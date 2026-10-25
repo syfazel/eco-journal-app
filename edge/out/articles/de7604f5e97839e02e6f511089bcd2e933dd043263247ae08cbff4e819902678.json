@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p3-t4",
+ "app_key": "a-de7604f5e97839e02e6f",
  "kind": "article",
  "title": "ضوابط رعایت مقررات احتیاطی برای صدور اوراق گام و برات الکترونیکی به شبکه بانکی ابلاغ شد",
  "summary": "<p>بانک مرکزی طی بخشنامه‌ای، لزوم رعایت الزامات صدور، پذیرش و انتقال ابزارهای تامین مالی زنجیره تولید (SCF) از جمله اوراق گام و برات الکترونیکی را به شبکه بانکی ابلاغ کرد. بر این اساس صدور این ابزارها صرفاً برای معاملات واقعی و قطعی‌شده کالا یا خدمت مجاز است.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d8%b6%d9%88%d8%a7%d8%a8%d8%b7-%d8%b1%d8%b9%d8%a7%db%8c%d8%aa-%d9%85%d9%82%d8%b1%d8%b1%d8%a7%d8%aa-%d8%a7%d8%ad%d8%aa%db%8c%d8%a7%d8%b7%db%8c-%d8%a8%d8%b1%d8%a7%db%8c-%d8%b5%d8%af%d9%88%d8%b1-%d8%a7\">ضوابط  رعایت مقررات احتیاطی برای صدور اوراق گام و برات الکترونیکی به شبکه بانکی ابلاغ شد</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -29,5 +30,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "938298f53fef23b69dc5c3e27a75c4de57d5fa40f2b57bdb9d3748c7bd8e7c12",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

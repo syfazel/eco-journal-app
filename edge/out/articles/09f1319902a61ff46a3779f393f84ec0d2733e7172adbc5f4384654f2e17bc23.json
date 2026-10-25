@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p1-t5",
+ "app_key": "a-09f1319902a61ff46a37",
  "kind": "article",
  "title": "از رشد سودآوری تا نوسازی خطوط تولید/ «سیمکات» آماده عرضه اولیه می‌شود",
  "summary": "شرکت سیمکات در آستانه عرضه اولیه سهام در فرابورس، با تمرکز بر افزایش ظرفیت تولید، نوسازی تجهیزات و توسعه صادرات برنامه‌های خود برای رشد پایدار را تشریح کرد.",
@@ -30,5 +31,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "a524bb3bb94271326405d55c481d98dae2a5f9f558f34377d4fc1ada465d92e4",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

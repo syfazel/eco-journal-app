@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p7-t9",
+ "app_key": "a-56087d38c353154e4483",
  "kind": "article",
  "title": "افزایش قیمت‌ها در پی جهش هزینه‌های حمل‌ونقل نفت",
  "summary": "رشد شدید هزینه‌های حمل‌ونقل در پی تنش‌های خاورمیانه، قیمت‌ها را در دیگر بخش‌ها افزایش داده است.",
@@ -33,5 +34,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "5d9b9e3240b8dee6968aa350cb4b933117bcf09eebaa9aea4bf0f7aa503b7811",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

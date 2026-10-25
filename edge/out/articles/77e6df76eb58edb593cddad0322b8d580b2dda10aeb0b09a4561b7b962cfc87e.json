@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.hamshahrionline.ir/news/1078288/%DB%B5-%D9%BE%DB%8C%D8%B1%D9%88%D8%B2%DB%8C-%D9%85%D9%87%D9%85-%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF%DB%8C-%D8%A8%D8%B1-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%DA%86%D9%87-%D8%A8%D9%88%D8%AF-%D8%AC%D8%B2%D8%A6%DB%8C%D8%A7%D8%AA-%D8%AA%D8%A7%D8%B2%D9%87-%D8%A7%D8%B2-%D9%88%D8%B1%D9%88%D8%AF",
+ "app_key": "a-77e6df76eb58edb593cd",
  "kind": "article",
  "title": "۵ پیروزی مهم اقتصادی بر آمریکا چه بود؟ | جزئیات تازه از ورود دلارهای نفتی به ایران",
  "summary": "قهرمانی‌های پیاپی تیم‌ملی کشتی فرنگی زیر ۲۳ سال و تیم ملی امید کشتی آزاد ایران در مسابقات جهانی آمریکا، امروز برای ایرانیان پیامی فراتر از دایره طلایی کشتی دارد و به نمادی از «اراده»، «مقاومت» و «جسارت» یک ملت در ایستادگی در برابر بزرگ‌ترین دشمنش تبدیل شده‌است.",
@@ -33,5 +34,8 @@
  "extracted_at": "2026-10-19T22:39:46.965137+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "69061109dad9417256c8e4b6149a86781c83d54e2162615ee00c7db479745bc9",
+ "updated_at_epoch": 1792436986965,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

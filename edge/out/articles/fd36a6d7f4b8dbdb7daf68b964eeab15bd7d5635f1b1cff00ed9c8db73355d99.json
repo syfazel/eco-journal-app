@@ -1,5 +1,6 @@
 {
  "id": "draft:/بخش-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4302994-%D8%AF%D8%B1%D8%AE%D9%88%D8%A7%D8%B3%D8%AA-%D8%B3%D9%86%D8%A7%D8%AA%D9%88%D8%B1-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7%DB%8C%DB%8C-%D8%A7%D8%B2-%D8%B3%D9%86%D8%AA%DA%A9%D8%A7%D9%85-%D9%87%D8%B2%DB%8C%D9%86%D9%87-%D9%88%D8%A7%D9%82%D8%B9%DB%8C-%D8%AC%D9%86%DA%AF-%D8%B9%D9%84%DB%8C%D9%87-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%B4%D9%81%D8%A7%D9%81-%D8%B3%D8%A7%D8%B2%DB%8C-%D8%B4%D9%88%D8%AF",
+ "app_key": "a-fd36a6d7f4b8dbdb7daf",
  "kind": "article",
  "title": "درخواست 5 سناتور آمریکایی از سنتکام/ هزینه واقعی جنگ علیه ایران شفاف سازی شود",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/2mL1Up0IMKdo/jOGliEF-5iasxrESKjbcJGiNFBttqEX5eGhU4SUgqTxtK4sN6WU9Uw4QTDqmtICYmlJtFWH_UeoeAg2JNstZ-1CeymSiQyqjY1EV8IKP97tuNZ8amtUh6emW-rzpPFPbDck8PqBayw4yJAlCLO0W7Q7YVZkeoniMbvjxKFmfFO4DKCEZEszrRlWwd0Bd2HxZ/U3r8Zt56bVWq.jpg\"> <div>سناتورهای آمریکایی خواستار ارائه برآورد خسارت‌های واردشده به پایگاه‌های آمریکا، جدول زمانی تعمیرات و جزئیات هزینه‌کرد برای تاسیسات جایگزین شدند.</div>",
@@ -27,5 +28,8 @@
  "extracted_at": "2026-10-20T04:59:55.629198+00:00",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "af19a2dc763c2569350d5a3ddb125da2ee4171ee8db0e51ecb349310b6ea97d0",
+ "updated_at_epoch": 1792472395629,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

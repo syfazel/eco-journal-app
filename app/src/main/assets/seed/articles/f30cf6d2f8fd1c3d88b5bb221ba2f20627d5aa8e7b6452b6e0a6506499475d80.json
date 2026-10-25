@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t28",
+ "app_key": "a-f30cf6d2f8fd1c3d88b5",
  "kind": "article",
  "title": "آخرین مهلت ثبت‌نام در حراج شمش طلای مرکز مبادله اعلام شد",
  "summary": "مرکز مبادله ایران سه‌شنبه ۲۸ مهرماه میزبان یکصد و پنجاه‌وهشتمین حراج شمش طلا خواهد بود و متقاضیان شرکت در این حراج تا ساعت ۲۴ روز دوشنبه ۲۷ مهرماه برای ثبت‌نام و واریز وجه‌الضمان فرصت دارند.",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "2aff59ea8fbb2e9e923c2122fcca3c360039bd2fd05febd3ec0c05e16858d4b1",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

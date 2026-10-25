@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399681/گزافه-گویی-نتانیاهو-علیه-ایران-با-همراهی-ترامپ",
+ "app_key": "a-8e7bfb9c20fedde12143",
  "kind": "article",
  "title": "ادعاهای تازه نتانیاهو علیه ایران",
  "summary": "بنیامین نتانیاهو نخست‌وزیر رژیم صهیونیستی سه شنبه شب در ادامه لفاظی ها عیله ایران که نشان می دهد به دنبال جذب رأی شرکت کنندگان در انتخابات پارلمانی سرزمین های اشغالی است، مدعی شد: ترامپ و من با هم اقدام می‌کنیم.",
@@ -31,5 +32,8 @@
  "extracted_at": "2026-10-22T02:08:33.206892+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "6c22a8f0269b53e4dc21bd476f6e0badfe8f07fce8a73b866c472ce5a973b84d",
+ "updated_at_epoch": 1792622313206,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

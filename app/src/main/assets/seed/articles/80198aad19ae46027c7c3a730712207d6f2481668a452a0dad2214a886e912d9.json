@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t31",
+ "app_key": "a-80198aad19ae46027c7c",
  "kind": "article",
  "title": "ارزش‌گذاری یادگاری‌های ورزشی؛ از اصالت و کمیابی تا قیمت واقعی بازار / قیمت یک پیراهن امضاشده یا توپ تاریخی چگونه تعیین می‌شود؟",
  "summary": "<p>مهدی حاجی‌وند، کارشناس اقتصاد ورزش- در بازار یادگاری‌های ورزشی، اصالت، اهمیت رویداد، کمیابی و سابقه معاملات عواملی هستند که می‌توانند ارزش یک شیء را از چند ده دلار به میلیون‌ها دلار برسانند.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d8%a7%d8%b1%d8%b2%d8%b4%da%af%d8%b0%d8%a7%d8%b1%db%8c-%db%8c%d8%a7%d8%af%da%af%d8%a7%d8%b1%db%8c%d9%87%d8%a7%db%8c-%d9%88%d8%b1%d8%b2%d8%b4%db%8c%d8%9b-%d8%a7%d8%b2-%d8%a7%d8%b5\">ارزش‌گذاری یادگاری‌های ورزشی؛ از اصالت و کمیابی تا قیمت واقعی بازار / قیمت یک پیراهن امضاشده یا توپ تاریخی چگونه تعیین می‌شود؟</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -34,5 +35,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "a9f73707ea509f0c4b20edf3896cd76c306d3269ab7f0692b72cbe5c354ef039",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

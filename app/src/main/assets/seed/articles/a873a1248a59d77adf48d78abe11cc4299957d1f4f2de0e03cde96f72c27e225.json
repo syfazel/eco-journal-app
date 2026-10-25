@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p0-t4",
+ "app_key": "a-a873a1248a59d77adf48",
  "kind": "article",
  "title": "تهدیدهای تازه ترامپ؛ آغاز جنگ با ایران یا قمار مرگبار برای او |جنگی که نتیجه آن از پیش تعیین‌شده نیست",
  "summary": "تهدیدهای آمریکا علیه ایران، در شرایطی مطرح می‌شود که واشنگتن و تل‌آویو با بن‌بست‌های سیاسی و امنیتی روبه‌رو هستند. آغاز جنگ در چنین شرایطی، نه یک تصمیم راهبردی، بلکه قماری پرهزینه است.",
@@ -35,5 +36,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "885bb8fd795cc768d03f1f1cce18c5437edb02ec439e8406c6dd722244555c48",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

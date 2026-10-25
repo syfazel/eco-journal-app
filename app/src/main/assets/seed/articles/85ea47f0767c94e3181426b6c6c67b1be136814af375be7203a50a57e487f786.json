@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p1-t0",
+ "app_key": "a-85ea47f0767c94e31814",
  "kind": "article",
  "title": "وقتی زبان علامت هشدار می‌دهد",
  "summary": "اگر لکه‌های سفید بیش از دو هفته باقی بمانند، به آسانی پاک نشوند یا با درد، سوزش، خونریزی، زخم یا دشواری در بلع همراه باشند، باید برای بررسی علت به پزشک یا دندانپزشک مراجعه کنید. در صورت تورم شدید زبان یا دشواری تنفس و بلع، رسیدگی فوری ضروری است.",
@@ -35,5 +36,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "1c9c7fcbcc867ad455f0e024ca36e1a88463598a1ae3690b96dd148ccba5accd",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

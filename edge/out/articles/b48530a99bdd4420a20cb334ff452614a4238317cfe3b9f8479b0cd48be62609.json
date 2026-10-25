@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%DA%A9%D8%B3%D8%A8-%DA%A9%D8%A7%D8%B1-104/4303067-%DA%A9%D9%86%D8%AA%D8%B1%D9%84-%D9%85%D8%B1%D8%B2-%D8%A8%D8%A7-%D8%A7%DB%8C%DA%A9%D8%B3-%D8%B1%DB%8C-%D9%85%D8%B9%D8%B7%D9%84-%D9%85%D8%B1%D8%A7%D8%B3%D9%85-%D8%A7%D9%81%D8%AA%D8%AA%D8%A7%D8%AD",
+ "app_key": "a-b48530a99bdd4420a20c",
  "kind": "article",
  "title": "کنترل مرز با «ایکس‌ری» معطل مراسم افتتاح",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/ezE3byrlCvDN/X79i2FhQ7c9kdvkvpaylrsDrNisUdT2n-Ya1yfRiq1nRkDSp2TYaYLF3TTf0Bgi6SYgsA10nN5OkyafRfyhgJ_KtY6lAe-vV84CRn9cwqYqmRrhRYn-q0bflNkRmfUD1Ri0Rjy-e24BDldDNaP1L_yfNqkGX5gMkfwfjAbZRb8VSrjyffFt5-ms8DWIEN7iR/IMG_7829.jpg\"> <div>دستگاه ایکس‌ری مرز تمرچین در پیرانشهر آذربایجان غربی، بنا بر اطلاعات ارائه‌شده، با وجود آمادگی کامل و اعلام آن به گمرک، همچنان به بهره‌برداری نرسیده است؛ زیرا آغاز فعالیت آن به تعیین زمان مراسم افتتاح با حضور وزیر امور اقتصادی و دارایی گره خورده است.</div>",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-20T14:59:00.229865+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "4836ef805623e42ac11acc08ce91ca00fd5094095f8cd88d4e2899b002905886",
+ "updated_at_epoch": 1792495740229,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

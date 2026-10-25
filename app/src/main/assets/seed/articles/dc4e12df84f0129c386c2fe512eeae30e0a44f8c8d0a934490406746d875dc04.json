@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.sedayebourse.ir/news/558155/%D8%B5%D8%AF%D9%88%D8%B1-%D9%85%D8%AC%D9%88%D8%B2-%D8%A7%D9%81%D8%B2%D8%A7%DB%8C%D8%B4-%D8%B3%D8%B1%D9%85%D8%A7%DB%8C%D9%87-%DB%B1%DB%B7%DB%B8-%D8%AF%D8%B1%D8%B5%D8%AF%DB%8C-%D9%88%DA%A9%D9%85%D9%BE%D9%86%D8%A7-%D8%A7%D8%B2-%D9%85%D8%AD%D9%84-%D8%B3%D9%88%D8%AF-%D8%A7%D9%86%D8%A8%D8%A7%D8%B4%D8%AA%D9%87",
+ "app_key": "a-dc4e12df84f0129c386c",
  "kind": "article",
  "title": "صدور مجوز افزایش سرمایه ۱۷۸ درصدی وکمپنا از محل سود انباشته",
  "summary": "سازمان بورس و اوراق بهادار، مجوز افزایش سرمایه ۱۷۷.۷ درصدی شرکت سرمایه‌گذاری ثروت‌آفرین صبا (وکمپنا) را از محل سود انباشته صادر کرد.",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-22T02:07:28.233127+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "4640ea924230d637b2698a9c8bd298dbccc7c7a3fc6c80d3ae4e4459db44faec",
+ "updated_at_epoch": 1792622248233,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

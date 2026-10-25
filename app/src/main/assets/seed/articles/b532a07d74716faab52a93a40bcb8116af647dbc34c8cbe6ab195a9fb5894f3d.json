@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p2-t4",
+ "app_key": "a-b532a07d74716faab52a",
  "kind": "article",
  "title": "پیش‌بینی قیمت طلا و سکه یکشنبه ۲۶ مهر ۱۴۰۵ / عقب‌نشینی دلار، شتاب رشد طلا و سکه را می‌گیرد + جدول",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/EDj0CjbJMruo/hAfvu3VWeJ_mVWiiI0HYNic21ojSVKO2nKien2Oo6mSF-iHjDS1W5bHCDOkHaiwlVRZRjmdRi6bfsng7-Ir6qegyiRqW3yZyuGe3pP1KYkD7VnQljqq--xfIrWSsL0ZdAYR8Z8G7yMaucfF9sILusQ17LPTQ9gXPOtwssM7B-GpxsKc37qidZLkkTOcgEn4W/IMG_20261018_172144_038.jpg\"> <div>دنیای اقتصاد: معاملات بورس تهران در روز یکشنبه ۲۶ مهرماه برای سومین روز معاملاتی متوالی با افت شاخص کل دنبال شد. نماگر اصلی بازار سهام با کاهش 1.03 درصدی به سطح ۸ میلیون و ۱۸۰ هزار واحد عقب‌نشینی کرد و برای دومین روز متوالی بیش از یک درصد افت روزانه را به ثبت رساند.</div>",
@@ -23,5 +24,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "575ff0dd93080850e5d9b56a57a5bd7ebf14955f57838612ab796792a460aec7",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p7-t30",
+ "app_key": "a-23915a11c0c3102ac0c3",
  "kind": "article",
  "title": "تغییر معماری بازارهای انرژی پاشنه آشیل محاسبات امریکا",
  "summary": "<p> سناریوی محتمل ادامه وضعیت فعلی است و سناریوی مطلوب ذینفعان بین المللی بازگشایی از طریق مذاکره و توافق است و هرچه به دوره‌ ‌های سردتر سال نزدیک شویم، این سناریو اعتبار و احتمال بیشتری پیدا می‌ ‌کند.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d8%aa%d8%ba%db%8c%db%8c%d8%b1-%d9%85%d8%b9%d9%85%d8%a7%d8%b1%db%8c-%d8%a8%d8%a7%d8%b2%d8%a7%d8%b1%d9%87%d8%a7%db%8c-%d8%a7%d9%86%d8%b1%da%98%db%8c-%d9%be%d8%a7%d8%b4%d9%86%d9%87-%d8%a2%d8%b4%db%8c\">تغییر معماری بازارهای انرژی پاشنه آشیل محاسبات امریکا</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -42,5 +43,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "7e1bd898cff6f88c758147e9543a280df4d6e1bf25062e394d7eb20b7f83a637",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

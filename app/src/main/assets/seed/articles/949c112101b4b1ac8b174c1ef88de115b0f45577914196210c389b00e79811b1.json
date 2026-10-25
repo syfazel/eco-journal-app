@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p2-t2",
+ "app_key": "a-949c112101b4b1ac8b17",
  "kind": "article",
  "title": "آخرین مهلت ثبت درخواست افزایش اعتبار کالابرگ اعلام شد",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/KKJPRAViSDm0/JlNgSSMFQEsWvh5ZcbkrhQaOEvUYhaT952zGRZ_LFLpdq4y87xKUgc8Qz6on_ZA3-PKyHQYbQLec13rrPFhn8rBVrl2EAOiW33K8-9sWRaQP1BY5VTuZFsCdJ33sPI1P2N20EFGNoS_rUhcqMJjIgmmcA6y4j4JhedIzXpdjOrYrQOUzmnG0kzRBkBV_K8Ut/%DA%A9%D8%A7%D9%84%D8%A7%D8%A8%D8%B1%DA%AF+19.jpg\"> <div>مشمولان افزایش اعتبار کالابرگ الکترونیک که پیامک دریافت کرده اند، تا ساعت ۲۴ امشب می‌توانند به سامانه دولت من مراجعه کنند.\n\n</div>",
@@ -26,5 +27,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "f7503a1fa7168212a3f7cf47d19a110a4a1f8c78d887c73c7af677d23093c45e",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

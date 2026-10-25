@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4303003-%D8%A8%D8%A7%D8%B1%D9%86%D8%AF%DA%AF%DB%8C-%D8%AF%D8%B1-%D8%B3%D9%87-%D8%A7%D8%B3%D8%AA%D8%A7%D9%86-%D8%B4%D9%85%D8%A7%D9%84%DB%8C-%DA%A9%D8%B4%D9%88%D8%B1-%DA%A9%D8%AF%D8%A7%D9%85-%D8%AC%D8%A7%D8%AF%D9%87-%D9%87%D8%A7-%D8%AA%D8%B1%D8%A7%D9%81%DB%8C%DA%A9-%D8%AF%D8%A7%D8%B1%D8%AF",
+ "app_key": "a-6f4e4deb08ae2b6f6d61",
  "kind": "article",
  "title": "بارندگی در سه استان شمالی کشور/ کدام جاده ها ترافیک دارد؟",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/34eg11qswWlQ/-qaB2OphTp4E7NjFgmvj6sDQaiTA57UBlKZa38UOA12sXCY5RXR9yzuY5isqkWi_k41LdfKwD9gQIXnsHzWKWoDG0HVmSX5Dfx4RamMRKodpiyT6r-hdPQiEEcNVLLY9YaCi27PVsgnH9xHk-RDdznMTdD9UkmkGZRqyLVdb0sxyAJm6MzJcEjDE89VtZcvV/TkvKvVNcprOQ.jpg\"> <div>رئیس مرکز اطلاعات و کنترل ترافیک پلیس راهور فراجا گفت: بارش باران در محورهای شمالی کشور گزارش شده است.</div>",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-20T08:27:10.066295+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "7c8eff1e07d71aa66972611e52a061f9f25ac4bccdbde553a59a5858882b31f0",
+ "updated_at_epoch": 1792472230066,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

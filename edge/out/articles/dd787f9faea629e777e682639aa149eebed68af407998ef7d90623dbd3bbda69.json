@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p7-t6",
+ "app_key": "a-dd787f9faea629e777e6",
  "kind": "article",
  "title": "تعمیرات اساسی پالایشگاه پارسیان برای تأمین پایدار گاز در زمستان",
  "summary": "مدیرعامل شرکت پالایش گاز پارسیان از اجرای برنامه تعمیرات اساسی و بازرسی‌های فنی در سایت‌های یک و دو این پالایشگاه خبر داد.",
@@ -38,5 +39,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "6dd4eb3c5df20d88b0f1dd73ff6dfb5a9ce3603a8c1ea144d8967c2a2b894542",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

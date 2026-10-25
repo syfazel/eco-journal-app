@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t6",
+ "app_key": "a-c6a855875330055b8e64",
  "kind": "article",
  "title": "ادامه افت بورس در دومین روز معاملات هفتگی/ خروج بیش از ۲.۸ هزار میلیارد تومان پول از بازار سهام",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/9Cq4fX1zDOyL/t-v9C5_e2kYPS8_oJCzG-Y5Vvn9deNQ9BsWmsi2xfxDp9GIBd5lz_Y6PNMQQ5Wqnd6CeLnBEdQexHYT7nisbkAK-aE3_hBIzFBSdrEGojTG6QDx0CB_SYys7lWstqe3izqpkxwStrbzckqle7DgnBqGSJcsh9u1Pt65jhneIidNJYcH0f4cafBSeMr7k_akC/%D8%A8%D9%88%D8%B1%D8%B3.jpg\"> <div>اقتصادنیوز: در پایان معاملات امروز شاخص کل بورس با افت ۸۴ هزار و ۸۰۰ واحدی به سطح ۸ میلیون و ۱۸۰ هزار واحد رسید و کاهش ۱.۰۳ درصدی را ثبت کرد. </div>",
@@ -31,5 +32,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "736abac636da775aa501d4b08c41e65fce8c90a4e4428d02cbef9fc348086830",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

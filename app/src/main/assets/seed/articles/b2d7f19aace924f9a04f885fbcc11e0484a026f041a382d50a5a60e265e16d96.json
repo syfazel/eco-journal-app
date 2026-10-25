@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399331/درخواست-مقتدی-برای-تظاهرات-در-حمایت-از-آزادی-حجاب",
+ "app_key": "a-b2d7f19aace924f9a04f",
  "kind": "article",
  "title": "فراخوان مقتدی صدر برای تظاهرات در حمایت از آزادی حجاب",
  "summary": "رهبر جریان صدر عراق از مدارس و دانشگاه‌های دولتی و غیردولتی این کشور خواست روز پنجشنبه در اعتراض به تصمیم منع حجاب در جمهوری آذربایجان و برخی کشورهای دیگر، تجمعی اعتراضی و مسالمت‌آمیز برگزار کنند.",
@@ -22,5 +23,8 @@
  "extracted_at": "2026-10-19T00:22:38.544921+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "7e20356e29844a85bc439d51282d3991f5ca4fc222611cf9664654519accb379",
+ "updated_at_epoch": 1792356758544,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

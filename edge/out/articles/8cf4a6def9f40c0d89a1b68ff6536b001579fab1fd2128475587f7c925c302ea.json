@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.eghtesadonline.com/fa/news/2169823/6-میلیارد-دلار-معمای-پول-های-بلوکه-شده-ایران",
+ "app_key": "a-8cf4a6def9f40c0d89a1",
  "kind": "article",
  "title": "۶ میلیارد دلار؛ معمای پول‌های بلوکه‌شده ایران",
  "summary": "دارایی‌های بلوکه‌شده ایران در کشور‌های خارجی سال‌هاست درگیر محدودیت‌های بانکی و سیاسی شده است. پول‌هایی که قرار بود برای خرید کالا‌های بشردوستانه هزینه شود اما هنوز سرنوشت دسترسی ایران به آنها در هاله‌ای از ابهام قرار دارد.",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-19T11:26:45.708763+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "e308e323ec259091bdd71c2fd2c06a5226de54633c941e3cb34c3b4968962e25",
+ "updated_at_epoch": 1792396605708,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

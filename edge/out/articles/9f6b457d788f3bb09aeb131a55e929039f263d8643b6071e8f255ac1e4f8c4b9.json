@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.irib-news.ir/fa/news/5944334/تنگه-هرمز-همچنان-بسته-می-ماند",
+ "app_key": "a-9f6b457d788f3bb09aeb",
  "kind": "article",
  "title": "تنگه هرمز همچنان بسته می‌ماند",
  "summary": "سخنگوی سپاه پاسداران انقلاب اسلامی گفت: تنگه هرمز صددرصد بسته است و ما هیچ اجازه‌ای برای عبور و مرور از این تنگه را نمی‌دهیم.",
@@ -79,5 +80,8 @@
  "extracted_at": "2026-10-22T02:08:28.003873+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "be265aefdd5fcb10e562c391faf2f35b1024f1d5c632337991527c33f0ccf531",
+ "updated_at_epoch": 1792622308003,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

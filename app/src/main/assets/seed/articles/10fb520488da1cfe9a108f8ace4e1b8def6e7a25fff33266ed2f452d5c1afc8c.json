@@ -1,5 +1,6 @@
 {
  "id": "draft:https://www.eia.gov/todayinenergy/detail.php?id=68344",
+ "app_key": "a-10fb520488da1cfe9a10",
  "kind": "article",
  "title": "U.S. refineries have been running at very high rates in 2026",
  "summary": "The U.S. refinery fleet has run at higher-than-normal rates this year, with refinery utilization averaging more than 95% of capacity between May and September, the highest for those months since 1998. Tight global product supplies this year have boosted margins for petroleum products, particularly for diesel, incentivizing the increased run rates.",
@@ -46,5 +47,8 @@
  "extracted_at": "2026-10-22T15:02:46.150016+00:00",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "023cbb7743e0449d011c57775dcb81a8cc7a7a240514a0595c7e0b08e1d132d7",
+ "updated_at_epoch": 1792681366150,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

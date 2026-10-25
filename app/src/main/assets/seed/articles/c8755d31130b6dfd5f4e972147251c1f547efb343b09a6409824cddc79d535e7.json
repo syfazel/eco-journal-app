@@ -1,5 +1,6 @@
 {
  "id": "draft:https://www.bbc.co.uk/news/articles/c6x2zrjl7kjno#0",
+ "app_key": "a-c8755d31130b6dfd5f4e",
  "kind": "article",
  "title": "What is the Budget and what could be in it?",
  "summary": "Chancellor John Healey will set out his plans for UK taxes on 28 October.",
@@ -66,5 +67,8 @@
  "extracted_at": "2026-10-18T21:02:27.079802+00:00",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "8804a784aaf32f80ea142101c99da13dd0a4eaee1343eebf695020604dc03c05",
+ "updated_at_epoch": 1792357347079,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

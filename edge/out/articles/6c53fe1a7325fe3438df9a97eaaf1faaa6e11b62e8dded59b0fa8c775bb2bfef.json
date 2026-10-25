@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.eghtesadonline.com/fa/news/2170239/قیمت-طلای-18-عیار-سکه-و-دلار-امروز-سه-شنبه-28-مهر",
+ "app_key": "a-6c53fe1a7325fe3438df",
  "kind": "article",
  "title": "قیمت طلای ۱۸ عیار، سکه و دلار امروز سه‌شنبه ۲۸ مهر",
  "summary": "معاملات امروز در بازار داخلی طلا با افزایش قیمت همراه بود. این افزایش در حالی رخ داد که همچنان اونس جهانی طلا در حال نوسان منفی است.",
@@ -29,5 +30,8 @@
  "extracted_at": "2026-10-20T21:27:55.421302+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "c0a14d9d258508b99bd4c90a3b35f993dd0a301430a438f240ce6ec40cfaff76",
+ "updated_at_epoch": 1792519075421,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

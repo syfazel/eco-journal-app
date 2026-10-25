@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t11",
+ "app_key": "a-d87195c69e6f743b8852",
  "kind": "article",
  "title": "امکان بخشودگی ۱۰۰ درصدی جرایم مالیات بر ارزش افزوده فراهم شد",
  "summary": "طبق اعلام سازمان امور مالیاتی کشور، مودیانی که تا ۲۴ آبان‌ماه نسبت به تسویه یا ترتیب پرداخت بدهی و ذخیره نهایی خلاصه عملکرد اقدام کنند، از بخشودگی ۱۰۰ درصدی جرایم تاخیر برخوردار خواهند شد.",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "c3bfe008d9ff81a253ea4e2535300bb067ca8edde9c7ca8c4bfef69b1bfcfa08",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

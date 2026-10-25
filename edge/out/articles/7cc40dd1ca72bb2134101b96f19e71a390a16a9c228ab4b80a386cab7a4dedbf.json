@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D9%87%D8%B1%D9%85%D8%B2%DA%AF%D8%A7%D9%86-155/4303036-%D8%AA%D9%88%D8%B3%D8%B9%D9%87-%D8%B2%DB%8C%D8%B1%D8%B3%D8%A7%D8%AE%D8%AA-%D9%87%D8%A7%DB%8C-%D9%84%D8%AC%D8%B3%D8%AA%DB%8C%DA%A9%DB%8C-%D8%A8%D9%86%D8%AF%D8%B1-%D8%B4%D9%87%DB%8C%D8%AF-%D8%B1%D8%AC%D8%A7%DB%8C%DB%8C",
+ "app_key": "a-7cc40dd1ca72bb213410",
  "kind": "article",
  "title": "توسعه زیرساخت‌های لجستیکی بندر شهید رجایی",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/nLtqpmxMmvlJ/66ZlndiLGkTv7gklEF_SKhnIZOwTOfQ9hSPRHzyX7QbOQLx-15QeY5VcPgB_Zq_jQGQyzIHlJs1cdNq2X6DqipGDm4GQLq1od33UslSo5IvJJOWkoW-tpah78s4kn8O71K0AKqd0_hIyjwOJYPv0uBBaGDT-y_IxouNhm5i7BQ3ZbICwX-vCjII6Hw9fLiEL/%D8%A8%D9%86%D8%AF%D8%B1%2B%D8%B4%D9%87%DB%8C%D8%AF%2B%D8%B1%D8%AC%D8%A7%DB%8C%DB%8C.jpg\"> <div>مدیرکل بنادر هرمزگان از رشد جابه‌جایی ریلی آهن‌آلات، مواد معدنی و گوگرد بندر شهید رجایی خبرداد و اعلام کرد که با توسعه خطوط ریلی این بندر، ظرفیت تخلیه و بارگیری کالا تا ۱۳ میلیون تن افزایش می‌یابد.</div>",
@@ -26,5 +27,8 @@
  "extracted_at": "2026-10-20T11:27:12.164637+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "81cf1358c6b9da726882683d4f30ae5de3b78dafb041fa9c8bd6885ff13bed63",
+ "updated_at_epoch": 1792483032164,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

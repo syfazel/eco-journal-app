@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t23",
+ "app_key": "a-f6aba6db2ab20cc117f5",
  "kind": "article",
  "title": "پرونده الکترونیک سلامت در آستانه نهایی شدن",
  "summary": "<p>معاون علمی، فرهنگی و اجتماعی سازمان برنامه و بودجه از نزدیک شدن معماری کلان نظام پرونده الکترونیک سلامت به مرحله نهایی خبر داد.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d9%be%d8%b1%d9%88%d9%86%d8%af%d9%87-%d8%a7%d9%84%da%a9%d8%aa%d8%b1%d9%88%d9%86%db%8c%da%a9-%d8%b3%d9%84%d8%a7%d9%85%d8%aa-%d8%af%d8%b1-%d8%a2%d8%b3%d8%aa%d8%a7%d9%86%d9%87-%d9%86%d9%87%d8%a7%db%8c\">پرونده الکترونیک سلامت در آستانه نهایی شدن</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -27,5 +28,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "b38cf51577895a880bc1b22a88b9804cae404685c58fb6f02d58f9b05a42e800",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

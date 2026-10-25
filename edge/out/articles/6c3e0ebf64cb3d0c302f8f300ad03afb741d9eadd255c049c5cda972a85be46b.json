@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.eghtesadonline.com/fa/news/2170271/لیست-قیمت-خرید-مسکن-در-افسریه-خرید-آپارتمان-80-متری-در-این-منطقه-چقدر-بوجه-نیاز-دارد-جدول-مهر-1405",
+ "app_key": "a-6c3e0ebf64cb3d0c302f",
  "kind": "article",
  "title": "لیست قیمت خرید مسکن در افسریه / خرید آپارتمان ۸۰ متری در این منطقه چقدر بوجه نیاز دارد؟ + جدول مهر ۱۴۰۵",
  "summary": "بازار مسکن افسریه تهران در پی تغییر معادلات قیمتی پایتخت، به یکی از کانون‌های اصلی معاملات ملکی و گزینه‌ای راهبردی برای متقاضیان مصرفی و سرمایه‌گذاران تبدیل شده است.",
@@ -30,5 +31,8 @@
  "extracted_at": "2026-10-20T21:29:24.534045+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "b31bc30904e3173e4b11a7ce84daa5828d46bc00e7fc963212b73e04386aabc5",
+ "updated_at_epoch": 1792519164534,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

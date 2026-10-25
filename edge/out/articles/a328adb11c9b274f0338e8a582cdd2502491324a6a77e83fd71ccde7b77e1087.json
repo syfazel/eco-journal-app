@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t36",
+ "app_key": "a-a328adb11c9b274f0338",
  "kind": "article",
  "title": "پیش‌بینی جدید از قیمت طلا",
  "summary": "<p>شماری از سرمایه‌گذاران و مدیران صندوق‌های سرمایه‌گذاری پیش‌بینی می‌کنند قیمت جهانی طلا طی یک تا دو سال آینده رکوردهای جدیدی ثبت کند.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d9%be%db%8c%d8%b4%d8%a8%db%8c%d9%86%db%8c-%d8%ac%d8%af%db%8c%d8%af-%d8%a7%d8%b2-%d9%82%db%8c%d9%85%d8%aa-%d8%b7%d9%84%d8%a7\">پیش‌بینی جدید از قیمت طلا</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -35,5 +36,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "c8977ef28cbeb3117ca9d81c81ff7a65b5f0de7696f9887f138cb8da1a809897",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p7-t31",
+ "app_key": "a-76ffe2f9c4f3e6147bc3",
  "kind": "article",
  "title": "پیام شبانه قالیباف به کشورهای منطقه / ابرپروژه جدید ایران رو شد",
  "summary": "پیام شبانه رئیس مجلس درباره قطع کامل منابع انرژی و زمین به شرکت‌های خاص خبرساز شد.",
@@ -23,5 +24,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "be04473b69de90f87b7c65a27041e336c25e9829c431e20594da919e4575a17f",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

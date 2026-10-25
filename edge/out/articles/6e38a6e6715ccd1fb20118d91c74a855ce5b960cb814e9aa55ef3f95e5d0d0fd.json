@@ -1,5 +1,6 @@
 {
  "id": "extract_493cdcd8cbcc44a283371dc0b00ee715",
+ "app_key": "a-6e38a6e6715ccd1fb201",
  "kind": "article",
  "title": "تکذیب ادعای استفاده از پایگاه العدید علیه ایران/ الانصاری:  ۶ میلیارد دلار ایران در قطر است/ آمریکا در مذاکرات تنگه هرمز کارشکنی می‌کند",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/cYoGyMQlvo4I/SNG64fLwwtcOtG6JiF2ofga9KDF2W7yj9dKwnYxn6POioSp28YQHGryO1DEwpO5g2Xm912b1HOEejA0cA7OP7MW1CcdzUMD3RB6TnMcJYe6MGF71wtymgu0lAh_NWdsGwyv82EWXY0YTiTp57QSD0srNeyyAnZNgAPMLHMYXoGOb-0FUrDE1SmnQtaMpG0vw/Sj1KVFrSuYNC.jpg\"> <div>الانصاری در واکنش به گمانه‌زنی‌ها و نگرانی‌های امنیتی پیرامون تحرکات نظامی در منطقه، ادعا کرد که پایگاه هوایی «العدید» هرگز برای اقدام یا حمله علیه جمهوری اسلامی ایران مورد استفاده قرار نگرفته است.</div>",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-18T01:33:38+00:00",
  "channel_message_id": null,
  "publish_status": "posted",
+ "status": "posted",
+ "content_hash": "e24f2f66245f1a7968f736f24d5d0d397ee7764ac69537fde79652cee1f773a3",
+ "updated_at_epoch": 1792287218000,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

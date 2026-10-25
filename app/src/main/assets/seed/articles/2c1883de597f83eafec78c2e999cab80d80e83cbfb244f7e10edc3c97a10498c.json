@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.mehrnews.com/news/6982587/%D9%BE%D8%A7%D9%84%D8%A7%DB%8C%D8%B4%DA%AF%D8%A7%D9%87-%D9%81%D8%A7%D8%B2-%DB%B1%DB%B3-%D8%AF%D8%B1-%D9%85%D8%B3%DB%8C%D8%B1-%D8%AA%D9%88%D9%84%DB%8C%D8%AF-%D9%BE%D8%A7%DB%8C%D8%AF%D8%A7%D8%B1-%D9%88-%D8%A8%D9%87%D8%A8%D9%88%D8%AF-%D8%B4%D8%A7%D8%AE%D8%B5-%D9%87%D8%A7%DB%8C-%D8%B2%DB%8C%D8%B3%D8%AA-%D9%85%D8%AD%DB%8C%D8%B7%DB%8C",
+ "app_key": "a-2c1883de597f83eafec7",
  "kind": "article",
  "title": "پالایشگاه فاز ۱۳ در مسیر تولید پایدار و بهبود شاخص‌های زیست‌محیطی",
  "summary": "معاون طرح‌های توسعه‌ای شرکت نفت و گاز پارس از تکمیل و تحویل مجموعه‌ای از تجهیزات و واحدهای پالایشگاه فاز ۱۳ میدان مشترک پارس جنوبی خبر داد.",
@@ -26,5 +27,8 @@
  "extracted_at": "2026-10-19T13:29:36.366718+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "78c273d78991f25915003d0fac9bd654adb83c02cd0816be562a08162c9dee4f",
+ "updated_at_epoch": 1792403976366,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p3-t0",
+ "app_key": "a-1feb9c201323f4f7cdfb",
  "kind": "article",
  "title": "عراقچی توئیت زد/ کارهای ناتمامی با اسرائیل داریم",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/An6QG3S6whEX/vLCNZ5JoWlu5BcNfhUwXvjQJjQ7slS_w-6Pj-AqSHCMASfI0yASAgF_lZODoEPurv4ldF1lTKXN6R1cBHsfF-w7i5Xi5aIvQDqFpRKvD4mEqauJnCzMDYUHdoNrwUJfPJj3yzaw2mKWoHjT2tqkcG6Mw714hnx-ZgAAuIc0-q4p6WZsgC3U01W7z-paTfCO1/%D8%B9%D8%B1%D8%A7%D9%82%DA%86%DB%8C.jpg\"> <div>وزیر خارجه ایران در توئیتی نوشت: نتانیاهو برای اینکه به زندان نیفتد، آمریکا را به سمت جنگی دیگر می‌کشاند</div>",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "5867cfe18b32d8b83ef31fc6967147cc7c9561f629ff7d01e91d3ff1d0976b07",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

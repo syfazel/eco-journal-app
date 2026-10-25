@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.eghtesadonline.com/fa/news/2170171/سوخت-گیری-با-کارت-بانکی-جزئیات-طرح-جدید-چیست",
+ "app_key": "a-0a312e4071a147a3059a",
  "kind": "article",
  "title": "سوخت‌گیری با کارت بانکی / جزئیات طرح جدید چیست؟",
  "summary": "طرح شناسه‌دار کردن کارت اضطراری جایگاه‌های سوخت با هدف شفاف‌سازی مصرف بنزین اجرا شده، جزئیات سوخت‌گیری با کارت بانکی، احراز هویت، سقف ۲۵ لیتر در تهران و برنامه گسترش طرح در این گزارش آمده است.",
@@ -20,5 +21,8 @@
  "extracted_at": "2026-10-20T14:04:39.166248+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "7582803474f8932a262a9b21cb828f86ce2b6262fa45eb3137599e39d709da2d",
+ "updated_at_epoch": 1792492479166,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

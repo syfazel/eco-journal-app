@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.mehrnews.com/news/6984283/%D8%A7%D8%AC%D8%B1%D8%A7%DB%8C-%D9%85%D8%B1%D8%AD%D9%84%D9%87-%D8%A7%DB%8C-%D8%B7%D8%B1%D8%AD-%D9%81%D8%B4%D8%A7%D8%B1%D8%A7%D9%81%D8%B2%D8%A7%DB%8C%DB%8C-%D9%BE%D8%A7%D8%B1%D8%B3-%D8%AC%D9%86%D9%88%D8%A8%DB%8C-%D8%AF%D8%B1-%D8%A7%D9%88%D9%84%D9%88%DB%8C%D8%AA-%D9%82%D8%B1%D8%A7%D8%B1-%DA%AF%D8%B1%D9%81%D8%AA",
+ "app_key": "a-e57acb6d50c7179bcb82",
  "kind": "article",
  "title": "اجرای مرحله‌ای طرح فشارافزایی پارس جنوبی در اولویت قرار گرفت",
  "summary": "مجری طرح فشارافزایی پارس جنوبی از بازنگری برنامه‌های اجرایی و تمرکز بر هاب‌های اولویت‌دار با هدف حفظ ظرفیت تولید گاز این میدان مشترک خبر داد.",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-20T18:30:25.135600+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "0cf415aee0013f09c2c2422fef3fb6ec2f1f1a630e0b290012ca64095e888d8e",
+ "updated_at_epoch": 1792508425135,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4303221-%D8%B4%DA%A9%D8%A7%D9%81-%D8%AF%D8%B1-%D8%AE%D8%A7%D9%86%D9%88%D8%A7%D8%AF%D9%87-%D8%AA%D8%B1%D8%A7%D9%85%D9%BE-%D8%A8%D8%B1-%D8%B3%D8%B1-%D8%AC%D9%86%DA%AF-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D9%85%D8%AE%D8%A7%D9%84%D9%81%D8%AA-%D9%BE%D8%B3%D8%B1-%D8%A7%D8%B1%D8%B4%D8%AF-%D8%B1%D8%A6%DB%8C%D8%B3-%D8%AC%D9%85%D9%87%D9%88%D8%B1-%D8%A8%D8%A7-%D9%BE%D8%AF%D8%B1%D8%B4-%D9%81%D8%A7%D8%B4-%D8%B4%D8%AF",
+ "app_key": "a-1530e202b07f293e615d",
  "kind": "article",
  "title": "مخالفت پسر ارشد ترامپ با پدرش بر سر جنگ ایران",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/61pX0lsi22lE/AxWXJAzGK38Wh4_0lDwHRcCPFG-TdY6Tqkpk-4jAEGAkiscJrvDaY27BU2jsl9ApiFQchuJu9emgIkOPVdRPIlPbdXGfitn2QbkgTQL-9WZW15CsFb1KkLYnx_lTxeiJAbkO_I2hd-980GOaYTrhd2t56x1eJridns8WROOwapVownFVSjTusqU5bS3b7LXe/%D8%AA%D8%B1%D8%A7%D9%85%D9%BE.jpg\"> <div>نشریه آتلانتیک اعلام کرد که دونالد ترامپ جونیور در گفت‌وگوهای خصوصی، از جمله در گفت‌وگو با «دونالد ترامپ» رئیس جمهوری آمریکا نگرانی‌های خود را درباره جنگ ایران مطرح کرده و با پدرش در این زمینه مخالف است.</div>",
@@ -44,5 +45,8 @@
  "extracted_at": "2026-10-22T02:08:32.387065+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "0c375862a7e9ffb6ca1bef672c429a65444588ed50e337ac68b81d1278e54324",
+ "updated_at_epoch": 1792622312387,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.sedayebourse.ir/news/558065/%D8%B1%D9%81%D8%AA%D8%A7%D8%B1-%D9%85%D8%AA%D8%B6%D8%A7%D8%AF-%D8%B7%D9%84%D8%A7-%D9%88-%D9%86%D9%81%D8%AA-%D8%AF%D8%B1-%DB%B7-%D9%85%D8%A7%D9%87%D9%87-%D8%AC%D9%86%DA%AF%DB%8C",
+ "app_key": "a-6b2a96f7224245027002",
  "kind": "article",
  "title": "رفتار متضاد طلا و نفت در ۷ ماهه جنگی",
  "summary": "جنگ در خاورمیانه، بازارهای جهانی کالاهای پایه و اساسی را وارد دوره‌ای از نوسانات کم‌سابقه کرده است.",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-19T22:39:48.234230+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "f4366bf0f40eff82910fd65bfa2f109f3be2d9ce89a9ab2eeb7730fb70f3c77d",
+ "updated_at_epoch": 1792436988234,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

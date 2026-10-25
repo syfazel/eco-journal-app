@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.eghtesadonline.com/fa/news/2170022/عارف-آمریکا-باید-هزینه-شرایط-تنگه-هرمز-را-بپردازد-هشدار-درباره-گسترش-ناامنی-در-خزر",
+ "app_key": "a-c5836e0fc26f5738bd76",
  "kind": "article",
  "title": "عارف: آمریکا باید هزینه شرایط تنگه هرمز را بپردازد",
  "summary": "معاون اول رئیس‌جمهور در دیدار با نخست‌وزیر روسیه، بر اعمال حاکمیت ایران بر تنگه هرمز تأکید کرد و نسبت به تبدیل دریای خزر به کانون جدید ناامنی هشدار داد.",
@@ -38,5 +39,8 @@
  "extracted_at": "2026-10-20T00:13:32.203472+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "164929ceebfc3a6b16ec4e88acb5bdd77907e37545f99186f04834c493486c5a",
+ "updated_at_epoch": 1792442612203,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

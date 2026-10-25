@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%AE%D8%A8%D8%B1-%D8%AF%DB%8C%D9%BE%D9%84%D9%85%D8%A7%D8%B3%DB%8C-64/4303030-%D8%B3%D9%87%D8%A7%D9%85-%D8%AF%D8%A7%D8%B1%D8%A7%D9%86-%D8%B5%D9%86%D8%A7%DB%8C%D8%B9-%D9%86%D8%B8%D8%A7%D9%85%DB%8C-%D8%A8%D9%87-%D9%BE%DB%8C%D8%B4%D9%88%D8%A7%D8%B2-%D8%B4%DA%A9%D8%B3%D8%AA-%D8%AC%D9%85%D9%87%D9%88%D8%B1%DB%8C-%D8%AE%D9%88%D8%A7%D9%87%D8%A7%D9%86-%D8%B1%D9%81%D8%AA%D9%86%D8%AF",
+ "app_key": "a-dfcc12a8c6b6ca737fa7",
  "kind": "article",
  "title": "سهام‌داران صنایع نظامی به پیشواز شکست جمهوری‌خواهان رفتند",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/dkiNyCr5xpYZ/HDCSj_HiXlp4dj-y3gHHR1eE_AIvrZJgqbrCrEScQ3d3DdcoA3azmHVVgqWQrDlFACBX9PIGV-pgpjPMe6ivo5NuxuAixx41HfZRQqXgkS6TbeiC8V8lbyulDKQ1JhMjujs08ONoB73oI1Ctnb66jMKQ_s74AXfVEqXsrlnsc-U-pTWGo4HiSrM3gDBqAuU4/IMG_7824.jpg\"> <div>دنیای اقتصاد: تقویت احتمال پیروزی قاطع دموکرات‌ها در انتخابات میان‌دوره‌ای پیش‌رو، وال‌استریت را به بازنگری در چشم‌انداز شرکت‌های دفاعی آمریکا واداشته و موجی از افت ارزش سهام این صنعت را رقم زده است. سرمایه‌گذاران با پیش‌بینی تسلط دموکرات‌ها بر کنگره، طرح جاه‌طلبانه دولت دونالد ترامپ برای افزودن ۵۰۰ میلیارد دلار به بودجه نظامی را عملاً بایگانی‌شده تلقی می‌کنند.\n\n</div>",
@@ -36,5 +37,8 @@
  "extracted_at": "2026-10-20T14:59:03.912561+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "3082357cb38b8b7cee78d4c46648cd1cde7e56ad60f460f979d916ca27c66c46",
+ "updated_at_epoch": 1792495743912,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

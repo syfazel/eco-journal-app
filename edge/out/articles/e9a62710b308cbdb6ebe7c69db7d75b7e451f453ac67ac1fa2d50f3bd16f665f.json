@@ -1,5 +1,6 @@
 {
  "id": "d2619c1d62424d84beb63fc4f0981f07",
+ "app_key": "a-e9a62710b308cbdb6ebe",
  "kind": "article",
  "title": "Iran calls on UN to slam 'unlawful threats' from US, Israel",
  "summary": "<article data-history-node-id=\"449757\" about=\"https://www.middleeasteye.net/live-blog/live-blog-update/iran-calls-un-slam-us-naval-blockade-hormuz-strait\" class=\"live-blog-update default clearfix\">\n\n  \n      <h2>\n      <a href=\"https://www.middleeasteye.net/live-blog/live-blog-update/iran-calls-un-slam-us-naval-blockade-hormuz-strait\" rel=\"bookmark\">\n<span class=\"field field-title\">Iran calls on UN to slam US naval blockade in Hormuz Strait </span>\n</a>\n    </h2>\n    \n\n        \n    <div class=\"content\">\n                <div class=\"field field-field-text\"><p>Iran’s envoy to the United Nations, Gholamhossein Darzi, has urged the UN secretary-general and the president of the Security Council to reject and denounce the US&nbsp;naval blockade of Iranian ports in the Strait of Hormuz and the Gulf.</p>\n\n<p>In a letter addressed to the UN,&nbsp;Darzi said that Tehran has the right to self-defence as a response to any act of aggression.&nbsp;</p>\n\n<p>He also warned of \"continuous threats\" from the US and Israel, including the possible usage of the \"Mother of All Bombs\" - known officially as the Massive Ordnance Air Blast (MOAB) - against Iran.&nbsp;</p>\n\n<p>\"Threatening to use the 'MOAB' bomb (the Mother of All Bombs) against Iran's civilian infrastructure and to target all of the country's energy infrastructure constitutes, among other things, a flagrant violation of international law,\" he added.</p>\n\n<p>Iran called on the the security council to demand Washington and Tel Aviv put an end to their \"unlawful threats\", as well as ensure accountability and reparations for damage from \"wrongful acts committed by the United States and the Israeli regime against Iran\".</p>\n</div>\n      \n  </div>\n\n</article>",
@@ -28,5 +29,8 @@
  "extracted_at": "2026-10-22T03:30:16.422565+00:00",
  "channel_message_id": null,
  "publish_status": "posted",
+ "status": "posted",
+ "content_hash": "367b570de25fc495ad295e3499d7f381ef321de97c2f459051812937251daf4c",
+ "updated_at_epoch": 1792639816422,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

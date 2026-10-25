@@ -11,6 +11,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShowChart
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -46,13 +53,19 @@ import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.ui.theme.EcoTheme
 import com.ecojournal.app.util.Notifications
 
-private data class Tab(val route: String, val label: String)
+private data class Tab(
+    val route: String,
+    val label: String,
+    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+)
 
+// M3 (P1-12): real icons, not four identical bullets. The label
+// itself is the content description, so TalkBack announces the tab.
 private val TABS = listOf(
-    Tab("feed", "صفحه اصلی"),
-    Tab("market", "بازار"),
-    Tab("bookmarks", "ذخیره‌شده‌ها"),
-    Tab("settings", "تنظیمات"),
+    Tab("feed", "صفحه اصلی", Icons.Filled.Home),
+    Tab("market", "بازار", Icons.Filled.ShowChart),
+    Tab("bookmarks", "ذخیره‌شده‌ها", Icons.Filled.Bookmark),
+    Tab("settings", "تنظیمات", Icons.Filled.Settings),
 )
 
 class MainActivity : ComponentActivity() {
@@ -77,8 +90,14 @@ class MainActivity : ComponentActivity() {
                             nav.navigate("article/${Uri.encode(pendingId)}")
                         }
                     }
+                    // The reader has its own top bar (M3, P1-08);
+                    // the bottom bar is hidden there so no tab
+                    // sits selected for a route that is not a tab.
+                    val backEntry by nav.currentBackStackEntryAsState()
+                    val onReader = backEntry?.destination?.route
+                        ?.substringBefore("/") == "article"
                     Scaffold(
-                        bottomBar = { BottomBar(nav) },
+                        bottomBar = { if (!onReader) BottomBar(nav) },
                     ) { inner ->
                         val pad = Modifier.padding(inner)
                         // Market board from Room (M2): the bundled seed
@@ -103,9 +122,13 @@ class MainActivity : ComponentActivity() {
                             modifier = pad,
                         ) {
                             composable("feed") {
-                                FeedScreen(repo = repo, onOpen = { appKey ->
-                                    nav.navigate("article/${Uri.encode(appKey)}")
-                                })
+                                FeedScreen(
+                                    repo = repo,
+                                    onOpen = { appKey ->
+                                        nav.navigate("article/${Uri.encode(appKey)}")
+                                    },
+                                    fontScale = settings.fontScale,
+                                )
                             }
                             // Route argument is an appKey (M1), never
                             // the verbatim source id. Uri.encode is
@@ -116,6 +139,7 @@ class MainActivity : ComponentActivity() {
                                     repo = repo,
                                     articleId = id,
                                     fontScale = settings.fontScale,
+                                    onBack = { nav.popBackStack() },
                                 )
                             }
                             // Old Categories destination, kept harmless:
@@ -123,24 +147,37 @@ class MainActivity : ComponentActivity() {
                             // page, so this route delegates to it instead
                             // of being deleted (other code may reference it).
                             composable("categories") {
-                                FeedScreen(repo = repo, onOpen = { appKey ->
-                                    nav.navigate("article/${Uri.encode(appKey)}")
-                                })
+                                FeedScreen(
+                                    repo = repo,
+                                    onOpen = { appKey ->
+                                        nav.navigate("article/${Uri.encode(appKey)}")
+                                    },
+                                    fontScale = settings.fontScale,
+                                )
                             }
                             composable("market") {
                                 MarketScreen(
                                     latest = marketLatest,
                                     formulas = marketFormulas,
                                     snapshotCount = marketCount,
+                                    fontScale = settings.fontScale,
                                 )
                             }
                             composable("bookmarks") {
-                                BookmarksScreen(repo = repo, onOpen = { appKey ->
-                                    nav.navigate("article/${Uri.encode(appKey)}")
-                                })
+                                BookmarksScreen(
+                                    repo = repo,
+                                    onOpen = { appKey ->
+                                        nav.navigate("article/${Uri.encode(appKey)}")
+                                    },
+                                    fontScale = settings.fontScale,
+                                )
                             }
                             composable("settings") {
-                                SettingsScreen(settings = settings, store = store)
+                                SettingsScreen(
+                                    settings = settings,
+                                    store = store,
+                                    fontScale = settings.fontScale,
+                                )
                             }
                         }
                     }
@@ -154,7 +191,8 @@ class MainActivity : ComponentActivity() {
 private fun BottomBar(nav: NavHostController) {
     val back by nav.currentBackStackEntryAsState()
     val current = back?.destination?.route?.substringBefore("/")
-    NavigationBar {
+    // Paper-coloured bar (M3, P2-02), not the M3 tonal default.
+    NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
         for (tab in TABS) {
             NavigationBarItem(
                 selected = current == tab.route,
@@ -165,7 +203,12 @@ private fun BottomBar(nav: NavHostController) {
                         restoreState = true
                     }
                 },
-                icon = { Text("•", fontFamily = EcoFontFamily) },
+                icon = {
+                    Icon(
+                        imageVector = tab.icon,
+                        contentDescription = tab.label,
+                    )
+                },
                 label = { Text(tab.label, fontFamily = EcoFontFamily) },
             )
         }

@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t12",
+ "app_key": "a-a93528ed060a3c484b62",
  "kind": "article",
  "title": "نسخه اقتصاددانان برای کوین وارش | پیش‌بینی نرخ بهره در فدرال رزرو تغییر می‌کند؟",
  "summary": "هم‌زمان با تلاش کوین وارش برای اصلاح شیوه ارتباط فدرال رزرو با بازارهای مالی، دو اقتصاددان پیشنهاد کرده‌اند نمودار دات‌پلات کنار گذاشته شود و پیش‌بینی‌های اقتصادی بانک مرکزی بر مبنای انتظارات بازار از نرخ بهره تنظیم شود.",
@@ -34,5 +35,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "ebcabff909a12e5caf5addc6e3447392b9d35a1c611e91f1e30ec977ec4d1d03",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

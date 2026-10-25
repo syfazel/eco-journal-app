@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399732/قیمت-دلار-امروز-چهارشنبه-29-مهرماه-آخرین-تغییرات-ارزی-در-بازار-و-مرکز-مبادله",
+ "app_key": "a-5d7db82c26c6a11f47bf",
  "kind": "article",
  "title": "قیمت دلار امروز چهارشنبه ۲۹ مهرماه؛ آخرین تغییرات ارزی در بازار و مرکز مبادله",
  "summary": "قیمت دلار امروز چهارشنبه ۲۹ مهرماه ۱۴۰۵ به محدوده ۲۶۵ هزار تومان افزایش یافته است. در این گزارش، آخرین تغییرات قیمت انواع دلار در بازار آزاد و مرکز مبادله را تحلیل کرده‌ایم.",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-22T02:07:19.979311+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "90451b0c53b6c0c6741bcbd1f884f79d0392ffadb2963e6f5d6f10790fd36102",
+ "updated_at_epoch": 1792622239979,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

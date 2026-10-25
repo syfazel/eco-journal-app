@@ -95,6 +95,63 @@ def paragraphs(body):
     return [b for b in blocks if b]
 
 
+def app_key_for(external_id):
+    """URL-safe surrogate key, byte-identical to Kotlin
+    ArticleKeys.appKeyFor: "a-" + first 20 hex of SHA-256(id).
+    The verbatim id is never used in a navigation route."""
+    return "a-" + hashlib.sha256(external_id.encode("utf-8")).hexdigest()[:20]
+
+
+def kotlin_content_hash(title, summary, body_blocks, points_compact,
+                        why_matters, category, source, original_url,
+                        published_at):
+    """Content hash, byte-identical to Kotlin ContentHashes.forArticle:
+    the nine fields joined by U+0001, SHA-256 hex. For full articles
+    the app prefers the explicit hash carried in the article file,
+    so file and index entry must carry this same value; for shorts
+    the app recomputes it from the short object, so the generator's
+    value must equal that recomputation exactly (points are "[]",
+    body is the single full text, summary is the full text)."""
+    canonical = "\u0001".join([
+        title or "",
+        summary or "",
+        "\n".join(body_blocks or []),
+        points_compact or "",
+        why_matters or "",
+        category or "",
+        source or "",
+        original_url or "",
+        published_at or "",
+    ])
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def epoch_millis(raw):
+    """Epoch millis for a raw date string, or None if unparseable.
+    Mirrors the Kotlin PublishedAtParser's accepted shapes (ISO-8601,
+    RFC-1123 GMT / numeric offset / named US zone) closely enough
+    for updated_at bookkeeping; a None here is harmless because the
+    app falls back to the published epoch."""
+    if not raw or not str(raw).strip():
+        return None
+    s = " ".join(str(raw).strip().split())
+    try:
+        dt = datetime.fromisoformat(s.replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            return None
+        return int(dt.timestamp() * 1000)
+    except ValueError:
+        pass
+    try:
+        from email.utils import parsedate_to_datetime
+        dt = parsedate_to_datetime(s)
+        if dt.tzinfo is None:
+            return None
+        return int(dt.timestamp() * 1000)
+    except (ValueError, TypeError):
+        return None
+
+
 def file_name_for(article_id):
     """Deterministic, filesystem-safe file name for an article id.
 
@@ -175,8 +232,20 @@ def main():
             points = json.loads(r["points_json"]) if r["points_json"] else []
         except (ValueError, TypeError):
             points = []
+        # org.json JSONArray.toString() (what Kotlin reads back) is
+        # compact: separators (",", ":") with no spaces. The hash
+        # must be computed over that exact compact form.
+        points_compact = json.dumps(points, ensure_ascii=False,
+                                    separators=(",", ":"))
+        source = r["item_source_fa"] or r["source_slug"]
+        published_at = r["item_published_at"] or r["extracted_at"]
+        updated_epoch = epoch_millis(r["extracted_at"]) or epoch_millis(published_at)
+        content_hash = kotlin_content_hash(
+            r["title"], summary, body_blocks, points_compact,
+            r["why_matters"], category, source, r["url"], published_at)
         doc = {
             "id": r["extract_id"],
+            "app_key": app_key_for(r["extract_id"]),
             "kind": "article",
             "title": r["title"],
             "summary": summary,
@@ -186,13 +255,16 @@ def main():
             "why_matters": r["why_matters"],
             "category": category,
             "category_fa": category_fa,
-            "source": r["item_source_fa"] or r["source_slug"],
+            "source": source,
             "source_slug": r["source_slug"],
             "original_url": r["url"],
-            "published_at": r["item_published_at"] or r["extracted_at"],
+            "published_at": published_at,
             "extracted_at": r["extracted_at"],
             "channel_message_id": r["channel_message_id"],
             "publish_status": r["status"],
+            "status": r["status"],
+            "content_hash": content_hash,
+            "updated_at_epoch": updated_epoch,
             "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)",
         }
         with open(os.path.join(out_dir, "articles", file_name_for(r["extract_id"])),
@@ -200,6 +272,7 @@ def main():
             json.dump(doc, f, ensure_ascii=False, indent=1)
         entries.append({
             "id": r["extract_id"],
+            "app_key": doc["app_key"],
             "kind": "article",
             "title": r["title"],
             "summary": summary,
@@ -209,6 +282,9 @@ def main():
             "published_at": doc["published_at"],
             "file": "articles/%s" % file_name_for(r["extract_id"]),
             "channel_message_id": r["channel_message_id"],
+            "status": r["status"],
+            "content_hash": content_hash,
+            "updated_at_epoch": updated_epoch,
             "provenance": doc["provenance"],
         })
 
@@ -224,8 +300,18 @@ def main():
     ).fetchall()
     shorts = []
     for r in short_rows:
+        sid = "draft-%s" % r["id"]
+        # Kotlin entityFromShortJson recomputes the hash from the
+        # short object itself (summary = full text, body = [text],
+        # points = "[]", category = general), so this value must
+        # equal that recomputation for sync skip-unchanged to work.
+        short_hash = kotlin_content_hash(
+            r["title"], r["body_fa"], [r["body_fa"]], "[]", None,
+            DEFAULT_CATEGORY, r["source_name"], r["original_url"],
+            r["decided_at"])
         shorts.append({
-            "id": "draft-%s" % r["id"],
+            "id": sid,
+            "app_key": app_key_for(sid),
             "kind": "short",
             "label": "گزیده",
             "title": r["title"],
@@ -233,6 +319,9 @@ def main():
             "source": r["source_name"],
             "original_url": r["original_url"],
             "decided_at": r["decided_at"],
+            "status": "approved",
+            "content_hash": short_hash,
+            "updated_at_epoch": epoch_millis(r["decided_at"]),
             "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)",
         })
     with open(os.path.join(out_dir, "short_cards.json"), "w", encoding="utf-8") as f:
@@ -240,6 +329,7 @@ def main():
     for s in shorts:
         entries.append({
             "id": s["id"],
+            "app_key": s["app_key"],
             "kind": "short",
             "title": s["title"],
             "summary": s["text"][:280],
@@ -249,6 +339,9 @@ def main():
             "published_at": s["decided_at"],
             "file": None,
             "channel_message_id": None,
+            "status": "approved",
+            "content_hash": s["content_hash"],
+            "updated_at_epoch": s["updated_at_epoch"],
             "provenance": s["provenance"],
         })
 
@@ -285,9 +378,9 @@ def main():
     canonical = json.dumps(entries, ensure_ascii=False, sort_keys=True)
     digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
     index = {
-        "version": 1,
+        "version": 2,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "generator": "edge/generate_edge.py (Phase 1, LAB ONLY)",
+        "generator": "edge/generate_edge.py (M3, LAB ONLY)",
         "hash_sha256": digest,
         "counts": {
             "full_articles": len(full_rows),

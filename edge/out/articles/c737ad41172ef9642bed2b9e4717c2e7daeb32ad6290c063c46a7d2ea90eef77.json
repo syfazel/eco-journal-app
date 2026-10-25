@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p7-t19",
+ "app_key": "a-c737ad41172ef9642bed",
  "kind": "article",
  "title": "یمن به کارکنان تأسیسات نفتی عربستان هشدار داد",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/VaIqhVp7ZOJS/VG_wzc1SkZaytP6EgTL66DKCrQ8dg8QaLQxkkky7uunVp-ej5RwGvqBCDNkB-FF7rtZKmjbY8f3JFhqEMpHKtoLfGgb34UNE8iXOOXNovXeWPg_J-ymW8b7S2tyY7vUGqlwNXX5RUaazADg3TWMvUy04HjzRuJZHwECXVxkhRSmYVwJkcQHi8hmJIkBwHSSU/%D9%86%DB%8C%D8%B1%D9%88%D9%87%D8%A7%DB%8C+%D9%85%D8%B3%D9%84%D8%AD+%DB%8C%D9%85%D9%86.jpg\"> <div>نیروهای مسلح یمن به کارکنان تأسیسات نفتی عربستان سعودی هشدار دادند که به این تأسیسات نزدیک نشوند.\n\n</div>",
@@ -26,5 +27,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "e484254ce46d945dbb10ebea0587fb80884d95f343165ae62964d5fd9143db4d",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p3-t3",
+ "app_key": "a-2846e6f62e2666449c99",
  "kind": "article",
  "title": "اعتراضات فرانسه چگونه به میدان تسویه‌حساب سیاسی تبدیل شد؟",
  "summary": "اعتراضات گسترده در فرانسه که با مطالبات معیشتی و نارضایتی از خدمات عمومی آغاز شد، با گسترش خشونت و درگیری به میدان تازه‌ای برای رقابت احزاب در آستانه انتخابات ریاست‌جمهوری تبدیل شده است.",
@@ -42,5 +43,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "0443b82d1cbf42d85cb4850fe1cf6eb88e2e3e4f11e3f6a0ca9229746a117d44",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

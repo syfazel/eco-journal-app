@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p7-t13",
+ "app_key": "a-8aee210af889e0fed509",
  "kind": "article",
  "title": "مأموریت ضربتی ساتبا و توانیر برای ورود ۱۲ هزار مگاوات برق تجدیدپذیر",
  "summary": "نقشه راه ضربتی اتصال تا سقف ۱۲ هزار مگاوات نیروگاه تجدیدپذیر به شبکه سراسری توسط سازمان انرژی‌های تجدیدپذیر و بهره‌وری انرژی برق (ساتبا) و شرکت توانیر کلید خورد.",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "02637e0a699c7ca85e9beb3d70d085fbc989be4f2b168454f652b0bb1405a088",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

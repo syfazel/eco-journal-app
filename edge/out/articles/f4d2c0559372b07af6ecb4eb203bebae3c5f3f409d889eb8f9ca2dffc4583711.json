@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p7-t27",
+ "app_key": "a-f4d2c0559372b07af6ec",
  "kind": "article",
  "title": "تغییر معماری بازارهای انرژی پاشنه آشیل محاسبات آمریکا",
  "summary": "مدیرعامل بورس انرژی ایران با اشاره به سهم ۲۰ درصدی تنگه هرمز از بازار انرژی گفت: گسترش معاملات مالی باعث شده قیمت‌ها علاوه بر عرضه و تقاضا، به انتظارات و ریسک‌های سیاسی نیز واکنش نشان دهند.",
@@ -39,5 +40,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "dd4e96c7349793adf303c578c82349598330ef6225a47344068dbb573d9dd33f",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%DA%AF%D8%B1%D9%88%D9%87-%D8%A2%D9%86%D9%84%D8%A7%DB%8C%D9%86-%D8%B1%D9%88%D8%B2%D9%86%D8%A7%D9%85%D9%87-%D8%AF%D9%86%DB%8C%D8%A7%DB%8C-%D8%A7%D9%82%D8%AA%D8%B5%D8%A7%D8%AF-192/4303090-%D8%B6%D8%B1%D9%88%D8%B1%D8%AA-%D8%A8%D8%A7%D8%B2%D9%86%DA%AF%D8%B1%DB%8C-%D8%AF%D8%B1-%D8%B3%DB%8C%D8%A7%D8%B3%D8%AA-%D9%87%D8%A7%DB%8C-%D8%AA%D8%AC%D8%A7%D8%B1%D8%AA-%D8%A7%D9%84%DA%A9%D8%AA%D8%B1%D9%88%D9%86%DB%8C%DA%A9",
+ "app_key": "a-8371b8860b37fc301e2a",
  "kind": "article",
  "title": "ضرورت بازنگری در سیاست‌های تجارت الکترونیک",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/MiHFyt7I42hi/C7Jan6ZhixlOTTgbe0tZnlO7f6DU1JuZ9HoXmJJlxqFZ7i7wpHPzkm2x3PxgnNGPLUoYMb1iFNC0s7k1FTCZMGFXy_Tdi0zM-oZPhAtPpTBEi0sGZix47c97oJXN4QnEmhyMGM_2ERWRPuJ9KXe1dkqTd5pn18zqxn68xOyYLEECNowSCZ7T7SajBx0iUX3B/rounamaei_1st_news14050725.jpg\"> <div>دنیای اقتصاد؛ محمدصادق مفتح، جانشین وزیر صنعت، معدن و تجارت در امور بازرگانی، در گردهمایی کارکنان مرکز توسعه تجارت الکترونیک، با اشاره به سابقه دو دهه‌ای شکل‌گیری ساختار تجارت الکترونیک کشور، اینماد را معادل «پروانه کسب» در فضای الکترونیک خواند و تاکید کرد: تجارت الکترونیک موثرترین ابزار برای بی‌اثر کردن تحریم‌ها و نزدیک‌شدن به لبه دانش جهانی است.</div>",
@@ -27,5 +28,8 @@
  "extracted_at": "2026-10-20T20:01:22.839934+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "86a825218bf138871fd1da97d4b6a8f3da49c6e0e7f5048bc9596a6307d02786",
+ "updated_at_epoch": 1792513882839,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -8,26 +8,26 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * TODO (Yasin, before first real sync): set EDGE_BASE_URL to the
- * published edge URL, e.g. the GitHub Pages URL for the edge repo
- * (no trailing slash). Until then sync() returns
- * Result.NotConfigured and the app shows only what is already cached
- * — it never invents content and never ships a placeholder feed.
- *
- * The edge is static JSON produced by edge/generate_edge.py; the app
- * talks to nothing else. No token, key or secret is used here.
+ * Edge URL decision (docs/vnext-decisions.md, M5 step): the Pages
+ * root https://syfazel.github.io/eco-journal-app/ — WITHOUT any
+ * /out suffix. It is NOT wired here yet: until the repo's Pages
+ * source is set to "GitHub Actions" (an M5 owner toggle), the
+ * workflow serves nothing, so BASE_URL stays blank, sync()
+ * returns Result.NotConfigured, and the app shows only what is
+ * already cached — it never invents content and never ships a
+ * placeholder feed. The edge is static JSON produced by
+ * edge/generate_edge.py; the app talks to nothing else. No token,
+ * key or secret is used here.
  *
  * Sync rules (M2), replacing the old "hash on partial" behaviour:
  * - An article is fetched only if it is absent, or if its stored
  *   content hash differs from the index entry's hash. A changed
  *   body therefore replaces the old body in the same transaction
  *   that records the sync; an unchanged body is never refetched.
- *   NOTE: the current generator emits no content_hash, app_key or
- *   status in index.json (verified 2026-10-25: 0 of 281 entries
- *   carry them), so until the generator is extended, sync refetches
- *   present articles (hash comparison falls back to fetch) and the
- *   tombstone path stays dormant. The code paths are ready; the
- *   generator fields are the remaining half of P0-05.
+ *   Since M3 the generator emits content_hash, app_key and status
+ *   in every index entry, so the skip-unchanged comparison and
+ *   the tombstone path are live (previously the generator emitted
+ *   none of them and the paths stayed dormant).
  * - A retracted entry becomes a tombstone: the local row keeps its
  *   bookmark link but leaves the feed (status = "retracted").
  * - The index hash is written ONLY after a transaction that

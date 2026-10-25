@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p3-t2",
+ "app_key": "a-1565ab58a4b1985c5acc",
  "kind": "article",
  "title": "تهدید تازه ترامپ علیه ایران / اولتیماتوم تازه آمریکا",
  "summary": "رئیس‌جمهور آمریکا در اظهاراتی تازه از وارد شدن ضربات سنگین به ایران سخن گفت.",
@@ -22,5 +23,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "48a8c8308cdaf674a59909a09e8438ff5ced65eb918ac5865e8b0e3931292d56",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

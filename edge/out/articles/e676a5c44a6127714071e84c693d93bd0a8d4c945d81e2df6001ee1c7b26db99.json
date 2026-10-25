@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4302518-%D8%AD%D9%85%D9%84%D9%87-%D8%A8%D9%87-%D8%B4%D9%86%D8%A7%D9%88%D8%B1-%D8%B7%DB%8C-%D8%B1%D9%88%D8%B2-%D8%AF%D8%B1-%D8%AA%D9%86%DA%AF%D9%87-%D9%87%D8%B1%D9%85%D8%B2-%D8%AA%D8%A7%D8%B3-%D8%A7%DB%8C%D9%86-%D8%AD%D9%85%D9%84%D8%A7%D8%AA-%D8%A8%DB%8C-%D8%B3%D8%A7%D8%A8%D9%82%D9%87-%D8%A8%D9%88%D8%AF%D9%87-%D8%A7%D8%B3%D8%AA",
+ "app_key": "a-e676a5c44a6127714071",
  "kind": "article",
  "title": "تاس: حمله به ۲۲ شناور در تنگه هرمز طی ۱۳ روز بی‌سابقه بود",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/bJrf936Ug0yo/u_SqsKAzAkprdRZxlayDtrjMe4QAaSY2CFV6gXYUAWw2m_GorHm1XzTBrlbDahVewXFp0cujUQEygZOvevbK3A7oQ1l6zaS1pyJs6IIGHJ0mi0cgW6Xk_l71aYPNKuXAgM9_S9qgqwwPLn3opmXHSVzoDmitzhWADPsxL9vXjZ0hFSbKl1_09Fjp-f-3bnG4/fR2aUBDHSk3N.jpg\"> <div>خبرگزاری تاس با اشاره به حمله به 22 شناور در تنگه هرمز نوشت: در پی این حوادث، ۱۵ ملوان مجروح ، دو نفر مفقود و یک شناور غرق شدند.</div>",
@@ -27,5 +28,8 @@
  "extracted_at": "2026-10-19T00:22:40.335680+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "7bc8badef562b9876fd1e5f62c4f8b19b60297d07ff35ee004d78823f8014f11",
+ "updated_at_epoch": 1792356760335,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

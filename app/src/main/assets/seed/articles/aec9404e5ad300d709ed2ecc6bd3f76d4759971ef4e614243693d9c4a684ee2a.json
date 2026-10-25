@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p1-t3",
+ "app_key": "a-aec9404e5ad300d709ed",
  "kind": "article",
  "title": "درخواست خکار برای بازگشایی نماد",
  "summary": "شرکت ایرکا پارت صنعت با نماد «خکار» پس از برگزاری کنفرانس اطلاع‌رسانی و شفاف‌سازی درباره تغییرات قیمت سهم، درخواست بازگشایی نماد معاملاتی خود را به بورس تهران ارائه داد.",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "b16b7a523dcea9f7509a7b178a5077b77a3f7d38e6a91a13665bd887dc35fafd",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t4",
+ "app_key": "a-f213d34b50897b7de663",
  "kind": "article",
  "title": "درخواست تعیین تکلیف برای بیش از ۱.۷ میلیون حساب ثبت شد",
  "summary": "<p>از زمان رونمایی سامانه حسام بانک مرکزی تا ۲۵ مهرماه، ۹۶ هزار و ۵۵۹ نفر به این سامانه مراجعه کرده و در مجموع درخواست تعیین تکلیف برای یک میلیون و ۷۰۶ هزار و ۸۶۲ حساب در آن به ثبت رسیده است.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d8%af%d8%b1%d8%ae%d9%88%d8%a7%d8%b3%d8%aa-%d8%aa%d8%b9%db%8c%db%8c%d9%86-%d8%aa%da%a9%d9%84%db%8c%d9%81-%d8%a8%d8%b1%d8%a7%db%8c-%d8%a8%db%8c%d8%b4-%d8%a7%d8%b2-%db%b1-%db%b7-%d9%85%db%8c%d9%84%db%8c\">درخواست تعیین تکلیف برای بیش از ۱.۷ میلیون حساب ثبت شد</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "7b54a297d7f282e3eacff782563bda23cd0725598534d9c5850bd52c832742dd",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

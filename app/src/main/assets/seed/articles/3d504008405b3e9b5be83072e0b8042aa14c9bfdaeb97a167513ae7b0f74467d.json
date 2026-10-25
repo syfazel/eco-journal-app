@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.sedayebourse.ir/news/558103/%D8%B6%D8%B1%D8%A8%D9%87-%DB%B1%DB%B4-%D9%87%D9%85%D8%AA%DB%8C-%D8%A8%D9%87-%D8%B3%D9%88%D8%AF%D8%A2%D9%88%D8%B1%DB%8C-%D8%B4%D9%BE%D9%86%D8%A7",
+ "app_key": "a-3d504008405b3e9b5be8",
  "kind": "article",
  "title": "ضربه ۱۴ همتی به سودآوری شپنا",
  "summary": "پالایش نفت اصفهان در تازه‌ترین شفاف‌سازی خود، برای نخستین‌بار اثر مستقیم دستورالعمل جدید قیمت‌گذاری نفت خام و فرآورده‌های نفتی بر سودآوری شرکت را عددگذاری کرد. برآورد «شپنا» نشان می‌دهد کاهش ۳ دلاری تخفیف نفت خام سبک، در صورت ثبات سایر متغیرها، می‌تواند سود خالص این شرکت در نیمه دوم سال را حدود ۱۴ هزار میلیارد تومان کاهش دهد.",
@@ -30,5 +31,8 @@
  "extracted_at": "2026-10-20T16:33:47.164081+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "4f07dc3de00e9e57948a822386425d2d85c91d14258784307a8dec3182d888fc",
+ "updated_at_epoch": 1792501427164,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

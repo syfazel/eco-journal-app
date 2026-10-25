@@ -1,5 +1,6 @@
 {
  "id": "extract_fe58546035834551b4eda713b297cbe9",
+ "app_key": "a-a2e4a530a369a5f0c496",
  "kind": "article",
  "title": "ادعای وزیر جنگ آمریکا: ایران دو راه پیش رو دارد؛ یا مذاکره یا.../ترامپ مصمم است با تهدید بلندمدت ایران و جاه‌طلبی‌های هسته‌ای تهران مقابله کند",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/54GWiciLCTND/InVuaV4uz_DjpWgRoFk6lc--i4GmlrNaYFxsMuV3coVwJPa7CN7TSj16XCfEphMpaS0MyPqTL_ZYYiL80cyj6AJyL4txD0XJ2j36CHvEaD1TBS2lqlpfHi7LuNRvhnL_6O0XP1GKVVGNEOqLD9yTpIvqaBtZJ370AJfkRfEgSJGh3iDPiBlyAp-RDwc3c2aM/%D9%BE%DB%8C%D8%AA+%D9%87%DA%AF%D8%B3%D8%AA+%2A.jpg\"> <div>وزیر جنگ امریکا ادعا کرد: ایران دو گزینه پیش رو دارد: یا از طریق مذاکره از جاه‌طلبی‌های خود دست بکشد، یا با ویرانی سریع به دست آمریکا مواجه شود.</div>",
@@ -23,5 +24,8 @@
  "extracted_at": "2026-10-18T02:44:13+00:00",
  "channel_message_id": null,
  "publish_status": "posted",
+ "status": "posted",
+ "content_hash": "fbd2bb2d7150a6abd6544b1cfa7f7ff87a5b966e8431fa461826e08c228a156a",
+ "updated_at_epoch": 1792291453000,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

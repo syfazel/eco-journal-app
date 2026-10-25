@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t24",
+ "app_key": "a-578526541dd44f12acf3",
  "kind": "article",
  "title": "افت شاخص کل و خروج نقدینگی/ بازار سرمایه با معیار دلار چقدر رشد کرده است؟ +فیلم",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/2ntwtLG1tonp/IqdkWQ-ZFv9X4ZflW6DB1VDUDopqxSigmgNvWnITaqraZAnZeLcvJgidPwfz1ZuRSadQg9FK6RDhqNK0ejIEcsCksiQRhJPSmEiZgcVkULKtgPi-6iAGxMu1s-kU5gQjc8fOf6HlWv6rqVnkliYPDmvPZA5CHxnFy_9vpK3w8UoBi4F0s5we6fMupT_LDaQT/%D8%A8%D9%88%D8%B1%D8%B3.jpg\"> <div>بازار سهام امروز با وجود افت شاخص‌ها، از نظر تعداد نمادهای مثبت وضعیت بهتری داشت؛ ۶۱ درصد نمادها سبزپوش بودند، اما شاخص کل بیش از یک درصد افت کرد و حدود ۲.۸۵ همت پول حقیقی از بازار خارج شد. </div>",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "ebe685f32cf30f78b8980e5a7b5e412a1f63f000e2a31326cb5cec652a974189",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

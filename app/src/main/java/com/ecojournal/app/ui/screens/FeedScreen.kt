@@ -8,14 +8,22 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ScrollableTabRow
@@ -32,10 +40,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ecojournal.app.R
 import com.ecojournal.app.data.ArticleEntity
 import com.ecojournal.app.data.BundledSeed
 import com.ecojournal.app.data.EdgeRepository
@@ -43,22 +58,45 @@ import com.ecojournal.app.data.SyncResult
 import com.ecojournal.app.ui.components.ArticleCard
 import com.ecojournal.app.ui.components.NewspaperDoubleRule
 import com.ecojournal.app.ui.theme.EcoFontFamily
+import com.ecojournal.app.util.escapeLikeQuery
+import com.ecojournal.app.util.formatPersianInt
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private data class Section(val key: String?, val label: String)
+
+/**
+ * Fixed, stable section order (M3, P1-10). Sections used to be
+ * ordered by first appearance in the cache, so a new article could
+ * reorder tabs and change heroes while the user watched. "همه" is
+ * always first; known categories follow this fixed order; any
+ * category the app has never seen is appended by label, so the
+ * order can never silently reshuffle on a sync.
+ */
+private val CATEGORY_ORDER = listOf(
+    "geopolitics",
+    "energy",
+    "wallstreet",
+    "business",
+    "rial",
+    "general",
+)
 
 /**
  * Home front page, broadsheet style. Masthead first, then a
  * ScrollableTabRow of sections synced to a HorizontalPager.
  *
  * Sections are derived only from what is actually in the Room
- * cache: "همه" plus every distinct category present, in the
- * order it first appears in the cache (publishedAtEpoch DESC).
- * No section, label or article is invented here.
+ * cache: "همه" plus every distinct category present, in the fixed
+ * order above. No section, label or article is invented here.
  *
- * Search still runs offline over the Room cache only (titles
- * and summaries). While a search query is present, the pager
- * is replaced by the flat search results list.
+ * Search runs offline over the Room cache (titles, summaries,
+ * body text, key points, source and category label — M3, P1-04),
+ * with a 300ms debounce, an escaped LIKE query, a result count
+ * and a clear button. While a search query is present, the pager
+ * is replaced by the flat search results list; clearing the query
+ * restores the pager on exactly the page it was on, because the
+ * pager state lives outside the search branch.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -66,9 +104,11 @@ fun FeedScreen(
     repo: EdgeRepository,
     onOpen: (String) -> Unit,
     modifier: Modifier = Modifier,
+    fontScale: Float = 1f,
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
     // Reactive feed (M2): the list is a Room Flow, so it updates
     // when the seed finishes, when a sync lands, or when a row is
     // retracted — it is never a single once-only read that can
@@ -79,6 +119,7 @@ fun FeedScreen(
     var query by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<ArticleEntity>?>(null) }
     var syncState by remember { mutableStateOf("") }
+    var syncing by remember { mutableStateOf(false) }
     var seeding by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
@@ -86,26 +127,32 @@ fun FeedScreen(
         seeding = false
     }
 
-    // Offline search: re-run against the cache whenever the query changes.
+    // Offline search, debounced: restarting this effect on each
+    // keystroke cancels the pending query, so typing never fires
+    // one Room query per character (P1-04).
     LaunchedEffect(query) {
-        searchResults = if (query.isBlank()) {
-            null
+        if (query.isBlank()) {
+            searchResults = null
         } else {
-            repo.dao.search(query.trim())
+            delay(300)
+            searchResults = repo.dao.search(escapeLikeQuery(query.trim()))
         }
     }
 
     val sections = remember(all) {
-        val seen = linkedSetOf<String>()
-        val ordered = mutableListOf<Section>()
-        for (a in all) {
-            if (seen.add(a.category)) {
-                ordered.add(Section(a.category, a.categoryFa))
-            }
-        }
-        listOf(Section(null, "همه")) + ordered
+        val present = all.map { it.category to it.categoryFa }.distinct().toMap()
+        val orderedKeys = CATEGORY_ORDER.filter { it in present } +
+            (present.keys - CATEGORY_ORDER.toSet()).sortedBy { present[it] }
+        listOf(Section(null, "همه")) +
+            orderedKeys.map { Section(it, present[it] ?: it) }
     }
     val pagerState = rememberPagerState(pageCount = { sections.size })
+    // Section-keyed scroll states (M3, P1-09): kept in a map that
+    // outlives any one page composition, so swiping two sections
+    // away and back restores the scroll position instead of
+    // resetting to the top. Pager neighbours stay composed for
+    // smoothness, but the map is what preserves position.
+    val listStates = remember { mutableMapOf<String?, LazyListState>() }
 
     Column(
         modifier = modifier
@@ -115,7 +162,7 @@ fun FeedScreen(
         // Masthead: ECO JOURNAL only. No other publication name appears.
         Text(
             text = "ECO JOURNAL",
-            fontSize = 32.sp,
+            fontSize = 32.sp * fontScale,
             fontFamily = EcoFontFamily,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -131,40 +178,75 @@ fun FeedScreen(
         OutlinedTextField(
             value = query,
             onValueChange = { query = it },
-            label = { Text("جست‌وجو در مقالات ذخیره‌شده", fontFamily = EcoFontFamily) },
+            label = { Text(stringResource(R.string.search_label), fontFamily = EcoFontFamily) },
+            // Theme typography is Vazirmatn (M3), but the field's
+            // typed text gets it explicitly too: before M3 it fell
+            // back to the system font while its label was Vazirmatn.
+            textStyle = TextStyle(fontFamily = EcoFontFamily),
             singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(onSearch = { focusManager.clearFocus() }),
+            trailingIcon = {
+                if (query.isNotEmpty()) {
+                    IconButton(onClick = { query = "" }) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = stringResource(R.string.clear_search),
+                        )
+                    }
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
         )
         Spacer(modifier = Modifier.height(8.dp))
+        // Hoisted out of the click handler: stringResource is a
+        // composable call and cannot run inside a coroutine launch.
+        val syncInProgressText = stringResource(R.string.sync_in_progress)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp),
         ) {
             Button(
+                enabled = !syncing,
                 onClick = {
                     scope.launch {
-                        syncState = "در حال همگام‌سازی…"
+                        syncing = true
+                        syncState = syncInProgressText
                         syncState = when (val r = repo.sync()) {
                             is SyncResult.Ok ->
                                 if (r.newArticleAppKeys.isEmpty()) {
-                                    "به‌روز است (${r.totalCached} مقاله در حافظه)."
+                                    context.getString(
+                                        R.string.sync_up_to_date,
+                                        formatPersianInt(r.totalCached),
+                                    )
                                 } else {
-                                    "${r.newArticleAppKeys.size} مقالهٔ تازه دریافت شد."
+                                    context.getString(
+                                        R.string.sync_new_articles,
+                                        formatPersianInt(r.newArticleAppKeys.size),
+                                    )
                                 }
                             is SyncResult.Partial ->
-                                "همگام‌سازی ناقص ماند؛ ${r.missingCount} مقاله در " +
-                                    "تلاش بعدی دوباره دریافت می‌شوند."
+                                context.getString(
+                                    R.string.sync_partial,
+                                    formatPersianInt(r.missingCount),
+                                )
                             is SyncResult.NotConfigured ->
-                                "لبهٔ انتشار هنوز تنظیم نشده است (TODO در EdgeConfig). " +
-                                    "فقط مقالات کش‌شده نمایش داده می‌شوند."
-                            is SyncResult.Failed -> "همگام‌سازی ناموفق بود: ${r.reason}"
+                                // No TODO leak in user-facing text
+                                // (P1-11): the edge URL decision lives
+                                // in docs/vnext-decisions.md, and the
+                                // toggle itself is an M5 step.
+                                context.getString(R.string.sync_not_configured)
+                            is SyncResult.Failed ->
+                                context.getString(R.string.sync_failed, r.reason)
                         }
+                        syncing = false
                     }
                 },
+                modifier = Modifier.heightIn(min = 48.dp),
             ) {
-                Text("همگام‌سازی", fontFamily = EcoFontFamily)
+                Text(stringResource(R.string.sync_button), fontFamily = EcoFontFamily)
             }
             Spacer(modifier = Modifier.width(8.dp))
             if (syncState.isNotBlank()) {
@@ -183,14 +265,35 @@ fun FeedScreen(
             // Search mode: flat newspaper rows, no pager.
             if (results.isEmpty()) {
                 Text(
-                    text = "در مقالات ذخیره‌شده چیزی برای این جست‌وجو یافت نشد.",
+                    text = stringResource(R.string.search_no_results),
                     fontFamily = EcoFontFamily,
                     modifier = Modifier.padding(16.dp),
                 )
             } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    itemsIndexed(results, key = { _, a -> a.appKey }) { _, a ->
-                        ArticleCard(article = a, onClick = { onOpen(a.appKey) })
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = stringResource(
+                            R.string.search_results_count,
+                            formatPersianInt(results.size),
+                        ),
+                        fontFamily = EcoFontFamily,
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                    val titleCounts = results.groupingBy { it.title }.eachCount()
+                    val seenTitles = mutableSetOf<String>()
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        itemsIndexed(results, key = { _, a -> a.appKey }) { _, a ->
+                            val duplicate = (titleCounts[a.title] ?: 0) > 1 &&
+                                !seenTitles.add(a.title)
+                            ArticleCard(
+                                article = a,
+                                onClick = { onOpen(a.appKey) },
+                                isDuplicateTitle = duplicate,
+                                fontScale = fontScale,
+                            )
+                        }
                     }
                 }
             }
@@ -202,8 +305,7 @@ fun FeedScreen(
             CircularProgressIndicator(modifier = Modifier.padding(16.dp))
         } else if (all.isEmpty()) {
             Text(
-                text = "هنوز مقاله‌ای در حافظه نیست. دکمهٔ همگام‌سازی را بزنید " +
-                    "تا پس از تنظیم لبهٔ انتشار، مقالات دریافت شوند.",
+                text = stringResource(R.string.feed_empty),
                 fontFamily = EcoFontFamily,
                 modifier = Modifier.padding(16.dp),
             )
@@ -213,6 +315,10 @@ fun FeedScreen(
                 pagerState = pagerState,
                 all = all,
                 onOpen = onOpen,
+                fontScale = fontScale,
+                listStateFor = { key ->
+                    listStates.getOrPut(key) { LazyListState() }
+                },
                 onTabClick = { index ->
                     scope.launch { pagerState.animateScrollToPage(index) }
                 },
@@ -228,6 +334,8 @@ private fun FrontPageTabs(
     pagerState: androidx.compose.foundation.pager.PagerState,
     all: List<ArticleEntity>,
     onOpen: (String) -> Unit,
+    fontScale: Float,
+    listStateFor: (String?) -> LazyListState,
     onTabClick: (Int) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -252,6 +360,9 @@ private fun FrontPageTabs(
                             },
                         )
                     },
+                    modifier = Modifier.semantics {
+                        contentDescription = "بخش ${section.label}"
+                    },
                 )
             }
         }
@@ -273,20 +384,29 @@ private fun FrontPageTabs(
             }
             if (shown.isEmpty()) {
                 Text(
-                    text = "در این بخش هنوز مقاله‌ای در حافظه نیست.",
+                    text = stringResource(R.string.section_empty),
                     fontFamily = EcoFontFamily,
                     modifier = Modifier.padding(16.dp),
                 )
             } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                val titleCounts = shown.groupingBy { it.title }.eachCount()
+                val seenTitles = mutableSetOf<String>()
+                LazyColumn(
+                    state = listStateFor(section.key),
+                    modifier = Modifier.fillMaxSize(),
+                ) {
                     // `shown` keeps the epoch order of `all`, so
                     // index 0 — the hero — is the newest article in
                     // this section, not the newest raw date string.
                     itemsIndexed(shown, key = { _, a -> a.appKey }) { index, a ->
+                        val duplicate = (titleCounts[a.title] ?: 0) > 1 &&
+                            !seenTitles.add(a.title)
                         ArticleCard(
                             article = a,
                             onClick = { onOpen(a.appKey) },
                             isHero = index == 0,
+                            isDuplicateTitle = duplicate,
+                            fontScale = fontScale,
                         )
                     }
                 }

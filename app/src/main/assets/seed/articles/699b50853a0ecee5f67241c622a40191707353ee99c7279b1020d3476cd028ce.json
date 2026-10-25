@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t19",
+ "app_key": "a-699b50853a0ecee5f672",
  "kind": "article",
  "title": "پرونده الکترونیک سلامت در آستانه نهایی شدن",
  "summary": "معاون علمی، فرهنگی و اجتماعی سازمان برنامه و بودجه از نزدیک شدن معماری کلان نظام پرونده الکترونیک سلامت به مرحله نهایی خبر داد.",
@@ -27,5 +28,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "8d0f4286b06c4803f9826be221221c873798207a8e754f4dc446f04275c9e182",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

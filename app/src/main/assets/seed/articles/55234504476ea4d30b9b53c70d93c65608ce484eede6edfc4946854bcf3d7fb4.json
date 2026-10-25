@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399416/حمله-شدید-حسین-شمس-به-منتقدان-همه-افتخارات-فدراسیون-فوتبال-برای-فوتسال-است",
+ "app_key": "a-55234504476ea4d30b9b",
  "kind": "article",
  "title": "انتقاد تند حسین شمس از کارشناسان فوتبال؛ همه افتخارات فدراسیون فوتبال برای فوتسال است",
  "summary": "سرمربی سابق تیم ملی فوتسال ایران با انتقاد شدید از صحبت‌های اخیر یکی از کارشناسان فوتبال کشورمان گفت: باید به افتخار فوتسال و فوتبال ساحلی ایران خبردار ایستاد.",
@@ -26,5 +27,8 @@
  "extracted_at": "2026-10-20T00:13:25.672804+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "43f3f41e988a9016251f9526f6bf797c01fc06d6b274c7073f2c5ba3fe16d77e",
+ "updated_at_epoch": 1792442605672,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

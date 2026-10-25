@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.eghtesadonline.com/fa/news/2170086/قیمت-جهانی-طلا-امروز-28-مهر-1405-اونس-طلا-کاهشی-شد",
+ "app_key": "a-1bc07752d5fe38978008",
  "kind": "article",
  "title": "قیمت جهانی طلا امروز ۲۸ مهر ۱۴۰۵ / اونس طلا کاهشی شد",
  "summary": "قیمت جهانی طلا امروز با کاهش جزئی همراه شد.",
@@ -22,5 +23,8 @@
  "extracted_at": "2026-10-20T09:58:55.802335+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "e817cc83d8b9f6a6d703c8fd7a9edd939682f60ed5ba4ed915b02b57b4d78623",
+ "updated_at_epoch": 1792477735802,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p7-t11",
+ "app_key": "a-b2f04821d1d2a7ea3d7a",
  "kind": "article",
  "title": "رئیس‌جمهور: امروز از واردات بنزین بی‌نیاز شده‌ایم",
  "summary": "<p> رئیس‌جمهور با اشاره به موضوع مصرف بالای انرژی و تأمین سوخت در شرایط محاصره اقتصادی، گفت: برای جلوگیری از بروز مشکلات بیشتر در حوزه انرژی و سوخت موضوع مدیریت مصرف را در دستور کار قرار دادیم که با همراهی مردم، به میزان قابل توجهی صورت گرفت.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d8%b1%d8%a6%db%8c%d8%b3%d8%ac%d9%85%d9%87%d9%88%d8%b1-%d8%a7%d9%85%d8%b1%d9%88%d8%b2-%d8%a7%d8%b2-%d9%88%d8%a7%d8%b1%d8%af%d8%a7%d8%aa-%d8%a8%d9%86%d8%b2%db%8c%d9%86-%d8%a8%db%8c\">رئیس‌جمهور: امروز از واردات بنزین بی‌نیاز شده‌ایم</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -36,5 +37,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "cc459c62488770849be6fa6e80a55cbaf1b0eccb266b6beb409b80414d9d9f2f",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

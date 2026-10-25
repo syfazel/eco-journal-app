@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p8-t20",
+ "app_key": "a-180c4872ffb4dedfff4f",
  "kind": "article",
  "title": "پیش‌ بینی قیمت دلار دوشنبه ۲۷ مهر ۱۴۰۵ / حمایت ۲۵۹ هزار تومانی در کانون توجه بازار ارز",
  "summary": "<p> قیمت دلار در معاملات روز یکشنبه با کاهش دو هزار تومانی در محدوده ۲۶۰ هزار تومان بازگشایی و روی همین رقم بسته شد. تداوم ابهامات سیاسی و احتیاط معامله‌گران، در کنار مدیریت عرضه ارز، مانع شکل‌گیری موج صعودی تازه در بازار شده است.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d9%be%db%8c%d8%b4-%d8%a8%db%8c%d9%86%db%8c-%d9%82%db%8c%d9%85%d8%aa-%d8%af%d9%84%d8%a7%d8%b1-%d8%af%d9%88%d8%b4%d9%86%d8%a8%d9%87-%db%b2%db%b7-%d9%85%d9%87%d8%b1-%db%b1%db%b4%db%b0%db%b5\">پیش‌ بینی قیمت دلار دوشنبه ۲۷ مهر ۱۴۰۵ / حمایت ۲۵۹ هزار تومانی در کانون توجه بازار ارز</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -29,5 +30,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "fb63be8b80dfaba9cc89b7247f571649c31f0ef992a11cb9c66a2a16d9dcc558",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

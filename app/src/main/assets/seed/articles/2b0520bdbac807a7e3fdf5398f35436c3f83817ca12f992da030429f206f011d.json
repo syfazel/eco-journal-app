@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p3-t4",
+ "app_key": "a-2b0520bdbac807a7e3fd",
  "kind": "article",
  "title": "پیش‌بینی بورس یکشنبه ۲۶ مهر ۱۴۰۵ / آیا فشار فروش تا پایان معاملات ادامه پیدا می‌کند؟",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/E8xU5qhButIV/0vOIG14EGSjWpl8xQ7KSByZcaIBJHxVb6n85BbQSmWAIB18BFrW7jjVJwAvW3bnfDlu_wMc8f8lso4anei4XRp72Yj1lQ0W7rmHIlqH8qY8-WBnLXWpwOoz9FNptEtwVsJF8JRf2qkMgneMW-gAThO7kaCB7ToLkDRk_5XI2F95o9dngOv1r_gmxp6nnMe6O/%D8%A8%D9%88%D8%B1%D8%B3.jpg\"> <div>اگرچه احتمال شروع منفی بورس در روز یکشنبه بالاست، اما درباره ادامه مسیر بازار تا پایان معاملات نمی توان با همان درجه از اطمینان اظهارنظر کرد. </div>",
@@ -38,5 +39,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "7ec6c05a1f0ac3e77a5de0707c14d7bea5f50d09948fa579902249c0447d5a5b",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

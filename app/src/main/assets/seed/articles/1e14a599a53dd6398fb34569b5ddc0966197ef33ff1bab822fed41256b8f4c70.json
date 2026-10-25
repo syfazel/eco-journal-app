@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t9",
+ "app_key": "a-1e14a599a53dd6398fb3",
  "kind": "article",
  "title": "تکو تیران چه امتیازی نسبت به دیگر روش‌های تسویه مطالبات و بدهی‌های تأمین اجتماعی دارد؟",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/tT16USsVNCq5/sWV8gzFnbwt_UYZTQBBY26hBV_jxWd73UGxjKTK2gh9l94Y5C9_WcVFbSQutWlRZNf0c4YR4ieDJgLryCiYs1nIyuISvWrTTqzv5NrdrLxKwzBYxllJkN4YL6h3gpd7RgHfx7G9x5pOIewYhqJuFyTsHXIV9rBTlvjvhwSIvZ-rxJNIyQpaMEw7j2_1EW3L4/about-health-finance-path-v3.png.jpg\"> <div>همه دست اندرکاران حوزه دارو از رئیس سازمان غذاودارو و کمیسیون بهداشت مجلس تا نمایندگان تشکل های اقتصادی، معتقداند که کمر زنجیره تأمین دارو زیر بار مطالبات معوق، خم شده است و سازمان های بیمه گر باید هرچه زودتر ابزارها و روش‌های جدیدی را برای گردش نقدینگی و اعتبارات در دسترس زنجیره تامین دارو قرار دهند. </div>",
@@ -30,5 +31,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "4942b7ec3930a11bf6eb4c6c06bfbd9786990e73f80a4425b36b0b0823db7fce",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

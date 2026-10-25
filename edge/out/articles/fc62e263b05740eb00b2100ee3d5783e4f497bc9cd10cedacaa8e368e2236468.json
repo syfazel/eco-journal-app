@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399280/عکس-پادشاهی-دوباره-کشتی-آزاد-ایران-در-جهان",
+ "app_key": "a-fc62e263b05740eb00b2",
  "kind": "article",
  "title": "قهرمانی تیم کشتی آزاد زیر ۲۳ سال ایران در جهان",
  "summary": "تیم ملی کشتی آزاد زیر ۲۳ سال ایران با کسب ۴ مدال طلا، ۱ نقره، ۴ برنز و ۱۸۰ امتیاز در رقابت‌های جهانی لاس‌وگاس آمریکا، با اقتدار بر بام قهرمانی جهان ایستاد تا بار دیگر قدرت خود را به رخ رقبا بکشد.",
@@ -20,5 +21,8 @@
  "extracted_at": "2026-10-21T00:07:44.395621+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "020e37e96a5bdafed3b53cdf80b86f49e77c4257ec4f4873b89078fe19b1bade",
+ "updated_at_epoch": 1792528664395,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%A8%D9%88%D8%B1%D8%B3-6/4303071-%D9%82%D9%81%D9%84-%D8%A8%D9%88%D8%B1%D8%B3-%D8%A8%D8%A7%D8%B2-%D8%B4%D8%AF",
+ "app_key": "a-a35d9038774fe51b7762",
  "kind": "article",
  "title": "قفل بورس باز شد",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/QfXJZT48bb6o/8bOk9YfnYjYQonKr2WOpCuRaX3zb5JyrPnWqrs0UkYnQs2XM_j75no_W-iO4vwCC--cFPBJUT7kvTTGuFvTKHSLG3WYWk6pnEuWQOiT-lW136WZIlh9VYdy6mJiwwRofILhRFjCxJE2mQl3taMI1cqlkhT9TduUsucLKuJFidGQkVutyWA8ufwFrYnECk4Ar/IMG_20261020_152217_289.jpg\"> <div>دنیای اقتصاد: معاملات بورس تهران در روز سه‌شنبه ۲۸ مهرماه برای دومین روز متوالی با رشد شاخص‌های سهامی همراه شد، اما اختلاف بازدهی نماگرهای اصلی نشان داد که سهام کوچک و متوسط عملکرد بهتری نسبت به شرکت‌های بزرگ داشتند. </div>",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-20T16:33:31.837876+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "79be9ef8f85dd171da3c3473a29c65e840dd33de7fd7941bae767269b8e48360",
+ "updated_at_epoch": 1792501411837,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

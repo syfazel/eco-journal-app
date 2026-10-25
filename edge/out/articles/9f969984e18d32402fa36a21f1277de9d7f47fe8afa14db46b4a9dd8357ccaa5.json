@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399680/کنترل-عملیاتی-تنگه-هرمز-در-اختیار-ایران-است",
+ "app_key": "a-9f969984e18d32402fa3",
  "kind": "article",
  "title": "کنترل عملیاتی تنگه هرمز در اختیار ایران است",
  "summary": "جانشین فرمانده کل سپاه با تأکید بر تسلط عملیاتی و اطلاعاتی نیروهای دریایی و هوافضای سپاه بر تنگه هرمز گفت: این روند تا زمان اراده جمهوری اسلامی ایران ادامه خواهد داشت.",
@@ -26,5 +27,8 @@
  "extracted_at": "2026-10-22T02:08:27.815335+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "9a25cc005e4f579532ef56a580752c5aaf2812488a21559dc39bb0b4cdc14a56",
+ "updated_at_epoch": 1792622307815,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

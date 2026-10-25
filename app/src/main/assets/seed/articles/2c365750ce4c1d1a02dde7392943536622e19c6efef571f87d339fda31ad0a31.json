@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:/بخش-%D8%B3%D8%A7%DB%8C%D8%AA-%D8%AE%D9%88%D8%A7%D9%86-62/4303220-%D8%B9%D8%B1%D8%A7%D9%82%DA%86%DB%8C-%D9%85%D8%B0%D8%A7%DA%A9%D8%B1%D8%A7%D8%AA-%D8%A8%D8%A7-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%D8%A8%D9%87-%D8%AC%D9%86%DA%AF-%D8%AE%D8%AA%D9%85-%D8%B4%D8%AF-%D8%A8%D9%87-%D8%A2%D9%86%D9%87%D8%A7-%D8%A7%D8%B9%D8%AA%D9%85%D8%A7%D8%AF-%D9%86%D8%AF%D8%A7%D8%B1%DB%8C%D9%85-%D8%AA%D8%A7-%D9%BE%D8%B0%DB%8C%D8%B1%D8%B4-%D8%B4%D8%B1%D9%88%D8%B7-%D9%85%D8%A7-%D8%AA%D9%88%D8%B3%D8%B7-%D8%A2%D9%85%D8%B1%DB%8C%DA%A9%D8%A7-%D8%AA%D9%86%DA%AF%D9%87-%D9%87%D8%B1%D9%85%D8%B2-%D8%A8%D8%B3%D8%AA%D9%87-%D8%A7%D8%B3%D8%AA-%D8%A7%DB%8C%D8%B1%D8%A7%D9%86-%D8%AA%D8%B3%D9%84%DB%8C%D9%85-%D8%AA%D8%AD%D8%B1%DB%8C%D9%85-%D8%AA%D9%87%D8%AF%DB%8C%D8%AF-%D9%86%D8%AE%D9%88%D8%A7%D9%87%D8%AF-%D8%B4%D8%AF",
+ "app_key": "a-2c365750ce4c1d1a02dd",
  "kind": "article",
  "title": "عراقچی: مذاکرات با آمریکا به جنگ ختم شد؛ به آن‌ها اعتماد نداریم",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/wK2JiDCT1XB5/Wc2p3s9WReEB3AIW44YMzPCgdJFD73eR9mKCTdTrkOfUD-zeoB9SN6sbzrI9qOBnukW2Pl64rzR9y5TJfGVMZFN9QwKu8qCICliJFlaMvLQ-nc__isvm5x5jEPI_0UegfPmxA7o4prt-rwXgxSwIq775284PPf6BmFMwrLj5fFiqNStbPSAI6Xevayfwz-bZ/%D8%B9%D8%B1%D8%A7%D9%82%DA%86%DB%8C.jpg\"> <div>وزیر امور خارجه ایران با اشاره به تجربه دورهای گذشته مذاکرات با آمریکا گفت که این گفت‌وگوها به آغاز جنگ علیه ایران منتهی شده و تجربه نشان داده است که نمی‌توان به طرف آمریکایی اعتماد کرد.</div>",
@@ -78,5 +79,8 @@
  "extracted_at": "2026-10-22T02:08:27.628774+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "db4c373966d3f7c6248e7b162da91ebacc0407300e58120894cc0cf7db633aaa",
+ "updated_at_epoch": 1792622307628,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

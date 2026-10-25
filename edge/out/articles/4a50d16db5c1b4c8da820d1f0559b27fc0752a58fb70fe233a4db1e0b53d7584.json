@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.eghtesadonline.com/fa/news/2170196/حساب-بانکی-هم-ضامن-شد-قانون-جدید-وثیقه-گذاری",
+ "app_key": "a-4a50d16db5c1b4c8da82",
  "kind": "article",
  "title": "حساب بانکی هم ضامن شد / قانون جدید وثیقه‌گذاری",
  "summary": "معاون مرکز فناوری اطلاعات قوه‌قضائیه اعلام کرد علاوه‌بر وثیقهٔ ملکی، حساب‌های بانکی نیز در سامانهٔ ضمانت الکترونیک فعال شده‌اند.",
@@ -20,5 +21,8 @@
  "extracted_at": "2026-10-20T16:33:49.172880+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "37bfa0e9acfada85bbc3d21136ded9ffcaddfab013961eec7ebc38cb887a7658",
+ "updated_at_epoch": 1792501429172,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

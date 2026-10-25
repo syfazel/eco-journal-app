@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-18-p12-t6",
+ "app_key": "a-89710fad85a69ba0a2eb",
  "kind": "article",
  "title": "رشد 82 درصدی منابع حاصل از عوارض ارزش افزوده برای مدیریت‌های محلی",
  "summary": "<p>وجوه واریزی از محل عوارض مالیات بر ارزش افزوده به حساب شهرداری‌ها، دهیاری‌ها 82 درصد رشد کرد.</p>\n<p>پست <a href=\"https://tejaratnews.com/%d8%b1%d8%b4%d8%af-82-%d8%af%d8%b1%d8%b5%d8%af%db%8c-%d9%85%d9%86%d8%a7%d8%a8%d8%b9-%d8%ad%d8%a7%d8%b5%d9%84-%d8%a7%d8%b2-%d8%b9%d9%88%d8%a7%d8%b1%d8%b6-%d8%a7%d8%b1%d8%b2%d8%b4-%d8%a7%d9%81%d8%b2\">رشد 82 درصدی منابع حاصل از عوارض ارزش افزوده برای مدیریت‌های محلی</a> اولین بار در <a href=\"https://tejaratnews.com\">تجارت نیوز</a> ظاهر شد.</p>",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-18T06:50:21.993361+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "d788c78d4fd33d0eda05cf703e1088788b273f8e26ce9a11b0e5c7a2200af477",
+ "updated_at_epoch": 1792293621993,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

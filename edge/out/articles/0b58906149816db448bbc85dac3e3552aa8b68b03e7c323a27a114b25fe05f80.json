@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.irib-news.ir/fa/news/5943942/افزایش-بهای-جهانی-نفت-خام",
+ "app_key": "a-0b58906149816db448bb",
  "kind": "article",
  "title": "افزایش بهای جهانی نفت خام",
  "summary": "نفت خام آمریکا ۴ درصد افزایش یافت و بهای نفت خام برنت نیز به بشکه‌ای ۱۱۱ دلار رسید.",
@@ -21,5 +22,8 @@
  "extracted_at": "2026-10-20T15:00:33.323776+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "9df1dfc4dd0a8d9f908cfde93cf0d3cc7ba5ea0de1538234b45a186bb31279ff",
+ "updated_at_epoch": 1792495833323,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

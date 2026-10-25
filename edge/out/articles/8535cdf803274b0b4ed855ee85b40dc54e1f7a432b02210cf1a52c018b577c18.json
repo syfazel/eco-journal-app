@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.tabnak.ir/fa/news/1399742/پایان-روز-سوم-با-4-طلا-6-نقره-و-10-برنز-برای-ایران",
+ "app_key": "a-8535cdf803274b0b4ed8",
  "kind": "article",
  "title": "پایان روز سوم با ۴ طلا، ۶ نقره و ۱۰ برنز برای ایران",
  "summary": "با ۲۰ مدالی که نمایندگان کشورمان در روز سوم بازی‌های پاراآسیایی ۲۰۲۶ کسب کردند، تعداد مدال‌ها به ۵۸ رسید.",
@@ -73,5 +74,8 @@
  "extracted_at": "2026-10-22T02:07:21.805012+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "8cfd8d914549693e7b6e12416454f43767af50cad9025aab1bc0dba3c718157c",
+ "updated_at_epoch": 1792622241805,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

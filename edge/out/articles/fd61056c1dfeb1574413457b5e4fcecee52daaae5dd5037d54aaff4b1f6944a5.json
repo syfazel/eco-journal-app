@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-19-p1-t0",
+ "app_key": "a-fd61056c1dfeb1574413",
  "kind": "article",
  "title": "زاکانی: مترو تا پایان شرایط جنگی رایگان می‌ماند + فیلم",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/cGQq2dr54x67/WJSm2uFJHT7h6vzgbX1rU3A5U116BDJgx4wyHtTosUnzKrhNKT6VA-IXtxTLkpkxJhleNL0ktmEWQ7XEiROktaj317ghVFahK0UCq3iZce0QPZ6Tri3ur_HlFKgIpWGkSbjm2L0lRske0EPimcwAmWn-7rVJJo2s4ZEvG7f4tTh2UXEWMhb9FNYylKVD6LGu/%D8%B9%D9%84%DB%8C%D8%B1%D8%B6%D8%A7+%D8%B2%D8%A7%DA%A9%D8%A7%D9%86%DB%8C+%2A.jpg\"> <div>زاکانی گفت: اجرای طرح «تورم صفر» ادامه دارد و خدمات مترو تا زمانی که در شرایط جنگی هستیم، رایگان خواهد بود.</div>",
@@ -24,5 +25,8 @@
  "extracted_at": "2026-10-19T06:50:18.852606+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "1ec94e2ebcb33fa2b922b8ce9b1725bdce39daa0c72a68ad5904503fbd2fd3fb",
+ "updated_at_epoch": 1792380018852,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

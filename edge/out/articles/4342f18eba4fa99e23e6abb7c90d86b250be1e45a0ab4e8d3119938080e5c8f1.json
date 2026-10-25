@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.irib-news.ir/fa/news/5945288/ترامپ-دو-راه-بیشتر-ندارد",
+ "app_key": "a-4342f18eba4fa99e23e6",
  "kind": "article",
  "title": "ترامپ دو راه بیشتر ندارد",
  "summary": "ترامپ دو راه بیشتر ندارد؛ ادامه راهی که بازار نفت، متحدان و حتی مقام‌های پیشین او، شکست آن را نشان می‌دهند یا پذیرش این واقعیت که تنگه هرمز و امنیت منطقه، بدون درنظر گرفتن ایران معنا ندارد.",
@@ -26,5 +27,8 @@
  "extracted_at": "2026-10-22T02:04:56.245944+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "d0a0281cd77fc4e2c2e00b945130e4e82bcb7e90b414feea4c11000ea2f6f1fd",
+ "updated_at_epoch": 1792622096245,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

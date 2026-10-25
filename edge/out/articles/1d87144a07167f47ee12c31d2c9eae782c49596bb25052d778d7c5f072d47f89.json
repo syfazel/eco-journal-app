@@ -1,5 +1,6 @@
 {
  "id": "extract_38cce23a272c410d830a7125c955b7bf",
+ "app_key": "a-1d87144a07167f47ee12",
  "kind": "article",
  "title": "هشدار مسکو درباره افزایش قیمت نفت در پی تداوم تنش‌ها در تنگه هرمز",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/2SHJOvIZDHz7/TElYWFhN_U9mb-HNzwc_yFwcLnU8ef7V3FiZCCdgr7GENCTqc3w8nZ8JGoD3rIuPO4DIpE2G03E-cPSRLGrO2RjBQl_70kt_SEU5h6R9t86YCd9rUTJaN9Rd0391HD9112sDRb7AwGTOFSxF6S1TLSTjzmzGzfhCrkSRYV4dkopku1wxCLe7eifof-nbna1K/de237cdd91334d8084196bcb1d1b812a.jpg\"> <div>معاون نخست‌وزیر روسیه اعلام کرد که در صورت حل نشدن درگیری‌ها پیرامون تنگه هرمز، قیمت نفت ممکن است بازهم افزایش پیدا کند.</div>",
@@ -26,5 +27,8 @@
  "extracted_at": "2026-10-18T01:33:38+00:00",
  "channel_message_id": null,
  "publish_status": "posted",
+ "status": "posted",
+ "content_hash": "31febd08ec428fc10ddebaa621aa1d93b43734810ee74a9ef138bad8bf0c0a9c",
+ "updated_at_epoch": 1792287218000,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

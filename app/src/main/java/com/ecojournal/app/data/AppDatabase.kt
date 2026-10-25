@@ -151,10 +151,22 @@ interface ArticleDao {
     )
     suspend fun byCategory(category: String): List<ArticleEntity>
 
-    /** Offline search over cached titles and summaries only. */
+    /**
+     * Offline search (M3, P1-04). Searches titles, summaries, body
+     * text (stored as a unit-separated string), key points, source
+     * and category label — not titles and summaries only. Callers
+     * MUST pass an already-escaped query (see
+     * util.escapeLikeQuery): '%' and '_' in a typed query are
+     * literals, not wildcards. ESCAPE '\' makes that binding stick.
+     */
     @Query(
-        "SELECT * FROM articles WHERE (title LIKE '%' || :q || '%' " +
-            "OR summary LIKE '%' || :q || '%') AND status != 'retracted' " +
+        "SELECT * FROM articles WHERE (title LIKE '%' || :q || '%' ESCAPE '\\' " +
+            "OR summary LIKE '%' || :q || '%' ESCAPE '\\' " +
+            "OR bodyBlocks LIKE '%' || :q || '%' ESCAPE '\\' " +
+            "OR pointsJson LIKE '%' || :q || '%' ESCAPE '\\' " +
+            "OR source LIKE '%' || :q || '%' ESCAPE '\\' " +
+            "OR categoryFa LIKE '%' || :q || '%' ESCAPE '\\') " +
+            "AND status != 'retracted' " +
             "ORDER BY publishedAtEpoch DESC, publishedAt DESC"
     )
     suspend fun search(q: String): List<ArticleEntity>
@@ -169,6 +181,15 @@ interface ArticleDao {
 
     @Query("SELECT * FROM articles WHERE appKey IN (SELECT appKey FROM bookmarks) ORDER BY publishedAtEpoch DESC, publishedAt DESC")
     suspend fun bookmarked(): List<ArticleEntity>
+
+    /**
+     * Orphan bookmarks (M3): bookmark rows whose article is gone
+     * from the cache. The old bookmark list silently dropped these
+     * (the join simply had no row); the M3 list shows them as
+     * "no longer available" rows with a prune action instead.
+     */
+    @Query("SELECT * FROM bookmarks WHERE appKey NOT IN (SELECT appKey FROM articles) ORDER BY savedAt DESC")
+    fun orphanBookmarksFlow(): Flow<List<BookmarkEntity>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addBookmark(bookmark: BookmarkEntity)

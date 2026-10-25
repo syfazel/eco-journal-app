@@ -1,5 +1,6 @@
 {
  "id": "newsdesk:https://www.eghtesadonline.com/fa/news/2170154/عاصم-منیر-با-چه-هدفی-به-تهران-می-آید-پاسخ-غیرمنتظره-وزارت-خارجه",
+ "app_key": "a-bb25ffba96c6e2f0f05b",
  "kind": "article",
  "title": "عاصم منیر با چه هدفی به تهران می‌آید؟ / پاسخ غیرمنتظره وزارت خارجه",
  "summary": "سخنگوی وزارت امور خارجه در واکنش به سفر عاصم منیر به تهران گفت: از دلیل این سفر اطلاعی ندارد و باید با او گفت‌وگو شود تا مشخص شود قرار است درباره چه موضوعاتی مذاکره کنند.",
@@ -22,5 +23,8 @@
  "extracted_at": "2026-10-20T13:29:55.602068+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "c3c1fbdfca3386979cdd55e49ed7736321828654c245dfd3846e369a24f75257",
+ "updated_at_epoch": 1792490395602,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }

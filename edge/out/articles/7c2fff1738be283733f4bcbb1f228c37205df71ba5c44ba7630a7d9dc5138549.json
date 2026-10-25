@@ -1,5 +1,6 @@
 {
  "id": "marg-2026-10-20-p3-t3",
+ "app_key": "a-7c2fff1738be283733f4",
  "kind": "article",
  "title": "زیدآبادی: برخی مسئولان چنان خونسرد درباره احتمال جنگ سخن می‌گویند که انگار قرار است جنگ تن‌به‌تن رخ دهد",
  "summary": "<img src=\"https://cdn.donya-e-eqtesad.com/thumbnail/A9TWSugKEbwJ/DQMlj6g8OrP8WYWEylI51mAQWBgupIfXxg5_LL-la86i-HtjcBB8-qYbIRS7KwkCcs3ZeDTKcqcJIxIkW3EnxPNTHwEaLcPAdmr4nNWfKDZfAVtp_YnWvXTPZLGwhZZ64RgiZR41BufhPJp3VURFpoJUetTXmgKU1VVwjA8xnbUENI9NfhwgVYRPD-gc-NEP/%D8%A7%D8%AD%D9%85%D8%AF+%D8%B2%DB%8C%D8%AF%D8%A2%D8%A8%D8%A7%D8%AF%DB%8C+%282%29.jpg\"> <div>زیدآبادی گفت: هنر سیاست در دنیای امروز دور نگه‌داشتن سرزمین و طبیعت و جامعه و مردم از بلای خانمان‌سوز جنگ است.</div>",
@@ -25,5 +26,8 @@
  "extracted_at": "2026-10-20T06:50:06.276499+03:30",
  "channel_message_id": null,
  "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "24b9e716ecb2a52bb4d4d64eb40335c7627a0e7881c8edb2bb9f7a27367182be",
+ "updated_at_epoch": 1792466406276,
  "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
 }
