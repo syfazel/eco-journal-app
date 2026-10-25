@@ -243,9 +243,13 @@ private fun FrontPageTabs(
             }
         }
         // Pager keeps neighbouring pages composed so swiping stays smooth.
+        // NOTE: in this BOM (2024.09.00) the parameter is
+        // beyondViewportPageCount, not the older beyondBoundsPageCount —
+        // the old name breaks overload resolution and cascades into
+        // "composable invocations only from a composable" errors.
         HorizontalPager(
             state = pagerState,
-            beyondBoundsPageCount = 1,
+            beyondViewportPageCount = 1,
             modifier = Modifier.fillMaxSize(),
         ) { page ->
             val section = sections[page]
