@@ -92,14 +92,24 @@ fun DiagnosticsScreen(
     // section state next to a fresh global line.
     var sectionStates by remember { mutableStateOf(emptyList<SectionSyncState>()) }
     var busySection by remember { mutableStateOf<String?>(null) }
+    // Phase 2 Diagnostics (spec 10): held count, per-format today
+    // counts against daily caps, and non-zero anomaly lines.
+    // Counts/states/fixed codes ONLY — never content, titles of
+    // held items, codes, tokens, or reader behaviour.
+    val heldCount by repo.channelDao.heldCountFlow().collectAsState(initial = 0)
+    var anomalyCounts by remember { mutableStateOf(emptyMap<String, Int>()) }
+    var formatCounts by remember { mutableStateOf(emptyMap<String, Int>()) }
     LaunchedEffect(Unit) {
         sectionStates = repo.sectionStates()
+        anomalyCounts = repo.anomalyCountsToday()
+        formatCounts = repo.formatCountsToday()
     }
     val sectionNames = mapOf(
         SyncSections.ARTICLES to stringResource(R.string.diagnostics_section_name_articles),
         SyncSections.SHORTS to stringResource(R.string.diagnostics_section_name_shorts),
         SyncSections.MARKET to stringResource(R.string.diagnostics_section_name_market),
         SyncSections.CHANNEL_REFS to stringResource(R.string.diagnostics_section_name_channel_refs),
+        SyncSections.CHANNEL_TYPED to stringResource(R.string.diagnostics_section_name_channel_typed),
         SyncSections.BUNDLES to stringResource(R.string.diagnostics_section_name_bundles),
         SyncSections.RADAR to stringResource(R.string.diagnostics_section_name_radar),
         SyncSections.NIGHTLY to stringResource(R.string.diagnostics_section_name_nightly),
@@ -136,6 +146,41 @@ fun DiagnosticsScreen(
             ),
         )
     }
+
+    // Phase 2 lines, built once and used for BOTH display and
+    // copy, so copy-diagnostics copies exactly the lines shown
+    // (P2-A11). Per-format lines cover every known format, even
+    // at zero, so a cap-hit day is visible; anomaly lines show
+    // only when their count is > 0 (spec 10).
+    val heldLine = context.getString(
+        R.string.diagnostics_held_count,
+        heldCount.toString().toPersianDigits(),
+    )
+    val formatLines = com.ecojournal.app.data.Formats.ALL.map { (format, info) ->
+        val count = formatCounts[format] ?: 0
+        if (info.dailyCap != null) {
+            context.getString(
+                R.string.diagnostics_format_line,
+                info.badgeText,
+                count.toString().toPersianDigits(),
+                info.dailyCap.toString().toPersianDigits(),
+            )
+        } else {
+            context.getString(
+                R.string.diagnostics_format_nocap,
+                info.badgeText,
+                count.toString().toPersianDigits(),
+            )
+        }
+    }
+    val anomalyLines = anomalyCounts.entries.sortedBy { it.key }.map { (code, n) ->
+        context.getString(
+            R.string.diagnostics_anomaly_line,
+            code,
+            n.toString().toPersianDigits(),
+        )
+    }
+    val phase2Lines = listOf(heldLine) + formatLines + anomalyLines
 
     val versionName = try {
         context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "?"
@@ -259,6 +304,8 @@ fun DiagnosticsScreen(
                         busySection = s.section
                         repo.syncOnly(s.section, forceRefresh = true)
                         sectionStates = repo.sectionStates()
+                        anomalyCounts = repo.anomalyCountsToday()
+                        formatCounts = repo.formatCountsToday()
                         busySection = null
                     }
                 },
@@ -270,6 +317,18 @@ fun DiagnosticsScreen(
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
+        }
+        // Phase 2 lines (spec 10): held count, per-format cap
+        // lines, non-zero anomaly lines — displayed exactly as
+        // copied below.
+        Spacer(modifier = Modifier.height(16.dp))
+        for (line in phase2Lines) {
+            Text(
+                text = line,
+                fontFamily = EcoFontFamily,
+                fontSize = 16.sp * fontScale,
+            )
+            Spacer(modifier = Modifier.height(6.dp))
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
@@ -293,6 +352,8 @@ fun DiagnosticsScreen(
                         is SyncResult.Failed -> context.getString(R.string.sync_failed)
                     }
                     sectionStates = repo.sectionStates()
+                    anomalyCounts = repo.anomalyCountsToday()
+                    formatCounts = repo.formatCountsToday()
                     syncing = false
                 }
             },
@@ -311,7 +372,7 @@ fun DiagnosticsScreen(
                 clipboard?.setPrimaryClip(
                     ClipData.newPlainText(
                         "ECO JOURNAL diagnostics",
-                        (lines + sectionLines).joinToString("\n"),
+                        (lines + sectionLines + phase2Lines).joinToString("\n"),
                     )
                 )
                 copied = true

@@ -46,6 +46,19 @@ fun formatPersianDouble(value: Double, decimals: Int = 2): String {
  * Without this, a typed '%' or '_' in a search acts as a wildcard
  * and can match (or hide) unrelated articles (P1-04).
  */
+/** Normalises Persian/Arabic-Indic digits to Latin, for date-key comparison. */
+fun String.toLatinDigits(): String = buildString {
+    for (c in this@toLatinDigits) {
+        append(
+            when (c) {
+                in '۰'..'۹' -> ('0' + (c - '۰'))
+                in '٠'..'٩' -> ('0' + (c - '٠'))
+                else -> c
+            }
+        )
+    }
+}
+
 fun escapeLikeQuery(query: String): String = query
     .replace("\\", "\\\\")
     .replace("%", "\\%")

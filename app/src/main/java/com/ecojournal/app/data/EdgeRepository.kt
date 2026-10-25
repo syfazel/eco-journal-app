@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
+import com.ecojournal.app.util.Notifications
 
 /**
  * Edge URL decision (docs/vnext-decisions.md §2, M5): the Pages
@@ -130,6 +131,8 @@ private fun edgeBase(): String? {
 class EdgeRepository(context: Context) {
     private val db: AppDatabase = DatabaseProvider.get(context)
     val dao: ArticleDao = db.articleDao()
+    val channelDao: ChannelDao = db.channelDao()
+    private val appContext: Context = context.applicationContext
     private val settings = SettingsStore(context)
 
     /** Records an attempt (M5): attempt time on every real attempt,
@@ -204,6 +207,9 @@ class EdgeRepository(context: Context) {
                 SyncSections.ARTICLES -> dao.articleKindCount("article")
                 SyncSections.SHORTS -> dao.articleKindCount("short")
                 SyncSections.MARKET -> dao.marketCount()
+                SyncSections.CHANNEL_TYPED -> channelDao.channelCount()
+                SyncSections.BUNDLES -> channelDao.allBundles().size
+                SyncSections.RADAR -> channelDao.radarCount()
                 else -> dao.metaValue(SyncSections.countKey(key))?.toIntOrNull() ?: 0
             }
             SectionSyncState(
@@ -726,11 +732,48 @@ class EdgeRepository(context: Context) {
             }
         }
 
+        // Phase 2 sections: typed channel items, bundles, radar.
+        // Same Phase 1 rules (manifest-first, per-section hash,
+        // one transaction per section, hash stored only on complete
+        // success, failed/corrupt section never empties its cache).
+        // No new sync mechanism is invented here.
+        val phase2Anomalies = AnomalyBag()
+        if (wants(SyncSections.CHANNEL_TYPED)) {
+            outcomes.add(syncChannelTypedSection(base, manifest, forceRefresh, now, phase2Anomalies).also {
+                if (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL) {
+                    anyIncomplete = true
+                }
+                missingTotal += it.missingCount
+            })
+        }
+        if (wants(SyncSections.BUNDLES)) {
+            outcomes.add(syncBundlesSection(base, manifest, forceRefresh, now, phase2Anomalies).also {
+                if (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL) {
+                    anyIncomplete = true
+                }
+                missingTotal += it.missingCount
+            })
+        }
+        if (wants(SyncSections.RADAR)) {
+            outcomes.add(syncRadarSection(base, manifest, forceRefresh, now, phase2Anomalies).also {
+                if (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL) {
+                    anyIncomplete = true
+                }
+                missingTotal += it.missingCount
+            })
+        }
+        // Computed (overwrite-for-today) Phase 2 anomaly codes:
+        // caps, bundle-shape flags. Parse anomalies (above) are
+        // accumulated for the day instead.
+        persistPhase2Anomalies(now, phase2Anomalies, computePhase2Computed(now))
+        if (onlySection == null) {
+            dispatchPhase2Notifications(now)
+        }
+
         // Not-yet-published and gated sections: state comes from the
         // manifest, no fetch is attempted, nothing is invented.
         for (key in listOf(
-            SyncSections.BUNDLES, SyncSections.RADAR, SyncSections.NIGHTLY,
-            SyncSections.VOICES, SyncSections.SPECIAL_ISSUES,
+            SyncSections.NIGHTLY, SyncSections.VOICES, SyncSections.SPECIAL_ISSUES,
         )) {
             if (!wants(key)) continue
             val section = manifest.sections[key]
@@ -786,6 +829,449 @@ class EdgeRepository(context: Context) {
             SyncResult.Partial(newKeys, missingTotal, total, outcomes)
         } else {
             SyncResult.Ok(newKeys, total, outcomes)
+        }
+    }
+
+    // ---- Phase 2 section sync (channel_typed, bundles, radar) ----
+
+    private suspend fun syncChannelTypedSection(
+        base: String,
+        manifest: EdgeManifest,
+        forceRefresh: Boolean,
+        now: Long,
+        anomalies: AnomalyBag,
+    ): SectionOutcome {
+        val key = SyncSections.CHANNEL_TYPED
+        val section = manifest.sections[key]
+            ?: return SectionOutcome(key, SectionStates.UNKNOWN, 0)
+        val storedHash = dao.metaValue(SyncSections.hashKey(key))
+        if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
+            recordSectionMeta(
+                key, SectionStates.UP_TO_DATE, "",
+                channelDao.channelCount(), 0, now, null, null,
+            )
+            // Held release is a time rule, not a new-content rule:
+            // an up-to-date section still releases items whose
+            // 08:00 has passed on a successful sync.
+            channelDao.releaseHeld(now)
+            return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
+        }
+        val existing = channelDao.allChannelItems().associateBy { it.appKey }
+        val storedHashes = existing.mapValues { it.value.contentHash }
+        val plan = DeltaPlanner.plan(
+            section.items, storedHashes, existing.keys, requiresFile = false,
+        )
+        val fresh = mutableListOf<ChannelItemEntity>()
+        val missingKeys = mutableListOf<String>()
+        if (plan.toFetch.isNotEmpty()) {
+            val text = when (val outcome = httpGet("$base/${section.file ?: "channel_typed.json"}")) {
+                is HttpOutcome.Ok -> outcome.body
+                else -> null
+            }
+            if (text == null) {
+                missingKeys.addAll(plan.toFetch.map { it.appKey })
+            } else {
+                try {
+                    val arr = JSONObject(text).optJSONArray("items") ?: JSONArray()
+                    val byKey = mutableMapOf<String, JSONObject>()
+                    for (i in 0 until arr.length()) {
+                        try {
+                            val obj = arr.getJSONObject(i)
+                            val k = obj.optString("app_key")
+                            if (k.isNotBlank()) byKey[k] = obj
+                        } catch (_: Exception) {
+                            continue
+                        }
+                    }
+                    for (item in plan.toFetch) {
+                        val obj = byKey[item.appKey]
+                        if (obj == null) {
+                            missingKeys.add(item.appKey)
+                        } else {
+                            val parsed = ChannelParsers.parseChannelItem(
+                                obj, existing[item.appKey], now, anomalies,
+                            )
+                            if (parsed != null) fresh.add(parsed)
+                            else missingKeys.add(item.appKey)
+                        }
+                    }
+                } catch (_: Exception) {
+                    missingKeys.addAll(plan.toFetch.map { it.appKey })
+                }
+            }
+        }
+        val tombstoneRows = plan.tombstones.mapNotNull { item ->
+            existing[item.appKey]?.copy(status = "retracted", updatedAtEpoch = now)
+        }
+        val complete = missingKeys.isEmpty() && plan.corruptCount == 0
+        val missing = missingKeys.size + plan.corruptCount
+        db.withTransaction {
+            if (fresh.isNotEmpty()) channelDao.upsertChannelItems(fresh)
+            if (tombstoneRows.isNotEmpty()) channelDao.upsertChannelItems(tombstoneRows)
+            channelDao.releaseHeld(now)
+            recordSectionMeta(
+                key,
+                if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
+                if (complete) "" else "partial",
+                channelDao.channelCount(),
+                missing, now,
+                if (complete) now else null,
+                if (complete) section.hash else null,
+            )
+        }
+        return SectionOutcome(
+            key,
+            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
+            missing,
+        )
+    }
+
+    private suspend fun syncBundlesSection(
+        base: String,
+        manifest: EdgeManifest,
+        forceRefresh: Boolean,
+        now: Long,
+        anomalies: AnomalyBag,
+    ): SectionOutcome {
+        val key = SyncSections.BUNDLES
+        val section = manifest.sections[key]
+            ?: return SectionOutcome(key, SectionStates.UNKNOWN, 0)
+        val storedHash = dao.metaValue(SyncSections.hashKey(key))
+        if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
+            recordSectionMeta(
+                key, SectionStates.UP_TO_DATE, "",
+                channelDao.allBundles().size, 0, now, null, null,
+            )
+            return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
+        }
+        val bundleOutcome = httpGet("$base/${section.file ?: "bundles.json"}")
+        val text = when (bundleOutcome) {
+            is HttpOutcome.Ok -> bundleOutcome.body
+            else -> null
+        }
+        if (text == null) {
+            recordSectionMeta(
+                key, SectionStates.FAILED, bundleOutcome.toFailedCode(),
+                null, 0, now, null, null,
+            )
+            return SectionOutcome(key, SectionStates.FAILED, 0)
+        }
+        val parsed = mutableListOf<BundleEntity>()
+        var corrupt = 0
+        try {
+            val arr = JSONObject(text).optJSONArray("bundles") ?: JSONArray()
+            for (i in 0 until arr.length()) {
+                try {
+                    val bundle = ChannelParsers.parseBundle(arr.getJSONObject(i), anomalies)
+                    if (bundle != null) parsed.add(bundle)
+                } catch (_: Exception) {
+                    corrupt++
+                }
+            }
+        } catch (_: Exception) {
+            recordSectionMeta(key, SectionStates.FAILED, "bad_section", null, 0, now, null, null)
+            return SectionOutcome(key, SectionStates.FAILED, 0)
+        }
+        val complete = corrupt == 0
+        db.withTransaction {
+            if (parsed.isNotEmpty()) channelDao.upsertBundles(parsed)
+            recordSectionMeta(
+                key,
+                if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
+                if (complete) "" else "partial",
+                channelDao.allBundles().size,
+                corrupt, now,
+                if (complete) now else null,
+                if (complete) section.hash else null,
+            )
+        }
+        return SectionOutcome(
+            key,
+            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
+            corrupt,
+        )
+    }
+
+    private suspend fun syncRadarSection(
+        base: String,
+        manifest: EdgeManifest,
+        forceRefresh: Boolean,
+        now: Long,
+        anomalies: AnomalyBag,
+    ): SectionOutcome {
+        val key = SyncSections.RADAR
+        val section = manifest.sections[key]
+            ?: return SectionOutcome(key, SectionStates.UNKNOWN, 0)
+        val storedHash = dao.metaValue(SyncSections.hashKey(key))
+        if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
+            recordSectionMeta(
+                key, SectionStates.UP_TO_DATE, "",
+                channelDao.radarCount(), 0, now, null, null,
+            )
+            return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
+        }
+        val radarOutcome = httpGet("$base/${section.file ?: "radar.json"}")
+        val text = when (radarOutcome) {
+            is HttpOutcome.Ok -> radarOutcome.body
+            else -> null
+        }
+        if (text == null) {
+            recordSectionMeta(
+                key, SectionStates.FAILED, radarOutcome.toFailedCode(),
+                null, 0, now, null, null,
+            )
+            return SectionOutcome(key, SectionStates.FAILED, 0)
+        }
+        val parsed = mutableListOf<RadarSignalEntity>()
+        var corrupt = 0
+        var interval: Int? = null
+        try {
+            val root = JSONObject(text)
+            val warRoom = root.optJSONObject("war_room")
+            if (warRoom != null) {
+                dao.upsertMeta(MetaEntity("p2_war_level", warRoom.optString("crisis_level")))
+                dao.upsertMeta(MetaEntity("p2_war_why", warRoom.optString("why_level")))
+                interval = if (warRoom.isNull("radar_interval_minutes")) {
+                    null
+                } else {
+                    warRoom.optInt("radar_interval_minutes")
+                }
+                dao.upsertMeta(
+                    MetaEntity("p2_radar_interval", interval?.toString() ?: "")
+                )
+            } else {
+                dao.upsertMeta(MetaEntity("p2_war_level", ""))
+                dao.upsertMeta(MetaEntity("p2_war_why", ""))
+                dao.upsertMeta(MetaEntity("p2_radar_interval", ""))
+            }
+            val arr = root.optJSONArray("signals") ?: JSONArray()
+            for (i in 0 until arr.length()) {
+                try {
+                    val signal = ChannelParsers.parseRadarSignal(arr.getJSONObject(i), anomalies)
+                    if (signal != null) parsed.add(signal)
+                } catch (_: Exception) {
+                    corrupt++
+                }
+            }
+        } catch (_: Exception) {
+            recordSectionMeta(key, SectionStates.FAILED, "bad_section", null, 0, now, null, null)
+            return SectionOutcome(key, SectionStates.FAILED, 0)
+        }
+        if (interval == null) {
+            anomalies.add(Phase2Anomalies.RADAR_INTERVAL_MISSING)
+        }
+        val complete = corrupt == 0
+        db.withTransaction {
+            if (parsed.isNotEmpty()) channelDao.upsertRadarSignals(parsed)
+            recordSectionMeta(
+                key,
+                if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
+                if (complete) "" else "partial",
+                channelDao.radarCount(),
+                corrupt, now,
+                if (complete) now else null,
+                if (complete) section.hash else null,
+            )
+        }
+        return SectionOutcome(
+            key,
+            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
+            corrupt,
+        )
+    }
+
+    // ---- Phase 2 Diagnostics data (counts only, never content) ----
+
+    private fun latinDigits(raw: String): String = buildString {
+        for (c in raw) {
+            append(
+                when (c) {
+                    in '۰'..'۹' -> ('0' + (c - '۰'))
+                    in '٠'..'٩' -> ('0' + (c - '٠'))
+                    else -> c
+                }
+            )
+        }
+    }
+
+    /** Computed codes are overwritten for today; parse codes accumulate. */
+    private suspend fun persistPhase2Anomalies(
+        now: Long,
+        accumulated: AnomalyBag,
+        computed: Map<String, Int>,
+    ) {
+        val dayKey = Jalali.shamsiDayKey(now)
+        val metaKey = "p2_anomalies_$dayKey"
+        val existing = try {
+            val obj = JSONObject(dao.metaValue(metaKey) ?: "{}")
+            val map = mutableMapOf<String, Int>()
+            for (k in obj.keys()) map[k] = obj.optInt(k)
+            map
+        } catch (_: Exception) {
+            mutableMapOf()
+        }
+        for ((code, n) in accumulated.counts) {
+            existing[code] = (existing[code] ?: 0) + n
+        }
+        for ((code, n) in computed) {
+            existing[code] = n
+        }
+        val out = JSONObject()
+        for ((code, n) in existing) out.put(code, n)
+        dao.upsertMeta(MetaEntity(metaKey, out.toString()))
+    }
+
+    private suspend fun computePhase2Computed(now: Long): Map<String, Int> {
+        val dayKey = Jalali.shamsiDayKey(now)
+        val (start, end) = Jalali.tehranDayRangeEpoch(now)
+        val items = channelDao.allChannelItems().filter {
+            it.status != "retracted" && it.publishedAtEpoch in start until end
+        }
+        val computed = mutableMapOf<String, Int>()
+        var excess = 0
+        for ((format, list) in items.groupBy { it.formatType }) {
+            val cap = Formats.ALL[format]?.dailyCap
+            if (cap != null && list.size > cap) excess += list.size - cap
+        }
+        computed[Phase2Anomalies.FORMAT_OVER_CAP] = excess
+        val flashCount = items.count { it.formatType == "FLASH" }
+        computed[Phase2Anomalies.FLASH_CAP_HIT] =
+            if (flashCount >= 999) 1 else 0
+        val bundles = channelDao.allBundles().filter {
+            it.status != "retracted" && latinDigits(it.bundleDateShamsi) == dayKey
+        }
+        val byKind = bundles.groupBy { it.kind }
+        val shortNews = byKind[BundleKinds.SHORT_NEWS] ?: emptyList()
+        computed[Phase2Anomalies.SHORT_NEWS_TWICE] =
+            if (shortNews.size > 1) shortNews.size - 1 else 0
+        computed[Phase2Anomalies.SHORT_NEWS_SMALL] =
+            shortNews.count { it.memberAppKeys.size < 3 }
+        val morning = byKind[BundleKinds.MORNING_BUNDLE] ?: emptyList()
+        computed[Phase2Anomalies.MORNING_BUNDLE_TWICE] =
+            if (morning.size > 1) morning.size - 1 else 0
+        computed[Phase2Anomalies.NIGHT_DESK_RANGE] =
+            (byKind[BundleKinds.NIGHT_DESK] ?: emptyList())
+                .count { it.memberAppKeys.size !in 12..30 }
+        val allItems = channelDao.allChannelItems().associateBy { it.appKey }
+        var mismatch = 0
+        for (bundle in bundles) {
+            var bad = false
+            for ((index, memberKey) in bundle.memberAppKeys.withIndex()) {
+                val item = allItems[memberKey]
+                if (item != null && item.bundlePosition != null &&
+                    item.bundlePosition != index + 1
+                ) {
+                    bad = true
+                    break
+                }
+            }
+            if (bad) mismatch++
+        }
+        computed[Phase2Anomalies.BUNDLE_POSITION_MISMATCH] = mismatch
+        return computed
+    }
+
+    /** Today's Phase 2 anomaly counts (non-zero lines only, in UI). */
+    suspend fun anomalyCountsToday(): Map<String, Int> {
+        val dayKey = Jalali.shamsiDayKey(System.currentTimeMillis())
+        return try {
+            val obj = JSONObject(dao.metaValue("p2_anomalies_$dayKey") ?: "{}")
+            val map = mutableMapOf<String, Int>()
+            for (k in obj.keys()) {
+                val n = obj.optInt(k)
+                if (n > 0) map[k] = n
+            }
+            map
+        } catch (_: Exception) {
+            emptyMap()
+        }
+    }
+
+    /** Per-format counts for today (Tehran day) against daily caps. */
+    suspend fun formatCountsToday(): Map<String, Int> {
+        val now = System.currentTimeMillis()
+        val (start, end) = Jalali.tehranDayRangeEpoch(now)
+        return channelDao.allChannelItems()
+            .filter { it.status != "retracted" && it.publishedAtEpoch in start until end }
+            .groupingBy { it.formatType }
+            .eachCount()
+    }
+
+    /** War Room header fields shipped by the edge, if any. */
+    suspend fun warRoomMeta(): Triple<String?, String?, Int?> {
+        val level = dao.metaValue("p2_war_level")?.takeIf { it.isNotBlank() }
+        val why = dao.metaValue("p2_war_why")?.takeIf { it.isNotBlank() }
+        val interval = dao.metaValue("p2_radar_interval")?.toIntOrNull()
+        return Triple(level, why, interval)
+    }
+
+    private suspend fun readMetaStringSet(key: String): Set<String> {
+        return try {
+            val arr = JSONArray(dao.metaValue(key) ?: "[]")
+            (0 until arr.length()).mapNotNull {
+                arr.optString(it).takeIf { s -> s.isNotBlank() }
+            }.toSet()
+        } catch (_: Exception) {
+            emptySet()
+        }
+    }
+
+    private suspend fun writeMetaStringSet(key: String, values: Set<String>) {
+        dao.upsertMeta(MetaEntity(key, JSONArray(values.toList()).toString()))
+    }
+
+    suspend fun markBundleOpened(bundleId: String) {
+        val opened = readMetaStringSet("p2_opened_bundles") + bundleId
+        writeMetaStringSet("p2_opened_bundles", opened)
+    }
+
+    /**
+     * Phase 2 notification dispatch, full syncs only. Urgent:
+     * one notification per newly synced INSTANT item, deduped by
+     * the stored notified flag — re-syncs never re-notify, and
+     * an item that arrived while the toggle was off is marked
+     * notified without firing (no retro-notification on toggle).
+     * Morning Bundle: exactly one default-channel notification
+     * per bundle, never before 08:00 Tehran, suppressed when the
+     * bundle was already opened (spec 9.5).
+     */
+    private suspend fun dispatchPhase2Notifications(now: Long) {
+        val enabled = settings.settings.first().notificationsEnabled
+        for (item in channelDao.unnotifiedInstant()) {
+            if (enabled) {
+                Notifications.showUrgent(
+                    appContext,
+                    articleId = item.appKey,
+                    title = item.headline,
+                    text = item.body,
+                )
+            }
+            channelDao.markNotified(item.appKey)
+        }
+        val todayKey = Jalali.shamsiDayKey(now)
+        val afterEight = !Jalali.isNightTehran(now)
+        val notified = readMetaStringSet("p2_notified_bundles")
+        val opened = readMetaStringSet("p2_opened_bundles")
+        val freshNotified = notified.toMutableSet()
+        for (bundle in channelDao.allBundles()) {
+            if (bundle.kind != BundleKinds.MORNING_BUNDLE) continue
+            if (bundle.status == "retracted") continue
+            if (bundle.bundleId in notified || bundle.bundleId in opened) continue
+            val bundleDay = latinDigits(bundle.bundleDateShamsi)
+            val pastDay = bundleDay < todayKey
+            if (!pastDay && bundleDay != todayKey) continue
+            if (!pastDay && !afterEight) continue
+            val heldCount = bundle.memberAppKeys.count { key ->
+                channelDao.channelByAppKey(key)?.wasHeld == true
+            }
+            val n = if (heldCount > 0) heldCount else bundle.memberAppKeys.size
+            if (enabled) {
+                Notifications.showMorningBundle(appContext, bundle.bundleId, n)
+            }
+            freshNotified.add(bundle.bundleId)
+        }
+        if (freshNotified != notified) {
+            writeMetaStringSet("p2_notified_bundles", freshNotified)
         }
     }
 

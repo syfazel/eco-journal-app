@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShowChart
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -49,11 +51,15 @@ import com.ecojournal.app.data.MarketSnapshot
 import com.ecojournal.app.data.SettingsStore
 import com.ecojournal.app.ui.screens.ArticleScreen
 import com.ecojournal.app.ui.screens.BookmarksScreen // M6: now in its own file, moved verbatim from the deleted CategoriesScreen.kt
+import com.ecojournal.app.ui.screens.BundlePageScreen
+import com.ecojournal.app.ui.screens.BundlesScreen
+import com.ecojournal.app.ui.screens.ChannelReaderScreen
 import com.ecojournal.app.ui.screens.DiagnosticsScreen
 import com.ecojournal.app.ui.screens.FeedScreen
 import com.ecojournal.app.ui.screens.InviteScreen
 import com.ecojournal.app.ui.screens.MarketScreen
 import com.ecojournal.app.ui.screens.SettingsScreen
+import com.ecojournal.app.ui.screens.WarRoomScreen
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.ui.theme.EcoTheme
 import com.ecojournal.app.util.Notifications
@@ -66,8 +72,13 @@ private data class Tab(
 
 // M3 (P1-12): real icons, not four identical bullets. The label
 // itself is the content description, so TalkBack announces the tab.
+// Phase 2 adds War Room and Bundles as top-level tabs (spec 4,
+// 8.1): War Room is a SECTION, not a feed tab, and Bundles is
+// its own top-level entry — neither is a parallel service.
 private val TABS = listOf(
     Tab("feed", "صفحه اصلی", Icons.Filled.Home),
+    Tab("warroom", "اتاق جنگ", Icons.Filled.Warning),
+    Tab("bundles", "بسته‌ها", Icons.Filled.List),
     Tab("market", "بازار", Icons.Filled.ShowChart),
     Tab("bookmarks", "ذخیره‌شده‌ها", Icons.Filled.Bookmark),
     Tab("settings", "تنظیمات", Icons.Filled.Settings),
@@ -125,21 +136,35 @@ class MainActivity : ComponentActivity() {
                     // requested from Settings with a rationale, only
                     // when notifications are ON and the permission
                     // is missing (see SettingsScreen).
-                    // Notification deep link: open the tapped article.
+                    // Notification deep links: article, typed
+                    // channel item (urgent), or Morning Bundle.
+                    // A retracted target opens its reader, which
+                    // shows the honest "no longer available" line.
                     val pendingId = Notifications.openArticleId(intent)
-                    LaunchedEffect(pendingId) {
+                    val pendingChannelId = Notifications.openChannelId(intent)
+                    val pendingBundleId = Notifications.openBundleId(intent)
+                    LaunchedEffect(pendingId, pendingChannelId, pendingBundleId) {
                         if (pendingId != null) {
                             nav.navigate("article/${Uri.encode(pendingId)}")
+                        }
+                        if (pendingChannelId != null) {
+                            nav.navigate("channel/${Uri.encode(pendingChannelId)}")
+                        }
+                        if (pendingBundleId != null) {
+                            nav.navigate("bundle/${Uri.encode(pendingBundleId)}")
                         }
                     }
                     // The reader has its own top bar (M3, P1-08),
                     // and diagnostics (M8) is a settings detail
                     // screen; the bottom bar is hidden on both so
                     // no tab sits selected for a route that is not
-                    // a tab.
+                    // a tab. Channel readers and bundle pages hide
+                    // it for the same reason.
                     val backEntry by nav.currentBackStackEntryAsState()
                     val hideBar = backEntry?.destination?.route
-                        ?.substringBefore("/") in setOf("article", "diagnostics")
+                        ?.substringBefore("/") in setOf(
+                        "article", "diagnostics", "channel", "bundle",
+                    )
                     Scaffold(
                         bottomBar = { if (!hideBar) BottomBar(nav) },
                     ) { inner ->
@@ -208,6 +233,60 @@ class MainActivity : ComponentActivity() {
                                         nav.navigate("article/${Uri.encode(appKey)}")
                                     },
                                     fontScale = settings.fontScale,
+                                    onOpenChannel = { appKey ->
+                                        nav.navigate("channel/${Uri.encode(appKey)}")
+                                    },
+                                    onOpenBundle = { bundleId ->
+                                        nav.navigate("bundle/${Uri.encode(bundleId)}")
+                                    },
+                                    onOpenMarket = { nav.navigate("market") },
+                                )
+                            }
+                            // Phase 2: War Room section (top-level,
+                            // not a feed tab) and Bundles section.
+                            composable("warroom") {
+                                WarRoomScreen(
+                                    repo = repo,
+                                    onOpenChannel = { appKey ->
+                                        nav.navigate("channel/${Uri.encode(appKey)}")
+                                    },
+                                    onOpenMarket = { nav.navigate("market") },
+                                    fontScale = settings.fontScale,
+                                )
+                            }
+                            composable("bundles") {
+                                BundlesScreen(
+                                    repo = repo,
+                                    onOpenBundle = { bundleId ->
+                                        nav.navigate("bundle/${Uri.encode(bundleId)}")
+                                    },
+                                    fontScale = settings.fontScale,
+                                )
+                            }
+                            composable("bundle/{bundleId}") { back ->
+                                val id = back.arguments?.getString("bundleId") ?: ""
+                                BundlePageScreen(
+                                    repo = repo,
+                                    bundleId = id,
+                                    onOpenChannel = { appKey ->
+                                        nav.navigate("channel/${Uri.encode(appKey)}")
+                                    },
+                                    onOpenMarket = { nav.navigate("market") },
+                                    onBack = { nav.popBackStack() },
+                                    fontScale = settings.fontScale,
+                                )
+                            }
+                            composable("channel/{appKey}") { back ->
+                                val id = back.arguments?.getString("appKey") ?: ""
+                                ChannelReaderScreen(
+                                    repo = repo,
+                                    channelId = id,
+                                    onOpenChannel = { appKey ->
+                                        nav.navigate("channel/${Uri.encode(appKey)}")
+                                    },
+                                    onOpenMarket = { nav.navigate("market") },
+                                    onBack = { nav.popBackStack() },
+                                    fontScale = settings.fontScale,
                                 )
                             }
                             // Route argument is an appKey (M1), never
@@ -246,6 +325,12 @@ class MainActivity : ComponentActivity() {
                                         nav.navigate("article/${Uri.encode(appKey)}")
                                     },
                                     fontScale = settings.fontScale,
+                                    onOpenChannel = { appKey ->
+                                        nav.navigate("channel/${Uri.encode(appKey)}")
+                                    },
+                                    onOpenBundle = { bundleId ->
+                                        nav.navigate("bundle/${Uri.encode(bundleId)}")
+                                    },
                                 )
                             }
                             composable("settings") {

@@ -8,20 +8,29 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ecojournal.app.R
+import com.ecojournal.app.data.BundleEntity
+import com.ecojournal.app.data.ChannelItemEntity
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.ui.components.ArticleCard
+import com.ecojournal.app.ui.components.TypedCard
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import kotlinx.coroutines.launch
 
@@ -46,13 +55,40 @@ fun BookmarksScreen(
     onOpen: (String) -> Unit,
     modifier: Modifier = Modifier,
     fontScale: Float = 1f,
+    onOpenChannel: (String) -> Unit = {},
+    onOpenBundle: (String) -> Unit = {},
 ) {
     // Reactive (M2): bookmarks update when the cache changes, and
     // open by appKey (M1), matching how ArticleScreen stores them.
     val saved by repo.dao.bookmarkedFlow().collectAsState(initial = emptyList())
     val orphans by repo.dao.orphanBookmarksFlow().collectAsState(initial = emptyList())
     val scope = rememberCoroutineScope()
-    if (saved.isEmpty() && orphans.isEmpty()) {
+    // Phase 2: live typed-item bookmarks and bundle bookmarks.
+    // A live channel bookmark must NOT also appear as an orphan:
+    // the orphan query (bookmarks NOT IN articles) cannot see
+    // channel rows, so live channel keys are filtered out here.
+    // A retracted channel bookmark correctly stays an orphan
+    // (prune via the article bookmark table, as before).
+    var savedChannel by remember { mutableStateOf(emptyList<ChannelItemEntity>()) }
+    var savedBundles by remember { mutableStateOf(emptyList<BundleEntity>()) }
+    var orphanBundles by remember { mutableStateOf(emptyList<String>()) }
+    LaunchedEffect(Unit) {
+        savedChannel = repo.channelDao.bookmarkedChannelItems()
+        val bundleMarks = repo.channelDao.bundleBookmarks()
+        val live = mutableListOf<BundleEntity>()
+        val dead = mutableListOf<String>()
+        for (mark in bundleMarks) {
+            val b = repo.channelDao.bundleById(mark.bundleId)
+            if (b != null && b.status != "retracted") live.add(b) else dead.add(mark.bundleId)
+        }
+        savedBundles = live
+        orphanBundles = dead
+    }
+    val channelLiveKeys = savedChannel.map { it.appKey }.toSet()
+    val shownOrphans = orphans.filter { it.appKey !in channelLiveKeys }
+    if (saved.isEmpty() && shownOrphans.isEmpty() && savedChannel.isEmpty() &&
+        savedBundles.isEmpty() && orphanBundles.isEmpty()
+    ) {
         Text(
             text = stringResource(R.string.bookmarks_empty),
             fontFamily = EcoFontFamily,
@@ -71,7 +107,32 @@ fun BookmarksScreen(
                     fontScale = fontScale,
                 )
             }
-            if (orphans.isNotEmpty()) {
+            items(savedChannel, key = { it.appKey }) { item ->
+                TypedCard(
+                    item = item,
+                    onClick = { onOpenChannel(item.appKey) },
+                    fontScale = fontScale,
+                )
+            }
+            items(savedBundles, key = { it.bundleId }) { bundle ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onOpenBundle(bundle.bundleId) }
+                        .padding(8.dp),
+                ) {
+                    Text(
+                        text = bundle.title,
+                        fontFamily = EcoFontFamily,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = com.ecojournal.app.data.BundleKinds.label(bundle.kind),
+                        fontFamily = EcoFontFamily,
+                    )
+                }
+            }
+            if (orphanBundles.isNotEmpty()) {
                 item {
                     Text(
                         text = stringResource(R.string.bookmarks_unavailable_title),
@@ -80,7 +141,42 @@ fun BookmarksScreen(
                         modifier = Modifier.padding(top = 16.dp, bottom = 4.dp),
                     )
                 }
-                items(orphans, key = { it.appKey }) { orphan ->
+                items(orphanBundles, key = { it }) { bundleId ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.bookmark_unavailable_row),
+                            fontFamily = EcoFontFamily,
+                            modifier = Modifier.weight(1f),
+                        )
+                        OutlinedButton(
+                            onClick = {
+                                scope.launch {
+                                    repo.channelDao.removeBundleBookmark(bundleId)
+                                    orphanBundles = orphanBundles - bundleId
+                                }
+                            },
+                        ) {
+                            Text(
+                                stringResource(R.string.bookmark_prune),
+                                fontFamily = EcoFontFamily,
+                            )
+                        }
+                    }
+                }
+            }
+            if (shownOrphans.isNotEmpty()) {
+                item {
+                    Text(
+                        text = stringResource(R.string.bookmarks_unavailable_title),
+                        fontFamily = EcoFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 4.dp),
+                    )
+                }
+                items(shownOrphans, key = { it.appKey }) { orphan ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth(),

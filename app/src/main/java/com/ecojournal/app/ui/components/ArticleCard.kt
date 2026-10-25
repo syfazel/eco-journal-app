@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ecojournal.app.R
 import com.ecojournal.app.data.ArticleEntity
+import com.ecojournal.app.data.DomainBars
 import com.ecojournal.app.ui.theme.EcoFontFamily
 
 /** Thin light-grey rule between newspaper rows. */
@@ -93,6 +94,11 @@ fun NewspaperByline(article: ArticleEntity, modifier: Modifier = Modifier) {
  * [fontScale] (M3) scales row and hero type with the Settings
  * slider, as the reader already did.
  */
+// Cross-phase category bar (Yasin, 2026-10-25): energy-domain
+// articles carry the YELLOW bar with the «انرژی» label on feed
+// cards (and on the reader header, see ArticleScreen). War-room /
+// red-alert items carry the RED bar via TypedCard instead — the
+// two categories stay inside the same feed/tabs system.
 @Composable
 fun ArticleCard(
     article: ArticleEntity,
@@ -102,6 +108,7 @@ fun ArticleCard(
     isDuplicateTitle: Boolean = false,
     fontScale: Float = 1f,
 ) {
+    val bar = DomainBars.forArticle(article)
     if (isHero) {
         NewspaperHeroArticle(
             article = article,
@@ -109,6 +116,7 @@ fun ArticleCard(
             modifier = modifier,
             isDuplicateTitle = isDuplicateTitle,
             fontScale = fontScale,
+            domainBar = bar,
         )
     } else {
         NewspaperArticleRow(
@@ -117,6 +125,7 @@ fun ArticleCard(
             modifier = modifier,
             isDuplicateTitle = isDuplicateTitle,
             fontScale = fontScale,
+            domainBar = bar,
         )
     }
 }
@@ -140,6 +149,8 @@ fun NewspaperHeroArticle(
     modifier: Modifier = Modifier,
     isDuplicateTitle: Boolean = false,
     fontScale: Float = 1f,
+    domainBar: com.ecojournal.app.data.DomainBar =
+        com.ecojournal.app.data.DomainBar.NONE,
 ) {
     Column(
         modifier = modifier
@@ -148,6 +159,10 @@ fun NewspaperHeroArticle(
             .then(rowClick(article, onClick))
             .padding(horizontal = 16.dp, vertical = 16.dp),
     ) {
+        if (domainBar != com.ecojournal.app.data.DomainBar.NONE) {
+            DomainBarStrip(bar = domainBar, label = "انرژی")
+            Spacer(modifier = Modifier.height(6.dp))
+        }
         NewspaperKicker(article = article)
         if (isDuplicateTitle) {
             Spacer(modifier = Modifier.height(4.dp))
@@ -196,6 +211,8 @@ fun NewspaperArticleRow(
     modifier: Modifier = Modifier,
     isDuplicateTitle: Boolean = false,
     fontScale: Float = 1f,
+    domainBar: com.ecojournal.app.data.DomainBar =
+        com.ecojournal.app.data.DomainBar.NONE,
 ) {
     Column(
         modifier = modifier
@@ -204,6 +221,10 @@ fun NewspaperArticleRow(
             .then(rowClick(article, onClick))
             .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
+        if (domainBar != com.ecojournal.app.data.DomainBar.NONE) {
+            DomainBarStrip(bar = domainBar, label = "انرژی")
+            Spacer(modifier = Modifier.height(6.dp))
+        }
         NewspaperKicker(article = article)
         if (isDuplicateTitle) {
             Spacer(modifier = Modifier.height(4.dp))

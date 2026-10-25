@@ -42,7 +42,9 @@ import androidx.compose.ui.unit.sp
 import com.ecojournal.app.R
 import com.ecojournal.app.data.ArticleEntity
 import com.ecojournal.app.data.BookmarkEntity
+import com.ecojournal.app.data.DomainBars
 import com.ecojournal.app.data.EdgeRepository
+import com.ecojournal.app.ui.components.DomainBarStrip
 import com.ecojournal.app.ui.components.NewspaperByline
 import com.ecojournal.app.ui.components.NewspaperDoubleRule
 import com.ecojournal.app.ui.components.NewspaperKicker
@@ -212,6 +214,13 @@ fun ArticleScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
         ) {
+            // Cross-phase category bar on the reader header:
+            // energy articles carry the YELLOW bar + «انرژی» label.
+            val readerBar = DomainBars.forArticle(a)
+            if (readerBar != com.ecojournal.app.data.DomainBar.NONE) {
+                DomainBarStrip(bar = readerBar, label = "انرژی")
+                Spacer(modifier = Modifier.height(6.dp))
+            }
             NewspaperKicker(article = a)
             Spacer(modifier = Modifier.height(8.dp))
             Text(

@@ -92,6 +92,106 @@ data class JoinKeyEntity(
 )
 
 /**
+ * Phase 2 typed channel item (spec section 2.2). One row per typed
+ * edge item. JSON sub-objects (prices, SITREP sections, watch-next)
+ * are stored as raw JSON strings and parsed at render time, so a
+ * malformed sub-object degrades one block, never the whole row.
+ *
+ * Night-law fields are written ONCE at first sync and never
+ * recomputed (spec 5.2): [nightLawResult] is "instant" / "held" /
+ * "feed_only"; [heldUntilEpoch] is the 08:00 Tehran release instant
+ * for held items; [heldReleased] flips true on the first successful
+ * sync at/after that instant; [wasHeld] stays true forever so the
+ * Morning Bundle can tag the item «از شب گذشته». [notified]
+ * dedups urgent notifications across re-syncs. A retracted row is
+ * a tombstone (status = "retracted") and is excluded from every
+ * list query below, exactly like article tombstones.
+ */
+@Entity(
+    tableName = "channel_items",
+    indices = [
+        Index(value = ["storyId"]),
+        Index(value = ["formatType"]),
+        Index(value = ["publishedAtEpoch"]),
+        Index(value = ["bundleId"]),
+    ],
+)
+data class ChannelItemEntity(
+    @PrimaryKey val appKey: String,
+    val guid: String?,
+    val storyId: String?,
+    val channelMessageId: Long?,
+    val formatType: String,
+    val urgencyScore: Int?,
+    val crisisLevel: String?,
+    val headline: String,
+    val body: String,
+    val publishedAtEpoch: Long,
+    val slot: String?,
+    val bundleId: String?,
+    val bundlePosition: Int?,
+    val bundleTotal: Int?,
+    val sourceName: String,
+    val sourceLink: String?,
+    val attribution: String?,
+    val verdictStatus: String?,
+    val verdictText: String?,
+    val pricesJson: String?,
+    val sitrepSectionsJson: String?,
+    val watchNextJson: String?,
+    val status: String,
+    val contentHash: String?,
+    val updatedAtEpoch: Long,
+    val nightLawResult: String,
+    val heldUntilEpoch: Long?,
+    val heldReleased: Boolean,
+    val wasHeld: Boolean,
+    val notified: Boolean,
+    val cachedAt: Long,
+)
+
+/** Phase 2 bundle header (spec section 2.3). */
+@Entity(tableName = "bundles")
+data class BundleEntity(
+    @PrimaryKey val bundleId: String,
+    val kind: String,
+    val title: String,
+    val memberAppKeys: List<String>,
+    val bundleDateShamsi: String,
+    val status: String,
+    val contentHash: String?,
+    val updatedAtEpoch: Long,
+)
+
+/** Phase 2 radar signal (spec section 2.4). */
+@Entity(
+    tableName = "radar_signals",
+    indices = [Index(value = ["layer"]), Index(value = ["detectedAtEpoch"])],
+)
+data class RadarSignalEntity(
+    @PrimaryKey val signalId: String,
+    val title: String,
+    val layer: Int,
+    val severity: String?,
+    val severityRank: Int?,
+    val sourceName: String,
+    val sourceLink: String?,
+    val linkedStoryId: String?,
+    val detectedAtEpoch: Long,
+    val status: String,
+    val contentHash: String?,
+    val updatedAtEpoch: Long,
+)
+
+/** Bundle bookmarks (spec 8.3): a bundle header bookmark is
+ * independent of member item bookmarks, like article bookmarks. */
+@Entity(tableName = "bundle_bookmarks")
+data class BundleBookmarkEntity(
+    @PrimaryKey val bundleId: String,
+    val savedAt: Long,
+)
+
+/**
  * Active market formulas as shipped by the edge/bundled market.json
  * (M4). The definition is the shipped S-expression string, stored
  * verbatim; MarketFormulas evaluates it at display time, so a
@@ -303,6 +403,192 @@ interface ArticleDao {
     suspend fun articleKindCount(kind: String): Int
 }
 
+@Dao
+interface ChannelDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertChannelItems(items: List<ChannelItemEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertBundles(bundles: List<BundleEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertRadarSignals(signals: List<RadarSignalEntity>)
+
+    /** Visible feed items: posted, and not (held and unreleased). */
+    @Query(
+        "SELECT * FROM channel_items WHERE status != 'retracted' " +
+            "AND NOT (nightLawResult = 'held' AND heldReleased = 0) " +
+            "ORDER BY publishedAtEpoch DESC, appKey ASC"
+    )
+    fun visibleChannelFlow(): Flow<List<ChannelItemEntity>>
+
+    @Query(
+        "SELECT * FROM channel_items WHERE status != 'retracted' " +
+            "AND NOT (nightLawResult = 'held' AND heldReleased = 0) " +
+            "ORDER BY publishedAtEpoch DESC, appKey ASC"
+    )
+    suspend fun visibleChannel(): List<ChannelItemEntity>
+
+    @Query("SELECT * FROM channel_items ORDER BY publishedAtEpoch DESC, appKey ASC")
+    suspend fun allChannelItems(): List<ChannelItemEntity>
+
+    @Query("SELECT * FROM channel_items WHERE appKey = :appKey LIMIT 1")
+    suspend fun channelByAppKey(appKey: String): ChannelItemEntity?
+
+    @Query(
+        "SELECT * FROM channel_items WHERE storyId = :storyId " +
+            "AND status != 'retracted' ORDER BY publishedAtEpoch ASC, appKey ASC"
+    )
+    suspend fun channelByStory(storyId: String): List<ChannelItemEntity>
+
+    /** Instant items for the urgent rail (spec 5.3). */
+    @Query(
+        "SELECT * FROM channel_items WHERE status != 'retracted' " +
+            "AND nightLawResult = 'instant' ORDER BY publishedAtEpoch DESC, appKey ASC"
+    )
+    fun instantChannelFlow(): Flow<List<ChannelItemEntity>>
+
+    @Query(
+        "SELECT * FROM channel_items WHERE status != 'retracted' " +
+            "AND nightLawResult = 'held' AND heldReleased = 0"
+    )
+    suspend fun heldChannelItems(): List<ChannelItemEntity>
+
+    @Query("SELECT COUNT(*) FROM channel_items WHERE status != 'retracted' AND nightLawResult = 'held' AND heldReleased = 0")
+    fun heldCountFlow(): Flow<Int>
+
+    @Query(
+        "SELECT * FROM channel_items WHERE status != 'retracted' " +
+            "AND nightLawResult != 'held' " +
+            "AND (headline LIKE '%' || :q || '%' ESCAPE '\\' " +
+            "OR body LIKE '%' || :q || '%' ESCAPE '\\' " +
+            "OR sourceName LIKE '%' || :q || '%' ESCAPE '\\') " +
+            "ORDER BY publishedAtEpoch DESC, appKey ASC"
+    )
+    suspend fun searchChannel(q: String): List<ChannelItemEntity>
+
+    @Query(
+        "SELECT * FROM channel_items WHERE status != 'retracted' " +
+            "AND nightLawResult = 'instant' AND notified = 0 " +
+            "ORDER BY publishedAtEpoch DESC, appKey ASC"
+    )
+    suspend fun unnotifiedInstant(): List<ChannelItemEntity>
+
+    @Query("UPDATE channel_items SET notified = 1 WHERE appKey = :appKey")
+    suspend fun markNotified(appKey: String)
+
+    @Query(
+        "UPDATE channel_items SET heldReleased = 1 WHERE nightLawResult = 'held' " +
+            "AND heldReleased = 0 AND heldUntilEpoch IS NOT NULL AND heldUntilEpoch <= :now"
+    )
+    suspend fun releaseHeld(now: Long)
+
+    @Query("SELECT COUNT(*) FROM channel_items WHERE status != 'retracted'")
+    suspend fun channelCount(): Int
+
+    @Query("SELECT COUNT(*) FROM channel_items WHERE status != 'retracted' AND formatType = :format")
+    suspend fun channelFormatCount(format: String): Int
+
+    @Query(
+        "SELECT * FROM bundles WHERE status != 'retracted' " +
+            "ORDER BY bundleDateShamsi DESC, title ASC"
+    )
+    fun bundlesFlow(): Flow<List<BundleEntity>>
+
+    @Query("SELECT * FROM bundles WHERE bundleId = :bundleId LIMIT 1")
+    suspend fun bundleById(bundleId: String): BundleEntity?
+
+    @Query("SELECT * FROM bundles WHERE status != 'retracted' ORDER BY bundleDateShamsi DESC, title ASC")
+    suspend fun allBundles(): List<BundleEntity>
+
+    @Query(
+        "SELECT * FROM radar_signals WHERE status != 'retracted' " +
+            "ORDER BY layer ASC, detectedAtEpoch DESC, signalId ASC"
+    )
+    fun radarFlow(): Flow<List<RadarSignalEntity>>
+
+    @Query("SELECT * FROM radar_signals WHERE status != 'retracted' ORDER BY detectedAtEpoch DESC")
+    suspend fun allRadar(): List<RadarSignalEntity>
+
+    @Query("SELECT COUNT(*) FROM radar_signals WHERE status != 'retracted'")
+    suspend fun radarCount(): Int
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun addBundleBookmark(bookmark: BundleBookmarkEntity)
+
+    @Query("DELETE FROM bundle_bookmarks WHERE bundleId = :bundleId")
+    suspend fun removeBundleBookmark(bundleId: String)
+
+    @Query("SELECT EXISTS(SELECT 1 FROM bundle_bookmarks WHERE bundleId = :bundleId)")
+    suspend fun isBundleBookmarked(bundleId: String): Boolean
+
+    @Query("SELECT * FROM bundle_bookmarks ORDER BY savedAt DESC")
+    suspend fun bundleBookmarks(): List<BundleBookmarkEntity>
+
+    @Query(
+        "SELECT * FROM channel_items WHERE appKey IN (SELECT appKey FROM bookmarks) " +
+            "AND status != 'retracted' ORDER BY publishedAtEpoch DESC, appKey ASC"
+    )
+    suspend fun bookmarkedChannelItems(): List<ChannelItemEntity>
+}
+
+// Version 4 -> 5 migration (Phase 2). Additive only: three new
+// tables + bundle bookmarks. No existing table is altered, so a
+// v4 install keeps its full cache; typed sections backfill on the
+// next v3 sync that publishes them.
+val MIGRATION_4_5: Migration = object : Migration(4, 5) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `channel_items` (" +
+                "`appKey` TEXT NOT NULL, `guid` TEXT, `storyId` TEXT, " +
+                "`channelMessageId` INTEGER, `formatType` TEXT NOT NULL, " +
+                "`urgencyScore` INTEGER, `crisisLevel` TEXT, " +
+                "`headline` TEXT NOT NULL, `body` TEXT NOT NULL, " +
+                "`publishedAtEpoch` INTEGER NOT NULL, `slot` TEXT, " +
+                "`bundleId` TEXT, `bundlePosition` INTEGER, " +
+                "`bundleTotal` INTEGER, `sourceName` TEXT NOT NULL, " +
+                "`sourceLink` TEXT, `attribution` TEXT, " +
+                "`verdictStatus` TEXT, `verdictText` TEXT, " +
+                "`pricesJson` TEXT, `sitrepSectionsJson` TEXT, " +
+                "`watchNextJson` TEXT, `status` TEXT NOT NULL, " +
+                "`contentHash` TEXT, `updatedAtEpoch` INTEGER NOT NULL, " +
+                "`nightLawResult` TEXT NOT NULL, `heldUntilEpoch` INTEGER, " +
+                "`heldReleased` INTEGER NOT NULL, `wasHeld` INTEGER NOT NULL, " +
+                "`notified` INTEGER NOT NULL, `cachedAt` INTEGER NOT NULL, " +
+                "PRIMARY KEY(`appKey`))"
+        )
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_channel_items_storyId` ON `channel_items` (`storyId`)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_channel_items_formatType` ON `channel_items` (`formatType`)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_channel_items_publishedAtEpoch` ON `channel_items` (`publishedAtEpoch`)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_channel_items_bundleId` ON `channel_items` (`bundleId`)")
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `bundles` (" +
+                "`bundleId` TEXT NOT NULL, `kind` TEXT NOT NULL, " +
+                "`title` TEXT NOT NULL, `memberAppKeys` TEXT NOT NULL, " +
+                "`bundleDateShamsi` TEXT NOT NULL, `status` TEXT NOT NULL, " +
+                "`contentHash` TEXT, `updatedAtEpoch` INTEGER NOT NULL, " +
+                "PRIMARY KEY(`bundleId`))"
+        )
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `radar_signals` (" +
+                "`signalId` TEXT NOT NULL, `title` TEXT NOT NULL, " +
+                "`layer` INTEGER NOT NULL, `severity` TEXT, " +
+                "`severityRank` INTEGER, `sourceName` TEXT NOT NULL, " +
+                "`sourceLink` TEXT, `linkedStoryId` TEXT, " +
+                "`detectedAtEpoch` INTEGER NOT NULL, `status` TEXT NOT NULL, " +
+                "`contentHash` TEXT, `updatedAtEpoch` INTEGER NOT NULL, " +
+                "PRIMARY KEY(`signalId`))"
+        )
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_radar_signals_layer` ON `radar_signals` (`layer`)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_radar_signals_detectedAtEpoch` ON `radar_signals` (`detectedAtEpoch`)")
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `bundle_bookmarks` (" +
+                "`bundleId` TEXT NOT NULL, `savedAt` INTEGER NOT NULL, " +
+                "PRIMARY KEY(`bundleId`))"
+        )
+    }
+}
+
 // Version 3 -> 4 migration (Phase 1). Additive only: a new
 // join_keys table. No existing table is altered, so a v3 install
 // keeps its full cache; the mapping backfills on the next v3 sync.
@@ -467,11 +753,16 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
         MarketSnapshotEntity::class,
         MarketFormulaEntity::class,
         JoinKeyEntity::class,
+        ChannelItemEntity::class,
+        BundleEntity::class,
+        RadarSignalEntity::class,
+        BundleBookmarkEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = false,
 )
 @TypeConverters(StringListConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun articleDao(): ArticleDao
+    abstract fun channelDao(): ChannelDao
 }

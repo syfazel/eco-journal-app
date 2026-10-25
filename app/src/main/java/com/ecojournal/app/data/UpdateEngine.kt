@@ -37,6 +37,7 @@ object SyncSections {
     const val SHORTS = "shorts"
     const val MARKET = "market"
     const val CHANNEL_REFS = "channel_refs"
+    const val CHANNEL_TYPED = "channel_typed"
     const val BUNDLES = "bundles"
     const val RADAR = "radar"
     const val NIGHTLY = "nightly"
@@ -46,13 +47,14 @@ object SyncSections {
     const val REVOCATIONS = "revocations"
 
     val ALL: List<String> = listOf(
-        ARTICLES, SHORTS, MARKET, CHANNEL_REFS, BUNDLES, RADAR,
+        ARTICLES, SHORTS, MARKET, CHANNEL_REFS, CHANNEL_TYPED, BUNDLES, RADAR,
         NIGHTLY, VOICES, SPECIAL_ISSUES, INVITES, REVOCATIONS,
     )
 
     // Sections with real edge files the app fetches and caches.
     val FETCHABLE: Set<String> = setOf(
-        ARTICLES, SHORTS, MARKET, CHANNEL_REFS, INVITES, REVOCATIONS,
+        ARTICLES, SHORTS, MARKET, CHANNEL_REFS, CHANNEL_TYPED, BUNDLES,
+        RADAR, INVITES, REVOCATIONS,
     )
 
     fun hashKey(section: String) = "sync_section_${section}_hash"

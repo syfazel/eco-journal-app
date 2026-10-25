@@ -1,0 +1,94 @@
+{
+ "war_room": {
+  "crisis_level": "L3",
+  "why_level": "LAB FIXTURE — خط چرایی سطح بحران آزمایشگاهی.",
+  "radar_interval_minutes": 60
+ },
+ "signals": [
+  {
+   "signal_id": "lab-radar-1",
+   "title": "سیگنال آزمایشگاهی لایه ۱ با رتبه بالا",
+   "layer": 1,
+   "severity": "بالا",
+   "severity_rank": 3,
+   "source_name": "منبع رادار آزمایشگاهی",
+   "source_link": null,
+   "linked_story_id": "story-lab-dup",
+   "detected_at_epoch": 1792906200,
+   "status": "active",
+   "updated_at_epoch": 1792906200,
+   "content_hash": "e1521a3a0ec0c891ff84e9aa00496fc9029e5d433ab04260e3621cb0f8058026"
+  },
+  {
+   "signal_id": "lab-radar-2",
+   "title": "سیگنال آزمایشگاهی لایه ۱ بدون رتبه",
+   "layer": 1,
+   "severity": "متوسط",
+   "severity_rank": null,
+   "source_name": "منبع رادار آزمایشگاهی",
+   "source_link": null,
+   "linked_story_id": null,
+   "detected_at_epoch": 1792908000,
+   "status": "active",
+   "updated_at_epoch": 1792908000,
+   "content_hash": "b129960569615d7b1d1c5b9d38f17ad19c799f6f3c959356af3423f1d9abd660"
+  },
+  {
+   "signal_id": "lab-radar-3",
+   "title": "سیگنال آزمایشگاهی لایه ۲",
+   "layer": 2,
+   "severity": "بحرانی",
+   "severity_rank": 4,
+   "source_name": "منبع رادار آزمایشگاهی",
+   "source_link": null,
+   "linked_story_id": null,
+   "detected_at_epoch": 1792905300,
+   "status": "active",
+   "updated_at_epoch": 1792905300,
+   "content_hash": "a305bd4e8e3b9336c11678dbe60e3aebe3968ab78dfa8988a423ce1791f370db"
+  },
+  {
+   "signal_id": "lab-radar-4",
+   "title": "سیگنال آزمایشگاهی لایه ۳",
+   "layer": 3,
+   "severity": "کم",
+   "severity_rank": 1,
+   "source_name": "منبع رادار آزمایشگاهی",
+   "source_link": null,
+   "linked_story_id": null,
+   "detected_at_epoch": 1792910700,
+   "status": "active",
+   "updated_at_epoch": 1792910700,
+   "content_hash": "a66914f00efa0e1e80fe46960ac679dedad55bc23e49eaacea50307f75698890"
+  },
+  {
+   "signal_id": "lab-radar-stale",
+   "title": "سیگنال آزمایشگاهی قدیمی",
+   "layer": 2,
+   "severity": "متوسط",
+   "severity_rank": 2,
+   "source_name": "منبع رادار آزمایشگاهی",
+   "source_link": null,
+   "linked_story_id": null,
+   "detected_at_epoch": 1792823400,
+   "status": "active",
+   "updated_at_epoch": 1792823400,
+   "content_hash": "b9d0301a102329b367ff2bb041ae7aeb468627253484e3518e18940b939d34ce"
+  },
+  {
+   "signal_id": "lab-radar-badlayer",
+   "title": "سیگنال آزمایشگاهی با لایه ناشناخته",
+   "layer": 9,
+   "severity": "متوسط",
+   "severity_rank": null,
+   "source_name": "منبع رادار آزمایشگاهی",
+   "source_link": null,
+   "linked_story_id": null,
+   "detected_at_epoch": 1792913400,
+   "status": "active",
+   "updated_at_epoch": 1792913400,
+   "content_hash": "cf4d00154a6cbc7134a6c736407dfc17ff8fab0cc9c9dcaca232eefc3b0991af"
+  }
+ ],
+ "label": "LAB FIXTURE"
+}

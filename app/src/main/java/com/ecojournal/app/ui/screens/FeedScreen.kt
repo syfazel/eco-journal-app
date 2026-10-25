@@ -2,6 +2,8 @@ package com.ecojournal.app.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -23,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -55,10 +59,17 @@ import androidx.compose.ui.unit.sp
 import com.ecojournal.app.R
 import com.ecojournal.app.data.ArticleEntity
 import com.ecojournal.app.data.BundledSeed
+import com.ecojournal.app.data.ChannelItemEntity
+import com.ecojournal.app.data.ChannelLists
 import com.ecojournal.app.data.EdgeRepository
+import com.ecojournal.app.data.Formats
+import com.ecojournal.app.data.Jalali
+import com.ecojournal.app.data.NightLaw
+import com.ecojournal.app.data.Slots
 import com.ecojournal.app.data.SyncResult
 import com.ecojournal.app.ui.components.ArticleCard
 import com.ecojournal.app.ui.components.NewspaperDoubleRule
+import com.ecojournal.app.ui.components.TypedCard
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.util.escapeLikeQuery
 import com.ecojournal.app.util.formatPersianInt
@@ -104,6 +115,17 @@ private val CATEGORY_ORDER = listOf(
  * restores the pager on exactly the page it was on, because the
  * pager state lives outside the search branch.
  */
+// Phase 2 feed integration (spec 3.2, 5.3, 7). The urgent rail
+// sits at the top of the feed, above all slot groups, regardless
+// of the format filter. The format filter is a single-select chip
+// row, session-only (leaving the feed resets to «همه»), and it
+// filters the FEED list only — never War Room, Radar, Bundles or
+// the Morning Bundle page. On the «همه» page, typed items render
+// as a slot-grouped day view above the article rows; articles
+// carry no slot field in vNext data, so their rows keep their
+// existing section order below the typed groups (documented in
+// the Phase 2 report as the feed-integration decision).
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FeedScreen(
@@ -111,6 +133,9 @@ fun FeedScreen(
     onOpen: (String) -> Unit,
     modifier: Modifier = Modifier,
     fontScale: Float = 1f,
+    onOpenChannel: (String) -> Unit = {},
+    onOpenBundle: (String) -> Unit = {},
+    onOpenMarket: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -122,8 +147,18 @@ fun FeedScreen(
     // here (idempotent and resumable), not only from Application
     // onCreate, so the first read never races a fire-and-forget seed.
     val all by repo.dao.allFlow().collectAsState(initial = emptyList())
+    // Phase 2 flows: visible typed items (held items excluded by
+    // the query itself), instant items for the rail, bundles for
+    // the «بسته» tags on feed cards.
+    val typedItems by repo.channelDao.visibleChannelFlow().collectAsState(initial = emptyList())
+    val instantItems by repo.channelDao.instantChannelFlow().collectAsState(initial = emptyList())
+    val bundles by repo.channelDao.bundlesFlow().collectAsState(initial = emptyList())
+    val bundleIds = remember(bundles) { bundles.map { it.bundleId }.toSet() }
+    var selectedFormat by remember { mutableStateOf<String?>(null) }
+    var showUrgentAll by remember { mutableStateOf(false) }
     var query by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<ArticleEntity>?>(null) }
+    var typedSearchResults by remember { mutableStateOf<List<ChannelItemEntity>>(emptyList()) }
     var syncState by remember { mutableStateOf("") }
     var syncing by remember { mutableStateOf(false) }
     var syncFailed by remember { mutableStateOf(false) }
@@ -140,13 +175,18 @@ fun FeedScreen(
 
     // Offline search, debounced: restarting this effect on each
     // keystroke cancels the pending query, so typing never fires
-    // one Room query per character (P1-04).
+    // one Room query per character (P1-04). Typed results join
+    // the article results (badges shown, not format-filtered,
+    // spec 3.2); held items are excluded by the query itself.
     LaunchedEffect(query) {
         if (query.isBlank()) {
             searchResults = null
+            typedSearchResults = emptyList()
         } else {
             delay(300)
-            searchResults = repo.dao.search(escapeLikeQuery(query.trim()))
+            val trimmed = query.trim()
+            searchResults = repo.dao.search(escapeLikeQuery(trimmed))
+            typedSearchResults = repo.channelDao.searchChannel(escapeLikeQuery(trimmed))
         }
     }
 
@@ -186,6 +226,92 @@ fun FeedScreen(
             modifier = Modifier.padding(horizontal = 16.dp),
         )
         Spacer(modifier = Modifier.height(12.dp))
+        // Urgent rail (spec 5.3): pinned at the top of the feed,
+        // visible regardless of the format filter selection.
+        val railNow = System.currentTimeMillis()
+        val railOrdered = remember(instantItems, railNow) {
+            val ordered = ChannelLists.railOrder(instantItems)
+            if (ordered.isEmpty()) {
+                ordered
+            } else {
+                val first = ordered[0]
+                if (NightLaw.isPinExpired(first.publishedAtEpoch, railNow)) {
+                    // The pinned card leaves the pinned position
+                    // after 6h: the rest re-sort, the expired card
+                    // moves to the end of the rail (still visible,
+                    // never hidden). [SPEC DECISION] on the
+                    // expired card's landing position.
+                    ordered.drop(1) + first
+                } else {
+                    ordered
+                }
+            }
+        }
+        if (showUrgentAll) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            ) {
+                TextButton(onClick = { showUrgentAll = false }) {
+                    Text(stringResource(R.string.article_back), fontFamily = EcoFontFamily)
+                }
+                Text(
+                    text = stringResource(R.string.urgent_rail_title),
+                    fontFamily = EcoFontFamily,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            LazyColumn(modifier = Modifier.weight(1f)) {
+                itemsIndexed(railOrdered, key = { _, item -> item.appKey }) { _, item ->
+                    TypedCard(
+                        item = item,
+                        onClick = { onOpenChannel(item.appKey) },
+                        onOpenMarket = onOpenMarket,
+                        fontScale = fontScale,
+                    )
+                }
+            }
+            return@Column
+        }
+        if (railOrdered.isNotEmpty()) {
+            Column(modifier = Modifier.padding(horizontal = 0.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                ) {
+                    Text(
+                        text = "🔴 ${stringResource(R.string.urgent_rail_title)}",
+                        fontFamily = EcoFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp * fontScale,
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                for (item in railOrdered.take(5)) {
+                    TypedCard(
+                        item = item,
+                        onClick = { onOpenChannel(item.appKey) },
+                        onOpenMarket = onOpenMarket,
+                        fontScale = fontScale,
+                    )
+                }
+                if (railOrdered.size > 5) {
+                    TextButton(
+                        onClick = { showUrgentAll = true },
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                    ) {
+                        Text(
+                            text = stringResource(
+                                R.string.urgent_rail_more,
+                                (railOrdered.size - 5).toString().toPersianDigits(),
+                            ),
+                            fontFamily = EcoFontFamily,
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+        }
         OutlinedTextField(
             value = query,
             onValueChange = { query = it },
@@ -313,12 +439,81 @@ fun FeedScreen(
                 }
             }
         }
+        if (syncFailed && !syncing) {
+            // Offline state (spec 11): cached content + honest line.
+            val offlineSyncText = lastSyncAt?.toLongOrNull()?.let { epoch ->
+                Jalali.formatShamsiDateTime(epoch)
+            } ?: stringResource(R.string.diagnostics_no_value)
+            Text(
+                text = stringResource(R.string.feed_offline_line, offlineSyncText),
+                fontFamily = EcoFontFamily,
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+        }
         Spacer(modifier = Modifier.height(12.dp))
+        // Format filter chips (spec 3.2): single-select, feed
+        // only, session-only. Selecting a format shows ONLY that
+        // format's typed cards (slot-grouped); «همه» restores the
+        // full feed. The filter never touches War Room, Radar,
+        // Bundles or the Morning Bundle page.
+        Row(
+            modifier = Modifier
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp),
+        ) {
+            val filterChips = listOf(null) + Formats.ALL.keys.toList()
+            for (chip in filterChips) {
+                val label = if (chip == null) {
+                    stringResource(R.string.filter_all)
+                } else {
+                    Formats.badgeText(chip)
+                }
+                val selected = selectedFormat == chip
+                FilterChip(
+                    selected = selected,
+                    onClick = { selectedFormat = chip },
+                    label = {
+                        Text(text = label, fontFamily = EcoFontFamily)
+                    },
+                    modifier = Modifier.padding(end = 6.dp),
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        val activeFilter = selectedFormat
+        if (activeFilter != null && query.isBlank()) {
+            val filtered = remember(typedItems, activeFilter) {
+                ChannelLists.dedupLatest(
+                    typedItems.filter { it.formatType == activeFilter }
+                )
+            }
+            if (filtered.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.feed_typed_empty),
+                    fontFamily = EcoFontFamily,
+                    modifier = Modifier.padding(16.dp),
+                )
+            } else {
+                TypedDaySlotGroups(
+                    items = filtered,
+                    onOpenChannel = onOpenChannel,
+                    onOpenBundle = onOpenBundle,
+                    bundleIds = bundleIds,
+                    onOpenMarket = onOpenMarket,
+                    fontScale = fontScale,
+                )
+            }
+            return@Column
+        }
 
         val results = searchResults
         if (results != null) {
-            // Search mode: flat newspaper rows, no pager.
-            if (results.isEmpty()) {
+            // Search mode: flat newspaper rows, no pager. Typed
+            // results join below the article results, badges shown,
+            // not format-filtered (spec 3.2).
+            if (results.isEmpty() && typedSearchResults.isEmpty()) {
                 Text(
                     text = stringResource(R.string.search_no_results),
                     fontFamily = EcoFontFamily,
@@ -329,7 +524,7 @@ fun FeedScreen(
                     Text(
                         text = stringResource(
                             R.string.search_results_count,
-                            formatPersianInt(results.size),
+                            formatPersianInt(results.size + typedSearchResults.size),
                         ),
                         fontFamily = EcoFontFamily,
                         fontSize = 13.sp,
@@ -349,6 +544,17 @@ fun FeedScreen(
                                 fontScale = fontScale,
                             )
                         }
+                        items(
+                            typedSearchResults,
+                            key = { item -> item.appKey },
+                        ) { item ->
+                            TypedCard(
+                                item = item,
+                                onClick = { onOpenChannel(item.appKey) },
+                                onOpenMarket = onOpenMarket,
+                                fontScale = fontScale,
+                            )
+                        }
                     }
                 }
             }
@@ -358,13 +564,20 @@ fun FeedScreen(
             // seed reports (even partially), an empty cache shows
             // the empty message below, never a permanent spinner.
             CircularProgressIndicator(modifier = Modifier.padding(16.dp))
-        } else if (all.isEmpty()) {
+        } else if (all.isEmpty() && typedItems.isEmpty()) {
             Text(
                 text = stringResource(R.string.feed_empty),
                 fontFamily = EcoFontFamily,
                 modifier = Modifier.padding(16.dp),
             )
         } else {
+            // Typed day/slot groups for the «همه» page (spec 7):
+            // newest day first, slots in fixed order within a day,
+            // deduped by story_id. Computed here, rendered inside
+            // the page's single LazyColumn by FrontPageTabs.
+            val typedGroups = remember(typedItems) {
+                groupTypedByDaySlot(typedItems)
+            }
             FrontPageTabs(
                 sections = sections,
                 pagerState = pagerState,
@@ -377,7 +590,100 @@ fun FeedScreen(
                 onTabClick = { index ->
                     scope.launch { pagerState.animateScrollToPage(index) }
                 },
+                typedGroups = typedGroups,
+                onOpenChannel = onOpenChannel,
+                onOpenBundle = onOpenBundle,
+                bundleIds = bundleIds,
+                onOpenMarket = onOpenMarket,
             )
+        }
+    }
+}
+
+/** One day's slot groups for the «همه» page (spec 7). */
+private data class DaySlotGroup(
+    val dayKey: String,
+    val slot: String?,
+    val items: List<ChannelItemEntity>,
+)
+
+/** Dedup by story_id, newest day first, slots in fixed order. */
+private fun groupTypedByDaySlot(
+    items: List<ChannelItemEntity>,
+): List<DaySlotGroup> {
+    val deduped = ChannelLists.dedupLatest(items)
+    val byDay = deduped.groupBy { Jalali.shamsiDayKey(it.publishedAtEpoch) }
+    val groups = mutableListOf<DaySlotGroup>()
+    for (dayKey in byDay.keys.sortedDescending()) {
+        val dayItems = byDay[dayKey] ?: continue
+        val bySlot = dayItems.groupBy { it.slot }
+        val slotOrder = bySlot.keys.sortedBy { Slots.orderIndex(it) }
+        for (slot in slotOrder) {
+            val slotItems = (bySlot[slot] ?: emptyList())
+                .sortedByDescending { it.publishedAtEpoch }
+            groups.add(DaySlotGroup(dayKey, slot, slotItems))
+        }
+    }
+    return groups
+}
+
+/**
+ * Slot-grouped typed list (used by the format-filter view):
+ * day headers + slot group headers + typed cards, one LazyColumn.
+ */
+@Composable
+private fun TypedDaySlotGroups(
+    items: List<ChannelItemEntity>,
+    onOpenChannel: (String) -> Unit,
+    onOpenBundle: (String) -> Unit,
+    bundleIds: Set<String>,
+    onOpenMarket: () -> Unit,
+    fontScale: Float,
+    modifier: Modifier = Modifier,
+) {
+    val groups = remember(items) { groupTypedByDaySlot(items) }
+    var lastDay: String? = null
+    LazyColumn(modifier = modifier.fillMaxSize()) {
+        for (group in groups) {
+            if (group.dayKey != lastDay) {
+                lastDay = group.dayKey
+                item(key = "day-${group.dayKey}") {
+                    Text(
+                        text = group.dayKey.toPersianDigits().replace("-", "/"),
+                        fontFamily = EcoFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp * fontScale,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                }
+            }
+            item(key = "slot-${group.dayKey}-${group.slot}") {
+                Text(
+                    text = stringResource(
+                        R.string.slot_group_count,
+                        Slots.header(group.slot),
+                        group.items.size.toString().toPersianDigits(),
+                    ),
+                    fontFamily = EcoFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp * fontScale,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                )
+            }
+            items(group.items, key = { it.appKey }) { item ->
+                TypedCard(
+                    item = item,
+                    onClick = { onOpenChannel(item.appKey) },
+                    bundleTag = if (item.bundleId != null && item.bundleId in bundleIds) {
+                        { onOpenBundle(item.bundleId) }
+                    } else {
+                        null
+                    },
+                    onOpenMarket = onOpenMarket,
+                    fontScale = fontScale,
+                )
+            }
         }
     }
 }
@@ -392,6 +698,11 @@ private fun FrontPageTabs(
     fontScale: Float,
     listStateFor: (String?) -> LazyListState,
     onTabClick: (Int) -> Unit,
+    typedGroups: List<DaySlotGroup>? = null,
+    onOpenChannel: (String) -> Unit = {},
+    onOpenBundle: (String) -> Unit = {},
+    bundleIds: Set<String> = emptySet(),
+    onOpenMarket: () -> Unit = {},
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         ScrollableTabRow(
@@ -441,7 +752,71 @@ private fun FrontPageTabs(
             } else {
                 all.filter { it.category == section.key }
             }
-            if (shown.isEmpty()) {
+            // «همه» page with typed items: slot-grouped day view
+            // first, then the article rows, in ONE LazyColumn so
+            // the page scrolls as a single feed (spec 7).
+            if (section.key == null && !typedGroups.isNullOrEmpty()) {
+                var lastDay: String? = null
+                LazyColumn(
+                    state = listStateFor(section.key),
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    for (group in typedGroups) {
+                        if (group.dayKey != lastDay) {
+                            lastDay = group.dayKey
+                            item(key = "day-${group.dayKey}") {
+                                Text(
+                                    text = group.dayKey.toPersianDigits().replace("-", "/"),
+                                    fontFamily = EcoFontFamily,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp * fontScale,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                )
+                            }
+                        }
+                        item(key = "slot-${group.dayKey}-${group.slot}") {
+                            Text(
+                                text = stringResource(
+                                    R.string.slot_group_count,
+                                    Slots.header(group.slot),
+                                    group.items.size.toString().toPersianDigits(),
+                                ),
+                                fontFamily = EcoFontFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp * fontScale,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                            )
+                        }
+                        items(group.items, key = { it.appKey }) { item ->
+                            TypedCard(
+                                item = item,
+                                onClick = { onOpenChannel(item.appKey) },
+                                bundleTag = if (item.bundleId != null && item.bundleId in bundleIds) {
+                                    { onOpenBundle(item.bundleId) }
+                                } else {
+                                    null
+                                },
+                                onOpenMarket = onOpenMarket,
+                                fontScale = fontScale,
+                            )
+                        }
+                    }
+                    val titleCounts = shown.groupingBy { it.title }.eachCount()
+                    val seenTitles = mutableSetOf<String>()
+                    itemsIndexed(shown, key = { _, a -> a.appKey }) { index, a ->
+                        val duplicate = (titleCounts[a.title] ?: 0) > 1 &&
+                            !seenTitles.add(a.title)
+                        ArticleCard(
+                            article = a,
+                            onClick = { onOpen(a.appKey) },
+                            isHero = index == 0,
+                            isDuplicateTitle = duplicate,
+                            fontScale = fontScale,
+                        )
+                    }
+                }
+            } else if (shown.isEmpty()) {
                 Text(
                     text = stringResource(R.string.section_empty),
                     fontFamily = EcoFontFamily,
