@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.pm.PackageInfoCompat
 import com.ecojournal.app.R
+import com.ecojournal.app.data.ChainRecord
 import com.ecojournal.app.data.EdgeConfig
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.SectionSyncState
@@ -182,6 +183,82 @@ fun DiagnosticsScreen(
     }
     val phase2Lines = listOf(heldLine) + formatLines + anomalyLines
 
+    // Phase 3 chain lines (spec 3.2), built once and used for
+    // BOTH display and copy, like phase2Lines. A missing step
+    // shows "not recorded" and marks the chain incomplete -- it
+    // is never rendered as zero or as the previous step's time.
+    // The Pages line is lab-observed, never phone-measured, so it
+    // always carries the footnote below.
+    val chainJson by repo.dao.metaValueFlow(ChainRecord.META_KEY)
+        .collectAsState(initial = null)
+    val chain = ChainRecord.fromMetaJson(chainJson)
+    val chainLines: List<String> = if (chain == null) {
+        listOf(stringResource(R.string.diagnostics_chain_none))
+    } else {
+        val stepLabels = mapOf(
+            "channel_post" to stringResource(R.string.diagnostics_chain_step_channel_post),
+            "staged" to stringResource(R.string.diagnostics_chain_step_staged),
+            "gate" to context.getString(
+                R.string.diagnostics_chain_step_gate,
+                when (chain.gateDecision) {
+                    "approved" -> "تأیید شد"
+                    "rejected" -> "رد شد"
+                    else -> chain.gateDecision ?: noValueEarly
+                },
+            ),
+            "edge_generated" to stringResource(R.string.diagnostics_chain_step_edge_generated),
+            "edge_pushed" to stringResource(R.string.diagnostics_chain_step_edge_pushed),
+            "pages_first_seen" to stringResource(R.string.diagnostics_chain_step_pages),
+            "app_manifest_seen" to stringResource(R.string.diagnostics_chain_step_app_manifest),
+            "app_item_applied" to stringResource(R.string.diagnostics_chain_step_app_applied),
+            "app_notified" to stringResource(R.string.diagnostics_chain_step_app_notified),
+        )
+        val stepLines = chain.steps().map { step ->
+            val timeText = when {
+                step.kind == "pages_first_seen" -> noValueEarly
+                step.kind == "app_notified" && step.epochSec == null ->
+                    stringResource(R.string.diagnostics_chain_no_notification)
+                step.epochSec == null -> noValueEarly
+                else -> ChainRecord.formatTehran(step.epochSec) ?: noValueEarly
+            }
+            val gapText = ChainRecord.formatGap(step.gapSec)
+            val base = context.getString(
+                R.string.diagnostics_chain_step,
+                stepLabels[step.kind] ?: step.kind,
+                timeText,
+            )
+            if (gapText != null) "$base (+$gapText)" else base
+        }
+        val tail = mutableListOf<String>()
+        if (!chain.isComplete) {
+            tail.add(stringResource(R.string.diagnostics_chain_incomplete))
+        }
+        chain.endToEndSec?.let { secs ->
+            tail.add(
+                context.getString(
+                    R.string.diagnostics_chain_end_to_end,
+                    ChainRecord.formatGap(secs) ?: secs.toString().toPersianDigits(),
+                )
+            )
+        }
+        chain.pollPath?.let { path ->
+            tail.add(
+                context.getString(
+                    R.string.diagnostics_chain_poll_path,
+                    when (path) {
+                        "manual" -> stringResource(R.string.diagnostics_chain_poll_manual)
+                        else -> stringResource(R.string.diagnostics_chain_poll_periodic)
+                    },
+                )
+            )
+        }
+        tail.add(stringResource(R.string.diagnostics_chain_pages_note))
+        if (chain.hasClockSkew) {
+            tail.add(stringResource(R.string.diagnostics_chain_clock_skew))
+        }
+        listOf(stringResource(R.string.diagnostics_chain_title)) + stepLines + tail
+    }
+
     val versionName = try {
         context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "?"
     } catch (_: Exception) {
@@ -330,6 +407,18 @@ fun DiagnosticsScreen(
             )
             Spacer(modifier = Modifier.height(6.dp))
         }
+        // Phase 3 chain lines (spec 3.2) — displayed exactly as
+        // copied below. No bar or card surface is touched here:
+        // the typed reader/feed bars from Phase 2 are unchanged.
+        Spacer(modifier = Modifier.height(16.dp))
+        for (line in chainLines) {
+            Text(
+                text = line,
+                fontFamily = EcoFontFamily,
+                fontSize = 16.sp * fontScale,
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+        }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             enabled = !syncing,
@@ -372,7 +461,7 @@ fun DiagnosticsScreen(
                 clipboard?.setPrimaryClip(
                     ClipData.newPlainText(
                         "ECO JOURNAL diagnostics",
-                        (lines + sectionLines + phase2Lines).joinToString("\n"),
+                        (lines + sectionLines + phase2Lines + chainLines).joinToString("\n"),
                     )
                 )
                 copied = true

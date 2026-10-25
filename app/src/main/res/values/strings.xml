@@ -190,6 +190,26 @@
     <string name="diagnostics_format_nocap">%1$s امروز: %2$s</string>
     <string name="diagnostics_anomaly_line">%1$s: %2$s</string>
     <string name="diagnostics_section_name_channel_typed">خبرهای کانال (تایپ‌شده)</string>
+    <string name="diagnostics_chain_title">زنجیرهٔ بلادرنگ — آخرین آیتم</string>
+    <string name="diagnostics_chain_none">هنوز زنجیرهٔ بلادرنگی ثبت نشده است.</string>
+    <string name="diagnostics_chain_incomplete">زنجیره ناقص است — آزمون قبول نشده است</string>
+    <string name="diagnostics_chain_step">%1$s: %2$s</string>
+    <string name="diagnostics_chain_step_channel_post">پست کانال</string>
+    <string name="diagnostics_chain_step_staged">استیج</string>
+    <string name="diagnostics_chain_step_gate">تأیید گیت (%1$s)</string>
+    <string name="diagnostics_chain_step_edge_generated">تولید اج</string>
+    <string name="diagnostics_chain_step_edge_pushed">پوش اج</string>
+    <string name="diagnostics_chain_step_pages">مشاهده در Pages</string>
+    <string name="diagnostics_chain_step_app_manifest">مشاهدهٔ مانیفست در اپ</string>
+    <string name="diagnostics_chain_step_app_applied">اعمال آیتم</string>
+    <string name="diagnostics_chain_step_app_notified">اعلان</string>
+    <string name="diagnostics_chain_no_notification">— اعلانی در کار نبود</string>
+    <string name="diagnostics_chain_pages_note">زمان سرو Pages را چکر آزمایشگاه مشاهده می‌کند، نه این گوشی؛ لحظهٔ واقعی دیپلوی ممکن است زودتر باشد.</string>
+    <string name="diagnostics_chain_clock_skew">ساعت دستگاه با زمان‌های اج متفاوت است — پاهای سمت اپ فقط راهنما هستند</string>
+    <string name="diagnostics_chain_end_to_end">سرتاسری (پست تا اپ): %1$s</string>
+    <string name="diagnostics_chain_poll_path">مسیر نظرسنجی: %1$s</string>
+    <string name="diagnostics_chain_poll_manual">دستی</string>
+    <string name="diagnostics_chain_poll_periodic">دوره‌ای / بازگشت به پیش‌زمینه</string>
     <string name="filter_all">همه</string>
     <string name="slot_group_count">%1$s · %2$s خبر</string>
 </resources>

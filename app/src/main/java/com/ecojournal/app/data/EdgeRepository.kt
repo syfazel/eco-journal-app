@@ -164,7 +164,10 @@ class EdgeRepository(context: Context) {
                     recordAttempt("bad_manifest")
                     SyncResult.Failed("bad_manifest")
                 } else {
-                    syncV3(base, manifest, forceRefresh, null)
+                    syncV3(
+                        base, manifest, forceRefresh, null,
+                        if (forceRefresh) "manual" else "periodic_or_foreground",
+                    )
                 }
             }
             else -> syncLegacy()
@@ -194,7 +197,7 @@ class EdgeRepository(context: Context) {
             recordAttempt(code)
             return SyncResult.Failed(code)
         }
-        return syncV3(base, manifest, forceRefresh, sectionKey)
+        return syncV3(base, manifest, forceRefresh, sectionKey, "manual")
     }
 
     // Per-section Diagnostics snapshot. Counts for articles, shorts
@@ -299,6 +302,7 @@ class EdgeRepository(context: Context) {
         manifest: EdgeManifest,
         forceRefresh: Boolean,
         onlySection: String?,
+        pollPath: String = "periodic_or_foreground",
     ): SyncResult {
         val now = System.currentTimeMillis()
         val inviteLists = fetchInviteLists(base)
@@ -739,7 +743,7 @@ class EdgeRepository(context: Context) {
         // No new sync mechanism is invented here.
         val phase2Anomalies = AnomalyBag()
         if (wants(SyncSections.CHANNEL_TYPED)) {
-            outcomes.add(syncChannelTypedSection(base, manifest, forceRefresh, now, phase2Anomalies).also {
+            outcomes.add(syncChannelTypedSection(base, manifest, forceRefresh, now, phase2Anomalies, pollPath).also {
                 if (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL) {
                     anyIncomplete = true
                 }
@@ -840,6 +844,7 @@ class EdgeRepository(context: Context) {
         forceRefresh: Boolean,
         now: Long,
         anomalies: AnomalyBag,
+        pollPath: String = "periodic_or_foreground",
     ): SectionOutcome {
         val key = SyncSections.CHANNEL_TYPED
         val section = manifest.sections[key]
@@ -862,6 +867,7 @@ class EdgeRepository(context: Context) {
             section.items, storedHashes, existing.keys, requiresFile = false,
         )
         val fresh = mutableListOf<ChannelItemEntity>()
+        var latestChain: EdgeChain? = null
         val missingKeys = mutableListOf<String>()
         if (plan.toFetch.isNotEmpty()) {
             val text = when (val outcome = httpGet("$base/${section.file ?: "channel_typed.json"}")) {
@@ -891,8 +897,19 @@ class EdgeRepository(context: Context) {
                             val parsed = ChannelParsers.parseChannelItem(
                                 obj, existing[item.appKey], now, anomalies,
                             )
-                            if (parsed != null) fresh.add(parsed)
-                            else missingKeys.add(item.appKey)
+                            if (parsed != null) {
+                                fresh.add(parsed)
+                                val chain = ChainRecord.parseEdgeChain(item.appKey, obj)
+                                if (chain != null) {
+                                    val prev = latestChain
+                                    if (prev == null ||
+                                        (chain.edgeGeneratedEpoch ?: 0L) >=
+                                            (prev.edgeGeneratedEpoch ?: 0L)
+                                    ) {
+                                        latestChain = chain
+                                    }
+                                }
+                            } else missingKeys.add(item.appKey)
                         }
                     }
                 } catch (_: Exception) {
@@ -917,6 +934,33 @@ class EdgeRepository(context: Context) {
                 missing, now,
                 if (complete) now else null,
                 if (complete) section.hash else null,
+            )
+        }
+        // Phase 3 chain record (spec 3.2): the latest chain-carrying
+        // item applied by this sync becomes the Diagnostics chain.
+        // app_manifest_seen_epoch is approximated by the sync start
+        // (the manifest is fetched first, at sync start); the
+        // applied epoch is the post-transaction instant. A
+        // re-sync of the same item keeps an already-recorded
+        // notification time (it is never re-stamped).
+        val chain = latestChain
+        if (chain != null && fresh.isNotEmpty()) {
+            val stored = ChainRecord.fromMetaJson(dao.metaValue(ChainRecord.META_KEY))
+            val notified = if (stored?.appKey == chain.appKey) {
+                stored.appNotifiedEpoch
+            } else {
+                null
+            }
+            dao.upsertMeta(
+                MetaEntity(
+                    ChainRecord.META_KEY,
+                    chain.copy(
+                        appManifestSeenEpoch = now / 1000,
+                        appItemAppliedEpoch = System.currentTimeMillis() / 1000,
+                        appNotifiedEpoch = notified,
+                        pollPath = pollPath,
+                    ).toMetaJson(),
+                )
             )
         }
         return SectionOutcome(
@@ -1235,6 +1279,26 @@ class EdgeRepository(context: Context) {
      * per bundle, never before 08:00 Tehran, suppressed when the
      * bundle was already opened (spec 9.5).
      */
+    /**
+     * Phase 3: stamp app_notified_epoch on the stored chain when
+     * its item actually fires an urgent notification. Items that
+     * arrive while the toggle is off are marked notified without
+     * firing, so their chain keeps app_notified_epoch null (no
+     * notification was due/fired -- a valid value, not a missing
+     * measurement, per spec 3.1).
+     */
+    private suspend fun markChainNotified(appKey: String, now: Long) {
+        val stored = ChainRecord.fromMetaJson(dao.metaValue(ChainRecord.META_KEY))
+            ?: return
+        if (stored.appKey != appKey || stored.appNotifiedEpoch != null) return
+        dao.upsertMeta(
+            MetaEntity(
+                ChainRecord.META_KEY,
+                stored.copy(appNotifiedEpoch = now / 1000).toMetaJson(),
+            )
+        )
+    }
+
     private suspend fun dispatchPhase2Notifications(now: Long) {
         val enabled = settings.settings.first().notificationsEnabled
         for (item in channelDao.unnotifiedInstant()) {
@@ -1245,6 +1309,7 @@ class EdgeRepository(context: Context) {
                     title = item.headline,
                     text = item.body,
                 )
+                markChainNotified(item.appKey, now)
             }
             channelDao.markNotified(item.appKey)
         }

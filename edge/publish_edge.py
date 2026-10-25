@@ -30,6 +30,12 @@ Safety:
 Usage:
   python3 edge/publish_edge.py --dry-run [--out DIR]
   python3 edge/publish_edge.py --real    # canonical edge/out only
+  python3 edge/publish_edge.py --verify-only --out DIR
+      # Phase 3: verify an EXISTING edge dir WITHOUT regenerating
+      # it. This is the only mode that may verify a merged edge
+      # (merge_staging.py output): --dry-run regenerates from the
+      # production DB and would wipe merged items. --verify-only
+      # changes nothing in git and never pushes.
 
 Python standard library only. No network access except `git push`
 in --real mode.
@@ -54,6 +60,18 @@ EXPECTED_SECTIONS = {
     "revocations", "bundles", "radar", "nightly", "voices",
     "special_issues",
 }
+# Phase 3 merged edges carry one more section, channel_typed.
+# An 11-section edge is a Phase 1 generation; a 12-section edge
+# is a Phase 3 merge. Anything else is a mismatch.
+PHASE3_SECTIONS = EXPECTED_SECTIONS | {"channel_typed"}
+PHASE1_GENERATOR = "edge/generate_edge.py (Phase 1, LAB ONLY)"
+PHASE3_GENERATOR = ("edge/merge_staging.py (Phase 3 Tier A, LAB ONLY) + "
+                    "edge/generate_edge.py (Phase 1, LAB ONLY)")
+GATE_PROVENANCE = "muse-editorial (delegated by Yasin 2026-10-18)"
+CHAIN_FIELDS = ("channel_message_id", "channel_posted_epoch",
+                "staged_epoch", "gate_decided_epoch", "gate_decision",
+                "gate_provenance", "edge_generated_epoch",
+                "edge_pushed_epoch")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 SECRET_PATTERN = re.compile(
     r"(?i)(token|secret|password|api[_-]?key|private[_-]?key)\s*[:=]")
@@ -130,17 +148,22 @@ def verify(out_dir):
         fail(checks, "manifest version is %r, expected 3" % manifest.get("version"))
     else:
         ok(checks, "manifest version 3")
-    if manifest.get("generator") != "edge/generate_edge.py (Phase 1, LAB ONLY)":
+    if manifest.get("generator") not in (PHASE1_GENERATOR, PHASE3_GENERATOR):
         fail(checks, "manifest generator string mismatch: %r" % manifest.get("generator"))
     else:
         ok(checks, "manifest generator string exact")
     sections = manifest.get("sections", {})
-    if set(sections) != EXPECTED_SECTIONS:
-        fail(checks, "manifest sections mismatch: missing=%s extra=%s" % (
-            sorted(EXPECTED_SECTIONS - set(sections)),
-            sorted(set(sections) - EXPECTED_SECTIONS)))
+    if set(sections) == EXPECTED_SECTIONS:
+        ok(checks, "manifest has exactly the 11 Phase 1 sections")
+        has_typed = False
+    elif set(sections) == PHASE3_SECTIONS:
+        ok(checks, "manifest has exactly the 12 Phase 3 sections (channel_typed present)")
+        has_typed = True
     else:
-        ok(checks, "manifest has exactly the 11 expected sections")
+        fail(checks, "manifest sections mismatch: missing=%s extra=%s" % (
+            sorted(PHASE3_SECTIONS - set(sections)),
+            sorted(set(sections) - PHASE3_SECTIONS)))
+        has_typed = "channel_typed" in sections
     if manifest.get("join_keys_file") != "join_keys.json":
         fail(checks, "manifest join_keys_file is %r" % manifest.get("join_keys_file"))
     else:
@@ -274,9 +297,145 @@ def verify(out_dir):
     if rev.get("file") != "revocations.json":
         fail(checks, "revocations file is %r" % rev.get("file"))
 
-    for name, expect in (("bundles", "not_yet_published"),
-                         ("radar", "not_yet_published"),
-                         ("nightly", "not_yet_published"),
+    # ---- Phase 3 sections: bundles / radar / channel_typed.
+    # A section is either honestly unpublished (not_yet_published,
+    # count 0, Phase 1 state), published_empty (count 0 with the
+    # empty-list hash, Phase 2 spec 2.1), or published (hash
+    # recomputed from its file + manifest items field-by-field).
+    # Bundles/radar keep their Phase 1 zero state on unmerged
+    # edges; on merged edges they are published (or empty).
+    def verify_file_section(name, fname, list_key, key_field):
+        """Verify one file-backed section. Returns its items or []."""
+        sec = sections.get(name, {})
+        status = sec.get("status")
+        if status == "not_yet_published":
+            if sec.get("count") != 0:
+                fail(checks, "%s not_yet_published but count %r" % (name, sec.get("count")))
+            else:
+                ok(checks, "%s honestly not_yet_published (count 0)" % name)
+            return []
+        if status == "published_empty":
+            empty_hash = hashlib.sha256(b"[]").hexdigest()
+            if sec.get("count") != 0 or sec.get("hash") != empty_hash \
+                    or sec.get("items") not in (None, []):
+                fail(checks, "%s published_empty malformed: %r" % (name, sec))
+            else:
+                ok(checks, "%s published_empty (hash of empty list, count 0)" % name)
+            return []
+        if status != "published":
+            fail(checks, "%s has unexpected status %r" % (name, status))
+            return []
+        path = os.path.join(out_dir, fname)
+        if not os.path.exists(path):
+            fail(checks, "%s published but file %s missing" % (name, fname))
+            return []
+        doc = load(out_dir, fname)
+        entries = doc.get(list_key, [])
+        # The 4-field view keys on app_key; bundle/radar entries
+        # carry bundle_id / signal_id instead (fixture shape).
+        hashed4k = sorted(
+            ({"app_key": e[key_field], "content_hash": e["content_hash"],
+              "updated_at_epoch": e["updated_at_epoch"],
+              "status": e["status"]} for e in entries),
+            key=lambda d: d["app_key"])
+        if sec.get("hash") != section_hash(hashed4k):
+            fail(checks, "%s hash mismatch (recomputed from %s)" % (name, fname))
+        else:
+            ok(checks, "%s hash recomputes identically (%d items)" % (name, len(entries)))
+        if sec.get("count") != len(entries):
+            fail(checks, "%s count %r != file items %d" % (name, sec.get("count"), len(entries)))
+        if sec.get("file") != fname:
+            fail(checks, "%s file is %r, expected %s" % (name, sec.get("file"), fname))
+        by_key = {e[key_field]: e for e in entries}
+        for item in sec.get("items", []):
+            src = by_key.get(item.get("app_key"))
+            if src is None:
+                fail(checks, "manifest %s app_key %r not in file" % (name, item.get("app_key")))
+                continue
+            for field in ("content_hash", "updated_at_epoch", "status"):
+                if item.get(field) != src.get(field):
+                    fail(checks, "manifest %s %s: field %s %r != file %r" % (
+                        name, item.get("app_key"), field, item.get(field), src.get(field)))
+        if len(sec.get("items", [])) != len(entries):
+            fail(checks, "manifest %s items %d != file items %d" % (
+                name, len(sec.get("items", [])), len(entries)))
+        else:
+            ok(checks, "manifest %s items match file field-by-field" % name)
+        # Content hashes recompute under the fixture rule (full
+        # object minus content_hash itself).
+        fails_before = sum(1 for c in checks if c[0] == "FAIL")
+        for e in entries:
+            recomputed = hashlib.sha256(canonical_json(
+                {k: v for k, v in e.items() if k != "content_hash"}
+            ).encode("utf-8")).hexdigest()
+            if recomputed != e.get("content_hash"):
+                fail(checks, "%s %s: stored content_hash != recomputed" % (
+                    name, e.get(key_field)))
+        if sum(1 for c in checks if c[0] == "FAIL") == fails_before:
+            ok(checks, "%s content_hash values all recompute" % name)
+        return entries
+
+    bundle_entries = verify_file_section("bundles", "bundles.json", "bundles", "bundle_id")
+    radar_entries = verify_file_section("radar", "radar.json", "signals", "signal_id")
+    typed_entries = []
+    if has_typed:
+        typed_entries = verify_file_section(
+            "channel_typed", "channel_typed.json", "items", "app_key")
+        # Typed extras: manifest items carry channel_message_id +
+        # story_id; no duplicate message_id (dedup); chain objects
+        # (when present) are well-formed with the exact delegated
+        # provenance and an edge_generated_epoch equal to the
+        # manifest's generated_at_utc.
+        sec = sections.get("channel_typed", {})
+        by_key = {e["app_key"]: e for e in typed_entries}
+        seen_mid = {}
+        for item in sec.get("items", []):
+            src = by_key.get(item.get("app_key"))
+            if src is None:
+                continue
+            if item.get("channel_message_id") != src.get("channel_message_id"):
+                fail(checks, "manifest channel_typed %s: channel_message_id %r != file %r"
+                     % (item.get("app_key"), item.get("channel_message_id"),
+                        src.get("channel_message_id")))
+            if item.get("story_id") != src.get("story_id"):
+                fail(checks, "manifest channel_typed %s: story_id mismatch" % item.get("app_key"))
+        for e in typed_entries:
+            mid = e.get("channel_message_id")
+            if mid is not None:
+                if mid in seen_mid:
+                    fail(checks, "channel_typed duplicate channel_message_id %r" % mid)
+                seen_mid[mid] = e["app_key"]
+        try:
+            from datetime import datetime as _dt
+            gen_epoch = int(_dt.fromisoformat(
+                manifest.get("generated_at_utc", "")).timestamp())
+        except Exception:
+            gen_epoch = None
+        for e in typed_entries:
+            chain = e.get("chain")
+            if chain is None:
+                continue
+            missing = [f for f in CHAIN_FIELDS if f not in chain]
+            if missing:
+                fail(checks, "channel_typed %s: chain missing %s" % (e["app_key"], missing))
+                continue
+            if chain.get("gate_provenance") != GATE_PROVENANCE:
+                fail(checks, "channel_typed %s: chain provenance %r" % (
+                    e["app_key"], chain.get("gate_provenance")))
+            if chain.get("gate_decision") != "approved":
+                fail(checks, "channel_typed %s: chain gate_decision %r" % (
+                    e["app_key"], chain.get("gate_decision")))
+            if chain.get("channel_message_id") != e.get("channel_message_id"):
+                fail(checks, "channel_typed %s: chain message_id != item" % e["app_key"])
+            if gen_epoch is not None and chain.get("edge_generated_epoch") != gen_epoch:
+                fail(checks, "channel_typed %s: chain edge_generated_epoch %r != "
+                     "manifest generated_at_utc %r" % (
+                         e["app_key"], chain.get("edge_generated_epoch"), gen_epoch))
+        if not any(c[0] == "FAIL" and "channel_typed" in c[1] for c in checks):
+            ok(checks, "channel_typed manifest extras + chain objects valid "
+                 "(%d items, %d with non-null message_id)"
+                 % (len(typed_entries), len(seen_mid)))
+    for name, expect in (("nightly", "not_yet_published"),
                          ("voices", "not_yet_published")):
         sec = sections.get(name, {})
         if sec.get("status") != expect or sec.get("count") != 0:
@@ -288,14 +447,26 @@ def verify(out_dir):
     else:
         ok(checks, "unpublished/gated sections report honest zero states")
 
-    # ---- join_keys coverage: exactly articles + shorts, one per app_key
+    # ---- join_keys coverage: articles + shorts on Phase 1 edges;
+    # articles + shorts + channel_typed on Phase 3 merged edges
+    # (one entry per app_key, no duplicates, story_ids derived).
     jk_entries = join_keys.get("entries", []) if join_keys.get("version") == 1 else []
     if join_keys.get("version") != 1:
         fail(checks, "join_keys version is %r, expected 1" % join_keys.get("version"))
-    if len(jk_entries) != len(entries):
-        fail(checks, "join_keys %d != index entries %d" % (len(jk_entries), len(entries)))
+    # Only CHAIN-carrying typed items are Phase 3 merges and must
+    # have join entries. Pre-merge fixture typed items carry no
+    # chain and are not required to be in join_keys (the Phase 1
+    # coverage rule, "still = articles + shorts", still holds for
+    # them -- spec step 4).
+    typed_merged = [e for e in typed_entries if e.get("chain") is not None]
+    expected_jk = len(entries) + len(typed_merged)
+    if len(jk_entries) != expected_jk:
+        fail(checks, "join_keys %d != expected %d (index %d + merged typed %d)" % (
+            len(jk_entries), expected_jk, len(entries), len(typed_merged)))
     else:
-        ok(checks, "join_keys coverage == articles + shorts (%d)" % len(entries))
+        ok(checks, "join_keys coverage == articles + shorts%s (%d)" % (
+            " + %d merged typed" % len(typed_merged) if typed_merged else "",
+            expected_jk))
     jk_by_key = {j["app_key"]: j for j in jk_entries}
     if len(jk_by_key) != len(jk_entries):
         fail(checks, "join_keys has duplicate app_keys")
@@ -318,10 +489,32 @@ def verify(out_dir):
         j = jk_by_key.get(item.get("app_key"))
         if j is not None and item.get("story_id") != j["story_id"]:
             fail(checks, "manifest article %s: story_id != join_keys" % item.get("app_key"))
+    # Phase 3: every CHAIN-carrying (merged) typed item has a join
+    # entry with a derived story_id and a matching
+    # channel_message_id. Fixture typed items without a chain are
+    # exempt (see above).
+    if has_typed:
+        typed_by_key = {e["app_key"]: e for e in typed_merged}
+        for key, src in typed_by_key.items():
+            j = jk_by_key.get(key)
+            if j is None:
+                fail(checks, "typed app_key %s missing from join_keys" % key)
+                continue
+            if not j.get("guid"):
+                fail(checks, "join_keys %s: empty guid" % key)
+            elif j["story_id"] != "story-" + hashlib.sha256(
+                    j["guid"].encode("utf-8")).hexdigest()[:20]:
+                fail(checks, "join_keys %s: story_id != story-<sha256(guid)[:20]>" % key)
+            if j.get("channel_message_id") != src.get("channel_message_id"):
+                fail(checks, "join_keys %s: channel_message_id != typed item" % key)
     if not any(c[0] == "FAIL" and "join_keys" in c[1] for c in checks):
         ok(checks, "join_keys story_ids derive correctly from guids; channel ids match index")
 
     # ---- counts vs GENERATION_REPORT.json
+    # The report describes the BASE generation: on a merged edge
+    # its join_keys_entries is the base count (index entries), while
+    # the merged join_keys file additionally carries typed entries
+    # (checked above under join_keys coverage).
     exported = report.get("exported", {})
     expected = {
         "full_articles": len(articles),
@@ -329,7 +522,7 @@ def verify(out_dir):
         "index_entries": len(entries),
         "market_snapshots": len(market.get("snapshots", [])),
         "channel_refs": len(refs),
-        "join_keys_entries": len(jk_entries),
+        "join_keys_entries": len(entries) if has_typed else len(jk_entries),
     }
     for key, value in expected.items():
         if exported.get(key) != value:
@@ -378,23 +571,32 @@ def main():
     ap.add_argument("--out", default=None)
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--real", action="store_true")
+    ap.add_argument("--verify-only", action="store_true")
     args = ap.parse_args()
-    if args.dry_run == args.real:
-        print("REFUSED: pass exactly one of --dry-run or --real", file=sys.stderr)
+    modes = sum((args.dry_run, args.real, args.verify_only))
+    if modes != 1:
+        print("REFUSED: pass exactly one of --dry-run, --real, or --verify-only",
+              file=sys.stderr)
         return 2
     out_dir = os.path.abspath(args.out) if args.out else CANONICAL_OUT
     app_root = os.path.abspath(APP_ROOT)
-    if os.path.commonpath([out_dir, app_root]) != app_root:
+    # The in-root guard applies to --dry-run/--real (which
+    # regenerate and, for --real, push). --verify-only is
+    # strictly read-only, so it may verify scratch copies (e.g.
+    # /tmp) -- Tier A failure exercises depend on that.
+    if not args.verify_only \
+            and os.path.commonpath([out_dir, app_root]) != app_root:
         print("REFUSED: --out must be inside %s" % app_root, file=sys.stderr)
         return 2
     if args.real and out_dir != CANONICAL_OUT:
         print("REFUSED: --real only publishes the canonical edge/out", file=sys.stderr)
         return 2
 
-    rc = run([sys.executable, GENERATE_EDGE, "--out", out_dir], cwd=APP_ROOT)
-    if rc != 0:
-        print("ABORTED: generate_edge.py failed", file=sys.stderr)
-        return rc
+    if not args.verify_only:
+        rc = run([sys.executable, GENERATE_EDGE, "--out", out_dir], cwd=APP_ROOT)
+        if rc != 0:
+            print("ABORTED: generate_edge.py failed", file=sys.stderr)
+            return rc
 
     checks, passed = verify(out_dir)
     print("=== publish_edge verification report (%s) ===" % out_dir)
@@ -405,6 +607,11 @@ def main():
         print("ABORTED: verification failed; nothing staged, committed, or pushed",
               file=sys.stderr)
         return 1
+
+    if args.verify_only:
+        print("VERIFY-ONLY: verification passed; nothing regenerated, "
+              "nothing changed in git, nothing pushed.")
+        return 0
 
     if args.dry_run:
         print("DRY-RUN: verification passed; nothing changed in git.")

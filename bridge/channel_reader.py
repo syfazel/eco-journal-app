@@ -129,6 +129,12 @@ def to_staging_item(post, chat_title):
         published_at = datetime.fromtimestamp(date, tz=tz).isoformat()
     else:
         published_at = now_iso()
+    # Phase 3 chain fields (spec 3.1): the Telegram date is the
+    # channel-post instant; staged_epoch is this capture's instant.
+    # Both are UTC epoch seconds. They are additive: older readers
+    # ignore unknown keys, and no existing field changes meaning.
+    channel_posted_epoch = int(date) if isinstance(date, (int, float)) else None
+    staged_epoch = int(datetime.now(timezone.utc).timestamp())
     item = {
         "id": f"channel-{message_id}",
         "kind": "channel_post",
@@ -141,6 +147,8 @@ def to_staging_item(post, chat_title):
         "original_url": "",
         "published_at": published_at,
         "channel_message_id": message_id,
+        "channel_posted_epoch": channel_posted_epoch,
+        "staged_epoch": staged_epoch,
         "publish_status": "staged",
         "provenance": "telegram channel_post (Bot API getUpdates input)",
         "idempotency_key": f"channel:{message_id}",
@@ -235,8 +243,12 @@ def process_updates(updates, staging_dir, already_reviewed=False,
             # A non-edited re-run of an already-queued post is a
             # dedup hit, not an overwrite (layer 2, P1-37).
     # Cumulative manifest: every staging file on disk, not this run.
+    # Gate annotations (channel-<id>.gate.json, Phase 3) are NOT
+    # staging files and must not appear here.
+    import re as _re
     all_staged = sorted(
-        p.stem for p in staging_dir.glob("channel-*.json"))
+        p.stem for p in staging_dir.glob("channel-*.json")
+        if _re.fullmatch(r"channel-\d+", p.stem))
     manifest = {
         "generated_at_utc": now_iso(),
         "staged_count": len(all_staged),

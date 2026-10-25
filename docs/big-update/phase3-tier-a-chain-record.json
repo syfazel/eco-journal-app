@@ -1,0 +1,148 @@
+{
+ "tier": "A (lab/dry-run)",
+ "verdict": "TIER A PASS (lab)",
+ "verdict_note": "Tier A proves the chain up to the publish gate. It is NOT an end-to-end latency result and NOT a phone pass. Tier B is BLOCKED (see phase report).",
+ "message_id": 9000101,
+ "app_key": "a-65637ec0033151d514d6",
+ "story_id": "story-65637ec0033151d514d6",
+ "format_type": "WIRE",
+ "chain": {
+  "channel_posted_epoch": 1792956662,
+  "staged_epoch": 1792956662,
+  "gate_decided_epoch": 1792956662,
+  "gate_decision": "approved",
+  "gate_provenance": "muse-editorial (delegated by Yasin 2026-10-18)",
+  "edge_generated_epoch": 1792956662,
+  "edge_pushed_epoch": null,
+  "pages_first_seen_epoch": null,
+  "pages_first_seen_window_SIMULATED": {
+   "previous_check_epoch": 1792956723,
+   "first_matching_check_epoch": 1792956783
+  },
+  "app_manifest_seen_epoch": null,
+  "app_item_applied_epoch": null,
+  "app_notified_epoch": null,
+  "app_legs_note": "Tier A lab: no phone sync; app-side fields are implemented in EdgeRepository/DiagnosticsScreen and await a phone test (Tier B blocked)."
+ },
+ "legs": {
+  "capture_M1_M0_s": 0,
+  "gate_wait_M2_M1_s_includes_deliberation": 0,
+  "merge_M3_M2_s": 0,
+  "mechanical_gate_to_verified_s": 1,
+  "mechanical_target": "<=300 s target, fail >900 s (spec L-1, push leg N/A in Tier A)",
+  "pages_window_SIMULATED_s": 60,
+  "polling_leg": "SIMULATED via delta (1 fetch); phone polling leg NOT measured in Tier A"
+ },
+ "steps": [
+  {
+   "step": "test_post_created",
+   "owner": "lab operator (simulates Yasin's test-channel post)",
+   "artifact": "synthetic updates JSON (in-memory, TEST-marked)",
+   "epoch": 1792956662,
+   "tehran": "2026-10-25T23:01:02+03:30",
+   "note": "message_id=9000101, WIRE/non-urgent"
+  },
+  {
+   "step": "bridge_capture",
+   "owner": "bridge/channel_reader.py",
+   "artifact": "/tmp/phase3-tiera/staging/channel-9000101.json",
+   "epoch": 1792956662,
+   "tehran": "2026-10-25T23:01:02+03:30",
+   "note": "staged_new=['channel-9000101']"
+  },
+  {
+   "step": "gate_decided",
+   "owner": "Muse editorial (muse-editorial (delegated by Yasin 2026-10-18))",
+   "artifact": "lab queue.db item channel:9000101 status=approved",
+   "epoch": 1792956662,
+   "tehran": "2026-10-25T23:01:02+03:30",
+   "note": "review -> approved"
+  },
+  {
+   "step": "staging_edge_merge",
+   "owner": "edge/merge_staging.py",
+   "artifact": "/home/hatch/workspace/goals/eco-journal/app/edge/out-phase3-tiera/channel_typed.json",
+   "epoch": 1792956663,
+   "tehran": "2026-10-25T23:01:03+03:30",
+   "note": "exit=0, stdout=merged 1 item(s) into /home/hatch/workspace/goals/eco-journal/app/edge/out-phase3-tiera (skipped 0)"
+  },
+  {
+   "step": "edge_generated",
+   "owner": "edge/merge_staging.py",
+   "artifact": "/home/hatch/workspace/goals/eco-journal/app/edge/out-phase3-tiera/manifest.json",
+   "epoch": 1792956662,
+   "tehran": "2026-10-25T23:01:02+03:30",
+   "note": "channel_typed count=49"
+  },
+  {
+   "step": "publish_verify",
+   "owner": "edge/publish_edge.py --verify-only",
+   "artifact": "verification report (stdout)",
+   "epoch": 1792956663,
+   "tehran": "2026-10-25T23:01:03+03:30",
+   "note": "exit=0"
+  },
+  {
+   "step": "delta_simulation",
+   "owner": "lab delta simulation (manifest comparison)",
+   "artifact": "base manifest vs merged manifest",
+   "epoch": 1792956663,
+   "tehran": "2026-10-25T23:01:03+03:30",
+   "note": "fetches={'articles': 0, 'shorts': 0, 'market': 0, 'channel_refs': 0, 'invites': 0, 'revocations': 0, 'bundles': 0, 'radar': 0, 'nightly': 0, 'voices': 0, 'special_issues': 0, 'channel_typed': 1}"
+  },
+  {
+   "step": "pages_checker_started",
+   "owner": "edge/check_pages.py (lab-side, 60 s cadence)",
+   "artifact": "checker report (pending)",
+   "epoch": 1792956663,
+   "tehran": "2026-10-25T23:01:03+03:30",
+   "note": "SIMULATED Pages: local http server, starts at +70s"
+  },
+  {
+   "step": "pages_first_seen_SIMULATED",
+   "owner": "edge/check_pages.py",
+   "artifact": "/tmp/phase3-tiera/pages-report.json",
+   "epoch": 1792956783,
+   "tehran": "2026-10-25T23:03:03+03:30",
+   "note": "exit=0, window={'previous_check_epoch': 1792956723, 'first_matching_check_epoch': 1792956783} (SIMULATED, not a GitHub Pages deploy)"
+  },
+  {
+   "step": "tier_a_complete",
+   "owner": "lab orchestrator",
+   "artifact": "/home/hatch/workspace/goals/eco-journal/app/docs/big-update/phase3-tier-a-chain-record.json",
+   "epoch": 1792956837,
+   "tehran": "2026-10-25T23:03:57+03:30",
+   "note": "failures=0"
+  }
+ ],
+ "delta_fetches": {
+  "articles": 0,
+  "shorts": 0,
+  "market": 0,
+  "channel_refs": 0,
+  "invites": 0,
+  "revocations": 0,
+  "bundles": 0,
+  "radar": 0,
+  "nightly": 0,
+  "voices": 0,
+  "special_issues": 0,
+  "channel_typed": 1
+ },
+ "failures": [],
+ "git_status_before_run": " M app/src/main/java/com/ecojournal/app/data/EdgeRepository.kt\n M app/src/main/java/com/ecojournal/app/ui/screens/DiagnosticsScreen.kt\n M app/src/main/res/values/strings.xml\n M bridge/channel_reader.py\n M docs/big-update/new-requirements.md\n M docs/vnext-plan.md\n M edge/out/revocations.json\n M edge/publish_edge.py\n?? app/src/main/java/com/ecojournal/app/data/ChainRecord.kt\n?? docs/big-update/dependency-risk-map.md\n?? docs/big-update/ml-track-spec.md\n?? docs/big-update/phase2-channel-surfaces-spec.md\n?? docs/big-update/phase3-near-realtime-spec.md\n?? docs/big-update/phase3-tier-a-chain-record.json\n?? docs/big-update/phase6-editorial-voices-spec.md\n?? docs/big-update/phases4-5-market-nightly-spec.md\n?? docs/big-update/phases7-8-pilot-freezelift-spec.md\n?? docs/big-update/roadmap.md\n?? docs/freeze-lift-order-draft.md\n?? docs/pilot-checklist-vnext.md\n?? edge/check_pages.py\n?? edge/merge_staging.py\n?? edge/out-phase3-tiera/\n?? edge/run_phase3_tier_a.py\n?? edge/verify_phase3_tiera.py\n",
+ "failure_modes": {
+  "F1": "exercised (exit 4, nothing written)",
+  "F2": "exercised (rejected item excluded)",
+  "F3": "exercised (held item fails --strict, exit 3)",
+  "F4": "exercised (corrupt edge fails verify, git unchanged)",
+  "F5": "NOT APPLICABLE in Tier A (no push ever runs)",
+  "F6": "exercised (stale v3 manifest served -> pages_not_yet_serving, exit 2)",
+  "F7": "exercised (bad manifest detected, old state retained)",
+  "F8": "exercised (unreachable edge -> edge_unreachable, exit 2)",
+  "F9": "NOT MEASURABLE in lab (Doze is phone-only; rule documented)",
+  "F10": "exercised (duplicate capture stages nothing new)",
+  "F11": "exercised (bad format annotation rejected, exit 3)",
+  "F12": "exercised (negative check: no allow-list, no live handle)"
+ }
+}
