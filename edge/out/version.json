@@ -1,0 +1,9 @@
+{
+ "version_name": "4.0.0",
+ "version_code": 4,
+ "apk_url": "https://syfazel.github.io/eco-journal-app/app-debug-v4.apk",
+ "apk_sha256": "d7e5d0ad09046d005fb34599bb97364651c017d247a8e9232e40edbfda016cc3",
+ "changelog_fa": "نسخهٔ ۴٫۰٫۰ — به‌روزرسانی بزرگ: سطوح کانال، نزدیک‌به‌لحظه، بازار و رادار، نسخهٔ شبانه، تحریریه، پرداخت نهایی، تجربهٔ پس از فاز و به‌روزرسانی از راه دور داخل اپ.",
+ "mandatory": false,
+ "generated_at_utc": "2026-10-25T21:10:44.152840+00:00"
+}

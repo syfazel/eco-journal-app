@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-25T20:46:04.805276+00:00",
+ "generated_at_utc": "2026-10-25T21:10:51.738416+00:00",
  "sources_read_only": [
   "/home/hatch/workspace/econ-news-blog/data_core/data_core.db",
   "/home/hatch/workspace/yasineco_bot/bot.db"
@@ -19,9 +19,9 @@
   "shorts_category": "uncategorised",
   "shorts_category_fa": "دسته‌بندی‌نشده",
   "channel_message_id_non_null": 0,
-  "invite_hashes_source": "canonical edge/out (copied verbatim)",
+  "invite_hashes_source": "out_dir (as-is)",
   "invite_hashes_count": 10,
-  "revocation_hashes_source": "canonical edge/out (copied verbatim)",
+  "revocation_hashes_source": "out_dir (as-is)",
   "revocation_hashes_count": 4
  },
  "summary_sources_full_articles": {
