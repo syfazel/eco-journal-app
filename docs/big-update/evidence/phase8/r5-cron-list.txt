@@ -1,0 +1,79 @@
+Phase 8 rehearsal — fresh read-only cron.list, 2026-10-26 ~00:10 Asia/Tehran.
+Source: cron.list (include_disabled=true), filtered to goal:goal-2 (ECO JOURNAL).
+Corroboration: docs/cron-reconciliation.md (59 definition files) + freeze log
+2026-10-24. Per the AGENTS.md stale-snapshot lesson, this live listing is
+corroborated, not trusted alone — and it agrees with the reconciliation:
+every goal-2 schedule below reads enabled=false.
+
+Goal-2 ECO JOURNAL schedules (51 live entries, ALL enabled=false):
+eco-1000-visitors-plan (runonce 2026-10-20, enabled=false)
+eco-article-daily (daily 07:30, enabled=false)
+eco-assemble-editorial (interval 12h, enabled=false)
+eco-catalyst-teacher (interval 6h, enabled=false)
+eco-channel-daily-report (daily 23:00, enabled=false)
+eco-channel-ml-impact-weekly (weekly Sat 09:00, enabled=false)
+eco-channel-watch (interval 1h, enabled=false)
+eco-daily-letter (daily 08:30, enabled=false)
+eco-dawn-review (daily 04:00, enabled=false)
+eco-editorial-pass (interval 2h, enabled=false)
+eco-editorial-supervision (daily 09:50, enabled=false)
+eco-forecast-signals (daily 06:50, enabled=false)
+eco-freewire-01 (daily 08:30, enabled=false)
+eco-freewire-02 (daily 10:00, enabled=false)
+eco-freewire-03 (daily 11:30, enabled=false)
+eco-freewire-04 (daily 13:30, enabled=false)
+eco-freewire-05 (daily 15:00, enabled=false)
+eco-freewire-06 (daily 16:30, enabled=false)
+eco-freewire-07 (daily 18:30, enabled=false)
+eco-freewire-08 (daily 20:00, enabled=false)
+eco-freewire-09 (daily 21:30, enabled=false)
+eco-freewire-10 (daily 22:30, enabled=false)
+eco-journal-daily-refresh (interval 6h, enabled=false)
+eco-lowburn-restore (runonce 2026-10-26 04:10, enabled=false)
+eco-marginalia-daily (daily 06:50, enabled=false)
+eco-market-pulse (interval 2h, enabled=false)
+eco-ml-5day-review (runonce 2026-10-21, enabled=false)
+eco-ml-evening-brief (daily 17:30, enabled=false)
+eco-ml-morning-brief (daily 09:30, enabled=false)
+eco-ml-nightly-quality (daily 23:45, enabled=false)
+eco-ml-snapshot-hourly (interval 1h, enabled=false)
+eco-ml-training-v0 (runonce 2026-10-28 03:21, enabled=false)
+eco-newsdesk-evening (daily 18:00, enabled=false)
+eco-newsdesk-midday (daily 13:00, enabled=false)
+eco-newsdesk-morning (daily 08:00, enabled=false)
+eco-newsdesk-night (daily 21:00, enabled=false)
+eco-nightdesk (daily 00:05, enabled=false)
+eco-pipeline-health (interval 6h, enabled=false)
+eco-publish-after-pilot (runonce 2026-10-18, enabled=false)
+eco-redalert-catchup (interval 1h, enabled=false)
+eco-redalert-sitrep (interval 2h, enabled=false)
+eco-redalert-watch (interval 30m, enabled=false)
+eco-site-watchdog (interval 6h, enabled=false)
+eco-special-issues-evening (daily 20:50, enabled=false)
+eco-special-issues-morning (daily 12:50, enabled=false)
+eco-urgent-watch (interval 5m, enabled=false)
+eco-war-forecast-daily (daily 22:30, enabled=false)
+eco-weekly-poll (weekly Fri 18:00, enabled=false)
+eco-wire-fast-poll (interval 10m, enabled=false)
+ml-daily-pipeline (daily 23:30, enabled=false)
+yasineco-bot-watchdog (interval 30m, enabled=false)
+
+Count check: 51 live goal-2 entries. Reconciliation doc counts 59
+definition files; the difference (8) is the past runonce definition
+files whose frontmatter still says enabled:true but which the live
+scheduler no longer lists (fired, purged — historical copies, not live
+schedules; see cron-reconciliation.md §8). 51 + 8 = 59. No orphan, no
+duplicate, no unknown in the live listing.
+
+Enabled=true entries in the same listing are SYSTEM schedules only
+(deterministic-doctor, feed-pulse-00..23, heartbeat, profile-image) —
+not ECO JOURNAL, not goal-2, out of scope for this rehearsal.
+
+R5 verdict: PASS as a zero-re-enable rehearsal — the lift-order draft
+re-enables NO cron (cron section: "No crons re-enabled by this draft"),
+and the line "eco-lowburn-restore (Mon 2026-10-26 04:10) stays DISABLED"
+is present in the draft. Note: eco-lowburn-restore's runonce time
+(2026-10-26 04:10) falls later today, but it is enabled=false, so it
+will not fire. When a real scope is named, the per-cron re-enable list
+must name each cron by id — a group name ("the frozen crons") would
+FAIL R5 at that point.

@@ -1,0 +1,22 @@
+Phase 8 rehearsal — POST-rehearsal read-only cron.list, 2026-10-26 ~00:30 Asia/Tehran.
+Second listing of the same rehearsal (the first is r5-cron-list.txt).
+Method: cron.list (include_disabled=true), filtered to goal:goal-2.
+
+Result: IDENTICAL to the pre-rehearsal listing. All 51 goal:goal-2
+ECO JOURNAL schedules still read enabled=false, including:
+- eco-lowburn-restore (runonce 2026-10-26 04:10, enabled=false)
+- eco-ml-training-v0 (runonce 2026-10-28 03:21, enabled=false)
+- eco-special-issues-morning (daily 12:50, enabled=false)
+- eco-special-issues-evening (daily 20:50, enabled=false)
+- eco-ml-snapshot-hourly (interval 1h, enabled=false)
+- yasineco-bot-watchdog (interval 30m, enabled=false)
+- eco-channel-daily-report (daily 23:00, enabled=false)
+- eco-daily-letter (daily 08:30, enabled=false)
+(Full 51-id list: see r5-cron-list.txt — same ids, same flags.)
+
+Enabled=true entries in this listing are SYSTEM schedules only
+(deterministic-doctor, feed-pulse-00..23, heartbeat, profile-image) —
+not ECO JOURNAL, not goal-2.
+
+Conclusion (spec §5.6 step 9): this rehearsal enabled, started,
+posted, and unfroze NOTHING. Confirmed by: the agent who ran it.
