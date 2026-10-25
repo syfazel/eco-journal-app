@@ -403,4 +403,22 @@
     <string name="story_arc_desc">نسخه‌های این داستان به ترتیب زمان: %1$s</string>
     <string name="story_arc_open">باز کردن نسخه: %1$s</string>
     <string name="reader_helpers_title">ابزارهای مطالعه</string>
+    <!-- v4-I: remote app update (binary only; content needs no APK) -->
+    <string name="app_update_title">به‌روزرسانی برنامه</string>
+    <string name="app_update_current">نسخهٔ نصب‌شده: %1$s</string>
+    <string name="app_update_auto_check">بررسی خودکار نسخهٔ تازه</string>
+    <string name="app_update_idle">نسخهٔ تازه‌ای پیدا نشد.</string>
+    <string name="app_update_check">بررسی نسخهٔ تازه</string>
+    <string name="app_update_checking">در حال بررسی نسخهٔ تازه…</string>
+    <string name="app_update_available">نسخهٔ تازه آماده است: %1$s</string>
+    <string name="app_update_mandatory">این به‌روزرسانی ضروری است و نمی‌توان آن را رد کرد.</string>
+    <string name="app_update_download">دانلود</string>
+    <string name="app_update_downloading">در حال دانلود نسخهٔ %1$s…</string>
+    <string name="app_update_ready">نسخهٔ %1$s دانلود و راستی‌آزمایی شد؛ با یک ضربه نصب می‌شود.</string>
+    <string name="app_update_install">نصب با نصب‌کنندهٔ سیستم</string>
+    <string name="app_update_dismiss">بعداً</string>
+    <string name="app_update_retry">تلاش دوباره</string>
+    <string name="app_update_failed">به‌روزرسانی ناموفق بود (کد: %1$s)</string>
+    <string name="app_update_need_permission">برای نصب، باید «نصب برنامه‌های ناشناس» برای ECO JOURNAL در تنظیمات سیستم روشن شود.</string>
+    <string name="app_update_open_settings">باز کردن تنظیمات نصب</string>
 </resources>

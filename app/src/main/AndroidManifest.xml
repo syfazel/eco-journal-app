@@ -5,6 +5,12 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- v4-I: installing an APK downloaded by the app itself
+         (system installer, one tap). The permission alone does
+         not install anything: on Android 8+ the user must also
+         allow "install unknown apps" for ECO JOURNAL in system
+         settings, which the app opens only for its own package. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <!-- M5 (P2-16): RECEIVE_BOOT_COMPLETED removed — no boot
          receiver exists and WorkManager reschedules itself, so
          the permission was dead weight. -->
@@ -27,6 +33,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- v4-I: FileProvider for handing a hash-verified APK
+             to the system installer. Only cache/updates/ is
+             shared, never the whole cache and never anything
+             else on the device. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <!-- FCM scaffolding, DORMANT BY DECISION (M5,
              docs/vnext-decisions.md §3): no Firebase project, no

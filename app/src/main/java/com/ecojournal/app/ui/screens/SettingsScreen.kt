@@ -9,6 +9,7 @@ import android.provider.Settings as SystemSettings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -22,11 +23,13 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -37,8 +40,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.ecojournal.app.R
+import com.ecojournal.app.data.AppUpdateRepository
+import com.ecojournal.app.data.AppUpdateSession
 import com.ecojournal.app.data.Settings
 import com.ecojournal.app.data.SettingsStore
+import com.ecojournal.app.data.UpdateUiState
+import com.ecojournal.app.data.installedVersion
+import com.ecojournal.app.ui.components.AppUpdateCard
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.util.toPersianDigits
 import kotlinx.coroutines.launch
@@ -535,5 +543,66 @@ fun SettingsScreen(
                 fontFamily = EcoFontFamily,
             )
         }
+        // v4-I: remote app update. Content updates need NO APK
+        // (manifest-v3 delta sync); this section is ONLY about
+        // updating the app binary itself. The check runs on
+        // launch and every 24h (AppUpdateWorker); this button
+        // is the manual re-check. A sideloaded app cannot
+        // install itself silently — install always opens the
+        // system installer with one tap (see AppUpdate.kt).
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.app_update_title),
+            fontFamily = EcoFontFamily,
+            fontSize = 16.sp * fontScale,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(
+                R.string.app_update_current,
+                installedVersion(context).versionName.ifBlank { "—" },
+            ),
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = stringResource(R.string.app_update_auto_check),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+                modifier = Modifier.weight(1f),
+            )
+            Switch(
+                checked = settings.updateCheckEnabled,
+                onCheckedChange = { v ->
+                    scope.launch { store.setUpdateCheckEnabled(v) }
+                },
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        val updateRepo = remember(context) { AppUpdateRepository(context) }
+        val updateState by AppUpdateSession.state.collectAsState()
+        AppUpdateCard(
+            state = updateState,
+            fontScale = fontScale,
+            onCheck = { scope.launch { updateRepo.check() } },
+            onDownload = { pending ->
+                scope.launch { updateRepo.download(pending) }
+            },
+            onInstall = {
+                val s = AppUpdateSession.state.value
+                if (s is UpdateUiState.ReadyToInstall) {
+                    updateRepo.install(context, s.file)
+                } else {
+                    val f = updateRepo.downloadFile()
+                    if (f.exists()) {
+                        updateRepo.install(context, f)
+                    }
+                }
+            },
+            onDismiss = { pending ->
+                scope.launch { updateRepo.dismiss(pending) }
+            },
+        )
     }
 }

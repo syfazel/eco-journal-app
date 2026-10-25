@@ -387,6 +387,57 @@ object Notifications {
         manager.notify(id, notification)
     }
 
+    /**
+     * v4-I: one local notification when the periodic check finds
+     * a newer app binary. It opens the app (the Settings update
+     * section is where download/install happens); it never
+     * downloads anything itself. New channel id (Phase 4 rule:
+     * new channels get new ids) at IMPORTANCE_DEFAULT, so an
+     * app update never outranks urgent news.
+     */
+    private const val APP_UPDATE_CHANNEL_ID = "eco_app_updates"
+
+    fun showAppUpdate(context: Context, versionName: String, mandatory: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val manager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            if (manager.getNotificationChannel(APP_UPDATE_CHANNEL_ID) == null) {
+                manager.createNotificationChannel(
+                    NotificationChannel(
+                        APP_UPDATE_CHANNEL_ID,
+                        "به‌روزرسانی برنامه",
+                        NotificationManager.IMPORTANCE_DEFAULT,
+                    ).apply { description = "اعلان نسخهٔ تازهٔ برنامهٔ ECO JOURNAL" },
+                )
+            }
+        }
+        val id = "eco_app_update".hashCode()
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pending = PendingIntent.getActivity(
+            context,
+            id,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        val title = if (mandatory) {
+            "نسخهٔ تازهٔ برنامه — به‌روزرسانی ضروری"
+        } else {
+            "نسخهٔ تازهٔ برنامه"
+        }
+        val notification = NotificationCompat.Builder(context, APP_UPDATE_CHANNEL_ID)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(title)
+            .setContentText("نسخهٔ $versionName آماده است؛ برای دانلود و نصب به تنظیمات بروید.")
+            .setContentIntent(pending)
+            .setAutoCancel(true)
+            .build()
+        val manager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.notify(id, notification)
+    }
+
     fun openArticleId(intent: Intent?): String? =
         intent?.getStringExtra(EXTRA_ARTICLE_ID)
 

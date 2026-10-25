@@ -60,11 +60,14 @@ import com.ecojournal.app.data.ChannelItemEntity
 import com.ecojournal.app.data.ChannelLists
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.Formats
+import com.ecojournal.app.data.PendingUpdate
+import com.ecojournal.app.data.UpdateUiState
 import com.ecojournal.app.data.Jalali
 import com.ecojournal.app.data.NightLaw
 import com.ecojournal.app.data.Slots
 import com.ecojournal.app.data.SyncResult
 import com.ecojournal.app.data.TickerTopics
+import com.ecojournal.app.ui.components.AppUpdateCompactRow
 import com.ecojournal.app.ui.components.ArticleCard
 import com.ecojournal.app.ui.components.CompactSyncRow
 import com.ecojournal.app.ui.components.Masthead
@@ -140,6 +143,13 @@ fun FeedScreen(
     // page). Both default to the pre-H behaviour when unwired.
     tickerEnabled: Boolean = true,
     onOpenDiagnostics: (() -> Unit)? = null,
+    // v4-I: remote app-update banner state, shared with the
+    // Settings card through the session flow. All default to
+    // "no banner" so unwired callers (previews) stay unchanged.
+    updateState: UpdateUiState = UpdateUiState.Idle,
+    onUpdateDownload: (PendingUpdate) -> Unit = {},
+    onUpdateInstall: () -> Unit = {},
+    onUpdateDismiss: (PendingUpdate) -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -261,6 +271,18 @@ fun FeedScreen(
             fontScale = fontScale,
         )
         Spacer(modifier = Modifier.height(12.dp))
+        // v4-I: compact update banner, directly under the
+        // masthead. Only Available/Downloading/Ready/Failed
+        // render anything; Idle/Checking stay invisible so the
+        // feed is never pushed down by a non-state.
+        AppUpdateCompactRow(
+            state = updateState,
+            fontScale = fontScale,
+            onDownload = onUpdateDownload,
+            onInstall = onUpdateInstall,
+            onDismiss = onUpdateDismiss,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
         // Urgent rail (spec 5.3): pinned at the top of the feed,
         // visible regardless of the format filter selection.
         val railNow = System.currentTimeMillis()

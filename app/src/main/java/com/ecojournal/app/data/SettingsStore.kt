@@ -54,6 +54,18 @@ private object Keys {
     val READING_RULER = booleanPreferencesKey("reading_ruler")
     val CALM_MODE = booleanPreferencesKey("calm_mode")
     val TICKER_ENABLED = booleanPreferencesKey("ticker_enabled")
+    // v4-I remote app update. The pending record is the offered
+    // binary only (version + URL + hash + changelog + flag) —
+    // never an APK, never a token, never device data. A missing
+    // pending record means "no update offered", never an error.
+    val UPDATE_CHECK_ENABLED = booleanPreferencesKey("update_check_enabled")
+    val DISMISSED_UPDATE_CODE = longPreferencesKey("dismissed_update_code")
+    val PENDING_UPDATE_NAME = stringPreferencesKey("pending_update_name")
+    val PENDING_UPDATE_CODE = longPreferencesKey("pending_update_code")
+    val PENDING_UPDATE_URL = stringPreferencesKey("pending_update_url")
+    val PENDING_UPDATE_SHA = stringPreferencesKey("pending_update_sha")
+    val PENDING_UPDATE_CHANGELOG = stringPreferencesKey("pending_update_changelog")
+    val PENDING_UPDATE_MANDATORY = booleanPreferencesKey("pending_update_mandatory")
     // Phase 4 market-alert cooldown state (spec §4.6, app-local).
     // Written ONLY after a notification was actually posted.
     val MARKET_ALERT_LAST_BUBBLE = longPreferencesKey("market_alert_last_notified_bubble")
@@ -83,6 +95,9 @@ data class Settings(
     val readingRuler: Boolean = false,
     val calmMode: Boolean = false,
     val tickerEnabled: Boolean = true,
+    val updateCheckEnabled: Boolean = true,
+    val dismissedUpdateCode: Long = 0L,
+    val pendingUpdate: PendingUpdate? = null,
 ) {
     /** Phase 4 NotificationPolicy view of these settings. */
     fun toNotificationPrefs(): NotificationPrefs = NotificationPrefs(
@@ -144,6 +159,31 @@ class SettingsStore(private val context: Context) {
                 readingRuler = p[Keys.READING_RULER] ?: false,
                 calmMode = p[Keys.CALM_MODE] ?: false,
                 tickerEnabled = p[Keys.TICKER_ENABLED] ?: true,
+                updateCheckEnabled = p[Keys.UPDATE_CHECK_ENABLED] ?: true,
+                dismissedUpdateCode = p[Keys.DISMISSED_UPDATE_CODE] ?: 0L,
+                pendingUpdate = run {
+                    val code = p[Keys.PENDING_UPDATE_CODE]
+                    val name = p[Keys.PENDING_UPDATE_NAME]
+                    val url = p[Keys.PENDING_UPDATE_URL]
+                    val sha = p[Keys.PENDING_UPDATE_SHA]
+                    // All four identity fields must be present;
+                    // a partial record is treated as no record,
+                    // never as an offer to install something.
+                    if (code == null || name.isNullOrBlank() ||
+                        url.isNullOrBlank() || sha.isNullOrBlank()
+                    ) {
+                        null
+                    } else {
+                        PendingUpdate(
+                            versionName = name,
+                            versionCode = code,
+                            apkUrl = url,
+                            apkSha256 = sha,
+                            changelogFa = p[Keys.PENDING_UPDATE_CHANGELOG] ?: "",
+                            mandatory = p[Keys.PENDING_UPDATE_MANDATORY] ?: false,
+                        )
+                    }
+                },
             )
         }
 
@@ -224,4 +264,32 @@ class SettingsStore(private val context: Context) {
 
     suspend fun setFcmToken(v: String) =
         context.settingsStore.edit { it[Keys.FCM_TOKEN] = v }
+
+    // v4-I setters (one key group each; a failed write never
+    // touches the other toggles).
+    suspend fun setUpdateCheckEnabled(v: Boolean) =
+        context.settingsStore.edit { it[Keys.UPDATE_CHECK_ENABLED] = v }
+
+    suspend fun setDismissedUpdateCode(code: Long) =
+        context.settingsStore.edit { it[Keys.DISMISSED_UPDATE_CODE] = code }
+
+    suspend fun setPendingUpdate(pending: PendingUpdate) =
+        context.settingsStore.edit {
+            it[Keys.PENDING_UPDATE_NAME] = pending.versionName
+            it[Keys.PENDING_UPDATE_CODE] = pending.versionCode
+            it[Keys.PENDING_UPDATE_URL] = pending.apkUrl
+            it[Keys.PENDING_UPDATE_SHA] = pending.apkSha256
+            it[Keys.PENDING_UPDATE_CHANGELOG] = pending.changelogFa
+            it[Keys.PENDING_UPDATE_MANDATORY] = pending.mandatory
+        }
+
+    suspend fun clearPendingUpdate() =
+        context.settingsStore.edit {
+            it.remove(Keys.PENDING_UPDATE_NAME)
+            it.remove(Keys.PENDING_UPDATE_CODE)
+            it.remove(Keys.PENDING_UPDATE_URL)
+            it.remove(Keys.PENDING_UPDATE_SHA)
+            it.remove(Keys.PENDING_UPDATE_CHANGELOG)
+            it.remove(Keys.PENDING_UPDATE_MANDATORY)
+        }
 }

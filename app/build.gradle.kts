@@ -13,8 +13,11 @@ android {
         applicationId = "com.ecojournal.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0-phase2"
+        // v4: unified program identity (v4 plan §3). Never
+        // reused, never reversed; the version manifest (v4-I)
+        // must name exactly this name/code at publish time.
+        versionCode = 4
+        versionName = "4.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

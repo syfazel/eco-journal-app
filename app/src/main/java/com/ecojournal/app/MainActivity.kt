@@ -49,8 +49,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ecojournal.app.R
+import com.ecojournal.app.data.AppUpdateRepository
+import com.ecojournal.app.data.AppUpdateSession
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.MarketSnapshot
+import com.ecojournal.app.data.UpdateUiState
 import com.ecojournal.app.data.SettingsStore
 import com.ecojournal.app.ui.screens.AnalysisScreen
 import com.ecojournal.app.ui.screens.ArticleScreen
@@ -109,6 +112,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val repo = EdgeRepository(this)
         val store = SettingsStore(this)
+        val updateRepo = AppUpdateRepository(this)
         setContent {
             // M8 gate loading fix: initial = null, so "no value
             // yet" is distinct from "stored inviteOk=false". The
@@ -149,6 +153,21 @@ class MainActivity : ComponentActivity() {
                             fontScale = settings.fontScale,
                         )
                         return@EcoTheme
+                    }
+                    // v4-I: one update check per launch (only
+                    // when the toggle is on) + restore of the
+                    // stored pending record, so the feed banner
+                    // and the Settings card can never disagree.
+                    // The periodic 24h check lives in
+                    // AppUpdateWorker (scheduled in EcoJournalApp).
+                    val updateState by AppUpdateSession.state.collectAsState()
+                    val updateScope = rememberCoroutineScope()
+                    val updateContext = LocalContext.current
+                    LaunchedEffect(settings.updateCheckEnabled) {
+                        updateRepo.restorePending()
+                        if (settings.updateCheckEnabled) {
+                            updateRepo.check()
+                        }
                     }
                     val nav = rememberNavController()
                     // M5 (P2-16): notification permission is NOT
@@ -311,6 +330,31 @@ class MainActivity : ComponentActivity() {
                                     // entry for the compact sync row.
                                     tickerEnabled = settings.tickerEnabled,
                                     onOpenDiagnostics = { nav.navigate("diagnostics") },
+                                    // v4-I: update banner state, shared
+                                    // with the Settings card via the
+                                    // session flow (never two states).
+                                    updateState = updateState,
+                                    onUpdateDownload = { pending ->
+                                        updateScope.launch { updateRepo.download(pending) }
+                                    },
+                                    onUpdateInstall = {
+                                        val s = AppUpdateSession.state.value
+                                        if (s is UpdateUiState.ReadyToInstall) {
+                                            updateRepo.install(updateContext, s.file)
+                                        } else {
+                                            // Permission path: re-run
+                                            // install so the settings
+                                            // page opens for this
+                                            // package only.
+                                            val f = updateRepo.downloadFile()
+                                            if (f.exists()) {
+                                                updateRepo.install(updateContext, f)
+                                            }
+                                        }
+                                    },
+                                    onUpdateDismiss = { pending ->
+                                        updateScope.launch { updateRepo.dismiss(pending) }
+                                    },
                                 )
                             }
                             // Phase 2: War Room section (top-level,

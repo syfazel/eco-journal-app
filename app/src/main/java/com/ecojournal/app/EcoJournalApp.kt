@@ -1,6 +1,7 @@
 package com.ecojournal.app
 
 import android.app.Application
+import com.ecojournal.app.data.AppUpdateWorker
 import com.ecojournal.app.data.BundledSeed
 import com.ecojournal.app.data.SyncWorker
 import com.ecojournal.app.util.Notifications
@@ -14,6 +15,10 @@ class EcoJournalApp : Application() {
         Notifications.ensureChannel(this)
         // 15-minute periodic edge sync (WorkManager minimum).
         SyncWorker.schedule(this)
+        // v4-I: 24-hour periodic app-binary check (NOT content
+        // sync — a binary release is never on a 15-minute
+        // cadence). The worker never downloads anything itself.
+        AppUpdateWorker.schedule(this)
         // Offline-first seed (M2): resumable and verifiable. It
         // seeds only what is missing, writes its success hash only
         // on a complete transaction, and is serialised with the

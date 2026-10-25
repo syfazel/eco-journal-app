@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  v4-I: only the app-update download directory is ever shared,
+  and only with the system installer, for one install intent.
+  Nothing else in cache (or anywhere else) is exposed.
+-->
+<paths>
+    <cache-path name="updates" path="updates/" />
+</paths>
