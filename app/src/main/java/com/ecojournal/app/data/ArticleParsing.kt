@@ -195,11 +195,23 @@ object ArticleParsers {
         )
     }
 
+    // Phase 1: shorts carry an explicit "uncategorised" marker,
+    // never a silent "general". The category is read from the
+    // object when the edge ships one and defaults to the explicit
+    // marker otherwise; the content hash is computed over the same
+    // resolved category, so it stays byte-identical to the
+    // generator's recomputation (edge/generate_edge.py). Note: the
+    // first v3 sync refetches all 32 shorts because their hash
+    // changes with the category — that is correct, not a bug.
     fun entityFromShortJson(obj: JSONObject, now: Long = System.currentTimeMillis()): ArticleEntity {
         val id = obj.getString("id")
         val text = obj.optString("text", "")
         val publishedAt = obj.optStringOrNull("decided_at")
         val publishedEpoch = PublishedAtParser.epochMillis(publishedAt)
+        val category = obj.optString("category", "uncategorised")
+            .takeIf { it.isNotBlank() } ?: "uncategorised"
+        val categoryFa = obj.optString("category_fa", "دسته‌بندی‌نشده")
+            .takeIf { it.isNotBlank() } ?: "دسته‌بندی‌نشده"
         return ArticleEntity(
             id = id,
             appKey = obj.optStringOrNull("app_key")?.takeIf { it.isNotBlank() }
@@ -210,8 +222,8 @@ object ArticleParsers {
             bodyBlocks = listOf(text),
             pointsJson = "[]",
             whyMatters = null,
-            category = "general",
-            categoryFa = "عمومی",
+            category = category,
+            categoryFa = categoryFa,
             source = obj.optString("source", ""),
             originalUrl = obj.optStringOrNull("original_url"),
             publishedAt = publishedAt,
@@ -222,7 +234,7 @@ object ArticleParsers {
                 bodyBlocks = listOf(text),
                 pointsJson = "[]",
                 whyMatters = null,
-                category = "general",
+                category = category,
                 source = obj.optString("source", ""),
                 originalUrl = obj.optStringOrNull("original_url"),
                 publishedAt = publishedAt,
@@ -230,7 +242,8 @@ object ArticleParsers {
             updatedAtEpoch = updatedAtOf(obj, publishedEpoch, now),
             status = statusOf(obj),
             retractedAtEpoch = null,
-            channelMessageId = null,
+            channelMessageId = if (obj.isNull("channel_message_id")) null
+                else obj.optLong("channel_message_id"),
             cachedAt = now,
         )
     }

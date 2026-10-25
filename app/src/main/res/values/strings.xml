@@ -106,5 +106,26 @@
     <string name="diagnostics_copy">کپی گزارش تشخیص</string>
     <string name="diagnostics_copied">گزارش تشخیص کپی شد.</string>
     <string name="diagnostics_sync_result">نتیجهٔ همگام‌سازی: %1$s</string>
+    <string name="diagnostics_sections_title">وضعیت بخش‌ها</string>
+    <string name="diagnostics_section_line">%1$s: %2$s • تعداد: %3$s</string>
+    <string name="diagnostics_section_detail">آخرین موفق: %1$s • آخرین تلاش: %2$s • خطا: %3$s • ناقص: %4$s</string>
+    <string name="diagnostics_section_force">به‌روزرسانی اجباری %1$s</string>
+    <string name="diagnostics_section_name_articles">مقاله‌ها</string>
+    <string name="diagnostics_section_name_shorts">گزیده‌ها</string>
+    <string name="diagnostics_section_name_market">بازار</string>
+    <string name="diagnostics_section_name_channel_refs">ارجاع‌های کانال</string>
+    <string name="diagnostics_section_name_bundles">بسته‌ها</string>
+    <string name="diagnostics_section_name_radar">رادار</string>
+    <string name="diagnostics_section_name_nightly">نسخهٔ شبانه</string>
+    <string name="diagnostics_section_name_voices">صداها</string>
+    <string name="diagnostics_section_name_special_issues">ویژه‌نامه‌ها</string>
+    <string name="diagnostics_section_name_invites">دعوت‌ها</string>
+    <string name="diagnostics_section_name_revocations">ابطال‌ها</string>
+    <string name="diagnostics_state_up_to_date">به‌روز</string>
+    <string name="diagnostics_state_partial">ناقص</string>
+    <string name="diagnostics_state_failed">ناموفق</string>
+    <string name="diagnostics_state_not_yet_published">هنوز منتشر نشده</string>
+    <string name="diagnostics_state_gated_frozen">متوقف (گیت‌دار)</string>
+    <string name="diagnostics_state_unknown">نامشخص</string>
     <string name="gate_loading">در حال بررسی دسترسی…</string>
 </resources>

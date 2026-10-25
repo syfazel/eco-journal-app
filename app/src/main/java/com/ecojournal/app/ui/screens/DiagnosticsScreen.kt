@@ -15,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +32,9 @@ import androidx.core.content.pm.PackageInfoCompat
 import com.ecojournal.app.R
 import com.ecojournal.app.data.EdgeConfig
 import com.ecojournal.app.data.EdgeRepository
+import com.ecojournal.app.data.SectionSyncState
 import com.ecojournal.app.data.SyncResult
+import com.ecojournal.app.data.SyncSections
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.util.toPersianDigits
 import java.text.SimpleDateFormat
@@ -83,6 +86,56 @@ fun DiagnosticsScreen(
     var syncing by remember { mutableStateOf(false) }
     var syncResult by remember { mutableStateOf("") }
     var copied by remember { mutableStateOf(false) }
+
+    // Phase 1 per-section states. Loaded once on entry and reloaded
+    // after every sync action, so the screen never shows a stale
+    // section state next to a fresh global line.
+    var sectionStates by remember { mutableStateOf(emptyList<SectionSyncState>()) }
+    var busySection by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(Unit) {
+        sectionStates = repo.sectionStates()
+    }
+    val sectionNames = mapOf(
+        SyncSections.ARTICLES to stringResource(R.string.diagnostics_section_name_articles),
+        SyncSections.SHORTS to stringResource(R.string.diagnostics_section_name_shorts),
+        SyncSections.MARKET to stringResource(R.string.diagnostics_section_name_market),
+        SyncSections.CHANNEL_REFS to stringResource(R.string.diagnostics_section_name_channel_refs),
+        SyncSections.BUNDLES to stringResource(R.string.diagnostics_section_name_bundles),
+        SyncSections.RADAR to stringResource(R.string.diagnostics_section_name_radar),
+        SyncSections.NIGHTLY to stringResource(R.string.diagnostics_section_name_nightly),
+        SyncSections.VOICES to stringResource(R.string.diagnostics_section_name_voices),
+        SyncSections.SPECIAL_ISSUES to stringResource(R.string.diagnostics_section_name_special_issues),
+        SyncSections.INVITES to stringResource(R.string.diagnostics_section_name_invites),
+        SyncSections.REVOCATIONS to stringResource(R.string.diagnostics_section_name_revocations),
+    )
+    val stateNames = mapOf(
+        "up_to_date" to stringResource(R.string.diagnostics_state_up_to_date),
+        "partial" to stringResource(R.string.diagnostics_state_partial),
+        "failed" to stringResource(R.string.diagnostics_state_failed),
+        "not_yet_published" to stringResource(R.string.diagnostics_state_not_yet_published),
+        "gated_frozen" to stringResource(R.string.diagnostics_state_gated_frozen),
+        "unknown" to stringResource(R.string.diagnostics_state_unknown),
+    )
+    val noValueEarly = stringResource(R.string.diagnostics_no_value)
+    val sectionLines = sectionStates.flatMap { s ->
+        val name = sectionNames[s.section] ?: s.section
+        val stateLabel = stateNames[s.state] ?: s.state
+        listOf(
+            context.getString(
+                R.string.diagnostics_section_line,
+                name,
+                stateLabel,
+                s.itemCount.toString().toPersianDigits(),
+            ),
+            context.getString(
+                R.string.diagnostics_section_detail,
+                formatEpoch(s.lastSyncAt?.toString()) ?: noValueEarly,
+                formatEpoch(s.lastAttemptAt?.toString()) ?: noValueEarly,
+                s.lastErrorCode.takeIf { it.isNotBlank() } ?: noValueEarly,
+                s.missingCount.toString().toPersianDigits(),
+            ),
+        )
+    }
 
     val versionName = try {
         context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "?"
@@ -159,6 +212,65 @@ fun DiagnosticsScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+        // Phase 1 per-section transparency: every section shows
+        // its state, counts, last sync/attempt, error code and
+        // missing count, with its own force-refresh button. The
+        // button re-reads the manifest and re-checks only that
+        // section; it never bypasses the invite gate. Hash values
+        // are never shown, only the present/absent line above.
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.diagnostics_sections_title),
+            fontFamily = EcoFontFamily,
+            fontSize = 20.sp * fontScale,
+            fontWeight = FontWeight.Bold,
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        for (s in sectionStates) {
+            val name = sectionNames[s.section] ?: s.section
+            val stateLabel = stateNames[s.state] ?: s.state
+            Text(
+                text = context.getString(
+                    R.string.diagnostics_section_line,
+                    name,
+                    stateLabel,
+                    s.itemCount.toString().toPersianDigits(),
+                ),
+                fontFamily = EcoFontFamily,
+                fontSize = 16.sp * fontScale,
+            )
+            Text(
+                text = context.getString(
+                    R.string.diagnostics_section_detail,
+                    formatEpoch(s.lastSyncAt?.toString()) ?: noValueEarly,
+                    formatEpoch(s.lastAttemptAt?.toString()) ?: noValueEarly,
+                    s.lastErrorCode.takeIf { it.isNotBlank() } ?: noValueEarly,
+                    s.missingCount.toString().toPersianDigits(),
+                ),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Button(
+                enabled = busySection == null,
+                onClick = {
+                    scope.launch {
+                        busySection = s.section
+                        repo.syncOnly(s.section, forceRefresh = true)
+                        sectionStates = repo.sectionStates()
+                        busySection = null
+                    }
+                },
+                modifier = Modifier.heightIn(min = 48.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.diagnostics_section_force, name),
+                    fontFamily = EcoFontFamily,
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+        }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             enabled = !syncing,
@@ -180,6 +292,7 @@ fun DiagnosticsScreen(
                         )
                         is SyncResult.Failed -> context.getString(R.string.sync_failed)
                     }
+                    sectionStates = repo.sectionStates()
                     syncing = false
                 }
             },
@@ -196,7 +309,10 @@ fun DiagnosticsScreen(
                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE)
                     as? ClipboardManager
                 clipboard?.setPrimaryClip(
-                    ClipData.newPlainText("ECO JOURNAL diagnostics", lines.joinToString("\n"))
+                    ClipData.newPlainText(
+                        "ECO JOURNAL diagnostics",
+                        (lines + sectionLines).joinToString("\n"),
+                    )
                 )
                 copied = true
             },

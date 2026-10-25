@@ -30,7 +30,59 @@ Outputs (all under edge/out/):
   short_cards.json  — the 32 short cards
   market.json       — price snapshots + active formulas
   channel_refs.json — channel_posts references (no invented text)
+  manifest.json     — version 3, per-section hashes for delta sync
+                      (Phase 1, see MANIFEST V3 below)
+  join_keys.json    — version 1, guid <-> app_key <-> story_id <->
+                      channel_message_id mapping (Phase 1)
   GENERATION_REPORT.json — exact counts + exclusions for auditing
+
+MANIFEST V3 (Phase 1, LAB ONLY) — section-hash definitions:
+  Canonical JSON everywhere = json.dumps(obj, sort_keys=True,
+  separators=(",", ":"), ensure_ascii=False); a section hash is the
+  SHA-256 hex of the UTF-8 encoding of that canonical form.
+  * articles / shorts: canonical JSON of the list of
+    {"app_key", "content_hash", "updated_at_epoch", "status"} for
+    that section's items, sorted by app_key. (The manifest's own
+    items lists keep index order; only the hashed list is sorted.)
+  * market: canonical JSON of {"snapshots": [...],
+    "formulas_active": [...]} exactly as written to market.json.
+    (market.json's extra bookkeeping keys — snapshot_count,
+    first_ts, last_ts, lineage_note — are NOT part of the hash.)
+  * channel_refs: canonical JSON of the refs list as written to
+    channel_refs.json.
+  * invites / revocations: canonical JSON of the hashes list read
+    from invite_hashes.json / revocations.json. Those two files are
+    OWNED by bridge/control.py (hashes only, never codes); this
+    generator never rewrites them in place. When --out points at a
+    different directory than the canonical edge/out, a verbatim copy
+    of each file (if present) is placed in --out so the output is
+    self-contained; when --out IS the canonical dir, the files are
+    read as-is and left untouched.
+  Sections with no published content yet (bundles, radar, nightly,
+  voices) report {"status": "not_yet_published", "count": 0} and no
+  hash; special_issues reports {"status": "gated_frozen", "count": 0}
+  because that service stays separately frozen (2026-10-25 ~01:56).
+
+JOIN KEYS (Phase 1) — story_id design:
+  story_id = "story-" + first 20 hex of SHA-256(guid).
+  Articles: guid = item_guid from data_core; ONLY if item_guid is
+  empty does the generator fall back to extract_id, and every such
+  fallback is counted in GENERATION_REPORT.json (never invented).
+  Shorts: guid = the short id itself ("draft-N").
+  channel_message_id stays NULL for all 281 entries today — honest,
+  never fabricated; the bridge staging path (Phase 3) is what will
+  populate it later (see docs/phase1-edge-notes.md for the
+  story_key -> story_id migration design).
+
+SHORTS CATEGORY (Phase 1 fix):
+  Shorts are NO LONGER silently "general"/"عمومی". They carry the
+  explicit marker category "uncategorised" / "دسته‌بندی‌نشده" in
+  short_cards.json, in index entries, and in manifest shorts items,
+  and their content hash is recomputed with that category (same
+  9-field U+0001 join as Kotlin ContentHashes.forArticle). Consequence:
+  the first v3 sync refetches all 32 shorts because their hash
+  changed — that is correct, not a bug. Article categories are NOT
+  changed in this pass (45 unknown-topic articles keep "general").
 
 Usage:
   python3 edge/generate_edge.py [--out DIR]
@@ -65,6 +117,11 @@ TOPIC_FA = {
 }
 DEFAULT_CATEGORY = "general"
 DEFAULT_CATEGORY_FA = "عمومی"
+# Phase 1 shorts marker: explicit "uncategorised", never silent "general".
+SHORT_CATEGORY = "uncategorised"
+SHORT_CATEGORY_FA = "دسته‌بندی‌نشده"
+MANIFEST_VERSION = 3
+MANIFEST_GENERATOR = "edge/generate_edge.py (Phase 1, LAB ONLY)"
 
 
 def ro_connect(path):
@@ -152,6 +209,36 @@ def epoch_millis(raw):
         return None
 
 
+def canonical_json(obj):
+    """Canonical JSON for section hashes: sorted keys, compact
+    separators, non-ASCII preserved (see MANIFEST V3 in the docstring)."""
+    return json.dumps(obj, sort_keys=True, separators=(",", ":"),
+                      ensure_ascii=False)
+
+
+def section_hash(obj):
+    """SHA-256 hex of the canonical JSON encoding of obj."""
+    return hashlib.sha256(canonical_json(obj).encode("utf-8")).hexdigest()
+
+
+def story_id_for(guid):
+    """guid-derived story id: 'story-' + first 20 hex of SHA-256(guid).
+    This SUPERSEDES the production queue's headline-hash story_key on
+    the edge/app side (see docs/phase1-edge-notes.md)."""
+    return "story-" + hashlib.sha256(guid.encode("utf-8")).hexdigest()[:20]
+
+
+def load_hashes_list(path):
+    """Read a hashes-only file ({..., 'hashes': [hex, ...]}).
+    Raises on a malformed file rather than publishing a wrong hash."""
+    with open(path, encoding="utf-8") as f:
+        doc = json.load(f)
+    hashes = doc.get("hashes")
+    if not isinstance(hashes, list) or not all(isinstance(h, str) for h in hashes):
+        raise ValueError("malformed hashes file: %s" % path)
+    return hashes
+
+
 def file_name_for(article_id):
     """Deterministic, filesystem-safe file name for an article id.
 
@@ -182,6 +269,8 @@ def main():
     for stale in glob.glob(os.path.join(out_dir, "articles", "*.json")):
         os.remove(stale)
 
+    generated_at_utc = datetime.now(timezone.utc).isoformat()
+
     con = ro_connect(DATA_CORE_DB)
     con.row_factory = sqlite3.Row
     bot = ro_connect(BOT_DB)
@@ -204,6 +293,8 @@ def main():
     ).fetchall()
 
     entries = []
+    article_join = []  # parallel to the article entries, in index order
+    guid_fallbacks = 0  # articles whose item_guid was empty -> extract_id
     summary_from_items = 0
     summary_from_excerpt = 0
     summary_empty = 0
@@ -270,6 +361,16 @@ def main():
         with open(os.path.join(out_dir, "articles", file_name_for(r["extract_id"])),
                   "w", encoding="utf-8") as f:
             json.dump(doc, f, ensure_ascii=False, indent=1)
+        guid = (r["item_guid"] or "").strip()
+        if not guid:
+            guid = r["extract_id"]  # fallback ONLY when item_guid empty
+            guid_fallbacks += 1
+        article_join.append({
+            "guid": guid,
+            "app_key": doc["app_key"],
+            "story_id": story_id_for(guid),
+            "channel_message_id": r["channel_message_id"],
+        })
         entries.append({
             "id": r["extract_id"],
             "app_key": doc["app_key"],
@@ -299,15 +400,18 @@ def main():
         """
     ).fetchall()
     shorts = []
+    short_join = []  # parallel to the short entries, in index order
     for r in short_rows:
         sid = "draft-%s" % r["id"]
-        # Kotlin entityFromShortJson recomputes the hash from the
-        # short object itself (summary = full text, body = [text],
-        # points = "[]", category = general), so this value must
-        # equal that recomputation for sync skip-unchanged to work.
+        # Phase 1: Kotlin entityFromShortJson recomputes the hash from
+        # the short object itself (summary = full text, body = [text],
+        # points = "[]", category = "uncategorised"), so this value
+        # must equal that recomputation for sync skip-unchanged to
+        # work. The category change vs v2 intentionally changes all
+        # 32 short hashes (first v3 sync refetches the shorts).
         short_hash = kotlin_content_hash(
             r["title"], r["body_fa"], [r["body_fa"]], "[]", None,
-            DEFAULT_CATEGORY, r["source_name"], r["original_url"],
+            SHORT_CATEGORY, r["source_name"], r["original_url"],
             r["decided_at"])
         shorts.append({
             "id": sid,
@@ -316,6 +420,8 @@ def main():
             "label": "گزیده",
             "title": r["title"],
             "text": r["body_fa"],
+            "category": SHORT_CATEGORY,
+            "category_fa": SHORT_CATEGORY_FA,
             "source": r["source_name"],
             "original_url": r["original_url"],
             "decided_at": r["decided_at"],
@@ -323,6 +429,12 @@ def main():
             "content_hash": short_hash,
             "updated_at_epoch": epoch_millis(r["decided_at"]),
             "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)",
+        })
+        short_join.append({
+            "guid": sid,
+            "app_key": app_key_for(sid),
+            "story_id": story_id_for(sid),
+            "channel_message_id": None,
         })
     with open(os.path.join(out_dir, "short_cards.json"), "w", encoding="utf-8") as f:
         json.dump(shorts, f, ensure_ascii=False, indent=1)
@@ -333,8 +445,8 @@ def main():
             "kind": "short",
             "title": s["title"],
             "summary": s["text"][:280],
-            "category": DEFAULT_CATEGORY,
-            "category_fa": DEFAULT_CATEGORY_FA,
+            "category": SHORT_CATEGORY,
+            "category_fa": SHORT_CATEGORY_FA,
             "source": s["source"],
             "published_at": s["decided_at"],
             "file": None,
@@ -375,11 +487,14 @@ def main():
         json.dump(refs, f, ensure_ascii=False, indent=1)
 
     # ---- INDEX (hash-chained over the canonical entry list)
+    # v2 schema UNCHANGED for backward compatibility (Phase 1): the
+    # only entry-level change vs the previous export is the shorts
+    # category/hash fix above; the generator string stays "M3".
     canonical = json.dumps(entries, ensure_ascii=False, sort_keys=True)
     digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
     index = {
         "version": 2,
-        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "generated_at_utc": generated_at_utc,
         "generator": "edge/generate_edge.py (M3, LAB ONLY)",
         "hash_sha256": digest,
         "counts": {
@@ -395,13 +510,146 @@ def main():
     with open(os.path.join(out_dir, "index.json"), "w", encoding="utf-8") as f:
         json.dump(index, f, ensure_ascii=False, indent=1)
 
+    # ---- INVITES / REVOCATIONS (hashes only, owned by bridge/control.py)
+    # Read from --out if present there, else from the canonical
+    # edge/out next to this script. When --out differs from the
+    # canonical dir, copy each file verbatim into --out so the output
+    # is self-contained; never rewrite the canonical files from here.
+    import shutil
+    canonical_out = os.path.join(script_dir, "out")
+    invite_source = None
+    revocation_source = None
+    invite_hashes = []
+    revocation_hashes = []
+    for fname, attr in (("invite_hashes.json", "invite"),
+                        ("revocations.json", "revocation")):
+        dest = os.path.join(out_dir, fname)
+        src = os.path.join(canonical_out, fname)
+        if os.path.exists(dest):
+            hashes = load_hashes_list(dest)
+            if attr == "invite":
+                invite_hashes, invite_source = hashes, "out_dir (as-is)"
+            else:
+                revocation_hashes, revocation_source = hashes, "out_dir (as-is)"
+        elif os.path.exists(src):
+            hashes = load_hashes_list(src)
+            shutil.copyfile(src, dest)
+            if attr == "invite":
+                invite_hashes, invite_source = hashes, "canonical edge/out (copied verbatim)"
+            else:
+                revocation_hashes, revocation_source = hashes, "canonical edge/out (copied verbatim)"
+        else:
+            if attr == "invite":
+                invite_source = "absent (empty hashes list)"
+            else:
+                revocation_source = "absent (empty hashes list)"
+
+    # ---- JOIN KEYS (guid <-> app_key <-> story_id <-> channel_message_id)
+    join_entries = []
+    article_entries = [e for e in entries if e["kind"] == "article"]
+    for e, j in zip(article_entries, article_join):
+        join_entries.append({
+            "guid": j["guid"],
+            "app_key": j["app_key"],
+            "story_id": j["story_id"],
+            "channel_message_id": j["channel_message_id"],
+        })
+    for e, j in zip([e for e in entries if e["kind"] == "short"], short_join):
+        join_entries.append({
+            "guid": j["guid"],
+            "app_key": j["app_key"],
+            "story_id": j["story_id"],
+            "channel_message_id": j["channel_message_id"],
+        })
+    with open(os.path.join(out_dir, "join_keys.json"), "w", encoding="utf-8") as f:
+        json.dump({"version": 1, "entries": join_entries},
+                  f, ensure_ascii=False, indent=1)
+
+    # ---- MANIFEST v3 (see MANIFEST V3 in the docstring)
+    def section_items_4(entry_list):
+        """The 4-field hashed view, sorted by app_key."""
+        return sorted(
+            ({"app_key": e["app_key"], "content_hash": e["content_hash"],
+              "updated_at_epoch": e["updated_at_epoch"],
+              "status": e["status"]} for e in entry_list),
+            key=lambda d: d["app_key"])
+
+    manifest_articles = []
+    for e, j in zip(article_entries, article_join):
+        manifest_articles.append({
+            "id": e["id"],
+            "app_key": e["app_key"],
+            "content_hash": e["content_hash"],
+            "updated_at_epoch": e["updated_at_epoch"],
+            "status": e["status"],
+            "file": e["file"],
+            "channel_message_id": e["channel_message_id"],
+            "story_id": j["story_id"],
+        })
+    short_entries = [e for e in entries if e["kind"] == "short"]
+    manifest_shorts = [{
+        "id": e["id"],
+        "app_key": e["app_key"],
+        "content_hash": e["content_hash"],
+        "updated_at_epoch": e["updated_at_epoch"],
+        "status": e["status"],
+        "category": e["category"],
+        "category_fa": e["category_fa"],
+        "channel_message_id": e["channel_message_id"],
+        "story_id": j["story_id"],
+    } for e, j in zip(short_entries, short_join)]
+    manifest = {
+        "version": MANIFEST_VERSION,
+        "generated_at_utc": generated_at_utc,
+        "generator": MANIFEST_GENERATOR,
+        "sections": {
+            "articles": {
+                "hash": section_hash(section_items_4(article_entries)),
+                "count": len(article_entries),
+                "items": manifest_articles,
+            },
+            "shorts": {
+                "hash": section_hash(section_items_4(short_entries)),
+                "count": len(short_entries),
+                "items": manifest_shorts,
+            },
+            "market": {
+                "hash": section_hash({"snapshots": snaps,
+                                      "formulas_active": formulas}),
+                "count": len(snaps),
+                "file": "market.json",
+            },
+            "channel_refs": {
+                "hash": section_hash(refs),
+                "count": len(refs),
+                "file": "channel_refs.json",
+            },
+            "invites": {
+                "hash": section_hash(invite_hashes),
+                "file": "invite_hashes.json",
+            },
+            "revocations": {
+                "hash": section_hash(revocation_hashes),
+                "file": "revocations.json",
+            },
+            "bundles": {"status": "not_yet_published", "count": 0},
+            "radar": {"status": "not_yet_published", "count": 0},
+            "nightly": {"status": "not_yet_published", "count": 0},
+            "voices": {"status": "not_yet_published", "count": 0},
+            "special_issues": {"status": "gated_frozen", "count": 0},
+        },
+        "join_keys_file": "join_keys.json",
+    }
+    with open(os.path.join(out_dir, "manifest.json"), "w", encoding="utf-8") as f:
+        json.dump(manifest, f, ensure_ascii=False, indent=1)
+
     # ---- AUDIT report (exact counts + exclusions)
     def count(sql, db="core"):
         c = con if db == "core" else bot
         return c.execute(sql).fetchone()[0]
 
     report = {
-        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "generated_at_utc": generated_at_utc,
         "sources_read_only": [DATA_CORE_DB, BOT_DB],
         "exported": {
             "full_articles": len(full_rows),
@@ -410,6 +658,19 @@ def main():
             "market_snapshots": len(snaps),
             "market_formulas_active": len(formulas),
             "channel_refs": len(refs),
+            "join_keys_entries": len(join_entries),
+            "manifest_version": MANIFEST_VERSION,
+        },
+        "phase1": {
+            "guid_fallbacks_to_extract_id": guid_fallbacks,
+            "shorts_category": SHORT_CATEGORY,
+            "shorts_category_fa": SHORT_CATEGORY_FA,
+            "channel_message_id_non_null": sum(
+                1 for j in join_entries if j["channel_message_id"] is not None),
+            "invite_hashes_source": invite_source,
+            "invite_hashes_count": len(invite_hashes),
+            "revocation_hashes_source": revocation_source,
+            "revocation_hashes_count": len(revocation_hashes),
         },
         "summary_sources_full_articles": {
             "from_items_summary": summary_from_items,
@@ -427,7 +688,9 @@ def main():
         "rules": [
             "No invented article text. Bodies and body_fa copied verbatim.",
             "No .env file opened. No token printed or embedded.",
-            "Nothing written outside app/edge/out/.",
+            "Nothing written outside app/edge/out/ (or the --out dir inside the app root).",
+            "Shorts carry explicit category 'uncategorised'; channel_message_id is never fabricated (null until the bridge staging path populates it).",
+            "Invite/revocation files carry hashes only and are owned by bridge/control.py; this generator never rewrites the canonical copies.",
         ],
     }
     with open(os.path.join(out_dir, "GENERATION_REPORT.json"), "w", encoding="utf-8") as f:

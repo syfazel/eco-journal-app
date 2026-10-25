@@ -75,6 +75,22 @@ data class MetaEntity(
     val value: String,
 )
 
+// Phase 1 join-key mapping (guid <-> appKey <-> story_id), carried
+// from the edge join_keys.json through sync. The guid is the source
+// guid (data_core item_guid for articles, the draft id for shorts);
+// story_id is "story-" + first 20 hex of SHA-256(guid), derived on
+// the edge side and never from a headline. channelMessageId is null
+// for every entry today and becomes non-null only when the bridge
+// staging path (Phase 3) carries a real channel post through. A
+// missing guid is stored as null, never invented from the appKey.
+@Entity(tableName = "join_keys")
+data class JoinKeyEntity(
+    @PrimaryKey val appKey: String,
+    val guid: String?,
+    val storyId: String?,
+    val channelMessageId: Long?,
+)
+
 /**
  * Active market formulas as shipped by the edge/bundled market.json
  * (M4). The definition is the shipped S-expression string, stored
@@ -270,6 +286,34 @@ interface ArticleDao {
 
     @Query("SELECT * FROM market_formulas ORDER BY name")
     suspend fun formulas(): List<MarketFormulaEntity>
+
+    // Phase 1: join-key mapping and kind-specific counts for the
+    // per-section Diagnostics view. Counts exclude retracted rows,
+    // matching the feed's tombstone rule.
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertJoinKeys(rows: List<JoinKeyEntity>)
+
+    @Query("SELECT COUNT(*) FROM join_keys")
+    suspend fun joinKeyCount(): Int
+
+    @Query("SELECT * FROM join_keys WHERE appKey = :appKey LIMIT 1")
+    suspend fun joinKeyByAppKey(appKey: String): JoinKeyEntity?
+
+    @Query("SELECT COUNT(*) FROM articles WHERE kind = :kind AND status != 'retracted'")
+    suspend fun articleKindCount(kind: String): Int
+}
+
+// Version 3 -> 4 migration (Phase 1). Additive only: a new
+// join_keys table. No existing table is altered, so a v3 install
+// keeps its full cache; the mapping backfills on the next v3 sync.
+val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `join_keys` (" +
+                "`appKey` TEXT NOT NULL, `guid` TEXT, `storyId` TEXT, " +
+                "`channelMessageId` INTEGER, PRIMARY KEY(`appKey`))"
+        )
+    }
 }
 
 /**
@@ -422,8 +466,9 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
         MetaEntity::class,
         MarketSnapshotEntity::class,
         MarketFormulaEntity::class,
+        JoinKeyEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = false,
 )
 @TypeConverters(StringListConverter::class)
