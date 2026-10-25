@@ -129,8 +129,12 @@ object ChainRecord {
 
     /** Parse the edge-side chain object of one typed item. */
     fun parseEdgeChain(appKey: String, item: JSONObject): EdgeChain? {
-        val chain = if (item.isNull("chain")) null else item.optJSONObject("chain")
-            ?: return null
+        // optJSONObject returns null when "chain" is missing, null, or
+        // not an object, so this single line covers the isNull case
+        // too — and gives chain a non-null type, which the local
+        // optLong/optString helpers below need (smart cast does not
+        // survive into local fun declarations).
+        val chain = item.optJSONObject("chain") ?: return null
         fun optLong(key: String): Long? =
             if (chain.isNull(key)) null else chain.optLong(key)
         fun optString(key: String): String? =

@@ -232,7 +232,7 @@ fun ArticleScreen(
         val bodyLine = if (readerSettings.calmMode) {
             baseBody * 2.0f
         } else {
-            bodyLine
+            baseBody * 1.75f
         }
         // v4-H: Box so the draggable reading ruler can overlay
         // the scrolling column without reflowing any text.
