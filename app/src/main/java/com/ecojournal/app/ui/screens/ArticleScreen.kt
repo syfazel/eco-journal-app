@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,12 +44,18 @@ import androidx.compose.ui.unit.sp
 import com.ecojournal.app.R
 import com.ecojournal.app.data.ArticleEntity
 import com.ecojournal.app.data.BookmarkEntity
+import com.ecojournal.app.data.ChannelItemEntity
 import com.ecojournal.app.data.DomainBars
 import com.ecojournal.app.data.EdgeRepository
+import com.ecojournal.app.data.Settings
+import com.ecojournal.app.data.SettingsStore
+import com.ecojournal.app.data.StoryArc
 import com.ecojournal.app.ui.components.DomainBarStrip
 import com.ecojournal.app.ui.components.NewspaperByline
 import com.ecojournal.app.ui.components.NewspaperDoubleRule
 import com.ecojournal.app.ui.components.NewspaperKicker
+import com.ecojournal.app.ui.components.ReadingRuler
+import com.ecojournal.app.ui.components.StoryArcStrip
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import kotlinx.coroutines.launch
 
@@ -76,6 +84,8 @@ fun ArticleScreen(
     fontScale: Float,
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
+    // v4-H H2: typed arc nodes open their channel reader.
+    onOpenChannel: (String) -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -83,6 +93,11 @@ fun ArticleScreen(
     var bookmarked by remember { mutableStateOf(false) }
     var loadAttempted by remember { mutableStateOf(false) }
     var sourceError by remember { mutableStateOf(false) }
+    // v4-H reader settings (ruler / calm) + the story's typed
+    // items for the RED bar path and the arc strip.
+    val readerSettings by SettingsStore(context).settings
+        .collectAsState(initial = Settings())
+    var storyTyped by remember { mutableStateOf<List<ChannelItemEntity>>(emptyList()) }
 
     // articleId is an appKey (M1). The verbatim source id is
     // accepted as a fallback for older deep links only. If the
@@ -98,6 +113,11 @@ fun ArticleScreen(
         article = found
         val key = found?.appKey ?: articleId
         bookmarked = repo.dao.isBookmarked(key)
+        // v4-H: typed items sharing this article's story_id
+        // (join_keys). The query already excludes retracted rows.
+        val joinKey = found?.let { repo.dao.joinKeyByAppKey(it.appKey) }
+        storyTyped = joinKey?.storyId?.let { repo.channelDao.channelByStory(it) }
+            ?: emptyList()
         loadAttempted = true
     }
 
@@ -206,19 +226,40 @@ fun ArticleScreen(
         }
         val headlineSize = 28.sp * fontScale
         val baseBody = 18.sp * fontScale
-        Column(
+        // v4-H H1 calm mode: taller line height, no overlays, no
+        // arc navigation chrome during reading. Attribution is
+        // never removed: the byline (verbatim source) always stays.
+        val bodyLine = if (readerSettings.calmMode) {
+            baseBody * 2.0f
+        } else {
+            bodyLine
+        }
+        // v4-H: Box so the draggable reading ruler can overlay
+        // the scrolling column without reflowing any text.
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .padding(inner)
+                .padding(inner),
+        ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
         ) {
-            // Cross-phase category bar on the reader header:
-            // energy articles carry the YELLOW bar + «انرژی» label.
-            val readerBar = DomainBars.forArticle(a)
-            if (readerBar != com.ecojournal.app.data.DomainBar.NONE) {
-                DomainBarStrip(bar = readerBar, label = "انرژی")
+            // Cross-phase category bar on the reader header.
+            // v4-H RED path: an article whose story has a typed
+            // item carries RED with the format's own label; energy
+            // without a typed item carries YELLOW + «انرژی».
+            val readerTypedFormat = storyTyped
+                .maxByOrNull { it.publishedAtEpoch }?.formatType
+            val readerBar = DomainBars.forArticleWithTyped(a, readerTypedFormat)
+            val readerBarLabel = DomainBars.labelFor(readerBar, readerTypedFormat)
+            if (readerBar != com.ecojournal.app.data.DomainBar.NONE &&
+                readerBarLabel != null
+            ) {
+                DomainBarStrip(bar = readerBar, label = readerBarLabel)
                 Spacer(modifier = Modifier.height(6.dp))
             }
             NewspaperKicker(article = a)
@@ -259,6 +300,22 @@ fun ArticleScreen(
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
+            // v4-H H2 arc strip: versions of this story, oldest
+            // first. Hidden in calm mode; absent entirely for a
+            // single-version story (StoryArc returns empty).
+            if (!readerSettings.calmMode) {
+                val arcNodes = remember(a, storyTyped) {
+                    StoryArc.nodes(a, storyTyped)
+                }
+                if (arcNodes.size >= 2) {
+                    StoryArcStrip(
+                        nodes = arcNodes,
+                        onOpenChannel = onOpenChannel,
+                        fontScale = fontScale,
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
             // Short cards (P1-06): the stored summary is a
             // truncation of the same full text held in bodyBlocks,
             // so showing both repeats the first ~280 characters.
@@ -268,7 +325,7 @@ fun ArticleScreen(
                 Text(
                     text = a.summary,
                     fontSize = baseBody,
-                    lineHeight = baseBody * 1.75f,
+                    lineHeight = bodyLine,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -291,7 +348,7 @@ fun ArticleScreen(
                     Text(
                         text = "• $point",
                         fontSize = baseBody,
-                        lineHeight = baseBody * 1.75f,
+                        lineHeight = bodyLine,
                         fontFamily = EcoFontFamily,
                         color = MaterialTheme.colorScheme.onBackground,
                     )
@@ -303,7 +360,7 @@ fun ArticleScreen(
                 Text(
                     text = block,
                     fontSize = baseBody,
-                    lineHeight = baseBody * 1.75f,
+                    lineHeight = bodyLine,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
@@ -323,7 +380,7 @@ fun ArticleScreen(
                 Text(
                     text = a.whyMatters,
                     fontSize = baseBody,
-                    lineHeight = baseBody * 1.75f,
+                    lineHeight = bodyLine,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
@@ -373,6 +430,13 @@ fun ArticleScreen(
                         color = MaterialTheme.colorScheme.error,
                     )
                 }
+            }
+        }
+            // v4-H H1 ruler: a fixed guide band over the scrolling
+            // body, draggable vertically. Hidden in calm mode
+            // (calm = body only, no overlays).
+            if (readerSettings.readingRuler && !readerSettings.calmMode) {
+                ReadingRuler(fontScale = fontScale)
             }
         }
     }

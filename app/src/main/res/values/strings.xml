@@ -384,4 +384,23 @@
     <string name="expired_pin_label">پین منقضی (بیش از ۶ ساعت)</string>
     <string name="radar_layer_expand">باز کردن لایهٔ رادار %1$s</string>
     <string name="radar_layer_collapse">بستن لایهٔ رادار %1$s</string>
+    <!-- v4-H: masthead wordmark + ticker, compact sync, reader helpers -->
+    <string name="ticker_empty">در حال حاضر موضوع زنده‌ای در اتاق جنگ نیست</string>
+    <string name="ticker_desc">نوار اخبار زندهٔ اتاق جنگ: %1$s</string>
+    <string name="ticker_toggle">نوار اخبار زنده زیر نام اپ</string>
+    <string name="sync_compact_up_to_date">به‌روز است</string>
+    <string name="sync_compact_new">%1$s خبر تازه</string>
+    <string name="sync_compact_partial">همگام‌سازی ناقص ماند</string>
+    <string name="sync_compact_failed">همگام‌سازی ناموفق بود</string>
+    <string name="sync_compact_syncing">در حال همگام‌سازی…</string>
+    <string name="sync_details">جزئیات همگام‌سازی</string>
+    <string name="sync_last_compact">آخرین همگام‌سازی: %1$s</string>
+    <string name="reading_ruler_toggle">خط‌کش مطالعه</string>
+    <string name="reading_ruler_desc">یک نوار راهنما روی متن مقاله که با کشیدن عمودی جابه‌جا می‌شود</string>
+    <string name="calm_mode_toggle">حالت آرام مطالعه</string>
+    <string name="calm_mode_desc">فقط تیتر و متن؛ حاشیه‌ها و جزئیات اضافه پنهان می‌شوند</string>
+    <string name="story_arc_title">سیر داستان</string>
+    <string name="story_arc_desc">نسخه‌های این داستان به ترتیب زمان: %1$s</string>
+    <string name="story_arc_open">باز کردن نسخه: %1$s</string>
+    <string name="reader_helpers_title">ابزارهای مطالعه</string>
 </resources>

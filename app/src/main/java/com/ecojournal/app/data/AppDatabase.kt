@@ -574,6 +574,14 @@ interface ArticleDao {
     @Query("SELECT * FROM join_keys WHERE appKey = :appKey LIMIT 1")
     suspend fun joinKeyByAppKey(appKey: String): JoinKeyEntity?
 
+    /**
+     * v4-H: whole join-key map as a Flow, so the feed can resolve
+     * each article's story_id (and therefore its typed format for
+     * the RED bar path) reactively, without one query per card.
+     */
+    @Query("SELECT * FROM join_keys")
+    fun joinKeysFlow(): Flow<List<JoinKeyEntity>>
+
     @Query("SELECT COUNT(*) FROM articles WHERE kind = :kind AND status != 'retracted'")
     suspend fun articleKindCount(kind: String): Int
 }

@@ -307,6 +307,10 @@ class MainActivity : ComponentActivity() {
                                         nav.navigate("bundle/${Uri.encode(bundleId)}")
                                     },
                                     onOpenMarket = { nav.navigate("market") },
+                                    // v4-H: ticker toggle + Diagnostics
+                                    // entry for the compact sync row.
+                                    tickerEnabled = settings.tickerEnabled,
+                                    onOpenDiagnostics = { nav.navigate("diagnostics") },
                                 )
                             }
                             // Phase 2: War Room section (top-level,
@@ -407,6 +411,11 @@ class MainActivity : ComponentActivity() {
                                     articleId = id,
                                     fontScale = settings.fontScale,
                                     onBack = { nav.popBackStack() },
+                                    // v4-H H2: arc nodes open their
+                                    // channel reader.
+                                    onOpenChannel = { appKey ->
+                                        nav.navigate("channel/${Uri.encode(appKey)}")
+                                    },
                                 )
                             }
                             // M6: the old fake "categories" route is

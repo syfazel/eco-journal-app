@@ -34,6 +34,33 @@ object DomainBars {
     /** Ordinary articles: YELLOW only for the energy category. */
     fun forArticle(article: ArticleEntity): DomainBar =
         if (article.category == "energy") DomainBar.YELLOW_ENERGY else DomainBar.NONE
+
+    /**
+     * v4-H fix (V19): the RED path for articles. An article linked
+     * (via join_keys story_id) to a live typed item IS a war-room /
+     * red-alert item and carries RED, which wins over YELLOW —
+     * exactly as Phase 6's barFor already did for its own cards.
+     * Before this fix, ArticleEntity carried no formatType at all,
+     * so the RED path could never reach a feed card or a reader
+     * header: every article bar was decided by category alone.
+     * [formatType] is the newest non-retracted typed format for the
+     * article's story, or null when the story has no typed item.
+     */
+    fun forArticleWithTyped(
+        article: ArticleEntity,
+        formatType: String?,
+    ): DomainBar = when {
+        formatType != null && Formats.isKnown(formatType) -> DomainBar.RED_WAR
+        article.category == "energy" -> DomainBar.YELLOW_ENERGY
+        else -> DomainBar.NONE
+    }
+
+    /** Bar label: never colour alone. RED names the format. */
+    fun labelFor(bar: DomainBar, formatType: String?): String? = when (bar) {
+        DomainBar.RED_WAR -> formatType?.let { Formats.badgeText(it) }
+        DomainBar.YELLOW_ENERGY -> "انرژی"
+        DomainBar.NONE -> null
+    }
 }
 
 // ---- Formats (spec section 3) ----

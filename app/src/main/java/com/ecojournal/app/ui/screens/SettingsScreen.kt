@@ -160,6 +160,62 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(6.dp))
         }
         Spacer(modifier = Modifier.height(16.dp))
+        // v4-H reader helpers + ticker: presentation-only toggles.
+        // Defaults keep pre-H behaviour (ticker on, ruler/calm off).
+        Text(
+            text = stringResource(R.string.reader_helpers_title),
+            fontFamily = EcoFontFamily,
+            fontSize = 16.sp * fontScale,
+        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Switch(
+                checked = settings.tickerEnabled,
+                onCheckedChange = { v -> scope.launch { store.setTickerEnabled(v) } },
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.ticker_toggle),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+            )
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Switch(
+                checked = settings.readingRuler,
+                onCheckedChange = { v -> scope.launch { store.setReadingRuler(v) } },
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.reading_ruler_toggle),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+            )
+        }
+        Text(
+            text = stringResource(R.string.reading_ruler_desc),
+            fontFamily = EcoFontFamily,
+            fontSize = 12.sp * fontScale,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Switch(
+                checked = settings.calmMode,
+                onCheckedChange = { v -> scope.launch { store.setCalmMode(v) } },
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.calm_mode_toggle),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+            )
+        }
+        Text(
+            text = stringResource(R.string.calm_mode_desc),
+            fontFamily = EcoFontFamily,
+            fontSize = 12.sp * fontScale,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = stringResource(R.string.settings_notifications_heading),
             fontFamily = EcoFontFamily,

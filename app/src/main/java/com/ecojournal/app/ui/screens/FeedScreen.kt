@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -24,7 +23,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -49,12 +47,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ecojournal.app.R
@@ -68,8 +64,10 @@ import com.ecojournal.app.data.Jalali
 import com.ecojournal.app.data.NightLaw
 import com.ecojournal.app.data.Slots
 import com.ecojournal.app.data.SyncResult
+import com.ecojournal.app.data.TickerTopics
 import com.ecojournal.app.ui.components.ArticleCard
-import com.ecojournal.app.ui.components.NewspaperDoubleRule
+import com.ecojournal.app.ui.components.CompactSyncRow
+import com.ecojournal.app.ui.components.Masthead
 import com.ecojournal.app.ui.components.TypedCard
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.util.escapeLikeQuery
@@ -137,6 +135,11 @@ fun FeedScreen(
     onOpenChannel: (String) -> Unit = {},
     onOpenBundle: (String) -> Unit = {},
     onOpenMarket: () -> Unit = {},
+    // v4-H: masthead ticker toggle + Diagnostics entry for the
+    // compact sync row (details live in Diagnostics, not on the
+    // page). Both default to the pre-H behaviour when unwired.
+    tickerEnabled: Boolean = true,
+    onOpenDiagnostics: (() -> Unit)? = null,
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -168,6 +171,25 @@ fun FeedScreen(
     // the sync row so "up to date" is always verifiable.
     val lastSyncAt by repo.dao.metaValueFlow("last_sync_at")
         .collectAsState(initial = null)
+    // v4-H RED path: article appKey -> story_id (join_keys), then
+    // story_id -> newest typed format (visible typed items). An
+    // article whose story has a typed item IS a red-alert item.
+    val joinKeys by repo.dao.joinKeysFlow().collectAsState(initial = emptyList())
+    val storyByAppKey = remember(joinKeys) {
+        joinKeys.mapNotNull { j -> j.storyId?.let { j.appKey to it } }.toMap()
+    }
+    val typedFormatByStory = remember(typedItems) {
+        typedItems
+            .filter { it.status != "retracted" && it.storyId != null }
+            .sortedByDescending { it.publishedAtEpoch }
+            .associate { it.storyId!! to it.formatType }
+    }
+    val typedFormatFor: (ArticleEntity) -> String? = { a ->
+        storyByAppKey[a.appKey]?.let { typedFormatByStory[it] }
+    }
+    // v4-H ticker topics: live war-room topics only (see
+    // TickerTopics for the inclusion rule).
+    val tickerTopics = remember(instantItems) { TickerTopics.topics(instantItems) }
 
     LaunchedEffect(Unit) {
         BundledSeed.ensureSeed(context)
@@ -199,6 +221,25 @@ fun FeedScreen(
             orderedKeys.map { Section(it, present[it] ?: it) }
     }
     val pagerState = rememberPagerState(pageCount = { sections.size })
+    // v4-H (V16) improved tabs: the selected tab is tracked by
+    // section KEY, not by index. Baseline behaviour: a new
+    // category inserted before the current tab shifted every
+    // index and the pager jumped to a different section. Now the
+    // key is remembered on every page change and restored
+    // whenever the section list changes, so a sync can never
+    // silently move the reader to another tab. Swipe/tap stay in
+    // sync through the same pagerState; per-tab scroll states
+    // (listStates) are unchanged.
+    var selectedSectionKey by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(pagerState.currentPage) {
+        selectedSectionKey = sections.getOrNull(pagerState.currentPage)?.key
+    }
+    LaunchedEffect(sections) {
+        val idx = sections.indexOfFirst { it.key == selectedSectionKey }
+        if (selectedSectionKey != null && idx >= 0 && idx != pagerState.currentPage) {
+            pagerState.animateScrollToPage(idx)
+        }
+    }
     // Section-keyed scroll states (M3, P1-09): kept in a map that
     // outlives any one page composition, so swiping two sections
     // away and back restores the scroll position instead of
@@ -211,23 +252,13 @@ fun FeedScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
     ) {
-        // Masthead: ECO JOURNAL only. No other publication name appears.
-        // Phase 7: headings were plain bold text, so TalkBack
-        // heading navigation found nothing on any screen.
-        Text(
-            text = stringResource(R.string.app_name),
-            fontSize = 32.sp * fontScale,
-            fontFamily = EcoFontFamily,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 10.dp)
-                .semantics { heading() },
-        )
-        NewspaperDoubleRule(
-            modifier = Modifier.padding(horizontal = 16.dp),
+        // v4-H masthead: small script ECO JOURNAL wordmark +
+        // CNN-style red ticker under the app name, laid out
+        // together as one unit. No other publication name appears.
+        Masthead(
+            topics = tickerTopics,
+            tickerEnabled = tickerEnabled,
+            fontScale = fontScale,
         )
         Spacer(modifier = Modifier.height(12.dp))
         // Urgent rail (spec 5.3): pinned at the top of the feed,
@@ -393,76 +424,29 @@ fun FeedScreen(
                 syncing = false
             }
         }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 16.dp),
-        ) {
-            Button(
-                enabled = !syncing,
-                onClick = runSync,
-                modifier = Modifier.heightIn(min = 48.dp),
-            ) {
-                Text(stringResource(R.string.sync_button), fontFamily = EcoFontFamily)
-            }
-            if (syncing) {
-                Spacer(modifier = Modifier.width(8.dp))
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    strokeWidth = 2.dp,
-                )
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            if (syncState.isNotBlank()) {
-                // Phase 7: the status text used to have no weight,
-                // so a long Persian sync message at 1.3x could push
-                // past the row edge.
-                Text(
-                    text = syncState,
-                    fontFamily = EcoFontFamily,
-                    fontSize = 13.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
-                )
-            }
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 16.dp),
-        ) {
-            // Last successful sync (M5, from meta): a date when a
-            // complete sync has been recorded, an honest "none yet"
-            // line otherwise — never a fake "up to date".
-            val lastSyncText = lastSyncAt?.toLongOrNull()?.let { epoch ->
-                val formatted = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale("fa"))
-                    .format(Date(epoch)).toPersianDigits()
-                context.getString(R.string.sync_last_success, formatted)
-            } ?: context.getString(R.string.sync_never_succeeded)
-            Text(
-                text = lastSyncText,
-                fontFamily = EcoFontFamily,
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            if (syncFailed && !syncing) {
-                TextButton(onClick = runSync) {
-                    Text(stringResource(R.string.sync_retry), fontFamily = EcoFontFamily)
-                }
-            }
-        }
-        if (syncFailed && !syncing) {
-            // Offline state (spec 11): cached content + honest line.
-            val offlineSyncText = lastSyncAt?.toLongOrNull()?.let { epoch ->
-                Jalali.formatShamsiDateTime(epoch)
-            } ?: stringResource(R.string.diagnostics_no_value)
-            Text(
-                text = stringResource(R.string.feed_offline_line, offlineSyncText),
-                fontFamily = EcoFontFamily,
-                fontSize = 12.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 16.dp),
-            )
-        }
-        Spacer(modifier = Modifier.height(12.dp))
+        // v4-H (V12): ONE compact sync line instead of the old
+        // button + status + last-sync + offline block. Same runner
+        // (runSync), same messages, same retry; failures still
+        // show in red with retry, and full per-section state +
+        // error codes stay in Diagnostics via the details button.
+        // Last-sync keeps its honest "none yet" when no complete
+        // sync has ever been recorded — never a fake "up to date".
+        val lastSyncCompact = lastSyncAt?.toLongOrNull()?.let { epoch ->
+            val formatted = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale("fa"))
+                .format(Date(epoch)).toPersianDigits()
+            context.getString(R.string.sync_last_compact, formatted)
+        } ?: context.getString(R.string.sync_never_succeeded)
+        CompactSyncRow(
+            syncing = syncing,
+            syncFailed = syncFailed,
+            syncState = syncState,
+            lastSyncText = lastSyncCompact,
+            onSync = runSync,
+            onRetry = runSync,
+            onOpenDiagnostics = onOpenDiagnostics,
+            fontScale = fontScale,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
         // Format filter chips (spec 3.2): single-select, feed
         // only, session-only. Selecting a format shows ONLY that
         // format's typed cards (slot-grouped); «همه» restores the
@@ -556,6 +540,7 @@ fun FeedScreen(
                                 onClick = { onOpen(a.appKey) },
                                 isDuplicateTitle = duplicate,
                                 fontScale = fontScale,
+                                typedFormatType = typedFormatFor(a),
                             )
                         }
                         items(
@@ -598,6 +583,7 @@ fun FeedScreen(
                 all = all,
                 onOpen = onOpen,
                 fontScale = fontScale,
+                typedFormatFor = typedFormatFor,
                 listStateFor = { key ->
                     listStates.getOrPut(key) { LazyListState() }
                 },
@@ -717,6 +703,8 @@ private fun FrontPageTabs(
     onOpenBundle: (String) -> Unit = {},
     bundleIds: Set<String> = emptySet(),
     onOpenMarket: () -> Unit = {},
+    // v4-H RED path: article -> newest typed format for its story.
+    typedFormatFor: (ArticleEntity) -> String? = { null },
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         ScrollableTabRow(
@@ -827,6 +815,7 @@ private fun FrontPageTabs(
                             isHero = index == 0,
                             isDuplicateTitle = duplicate,
                             fontScale = fontScale,
+                            typedFormatType = typedFormatFor(a),
                         )
                     }
                 }
@@ -855,6 +844,7 @@ private fun FrontPageTabs(
                             isHero = index == 0,
                             isDuplicateTitle = duplicate,
                             fontScale = fontScale,
+                            typedFormatType = typedFormatFor(a),
                         )
                     }
                 }

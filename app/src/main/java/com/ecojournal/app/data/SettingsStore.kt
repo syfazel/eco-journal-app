@@ -49,6 +49,11 @@ private object Keys {
     val QUIET_START_MIN = intPreferencesKey("quiet_start_min")
     val QUIET_END_MIN = intPreferencesKey("quiet_end_min")
     val QUIET_MUTE_URGENT = booleanPreferencesKey("quiet_mute_urgent")
+    // v4-H helper modules + ticker (presentation only; defaults
+    // keep the pre-H behaviour: ticker on, ruler off, calm off).
+    val READING_RULER = booleanPreferencesKey("reading_ruler")
+    val CALM_MODE = booleanPreferencesKey("calm_mode")
+    val TICKER_ENABLED = booleanPreferencesKey("ticker_enabled")
     // Phase 4 market-alert cooldown state (spec §4.6, app-local).
     // Written ONLY after a notification was actually posted.
     val MARKET_ALERT_LAST_BUBBLE = longPreferencesKey("market_alert_last_notified_bubble")
@@ -75,6 +80,9 @@ data class Settings(
     val quietMuteUrgent: Boolean = false,
     val marketAlertLastBubbleMs: Long? = null,
     val marketAlertLastSpreadMs: Long? = null,
+    val readingRuler: Boolean = false,
+    val calmMode: Boolean = false,
+    val tickerEnabled: Boolean = true,
 ) {
     /** Phase 4 NotificationPolicy view of these settings. */
     fun toNotificationPrefs(): NotificationPrefs = NotificationPrefs(
@@ -133,6 +141,9 @@ class SettingsStore(private val context: Context) {
                 quietMuteUrgent = p[Keys.QUIET_MUTE_URGENT] ?: false,
                 marketAlertLastBubbleMs = p[Keys.MARKET_ALERT_LAST_BUBBLE],
                 marketAlertLastSpreadMs = p[Keys.MARKET_ALERT_LAST_SPREAD],
+                readingRuler = p[Keys.READING_RULER] ?: false,
+                calmMode = p[Keys.CALM_MODE] ?: false,
+                tickerEnabled = p[Keys.TICKER_ENABLED] ?: true,
             )
         }
 
@@ -199,6 +210,17 @@ class SettingsStore(private val context: Context) {
             it[Keys.INVITE_OK] = false
             it.remove(Keys.INVITE_HASH)
         }
+
+    // v4-H setters (one key each; a failed write never touches
+    // the other toggles).
+    suspend fun setReadingRuler(v: Boolean) =
+        context.settingsStore.edit { it[Keys.READING_RULER] = v }
+
+    suspend fun setCalmMode(v: Boolean) =
+        context.settingsStore.edit { it[Keys.CALM_MODE] = v }
+
+    suspend fun setTickerEnabled(v: Boolean) =
+        context.settingsStore.edit { it[Keys.TICKER_ENABLED] = v }
 
     suspend fun setFcmToken(v: String) =
         context.settingsStore.edit { it[Keys.FCM_TOKEN] = v }

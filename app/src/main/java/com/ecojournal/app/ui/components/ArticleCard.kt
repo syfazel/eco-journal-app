@@ -99,6 +99,14 @@ fun NewspaperByline(article: ArticleEntity, modifier: Modifier = Modifier) {
 // cards (and on the reader header, see ArticleScreen). War-room /
 // red-alert items carry the RED bar via TypedCard instead — the
 // two categories stay inside the same feed/tabs system.
+//
+// v4-H fix (V19): [typedFormatType] is the newest non-retracted
+// typed format for this article's story (resolved by the caller
+// from join_keys + typed items). When present, the article IS a
+// red-alert item and carries RED with the format's own label —
+// before this fix the card hard-coded the «انرژی» label for ANY
+// bar, so a RED bar here would have been mislabelled. RED wins
+// over YELLOW, exactly as in Phase 6's barFor.
 @Composable
 fun ArticleCard(
     article: ArticleEntity,
@@ -107,8 +115,10 @@ fun ArticleCard(
     isHero: Boolean = false,
     isDuplicateTitle: Boolean = false,
     fontScale: Float = 1f,
+    typedFormatType: String? = null,
 ) {
-    val bar = DomainBars.forArticle(article)
+    val bar = DomainBars.forArticleWithTyped(article, typedFormatType)
+    val barLabel = DomainBars.labelFor(bar, typedFormatType)
     if (isHero) {
         NewspaperHeroArticle(
             article = article,
@@ -117,6 +127,7 @@ fun ArticleCard(
             isDuplicateTitle = isDuplicateTitle,
             fontScale = fontScale,
             domainBar = bar,
+            barLabel = barLabel,
         )
     } else {
         NewspaperArticleRow(
@@ -126,6 +137,7 @@ fun ArticleCard(
             isDuplicateTitle = isDuplicateTitle,
             fontScale = fontScale,
             domainBar = bar,
+            barLabel = barLabel,
         )
     }
 }
@@ -151,6 +163,7 @@ fun NewspaperHeroArticle(
     fontScale: Float = 1f,
     domainBar: com.ecojournal.app.data.DomainBar =
         com.ecojournal.app.data.DomainBar.NONE,
+    barLabel: String? = null,
 ) {
     Column(
         modifier = modifier
@@ -159,8 +172,8 @@ fun NewspaperHeroArticle(
             .then(rowClick(article, onClick))
             .padding(horizontal = 16.dp, vertical = 16.dp),
     ) {
-        if (domainBar != com.ecojournal.app.data.DomainBar.NONE) {
-            DomainBarStrip(bar = domainBar, label = "انرژی")
+        if (domainBar != com.ecojournal.app.data.DomainBar.NONE && barLabel != null) {
+            DomainBarStrip(bar = domainBar, label = barLabel)
             Spacer(modifier = Modifier.height(6.dp))
         }
         NewspaperKicker(article = article)
@@ -213,6 +226,7 @@ fun NewspaperArticleRow(
     fontScale: Float = 1f,
     domainBar: com.ecojournal.app.data.DomainBar =
         com.ecojournal.app.data.DomainBar.NONE,
+    barLabel: String? = null,
 ) {
     Column(
         modifier = modifier
@@ -221,8 +235,8 @@ fun NewspaperArticleRow(
             .then(rowClick(article, onClick))
             .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
-        if (domainBar != com.ecojournal.app.data.DomainBar.NONE) {
-            DomainBarStrip(bar = domainBar, label = "انرژی")
+        if (domainBar != com.ecojournal.app.data.DomainBar.NONE && barLabel != null) {
+            DomainBarStrip(bar = domainBar, label = barLabel)
             Spacer(modifier = Modifier.height(6.dp))
         }
         NewspaperKicker(article = article)
