@@ -2,7 +2,9 @@ package com.ecojournal.app.data
 
 /**
  * Article model shared by the edge JSON, Room cache and UI.
- * Field names match edge/out/*.json exactly (see edge/generate_edge.py).
+ * Field names match the edge JSON files exactly (see edge/generate_edge.py).
+ * NOTE: never write a glob like out-slash-star here — Kotlin nests block
+ * comments, so "/*" inside a KDoc leaves the outer comment unclosed.
  * Body text is copied verbatim from the source databases; this layer
  * never rewrites, summarises or invents article text.
  */
