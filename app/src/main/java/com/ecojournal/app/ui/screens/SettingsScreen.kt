@@ -82,6 +82,11 @@ fun SettingsScreen(
     settings: Settings,
     store: SettingsStore,
     onDiagnostics: () -> Unit = {},
+    // Phase 6: Method page + gated placeholders, reached from
+    // Settings so their absence is honest rather than hidden.
+    onMethod: () -> Unit = {},
+    onVoices: () -> Unit = {},
+    onSpecialIssues: () -> Unit = {},
     modifier: Modifier = Modifier,
     fontScale: Float = 1f,
     // Phase 4: threshold PRESENCE only (never the value — the
@@ -421,6 +426,39 @@ fun SettingsScreen(
         ) {
             Text(
                 text = stringResource(R.string.settings_diagnostics_button),
+                fontFamily = EcoFontFamily,
+            )
+        }
+        // Phase 6: Method page (bundled) + gated placeholders.
+        // The voices/special-issues buttons open placeholders
+        // only — no voice name, badge, page, or queued content.
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = onMethod,
+            modifier = Modifier.heightIn(min = 48.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.settings_method_button),
+                fontFamily = EcoFontFamily,
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = onVoices,
+            modifier = Modifier.heightIn(min = 48.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.settings_voices_button),
+                fontFamily = EcoFontFamily,
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = onSpecialIssues,
+            modifier = Modifier.heightIn(min = 48.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.settings_special_issues_button),
                 fontFamily = EcoFontFamily,
             )
         }

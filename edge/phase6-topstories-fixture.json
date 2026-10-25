@@ -1,0 +1,42 @@
+{
+  "card": {
+    "week_range": "۱۴۰۵-۰۸-۰۳ تا ۱۴۰۵-۰۸-۰۹",
+    "selection_basis": "editorial",
+    "stories": [
+      {
+        "title": "داستان آزمایشی یک",
+        "story_id": "lab-p6-oped-1",
+        "format_type": "GEOPOL",
+        "date_shamsi": "۱۴۰۵-۰۸-۰۴",
+        "source": "منبع آزمایشی"
+      },
+      {
+        "title": "داستان آزمایشی دو",
+        "story_id": "lab-p6-weekly-1",
+        "format_type": "WIRE",
+        "date_shamsi": "۱۴۰۵-۰۸-۰۳",
+        "source": "منبع آزمایشی"
+      },
+      {
+        "title": "داستان آزمایشی سه",
+        "story_id": "lab-p5-full-1",
+        "format_type": null,
+        "date_shamsi": "۱۴۰۵-۰۸-۰۲",
+        "source": "منبع آزمایشی"
+      }
+    ]
+  },
+  "vote_field_trap": {
+    "week_range": "۱۴۰۵-۰۸-۰۳ تا ۱۴۰۵-۰۸-۰۹",
+    "selection_basis": "editorial",
+    "stories": [
+      {
+        "title": "داستان آزمایشی یک",
+        "story_id": "lab-p6-oped-1",
+        "date_shamsi": "۱۴۰۵-۰۸-۰۴",
+        "source": "منبع آزمایشی"
+      }
+    ],
+    "vote_count": 42
+  }
+}

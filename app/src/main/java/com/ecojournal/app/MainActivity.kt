@@ -52,6 +52,7 @@ import com.ecojournal.app.R
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.MarketSnapshot
 import com.ecojournal.app.data.SettingsStore
+import com.ecojournal.app.ui.screens.AnalysisScreen
 import com.ecojournal.app.ui.screens.ArticleScreen
 import com.ecojournal.app.ui.screens.BookmarksScreen // M6: now in its own file, moved verbatim from the deleted CategoriesScreen.kt
 import com.ecojournal.app.ui.screens.BundlePageScreen
@@ -63,8 +64,11 @@ import com.ecojournal.app.ui.screens.InviteScreen
 import com.ecojournal.app.ui.screens.DossierPageScreen
 import com.ecojournal.app.ui.screens.EditionPageScreen
 import com.ecojournal.app.ui.screens.MarketScreen
+import com.ecojournal.app.ui.screens.MethodScreen
 import com.ecojournal.app.ui.screens.NightlyScreen
 import com.ecojournal.app.ui.screens.SettingsScreen
+import com.ecojournal.app.ui.screens.SpecialIssuesScreen
+import com.ecojournal.app.ui.screens.VoicesScreen
 import com.ecojournal.app.ui.screens.WarRoomScreen
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.ui.theme.EcoTheme
@@ -90,6 +94,11 @@ private val TABS = listOf(
     // edition section, not a parallel service and not a
     // separate tab for war-room/red-alert (bar rule §0).
     Tab("nightly", "نسخهٔ شبانه", Icons.Filled.DarkMode),
+    // Phase 6: Analysis is a standalone section (spec §2), and
+    // the nightly edition links to the same story_id — two views
+    // of one item, never two copies. Not a war-room tab: red-alert
+    // items stay inside it with bar + badge (bar rule §0).
+    Tab("analysis", "تحلیل", Icons.Filled.Article),
     Tab("market", "بازار", Icons.Filled.ShowChart),
     Tab("bookmarks", "ذخیره‌شده‌ها", Icons.Filled.Bookmark),
     Tab("settings", "تنظیمات", Icons.Filled.Settings),
@@ -449,12 +458,34 @@ class MainActivity : ComponentActivity() {
                                     },
                                 )
                             }
+                            // Phase 6: Analysis section + Method
+                            // page + gated placeholders (voices /
+                            // special issues render placeholders
+                            // only until their own gates open).
+                            composable("analysis") {
+                                AnalysisScreen(
+                                    repo = repo,
+                                    fontScale = settings.fontScale,
+                                )
+                            }
+                            composable("method") {
+                                MethodScreen(fontScale = settings.fontScale)
+                            }
+                            composable("voices") {
+                                VoicesScreen(fontScale = settings.fontScale)
+                            }
+                            composable("specialissues") {
+                                SpecialIssuesScreen(fontScale = settings.fontScale)
+                            }
                             composable("settings") {
                                 SettingsScreen(
                                     settings = settings,
                                     store = store,
                                     fontScale = settings.fontScale,
                                     onDiagnostics = { nav.navigate("diagnostics") },
+                                    onMethod = { nav.navigate("method") },
+                                    onVoices = { nav.navigate("voices") },
+                                    onSpecialIssues = { nav.navigate("specialissues") },
                                     // Presence only — never the value.
                                     marketThresholdSet = !p4BubbleMeta.isNullOrBlank() ||
                                         !p4SpreadMeta.isNullOrBlank(),

@@ -316,4 +316,45 @@
     <string name="nightly_alert_not_notified">اعلان نشد</string>
     <string name="nightly_alert_no_threshold">آستانه تنظیم نشده — هشدارها خاموش‌اند</string>
     <string name="nightly_no_alerts_today">امروز هشدار بازاری ثبت نشده است.</string>
+    <!-- Phase 6: Method page (bundled copy, spec §1; version + Shamsi date line). -->
+    <string name="method_title">روش کار</string>
+    <string name="method_version_line">نسخهٔ ۱ — به‌روز شده در ۱۴۰۵-۰۸-۰۳</string>
+    <string name="method_m1_title">اکو ژورنال چیست</string>
+    <string name="method_m1_body">اکو ژورنال یک خبر کامل منتشر می‌کند: یک گزارش تحریری خودکفا که با تیتر آغاز می‌شود، نکته‌های کلیدی را می‌آورد و در بخش مشخص «چرا مهم است» نظر تحریریه را — با همین برچسب — جدا می‌گوید. هر خبر نام منبع و پیوند مستقیم به همان منبع خبری را دارد، نه به وبلاگ. کوتاهی، یک قول به خواننده است: یک خبر کوتاه حدود چهار هزار نویسه است؛ نه خلاصهٔ ناقص، نه متن بلند بی‌جهت.</string>
+    <string name="method_m2_title">چه کسی تصمیم می‌گیرد</string>
+    <string name="method_m2_body">تصمیم انتشار با تحریریهٔ اکو ژورنال است؛ این اختیار در سال ۲۰۲۶ به تحریریه تفویض شده و ناظر، در تصویب تک‌تک خبرها دخالت نمی‌کند. امضای همهٔ خبرها یکسان است: «تحریریهٔ ECO JOURNAL». در هیچ صفحه‌ای نام شخص یا رد هوش مصنوعی نمی‌بینید؛ خبر با محتوایش سنجیده می‌شود، نه با نام نویسنده‌اش.</string>
+    <string name="method_m3_title">معیارهای تحریریه</string>
+    <string name="method_m3_body">هر خبر از دو خانواده معیار می‌گذرد: دروازه‌های رد که سلامت منبع، درستی، تکراری نبودن، پرمایه بودن و رعایت محدودهٔ بازنشر قانونی را نگه می‌دارند، و شرط‌های تأیید که خبر را برای انتشار آماده می‌کنند. متن کامل معیارهای داخلی و آستانه‌های عددی آن منتشر نمی‌شود تا هیچ منبعی نتواند دروازه را دور بزند؛ آنچه اینجا آمده، خلاصهٔ همان معیارهاست، نه معیاری تازه.</string>
+    <string name="method_m4_title">برچسب‌ها و انتساب</string>
+    <string name="method_m4_body">«بازنشر از {منبع}» یعنی متن، عیناً و بدون دخل و تصرف از همان منبع آمده است؛ «ترجمهٔ فارسی تحریریه» یعنی تحریریه آن را ترجمه کرده است. این دو هرگز با هم قاطی نمی‌شوند. نقل‌قول مستقیم همیشه در گیومه است و بازنویسی با «به نقل از» مشخص می‌شود. خبری که اصلاح شود، یادداشت «اصلاح شد» را روی همان خبر می‌بیند؛ هیچ اصلاحی بی‌صدا انجام نمی‌شود.</string>
+    <string name="method_m5_title">سقف‌ها و ریتم روز</string>
+    <string name="method_m5_body">هر روز سقفی برای تعداد خبرها و کفی برای حجم انتشار وجود دارد و در بحران، این سقف‌ها میان قالب‌ها جابه‌جا می‌شوند. خبرها در بازه‌های صبح، ظهر، عصر و شب دسته‌بندی می‌شوند و در بسته‌ها می‌آیند. خبری که نگه داشته شده باشد، به‌صورت عضویت در یک بسته دیده می‌شود؛ هیچ خبری بی‌صدا گم نمی‌شود.</string>
+    <string name="method_m6_title">قانون شب و اعلان‌ها</string>
+    <string name="method_m6_body">روز: امتیاز ۷۰ و بالاتر، اعلان فوری می‌گیرد. شب (۰۰:۰۰ تا ۰۸:۰۰): فقط امتیاز ۸۵ و بالاتر فوری است؛ ۷۰ تا ۸۴ تا بستهٔ صبح ساعت ۰۸:۰۰ نگه داشته می‌شود و با همان بسته، یک اعلان می‌آید. استثناها: خبر فوری همیشه فوری است، و «تحت نظر» در بحران سطح ۳ یا ۴ در شب هم فوری است. ساعات سکوتِ خودتان فقط اعلان‌های غیرفوری را خاموش می‌کند؛ بی‌صدا کردن اعلان فوری، یک انتخاب جداگانه و آگاهانه است. در همگام‌سازی دوره‌ای، سامانه نمی‌تواند از کف حدود ۱۵ دقیقه‌ای سریع‌تر باشد و حالت خواب گوشی در شب ممکن است آن را بیشتر به تأخیر بیندازد؛ همگام‌سازی دستی یا باز کردن برنامه، راه سریع است.</string>
+    <string name="method_m7_title">چه چیزی اینجا نیست</string>
+    <string name="method_m7_body">اینجا بازنشر عین متن فقط از دو منبع مجاز است و بقیهٔ منابع فارسی فقط به‌صورت خلاصه می‌آیند. گزارش‌های خصوصی مالک و نامه‌های روزانهٔ مدل در برنامه نیستند. هیچ احتمال عددیِ مدلی روی هیچ صفحه‌ای نمی‌آید تا وقتی کالیبراسیون آن تصویب شود. رأی‌گیری در برنامه فعال نیست. و تا وقتی پیوند وبلاگ فعال نشده باشد، هیچ دکمه یا پیوندی به وبلاگ در برنامه نیست.</string>
+    <!-- Phase 6: Analysis, voices (gated), special issues (frozen), top stories. -->
+    <string name="analysis_title">تحلیل</string>
+    <string name="analysis_empty">هنوز تحلیلی منتشر نشده است</string>
+    <string name="analysis_held_note">برخی اقلام این بخش نگه داشته شدند (در گزارش سازنده ثبت شده است).</string>
+    <string name="analysis_correction_badge">اصلاح شد</string>
+    <string name="analysis_consensus_label">سیگنال‌ها، نه پیش‌بینی‌ها</string>
+    <string name="analysis_section_thesis">تز</string>
+    <string name="analysis_section_evidence">شواهد</string>
+    <string name="analysis_section_counter">مخالف‌خوانی</string>
+    <string name="analysis_section_scenarios">سناریوها</string>
+    <string name="analysis_word_count">%1$s واژه</string>
+    <string name="analysis_source_links_title">منبع‌ها</string>
+    <string name="analysis_back">بازگشت</string>
+    <string name="analysis_correction_note">این مقاله اصلاح شده است؛ تغییر در یادداشت اصلاحیهٔ آن آمده است.</string>
+    <string name="voices_title">صداهای مهم</string>
+    <string name="voices_placeholder">صداهای مهم — فهرست در انتظار نهایی‌شدن توسط یاسین است. تا آن زمان هیچ صفحهٔ صدایی منتشر نمی‌شود.</string>
+    <string name="special_issues_title">ویژه‌نامه‌ها</string>
+    <string name="special_issues_placeholder">ویژه‌نامه‌ها — متوقف است</string>
+    <string name="topstories_title">برگزیده‌های هفته</string>
+    <string name="topstories_no_card">این هفته کارتی نیست.</string>
+    <string name="topstories_readonly_note">رأی‌گیری در اپ فعلاً فعال نیست</string>
+    <string name="settings_method_button">روش کار</string>
+    <string name="settings_voices_button">صداهای مهم</string>
+    <string name="settings_special_issues_button">ویژه‌نامه‌ها</string>
 </resources>
