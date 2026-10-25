@@ -28,6 +28,21 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      # Shared debug signing (fix for the 2026-10-25 install failure):
+      # every ephemeral runner used to generate its own Android Debug
+      # keystore, so each cloud APK had a different signature and
+      # Android refused to update over the previous one. All builds
+      # now share ONE keystore, stored only as a GitHub secret (never
+      # committed — *.keystore is gitignored). The keystore itself is
+      # a debug key with the standard Android debug credentials.
+      - name: Restore shared debug keystore
+        env:
+          DEBUG_KEYSTORE_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$DEBUG_KEYSTORE_BASE64" ]; then
+            echo "$DEBUG_KEYSTORE_BASE64" | base64 -d > app/debug.keystore
+          fi
+
       - name: Build debug APK
         run: gradle assembleDebug --stacktrace
 

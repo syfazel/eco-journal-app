@@ -18,7 +18,26 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    // Shared debug signing (fix for the 2026-10-25 install failure):
+    // when app/debug.keystore exists (restored by CI from a GitHub
+    // secret, never committed), debug builds sign with it, so every
+    // cloud APK shares one signature and updates over the previous
+    // one. Without the file, AGP falls back to its generated debug
+    // key — the pre-fix behaviour.
+    signingConfigs {
+        create("sharedDebug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
     buildTypes {
+        debug {
+            if (file("debug.keystore").exists()) {
+                signingConfig = signingConfigs.getByName("sharedDebug")
+            }
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
