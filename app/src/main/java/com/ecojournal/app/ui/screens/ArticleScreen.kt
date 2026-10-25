@@ -2,6 +2,7 @@ package com.ecojournal.app.ui.screens
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,13 +29,18 @@ import androidx.compose.ui.unit.sp
 import com.ecojournal.app.data.ArticleEntity
 import com.ecojournal.app.data.BookmarkEntity
 import com.ecojournal.app.data.EdgeRepository
+import com.ecojournal.app.ui.components.NewspaperByline
+import com.ecojournal.app.ui.components.NewspaperDoubleRule
+import com.ecojournal.app.ui.components.NewspaperKicker
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import kotlinx.coroutines.launch
 
 /**
- * Article reader. Body paragraphs are rendered verbatim from the
- * cached article; this screen never edits, summarises or completes
- * article text. Short cards show the "گزیده" label at the top.
+ * Article reader, newspaper style. Headline, kicker, byline and
+ * date block, a rule, then body paragraphs rendered verbatim
+ * from the cached article; this screen never edits, summarises
+ * or completes article text. Short cards show the "گزیده" label
+ * in the kicker line.
  */
 @Composable
 fun ArticleScreen(
@@ -62,52 +68,50 @@ fun ArticleScreen(
         )
         return
     }
-    val baseBody = 17.sp * fontScale
+    val headlineSize = 28.sp * fontScale
+    val baseBody = 18.sp * fontScale
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
     ) {
-        if (a.kind == "short") {
-            Text(
-                text = "گزیده",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary,
-                fontFamily = EcoFontFamily,
-                fontWeight = FontWeight.Bold,
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-        }
-        Text(
-            text = a.title,
-            style = MaterialTheme.typography.headlineSmall,
-            fontFamily = EcoFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 22.sp * fontScale,
-        )
+        NewspaperKicker(article = a)
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "${a.categoryFa} • ${a.source}",
-            style = MaterialTheme.typography.bodySmall,
+            text = a.title,
+            fontSize = headlineSize,
+            lineHeight = headlineSize * 1.35f,
             fontFamily = EcoFontFamily,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground,
         )
-        a.publishedAt?.let {
-            Text(
-                text = it,
-                style = MaterialTheme.typography.bodySmall,
-                fontFamily = EcoFontFamily,
-            )
-        }
+        Spacer(modifier = Modifier.height(10.dp))
+        NewspaperByline(article = a)
+        Spacer(modifier = Modifier.height(14.dp))
+        NewspaperDoubleRule()
         Spacer(modifier = Modifier.height(16.dp))
+        if (a.summary.isNotBlank()) {
+            Text(
+                text = a.summary,
+                fontSize = baseBody,
+                lineHeight = baseBody * 1.75f,
+                fontFamily = EcoFontFamily,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
         for (block in a.bodyBlocks) {
             Text(
                 text = block,
                 fontSize = baseBody,
-                lineHeight = (baseBody * 1.7f),
+                lineHeight = baseBody * 1.75f,
                 fontFamily = EcoFontFamily,
+                color = MaterialTheme.colorScheme.onBackground,
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(14.dp))
         }
         OutlinedButton(
             onClick = {

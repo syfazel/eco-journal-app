@@ -36,3 +36,19 @@ app/google-services.json
 # Lab dry-run bridge state — scratch only, NOT the production
 # sent-record. See bridge/dryrun.py.
 bridge/.dryrun-state/
+
+# Lab queue DB (Phase 2) — holds queue state, sent records and
+# invite-code hashes. Lab-only, NEVER committed (it is state, not
+# source), and never the production database.
+bridge/queue.db
+bridge/queue.db-journal
+bridge/send.lock
+
+# Python bytecode
+__pycache__/
+
+# Phase 3 pilot — invite codes in plaintext. LAB ONLY, never committed.
+docs/pilot-invite-codes-private.md
+
+# Phase 3 local toolchain (JDK/SDK/Gradle) — lab-local, never committed.
+.tools/

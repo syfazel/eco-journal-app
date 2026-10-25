@@ -1,7 +1,42 @@
 # Telegram Bridge Spec — Channel ↔ App (Phase 1 spec)
 
-**Status:** SPEC ONLY in Phase 1. No bridge code is built yet, and
-nothing in this document posts to any channel.
+**Status (updated Phase 2, 2026-10-25):** the bridge is now BUILT in
+`bridge/` (channel_reader.py, publish_worker.py, control.py,
+bridge_lib.py) and verified by `bridge/test_phase2.py` (19/19) plus
+the original `bridge/dryrun.py` harness (13/13). Everything below
+still holds, with three deliberate Phase 2 implementation notes
+(these refine the spec; they do not weaken any gate):
+
+1. **Rejected state.** The spec's machine had no reject step, but
+   the control-plane spec requires a reject action. Phase 2 adds
+   `review -> rejected` as the only reject transition; rejection is
+   terminal for that item version (a corrected version re-enters as
+   a new draft). "Hold" is not a state — it appends a note and the
+   item stays in `review`.
+2. **Splitting decision.** Oversize text (> 4096 chars) is flagged
+   with a split plan (`split_channel_text`, paragraph-boundary
+   splits, each part ≤ 4096) and the item stays `published_app` for
+   a human decision. If a single paragraph exceeds the cap, no
+   automatic split is possible and the report says so — a manual
+   edit is required. Nothing is ever silently truncated.
+3. **State files.** The "state file" named in the spec is the lab
+   SQLite queue `bridge/queue.db` (gitignored): `items` (the queue),
+   `sent` (the only sent-record, written only with a returned
+   `message_id`), `invites` (SHA-256 hashes only). The send lock is
+   an `flock` on `bridge/send.lock`; because flock auto-releases
+   when the holder dies, a lock can never stay "stuck" after a
+   crash — the health check reports "held by a live process" vs
+   "free" on that basis. Channel→app staging lives in
+   `bridge/staging/` (one JSON per `channel-<message_id>` plus an
+   index manifest).
+4. **Live gating, as built.** A live send requires ALL of: `--live`,
+   `BRIDGE_LIVE=1`, `BRIDGE_CHANNEL_ID` (a test channel id — the
+   live channel id is never hardcoded), and `ECO_BOT_TOKEN` from the
+   environment. With none of those set, every run is dry-run and
+   `live_sends` stays 0. The live path additionally still needs
+   Yasin's explicit reopen order before it may target the live
+   channel; the test-channel id is the only channel id the code
+   will ever use on its own.
 
 Standing law 14 applies throughout: **the bot posts to the channel
 only, never DMs to readers.** The bridge has no reader-messaging path

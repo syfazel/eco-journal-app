@@ -38,7 +38,6 @@ import com.ecojournal.app.data.MarketSnapshot
 import com.ecojournal.app.data.SettingsStore
 import com.ecojournal.app.ui.screens.ArticleScreen
 import com.ecojournal.app.ui.screens.BookmarksScreen
-import com.ecojournal.app.ui.screens.CategoriesScreen
 import com.ecojournal.app.ui.screens.FeedScreen
 import com.ecojournal.app.ui.screens.MarketScreen
 import com.ecojournal.app.ui.screens.SettingsScreen
@@ -49,8 +48,7 @@ import com.ecojournal.app.util.Notifications
 private data class Tab(val route: String, val label: String)
 
 private val TABS = listOf(
-    Tab("feed", "فید"),
-    Tab("categories", "دسته‌ها"),
+    Tab("feed", "صفحه اصلی"),
     Tab("market", "بازار"),
     Tab("bookmarks", "ذخیره‌شده‌ها"),
     Tab("settings", "تنظیمات"),
@@ -109,8 +107,12 @@ class MainActivity : ComponentActivity() {
                                     fontScale = settings.fontScale,
                                 )
                             }
+                            // Old Categories destination, kept harmless:
+                            // sections now live as tabs on the home front
+                            // page, so this route delegates to it instead
+                            // of being deleted (other code may reference it).
                             composable("categories") {
-                                CategoriesScreen(repo = repo, onOpen = { id ->
+                                FeedScreen(repo = repo, onOpen = { id ->
                                     nav.navigate("article/$id")
                                 })
                             }

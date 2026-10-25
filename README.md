@@ -1,5 +1,16 @@
 # ECO JOURNAL — Android App (Phase 1, LAB)
 
+**Phase 2 update (2026-10-25):** the Telegram bridge and control
+plane are now BUILT in `bridge/` — `channel_reader.py`
+(channel→app staging), `publish_worker.py` (gated write path,
+dry-run default), `control.py` (queue + invites CLI engine) and
+`bridge_lib.py` (shared machine/validator/lock). Verified: 19/19
+Phase 2 tests + 13/13 dry-run harness cases, `live_sends` 0,
+production DBs untouched. The bridge remains dry-run-only until
+Yasin supplies a test channel id and an explicit reopen order for
+the live channel. See `docs/telegram-bridge-spec.md` (Phase 2 notes
+at the top) for the exact gates.
+
 **Lab only.** This project lives under `goals/eco-journal/app/` and is
 deliberately separate from the live platform. It never touches
 `econ-news-blog/` or `yasineco_bot/` except read-only, never posts to
@@ -38,8 +49,9 @@ offline-first, Persian RTL, Vazirmatn font, with:
 
 - No APK has been built on this machine (see below).
 - No FCM with real keys, no invite-code server check, no review
-  queue UI, no Telegram bridge code — those are specs in `docs/`
-  (control-plane-spec.md, telegram-bridge-spec.md) for Phase 2.
+  queue UI — the bridge code itself landed in Phase 2 (`bridge/`),
+  but FCM keys and the dashboard UI are still outstanding (see
+  "Still needed from Yasin" below).
 - No invented article text. Seed content comes only from the real
   databases (see `edge/`).
 
@@ -188,6 +200,30 @@ content to fill the feed.
    additionally needs his explicit reopen order.
 4. **Final launcher icon** — the current `mipmap-*` icons are valid
    PNG placeholders (navy + gold block), not the ECO JOURNAL mark.
+
+## Phase 3 update (2026-10-25): local build BLOCKED, wrapper done, pilot prepped
+
+- **No APK was built locally.** Root cause, verified: JVM
+  loopback TCP is intercepted in this sandbox (Java→loopback
+  gets a policy denial / reset, while Python→loopback works),
+  and the Gradle daemon protocol requires JVM→JVM loopback TCP.
+  Every Gradle invocation fails with "Could not receive a
+  message from the daemon" after the daemon starts cleanly
+  (heap size and `--no-daemon`/`--foreground` do not change it).
+  Full evidence + minimal reproductions:
+  `docs/apk-build-phase3.md`. The remaining route to the first
+  APK is the GitHub Actions cloud build (Route B above) after
+  the one-time repo push — no settings change was requested.
+- **Toolchain + wrapper ARE done (lab only):** JDK 17.0.21,
+  SDK 34 + build-tools 34.0.0 + platform-tools under
+  `.tools/` (gitignored), and a verified `gradlew` +
+  `gradle/wrapper/*` (bootstrap tested: `./gradlew --version`
+  prints Gradle 8.7). `local.properties` points at the lab SDK
+  (gitignored).
+- **Pilot prep done, pilot NOT started:** 10 invite codes in
+  `docs/pilot-invite-codes-private.md` (gitignored, hashes only
+  in the control plane) and `docs/pilot-test-plan.md`. No code
+  has left the lab and no reader has been contacted.
 
 ## Rules that bind later phases
 
