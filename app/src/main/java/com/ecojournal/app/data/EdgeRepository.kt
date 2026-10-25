@@ -209,8 +209,13 @@ class EdgeRepository(context: Context) {
 
         // Market travels in the same manifest-gated pass when the
         // edge serves it; a market failure makes the sync Partial,
-        // never a silent success with stale market data.
+        // never a silent success with stale market data. Formulas
+        // travel with it (M4): a non-empty formulas_active replaces
+        // the cached set, so a deactivated formula disappears
+        // instead of lingering; an empty/missing array leaves the
+        // cached set untouched rather than deleting it on a guess.
         var marketFresh = emptyList<MarketSnapshotEntity>()
+        var formulasFresh = emptyList<MarketFormulaEntity>()
         var marketFailed = false
         val marketText = try {
             httpGet("$base/market.json")
@@ -221,7 +226,8 @@ class EdgeRepository(context: Context) {
             marketFailed = true
         } else {
             try {
-                val snaps = JSONObject(marketText).optJSONArray("snapshots") ?: JSONArray()
+                val marketObj = JSONObject(marketText)
+                val snaps = marketObj.optJSONArray("snapshots") ?: JSONArray()
                 val parsed = mutableListOf<MarketSnapshotEntity>()
                 for (i in 0 until snaps.length()) {
                     try {
@@ -231,6 +237,26 @@ class EdgeRepository(context: Context) {
                     }
                 }
                 marketFresh = parsed
+                val farr = marketObj.optJSONArray("formulas_active") ?: JSONArray()
+                val parsedFormulas = mutableListOf<MarketFormulaEntity>()
+                for (i in 0 until farr.length()) {
+                    try {
+                        val formula = MarketFormulas.formulaFromJson(farr.getJSONObject(i))
+                            ?: continue
+                        parsedFormulas.add(
+                            MarketFormulaEntity(
+                                name = formula.name,
+                                version = formula.version,
+                                definition = formula.definition,
+                                inputs = formula.inputs,
+                                descriptionFa = formula.descriptionFa,
+                            )
+                        )
+                    } catch (_: Exception) {
+                        continue
+                    }
+                }
+                formulasFresh = parsedFormulas
             } catch (_: Exception) {
                 marketFailed = true
             }
@@ -242,6 +268,10 @@ class EdgeRepository(context: Context) {
             if (fresh.isNotEmpty()) dao.upsertAll(fresh)
             if (tombstoneRows.isNotEmpty()) dao.upsertAll(tombstoneRows)
             if (marketFresh.isNotEmpty()) dao.upsertMarket(marketFresh)
+            if (formulasFresh.isNotEmpty()) {
+                dao.deleteAllFormulas()
+                dao.upsertFormulas(formulasFresh)
+            }
             if (complete) {
                 if (hash.isNotBlank()) dao.upsertMeta(MetaEntity("index_hash", hash))
                 dao.upsertMeta(MetaEntity("last_sync_at", now.toString()))
@@ -348,16 +378,11 @@ class EdgeRepository(context: Context) {
             val forms = mutableListOf<MarketFormula>()
             val farr = obj.optJSONArray("formulas_active") ?: JSONArray()
             for (i in 0 until farr.length()) {
-                val f = farr.getJSONObject(i)
-                forms.add(
-                    MarketFormula(
-                        name = f.optString("name", ""),
-                        version = f.optInt("version", 1),
-                        definition = f.optString("definition", ""),
-                        inputs = f.optStringOrNull("inputs"),
-                        descriptionFa = f.optStringOrNull("description_fa"),
-                    )
-                )
+                try {
+                    MarketFormulas.formulaFromJson(farr.getJSONObject(i))?.let { forms.add(it) }
+                } catch (_: Exception) {
+                    continue
+                }
             }
             Triple(latest, forms, snaps.length())
         } catch (_: Exception) {

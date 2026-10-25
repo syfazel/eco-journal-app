@@ -259,13 +259,22 @@ object ArticleParsers {
 
     fun marketSnapshotFromEntity(e: MarketSnapshotEntity): MarketSnapshot {
         return MarketSnapshot(
+            snapshotId = e.snapshotId,
             tsTehran = e.tsTehran,
             tsEpoch = e.tsEpoch,
             brent = e.brent,
             xauUsd = e.xauUsd,
+            dxy = e.dxy,
+            usdtUsd = e.usdtUsd,
             usdIrtFree = e.usdIrtFree,
             usdtIrt = e.usdtIrt,
+            gold18kGram = e.gold18kGram,
             sekkeEmami = e.sekkeEmami,
+            sekkeBahar = e.sekkeBahar,
+            nimSekke = e.nimSekke,
+            robSekke = e.robSekke,
+            vix = e.vix,
+            sp500 = e.sp500,
         )
     }
 }

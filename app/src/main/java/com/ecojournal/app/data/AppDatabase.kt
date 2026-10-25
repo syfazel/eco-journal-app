@@ -75,6 +75,23 @@ data class MetaEntity(
     val value: String,
 )
 
+/**
+ * Active market formulas as shipped by the edge/bundled market.json
+ * (M4). The definition is the shipped S-expression string, stored
+ * verbatim; MarketFormulas evaluates it at display time, so a
+ * definition change propagates without an app update. Seeded from
+ * the bundled asset (so formulas work offline) and replaced by the
+ * edge sync's formulas_active in the same manifest-gated pass.
+ */
+@Entity(tableName = "market_formulas")
+data class MarketFormulaEntity(
+    @PrimaryKey val name: String,
+    val version: Int,
+    val definition: String,
+    val inputs: String?,
+    val descriptionFa: String?,
+)
+
 @Entity(
     tableName = "market_snapshots",
     indices = [Index(value = ["tsEpoch"])],
@@ -217,6 +234,51 @@ interface ArticleDao {
 
     @Query("SELECT COUNT(*) FROM market_snapshots")
     fun marketCountFlow(): Flow<Int>
+
+    /**
+     * The snapshot before the latest one: greatest timestamp
+     * strictly below [latestEpoch]. Used for change-vs-previous.
+     * A null latest epoch (no parseable timestamp at all) yields
+     * no previous, never a fabricated comparison.
+     */
+    @Query(
+        "SELECT * FROM market_snapshots WHERE tsEpoch < :latestEpoch " +
+            "ORDER BY tsEpoch DESC LIMIT 1"
+    )
+    suspend fun marketPrevious(latestEpoch: Long?): MarketSnapshotEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertFormulas(formulas: List<MarketFormulaEntity>)
+
+    @Query("DELETE FROM market_formulas")
+    suspend fun deleteAllFormulas()
+
+    @Query("SELECT COUNT(*) FROM market_formulas")
+    suspend fun formulaCount(): Int
+
+    @Query("SELECT * FROM market_formulas ORDER BY name")
+    fun formulasFlow(): Flow<List<MarketFormulaEntity>>
+
+    @Query("SELECT * FROM market_formulas ORDER BY name")
+    suspend fun formulas(): List<MarketFormulaEntity>
+}
+
+/**
+ * Version 2 -> 3 migration (M4). Additive only: a new
+ * market_formulas table. Existing snapshots, articles and bookmarks
+ * are untouched, so a v2 install keeps its cache and the seed
+ * backfills formulas on the next launch (BundledSeed retries while
+ * formulaCount is 0, even when snapshots already exist).
+ */
+val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `market_formulas` (" +
+                "`name` TEXT NOT NULL, `version` INTEGER NOT NULL, " +
+                "`definition` TEXT NOT NULL, `inputs` TEXT, " +
+                "`descriptionFa` TEXT, PRIMARY KEY(`name`))"
+        )
+    }
 }
 
 /**
@@ -350,8 +412,9 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
         BookmarkEntity::class,
         MetaEntity::class,
         MarketSnapshotEntity::class,
+        MarketFormulaEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 @TypeConverters(StringListConverter::class)

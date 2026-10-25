@@ -41,7 +41,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ecojournal.app.data.EdgeRepository
-import com.ecojournal.app.data.MarketFormula
 import com.ecojournal.app.data.MarketSnapshot
 import com.ecojournal.app.data.SettingsStore
 import com.ecojournal.app.ui.screens.ArticleScreen
@@ -100,22 +99,58 @@ class MainActivity : ComponentActivity() {
                         bottomBar = { if (!onReader) BottomBar(nav) },
                     ) { inner ->
                         val pad = Modifier.padding(inner)
-                        // Market board from Room (M2): the bundled seed
-                        // populates market_snapshots on first run, so
-                        // the board is not empty offline. Formulas
-                        // still come from the edge when available.
+                        // Market board from Room (M2, M4): the bundled
+                        // seed populates market_snapshots AND
+                        // market_formulas on first run, so the board
+                        // — including computed formulas — works
+                        // offline. The edge is not consulted here:
+                        // BASE_URL stays unwired until the M5
+                        // decision, and the sync pass (not this
+                        // screen) is what refreshes Room from the
+                        // edge. Seed-done state is tracked so the
+                        // screen can tell "still seeding" (loading)
+                        // from "seed ran, market still empty"
+                        // (error with retry) instead of guessing
+                        // from a null flow value.
+                        val context = LocalContext.current
                         val marketEntity by repo.dao.marketLatestFlow()
                             .collectAsState(initial = null)
                         val marketCount by repo.dao.marketCountFlow()
                             .collectAsState(initial = 0)
-                        var marketFormulas by remember { mutableStateOf<List<MarketFormula>>(emptyList()) }
-                        LaunchedEffect(Unit) {
-                            val (_, formulas, _) = repo.fetchMarket()
-                            marketFormulas = formulas
+                        val marketFormulaEntities by repo.dao.formulasFlow()
+                            .collectAsState(initial = emptyList())
+                        var marketPreviousEntity by remember {
+                            mutableStateOf<com.ecojournal.app.data.MarketSnapshotEntity?>(null)
+                        }
+                        LaunchedEffect(marketEntity) {
+                            marketPreviousEntity = marketEntity?.let {
+                                repo.dao.marketPrevious(it.tsEpoch)
+                            }
+                        }
+                        var marketSeedDone by remember { mutableStateOf(false) }
+                        var marketRetry by remember { mutableStateOf(0) }
+                        LaunchedEffect(marketRetry) {
+                            com.ecojournal.app.data.BundledSeed.ensureSeed(context)
+                            marketSeedDone = true
                         }
                         val marketLatest: MarketSnapshot? = marketEntity?.let {
                             com.ecojournal.app.data.ArticleParsers.marketSnapshotFromEntity(it)
                         }
+                        val marketPrevious: MarketSnapshot? = marketPreviousEntity?.let {
+                            com.ecojournal.app.data.ArticleParsers.marketSnapshotFromEntity(it)
+                        }
+                        val marketComputed = marketLatest?.let { latest ->
+                            val formulas = marketFormulaEntities.map {
+                                com.ecojournal.app.data.MarketFormula(
+                                    name = it.name,
+                                    version = it.version,
+                                    definition = it.definition,
+                                    inputs = it.inputs,
+                                    descriptionFa = it.descriptionFa,
+                                )
+                            }
+                            com.ecojournal.app.data.MarketFormulas.evaluate(latest, formulas)
+                        } ?: emptyList()
                         NavHost(
                             navController = nav,
                             startDestination = "feed",
@@ -158,8 +193,11 @@ class MainActivity : ComponentActivity() {
                             composable("market") {
                                 MarketScreen(
                                     latest = marketLatest,
-                                    formulas = marketFormulas,
+                                    previous = marketPrevious,
+                                    formulas = marketComputed,
                                     snapshotCount = marketCount,
+                                    seedDone = marketSeedDone,
+                                    onRetry = { marketRetry++ },
                                     fontScale = settings.fontScale,
                                 )
                             }

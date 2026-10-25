@@ -46,6 +46,7 @@ object BundledSeed {
         val missing: Int,
         val marketInserted: Int,
         val complete: Boolean,
+        val formulasInserted: Int = 0,
     )
 
     private fun readAsset(context: Context, path: String): String? {
@@ -77,11 +78,15 @@ object BundledSeed {
         val storedHash = dao.indexHash()
 
         // Fast path: a complete seed for this exact bundle is already
-        // recorded, and the market table is populated. Anything else
-        // falls through to the missing-set computation below.
+        // recorded, and the market table and the formulas table are
+        // populated. Anything else falls through to the missing-set
+        // computation below. The formulaCount check matters for
+        // installs that migrate from v2: they already have snapshots
+        // but an empty formulas table, and without it they would
+        // never backfill formulas.
         if (storedVersion >= BUNDLED_SEED_VERSION &&
             storedHash != null && storedHash == hash &&
-            dao.marketCount() > 0
+            dao.marketCount() > 0 && dao.formulaCount() > 0
         ) {
             return SeedReport(0, 0, 0, true)
         }
@@ -164,28 +169,64 @@ object BundledSeed {
             }
         }
 
+        // Market (M4): snapshots and formulas are seeded
+        // independently. Snapshots seed only when the table is empty;
+        // formulas seed whenever their table is empty — including on
+        // a migrated v2 install whose snapshots already exist. A
+        // missing formulas file is retried on the next launch because
+        // the fast path above requires formulaCount > 0; it does not
+        // block the article seed's completeness, since a market-only
+        // failure must not mark articles incomplete.
         var marketFresh = emptyList<MarketSnapshotEntity>()
+        var formulasFresh = emptyList<MarketFormulaEntity>()
         var marketMissing = false
-        if (dao.marketCount() == 0) {
+        val needSnapshots = dao.marketCount() == 0
+        val needFormulas = dao.formulaCount() == 0
+        if (needSnapshots || needFormulas) {
             val marketText = readAsset(context, SEED_MARKET)
             if (marketText == null) {
-                marketMissing = true
+                if (needSnapshots) marketMissing = true
             } else {
                 try {
-                    val snaps = JSONObject(marketText).optJSONArray("snapshots") ?: JSONArray()
-                    val parsed = mutableListOf<MarketSnapshotEntity>()
-                    for (i in 0 until snaps.length()) {
-                        try {
-                            parsed.add(ArticleParsers.marketEntityFromJson(snaps.getJSONObject(i)))
-                        } catch (_: Exception) {
-                            // One bad snapshot does not poison the rest.
-                            continue
+                    val marketObj = JSONObject(marketText)
+                    if (needSnapshots) {
+                        val snaps = marketObj.optJSONArray("snapshots") ?: JSONArray()
+                        val parsed = mutableListOf<MarketSnapshotEntity>()
+                        for (i in 0 until snaps.length()) {
+                            try {
+                                parsed.add(ArticleParsers.marketEntityFromJson(snaps.getJSONObject(i)))
+                            } catch (_: Exception) {
+                                // One bad snapshot does not poison the rest.
+                                continue
+                            }
                         }
+                        marketFresh = parsed
+                        if (parsed.isEmpty()) marketMissing = true
                     }
-                    marketFresh = parsed
-                    if (parsed.isEmpty()) marketMissing = true
+                    if (needFormulas) {
+                        val farr = marketObj.optJSONArray("formulas_active") ?: JSONArray()
+                        val parsedFormulas = mutableListOf<MarketFormulaEntity>()
+                        for (i in 0 until farr.length()) {
+                            try {
+                                val formula = MarketFormulas.formulaFromJson(farr.getJSONObject(i))
+                                    ?: continue
+                                parsedFormulas.add(
+                                    MarketFormulaEntity(
+                                        name = formula.name,
+                                        version = formula.version,
+                                        definition = formula.definition,
+                                        inputs = formula.inputs,
+                                        descriptionFa = formula.descriptionFa,
+                                    )
+                                )
+                            } catch (_: Exception) {
+                                continue
+                            }
+                        }
+                        formulasFresh = parsedFormulas
+                    }
                 } catch (_: Exception) {
-                    marketMissing = true
+                    if (needSnapshots) marketMissing = true
                 }
             }
         }
@@ -194,6 +235,7 @@ object BundledSeed {
         db.withTransaction {
             if (fresh.isNotEmpty()) dao.upsertAll(fresh)
             if (marketFresh.isNotEmpty()) dao.upsertMarket(marketFresh)
+            if (formulasFresh.isNotEmpty()) dao.upsertFormulas(formulasFresh)
             dao.upsertMeta(MetaEntity("seed_missing_count", missingIds.size.toString()))
             if (complete) {
                 if (hash.isNotBlank()) dao.upsertMeta(MetaEntity("index_hash", hash))
@@ -205,6 +247,7 @@ object BundledSeed {
             missing = missingIds.size,
             marketInserted = marketFresh.size,
             complete = complete,
+            formulasInserted = formulasFresh.size,
         )
     }
 

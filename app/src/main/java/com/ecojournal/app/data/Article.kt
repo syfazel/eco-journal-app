@@ -49,14 +49,32 @@ data class EdgeIndex(
     val entries: List<IndexEntry>,
 )
 
+/**
+ * Market snapshot (M4): every field the bundled/edge market.json
+ * carries, not the 5-field subset M2/M3 showed. The Room entity
+ * already stored all 13 prices; only this UI model lagged behind,
+ * so the board silently dropped 8 fields. A null price means the
+ * snapshot genuinely has no value for it (early snapshots predate
+ * several series) and the UI must render "—", never omit the row.
+ * Field order here follows market.json, not display order.
+ */
 data class MarketSnapshot(
+    val snapshotId: String = "",
     val tsTehran: String,
     val tsEpoch: Long? = null,
     val brent: Double?,
     val xauUsd: Double?,
+    val dxy: Double?,
+    val usdtUsd: Double?,
     val usdIrtFree: Double?,
     val usdtIrt: Double?,
+    val gold18kGram: Double?,
     val sekkeEmami: Double?,
+    val sekkeBahar: Double?,
+    val nimSekke: Double?,
+    val robSekke: Double?,
+    val vix: Double?,
+    val sp500: Double?,
 )
 
 data class MarketFormula(

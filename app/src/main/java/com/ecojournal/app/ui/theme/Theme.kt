@@ -36,9 +36,13 @@ val EcoFontFamily: FontFamily = FontFamily(
  * M3: schemes are now complete (secondary / tertiary /
  * surfaceVariant / surfaceContainer / error and their on-* colours),
  * so no M3 purple-tinted default leaks through anywhere (P2-02).
- * Typography carries Vazirmatn as its default font family, so a
- * Text without an explicit fontFamily no longer falls back to the
- * system font (P2-03) — the search field's typed text included.
+ * M4 correction of a stale M3 comment: Typography does NOT carry
+ * Vazirmatn as a default family — material3 1.3.0 has no such
+ * Typography parameter (see the note at the MaterialTheme call
+ * below, cloud build 40213937473). Vazirmatn reaches texts only
+ * via per-Text fontFamily = EcoFontFamily, and a Text without an
+ * explicit fontFamily still falls back to the system font; that
+ * remaining gap is not claimed fixed here.
  */
 private val LightColors = lightColorScheme(
     primary = Color(0xFF0F2A44),
