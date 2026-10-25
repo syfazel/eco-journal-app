@@ -1,5 +1,6 @@
 {
- "generated_at_utc": "2026-10-25T13:53:56.488236+00:00",
+ "source": "dryrun",
+ "generated_at_utc": "2026-10-25T17:36:09.706908+00:00",
  "mode": "dry-run",
  "channel_open": false,
  "network_used": false,
@@ -68,7 +69,7 @@
   {
    "case": "cap validator fires on 5000-char filler",
    "pass": true,
-   "detail": "over Telegram cap: 5114 chars (cap 4096, excess 1018); needs a Phase 2 splitting decision, never silent truncation"
+   "detail": "over Telegram cap: 5114 chars (cap 4096, excess 1018); a single paragraph exceeds the cap; needs a manual edit — never silent truncation"
   }
  ],
  "would_send": [

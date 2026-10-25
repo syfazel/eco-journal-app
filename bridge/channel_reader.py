@@ -95,28 +95,45 @@ def edge_channel_ids():
 
 
 def to_staging_item(post, chat_title):
-    """Build an edge-shaped staging item. Returns (item, skip_reason)."""
+    """Build an edge-shaped staging item. Returns (item, skip_reason).
+
+    M7 (P0-12): a photo-with-caption post carries its text in
+    `caption`, not `text` — caption is now read, with a `has_media`
+    flag and a note that the media itself is not republished
+    (nothing invented). A text+photo post keeps the photo note.
+    A post with neither text nor caption is still skipped, never
+    fabricated. Dates are Tehran time (P2-14), and summaries cut
+    at 300 chars carry an ellipsis instead of a mid-word cut.
+    """
     message_id = post.get("message_id")
-    text = (post.get("text") or "").strip()
+    # Caption is the channel's most common format; text is second.
+    text = (post.get("text") or post.get("caption") or "").strip()
+    has_media = any(k in post for k in ("photo", "video", "document", "animation"))
     if message_id is None:
         return None, "update without message_id"
     if not text:
-        return None, f"message {message_id} has no text (media-only) — skipped, nothing invented"
+        return None, f"message {message_id} has no text or caption (media-only) — skipped, nothing invented"
     # Title: first line; if the post is a single block, first 120 chars.
     first_line = text.split("\n", 1)[0].strip()
     title = first_line if first_line else text[:120]
     if len(title) > 120:
-        title = title[:120]
+        title = title[:117] + "…"
+    summary = text[:300] + ("…" if len(text) > 300 else "")
     date = post.get("date")
-    published_at = (
-        datetime.fromtimestamp(date, tz=timezone.utc).isoformat()
-        if isinstance(date, (int, float)) else now_iso()
-    )
+    if isinstance(date, (int, float)):
+        try:
+            from zoneinfo import ZoneInfo
+            tz = ZoneInfo("Asia/Tehran")
+        except Exception:
+            tz = timezone.utc
+        published_at = datetime.fromtimestamp(date, tz=tz).isoformat()
+    else:
+        published_at = now_iso()
     item = {
         "id": f"channel-{message_id}",
         "kind": "channel_post",
         "title": title,
-        "summary": text[:300],
+        "summary": summary,
         "body_blocks": [text],
         "category": "channel",
         "category_fa": "کانال",
@@ -127,13 +144,29 @@ def to_staging_item(post, chat_title):
         "publish_status": "staged",
         "provenance": "telegram channel_post (Bot API getUpdates input)",
         "idempotency_key": f"channel:{message_id}",
+        "has_media": has_media,
     }
+    if has_media:
+        item["media_note"] = ("Media attached in the channel post; "
+                              "the media itself is not republished, text only.")
     return item, ""
 
 
 def process_updates(updates, staging_dir, already_reviewed=False,
-                    enqueue=False, db_path=None):
-    """Process updates. Returns a report dict (no network, no sends)."""
+                    enqueue=False, db_path=None, chat_id_filter=None):
+    """Process updates. Returns a report dict (no network, no sends).
+
+    M7 (P1-38, P2-14): an edited post updates the queued payload
+    when the item is not yet sent (via update_item_payload), and
+    creates an edit record when it is already sent — never a silent
+    overwrite, never a stale queue. An edited post for a
+    never-seen message is flagged as an orphan edit, not staged as
+    a fresh item. The staging manifest is cumulative (all staging
+    files on disk), not just this run's items. A --chat-id filter
+    (main()) skips posts from other chats instead of staging any
+    channel_post regardless of source.
+    """
+    from bridge_lib import get_item, record_edit, update_item_payload
     staging_dir = Path(staging_dir)
     staging_dir.mkdir(parents=True, exist_ok=True)
     published_ids = edge_channel_ids()
@@ -147,36 +180,67 @@ def process_updates(updates, staging_dir, already_reviewed=False,
                             "reason": "not a channel post"})
             continue
         message_id = post.get("message_id")
+        if message_id is None:
+            # M7 (P2-14): label it for what it is, not "duplicate".
+            skipped.append({"update_id": update.get("update_id"),
+                            "reason": "no message_id"})
+            continue
         if message_id in seen_this_run:
             skipped.append({"message_id": message_id,
                             "reason": "duplicate in this input file"})
             continue
         seen_this_run.add(message_id)
+        chat = post.get("chat") or {}
+        if chat_id_filter is not None and str(chat.get("id")) != str(chat_id_filter):
+            skipped.append({"message_id": message_id,
+                            "reason": f"chat id {chat.get('id')} does not match filter {chat_id_filter}"})
+            continue
         if message_id in published_ids:
             skipped.append({"message_id": message_id,
                             "reason": "already in edge index"})
             continue
-        chat = post.get("chat") or {}
         item, why = to_staging_item(post, chat.get("title"))
         if item is None:
             skipped.append({"message_id": message_id, "reason": why})
             continue
         target = staging_dir / f"channel-{message_id}.json"
         existed = target.exists()
+        if edited and not existed and not (enqueue and get_item(con, item["idempotency_key"])):
+            # Orphan edit: no staging file and no queue row to update.
+            skipped.append({"message_id": message_id,
+                            "reason": "orphan edit: edited post for a never-seen message"})
+            continue
         target.write_text(json.dumps(item, ensure_ascii=False, indent=1),
                           encoding="utf-8")
         (updated if existed else staged).append(item["id"])
         if enqueue:
-            status = "approved" if already_reviewed else "review"
-            ok, msg = enqueue_item(con, item["idempotency_key"], item,
-                                   status=status)
-            if not ok:
-                skipped.append({"message_id": message_id,
-                                "reason": f"queue: {msg}"})
+            existing = get_item(con, item["idempotency_key"])
+            if existing is None:
+                status = "approved" if already_reviewed else "review"
+                ok, msg = enqueue_item(con, item["idempotency_key"], item,
+                                       status=status)
+                if not ok:
+                    skipped.append({"message_id": message_id,
+                                    "reason": f"queue: {msg}"})
+            elif edited:
+                if existing["status"] in ("published_channel", "sending"):
+                    record_edit(con, item["idempotency_key"], message_id, item)
+                else:
+                    ok, msg = update_item_payload(
+                        con, item["idempotency_key"], item,
+                        edit_note="edited_channel_post: payload refreshed")
+                    if not ok:
+                        skipped.append({"message_id": message_id,
+                                        "reason": f"queue edit: {msg}"})
+            # A non-edited re-run of an already-queued post is a
+            # dedup hit, not an overwrite (layer 2, P1-37).
+    # Cumulative manifest: every staging file on disk, not this run.
+    all_staged = sorted(
+        p.stem for p in staging_dir.glob("channel-*.json"))
     manifest = {
         "generated_at_utc": now_iso(),
-        "staged_count": len(staged) + len(updated),
-        "staged": sorted(set(staged) | set(updated)),
+        "staged_count": len(all_staged),
+        "staged": all_staged,
     }
     (staging_dir / "index.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -221,10 +285,13 @@ def main(argv) -> int:
     enqueue = "--enqueue" in argv
     staging_dir = DEFAULT_STAGING_DIR
     db_path = None
+    chat_id_filter = None
     if "--staging-dir" in argv:
         staging_dir = Path(argv[argv.index("--staging-dir") + 1])
     if "--db" in argv:
         db_path = argv[argv.index("--db") + 1]
+    if "--chat-id" in argv:
+        chat_id_filter = argv[argv.index("--chat-id") + 1]
     try:
         data = json.loads(input_file.read_text(encoding="utf-8"))
         updates = parse_updates(data)
@@ -233,7 +300,8 @@ def main(argv) -> int:
         return 1
     report = process_updates(updates, staging_dir,
                              already_reviewed=already_reviewed,
-                             enqueue=enqueue, db_path=db_path)
+                             enqueue=enqueue, db_path=db_path,
+                             chat_id_filter=chat_id_filter)
     print(f"staged new: {len(report['staged_new'])}; "
           f"updated: {len(report['staged_updated'])}; "
           f"skipped: {len(report['skipped'])}")

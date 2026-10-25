@@ -70,6 +70,23 @@ URL is intentionally still empty and FCM is scaffold-only, so:
 9. **Crash / freeze report** — any crash, freeze, or blank screen:
    note what you tapped just before it and your device model.
 
+## M7 acceptance (operator tests, lab only — not reader steps)
+
+- Wrong code on first run: feed stays locked, fixed error only,
+  no hint about any valid code.
+- Revoked code re-locks on next sync: after
+  `control.py invites revoke --label pilot-XX` (hash appended to
+  edge revocations), a sync re-locks the feed; cached articles are
+  hidden, not deleted, and re-entering a valid code restores them.
+- Split send: a >4096-char queued item sends as numbered parts
+  with ALL message ids recorded (mock-sender test in
+  test_phase2.py TestM7); a crash-window "sending" item is never
+  auto re-sent — it waits for `control.py reconcile`.
+- Verified mark-app: `mark-app` refuses an item absent from the
+  new edge index, accepts one present with a matching content
+  hash. Staging -> edge promotion: `control.py promote
+  channel-<message_id>` writes the edge entry mark-app verifies.
+
 ## Feedback to collect (one short message per reader)
 
 - Device + Android version.

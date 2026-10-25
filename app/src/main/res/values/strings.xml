@@ -46,6 +46,18 @@
     <string name="bookmarks_unavailable_title">ذخیره‌شده‌های دیگر در دسترس نیست</string>
     <string name="bookmark_unavailable_row">این مقاله دیگر در دسترس نیست.</string>
     <string name="bookmark_prune">حذف</string>
+    <!-- M7: real invite gate strings. No code, hash, or hint about
+         a valid code is ever shown in the UI. -->
+    <string name="invite_title">ورود با کد دعوت</string>
+    <string name="invite_subtitle">این نسخهٔ آزمایشی فقط با کد دعوت باز می‌شود. کد را وارد کنید تا مقالات نمایش داده شوند.</string>
+    <string name="invite_code_label">کد دعوت</string>
+    <string name="invite_confirm">تأیید کد</string>
+    <string name="invite_error">کد واردشده معتبر نیست. دوباره بررسی کنید.</string>
+    <string name="invite_privacy_note">کد شما از این دستگاه خارج نمی‌شود؛ فقط هش آن با فهرست دعوت مقایسه و ذخیره می‌شود.</string>
+    <string name="invite_confirmed">دسترسی با کد دعوت تأیید شده است.</string>
+    <string name="invite_not_confirmed">کد دعوت هنوز تأیید نشده است.</string>
+    <string name="invite_revocation_note">اگر دسترسی شما لغو شود، در همگام‌سازی بعدی قفل می‌شود؛ مقالات کش‌شده حذف نمی‌شوند و با کد معتبر تازه دوباره دیده می‌شوند.</string>
+    <string name="invite_lock_button">قفل کردن دسترسی (بازگشت به صفحهٔ کد)</string>
     <string name="font_size_label">اندازهٔ فونت</string>
     <string name="font_preview">این یک پاراگراف نمونه است تا اندازهٔ فونت انتخاب‌شده را همین‌جا ببینید.</string>
 </resources>

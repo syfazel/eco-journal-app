@@ -40,6 +40,7 @@ import com.ecojournal.app.data.SettingsStore
 import com.ecojournal.app.ui.screens.ArticleScreen
 import com.ecojournal.app.ui.screens.BookmarksScreen // M6: now in its own file, moved verbatim from the deleted CategoriesScreen.kt
 import com.ecojournal.app.ui.screens.FeedScreen
+import com.ecojournal.app.ui.screens.InviteScreen
 import com.ecojournal.app.ui.screens.MarketScreen
 import com.ecojournal.app.ui.screens.SettingsScreen
 import com.ecojournal.app.ui.theme.EcoFontFamily
@@ -74,6 +75,21 @@ class MainActivity : ComponentActivity() {
             // Whole app is RTL-first (Persian UI).
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                 EcoTheme(theme = settings.theme, darkSystem = darkSystem) {
+                    // M7 real invite gate: the feed stays locked
+                    // until a valid code is entered (InviteScreen).
+                    // The gate replaces the old unconditional
+                    // startDestination = "feed". Known limitation
+                    // (M8 polish): the very first DataStore emission
+                    // is inviteOk=false, so a returning reader may
+                    // briefly see the gate before the feed appears.
+                    if (!settings.inviteOk) {
+                        InviteScreen(
+                            repo = repo,
+                            store = store,
+                            fontScale = settings.fontScale,
+                        )
+                        return@EcoTheme
+                    }
                     val nav = rememberNavController()
                     // M5 (P2-16): notification permission is NOT
                     // requested blindly on launch any more. It is

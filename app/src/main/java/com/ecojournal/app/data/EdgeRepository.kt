@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.withTransaction
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlinx.coroutines.flow.first
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -146,6 +147,13 @@ class EdgeRepository(context: Context) {
         val hash = index.optString("hash_sha256", "")
         val entries = index.optJSONArray("entries") ?: JSONArray()
         val now = System.currentTimeMillis()
+
+        // M7 invite re-check: fetch the edge invite + revocation
+        // lists in the same sync pass. A fetch failure yields null
+        // and the re-check is skipped entirely — offline must never
+        // lock a reader out. Only a successfully fetched list can
+        // re-lock, and it does so after the content transaction.
+        val inviteLists = fetchInviteLists(base)
 
         // Existing rows keyed by appKey, with their stored hashes.
         val existingByKey = dao.all().associate { it.appKey to it }
@@ -325,6 +333,15 @@ class EdgeRepository(context: Context) {
                 dao.deleteAllFormulas()
                 dao.upsertFormulas(formulasFresh)
             }
+            // M7: store the fetched edge invite lists (hashes only)
+            // in the same transaction, so a later code entry can be
+            // checked against the edge list without a new fetch.
+            if (inviteLists != null) {
+                dao.upsertMeta(MetaEntity("edge_invite_hashes",
+                    JSONArray(inviteLists.first).toString()))
+                dao.upsertMeta(MetaEntity("edge_revocations",
+                    JSONArray(inviteLists.second).toString()))
+            }
             dao.upsertMeta(MetaEntity("last_sync_attempt_at", now.toString()))
             if (complete) {
                 if (hash.isNotBlank()) dao.upsertMeta(MetaEntity("index_hash", hash))
@@ -334,12 +351,48 @@ class EdgeRepository(context: Context) {
                 dao.upsertMeta(MetaEntity("last_sync_error_code", "partial"))
             }
         }
+        // M7 sync-time re-check: a revoked (or list-dropped) hash
+        // re-locks the feed. Cached rows are NOT deleted — only the
+        // gate closes, so a re-grant restores them without download.
+        if (inviteLists != null) {
+            val storedHash = settings.settings.first().inviteHash
+            if (storedHash != null &&
+                !InviteGate.stillValid(storedHash, inviteLists.first, inviteLists.second)
+            ) {
+                settings.setInviteOk(false)
+            }
+        }
         val total = dao.allIds().size
         return if (complete) {
             SyncResult.Ok(newKeys, total)
         } else {
             SyncResult.Partial(newKeys, missingKeys.size + corruptEntries, total)
         }
+    }
+
+    /**
+     * Fetch the edge invite + revocation lists (hashes only).
+     * Returns null when either file cannot be fetched or parsed —
+     * callers must then skip the re-check, never lock on a failure.
+     */
+    private fun fetchInviteLists(base: String): Pair<List<String>, List<String>>? {
+        fun hashes(url: String): List<String>? {
+            val text = when (val outcome = httpGet(url)) {
+                is HttpOutcome.Ok -> outcome.body
+                else -> return null
+            }
+            return try {
+                val arr = JSONObject(text).optJSONArray("hashes") ?: return null
+                (0 until arr.length()).mapNotNull {
+                    arr.optString(it).takeIf { s -> s.isNotBlank() }
+                }
+            } catch (_: Exception) {
+                null
+            }
+        }
+        val invites = hashes("$base/invite_hashes.json") ?: return null
+        val revocations = hashes("$base/revocations.json") ?: return null
+        return invites to revocations
     }
 
     /**

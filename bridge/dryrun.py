@@ -53,20 +53,30 @@ BRIDGE_DIR = Path(__file__).resolve().parent
 APP_ROOT = BRIDGE_DIR.parent
 EDGE_OUT = APP_ROOT / "edge" / "out"
 STATE_DIR = BRIDGE_DIR / ".dryrun-state"
-LOCK_FILE = STATE_DIR / "send.lock"
+# M7 (P2-10): the harness uses the SAME single lock file as the real
+# worker (bridge/send.lock), so its contention test proves something
+# about the real path instead of a private scratch lock. The scratch
+# state file stays separate (it is explicitly not a sent-record).
+import sys as _sys
+_sys.path.insert(0, str(BRIDGE_DIR))
+from bridge_lib import LOCK_FILE  # noqa: E402
 SCRATCH_FILE = STATE_DIR / "scratch_sent.json"
 REPORT_FILE = BRIDGE_DIR / "dryrun-report.json"
 
 TELEGRAM_CAP = 4096
 PLACEHOLDER_MARKERS = ("TODO", "Lorem", "XXX", "متن نمونه", "[...]")
 
-# Spec status machine (docs/telegram-bridge-spec.md, direction 2).
+# Spec status machine (docs/telegram-bridge-spec.md, direction 2),
+# kept in sync with bridge_lib.LEGAL (M7: review -> rejected added).
 LEGAL = {
     "draft": ["review"],
-    "review": ["approved"],
+    "review": ["approved", "rejected"],
     "approved": ["queued"],
     "queued": ["published_app"],
-    "published_app": ["published_channel"],
+    "published_app": ["sending"],
+    "sending": ["published_channel", "published_app"],
+    "published_channel": [],
+    "rejected": [],
 }
 
 # The live channel is FROZEN (2026-10-24 order). This is a fact of the
@@ -102,10 +112,16 @@ def validate_channel_text(text: str, article: dict):
         if marker in text:
             return False, f"placeholder marker present: {marker}"
     if len(text) > TELEGRAM_CAP:
+        # M7: the harness validator now carries the same split hint
+        # as bridge_lib, so the two machines cannot disagree.
+        from bridge_lib import split_channel_text as _split
+        parts = _split(text)
+        hint = (f"split into {len(parts)} parts at paragraph boundaries"
+                if parts else "a single paragraph exceeds the cap; needs a manual edit")
         return False, (
             f"over Telegram cap: {len(text)} chars "
             f"(cap {TELEGRAM_CAP}, excess {len(text) - TELEGRAM_CAP}); "
-            "needs a Phase 2 splitting decision, never silent truncation"
+            f"{hint} — never silent truncation"
         )
     return True, f"valid, {len(text)} chars"
 
@@ -247,6 +263,7 @@ def main(argv) -> int:
                "not the production sent-record)")
 
     report = {
+        "source": "dryrun",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "mode": "dry-run" + (" + scratch" if scratch_mode else ""),
         "channel_open": CHANNEL_OPEN,

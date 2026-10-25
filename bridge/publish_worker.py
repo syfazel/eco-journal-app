@@ -39,9 +39,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from bridge_lib import (  # noqa: E402
-    BRIDGE_DIR, LockHeld, already_sent, check_live_gates, format_channel,
-    get_item, init_db, now_iso, queue_db_path, record_sent, send_lock,
-    send_via_bot_api, set_note, split_channel_text, validate_channel_text,
+    BRIDGE_DIR, LockHeld, already_sent, cadence_ok, check_live_gates,
+    format_channel, get_item, init_db, now_iso, numbered_split_parts,
+    queue_db_path, record_sent, send_lock, send_via_bot_api, set_note,
+    set_status, split_channel_text, validate_channel_text,
 )
 import os  # noqa: E402
 
@@ -56,7 +57,13 @@ def enqueue_article(article_file, db_path=None):
         print(f"bad article file: {e}", file=sys.stderr)
         return 1
     from bridge_lib import enqueue_item
-    ok, msg = enqueue_item(con, f"article:{article.get('id', '')}", article)
+    import hashlib as _hashlib
+    article_id = article.get("id", "")
+    if not article_id:
+        article_id = "untitled-" + _hashlib.sha256(
+            json.dumps(article, ensure_ascii=False, sort_keys=True
+                       ).encode("utf-8")).hexdigest()[:16]
+    ok, msg = enqueue_item(con, f"article:{article_id}", article)
     print(msg)
     con.close()
     return 0 if ok else 1
@@ -75,6 +82,7 @@ def run_worker(db_path=None, live=False, report_file=None,
         print("live send REFUSED (fail closed): " + "; ".join(gate_reasons))
     con = init_db(queue_db_path(db_path))
     report = {
+        "source": "publish_worker",
         "generated_at_utc": now_iso(),
         "mode": mode,
         "live_requested": live,
@@ -90,6 +98,26 @@ def run_worker(db_path=None, live=False, report_file=None,
     }
     try:
         with send_lock():
+            # M7 crash reconciliation: items left in "sending" by a
+            # crashed pass are NEVER auto re-sent. They are reported
+            # as blocked for operator reconciliation (control.py
+            # "reconcile"), because Telegram may already have
+            # delivered a part whose record never landed.
+            sending_rows = con.execute(
+                "SELECT key FROM items WHERE status = 'sending'"
+                " ORDER BY updated_at"
+            ).fetchall()
+            for (key,) in sending_rows:
+                if already_sent(con, key):
+                    set_status(con, key, "published_channel")
+                    report["skipped"].append(
+                        {"key": key, "reason": "sending item already has a sent record; reconciled"})
+                    continue
+                report["blocked"].append(
+                    {"key": key,
+                     "reason": "sending state needs operator reconciliation "
+                               "(crash window); not re-sent automatically"})
+                print(f"[BLOCKED] {key}: sending state needs operator reconciliation")
             rows = con.execute(
                 "SELECT key FROM items WHERE status = 'published_app'"
                 " ORDER BY updated_at"
@@ -99,20 +127,59 @@ def run_worker(db_path=None, live=False, report_file=None,
                 article = json.loads(item["payload"])
                 text = format_channel(article)
                 valid, why = validate_channel_text(text, article)
-                if not valid:
-                    parts = split_channel_text(text) if len(text) > 4096 else None
-                    plan = {"parts": len(parts)} if parts else None
+                if not valid and len(text) <= 4096:
+                    # A real validation failure (empty body, missing
+                    # attribution, placeholder) — not an oversize
+                    # item, which is handled below by splitting.
                     con.execute(
                         "UPDATE items SET split_plan = ?, updated_at = ?"
                         " WHERE key = ?",
-                        (json.dumps(plan) if plan else None, now_iso(), key),
+                        (None, now_iso(), key),
                     )
                     con.commit()
                     set_note(con, key, f"blocked: {why}")
                     report["blocked"].append(
-                        {"key": key, "reason": why, "split_plan": plan})
+                        {"key": key, "reason": why, "split_plan": None})
                     print(f"[BLOCKED] {key}: {why}")
                     continue
+                if not valid and len(text) > 4096:
+                    # A non-size failure (empty body, placeholder,
+                    # missing attribution) blocks even an oversize
+                    # item — splitting must never launder it through.
+                    if any(k in why for k in ("empty", "placeholder", "missing source")):
+                        set_note(con, key, f"blocked: {why}")
+                        report["blocked"].append(
+                            {"key": key, "reason": why, "split_plan": None})
+                        print(f"[BLOCKED] {key}: {why}")
+                        continue
+                    # M7 (P1-34): oversize is no longer a permanent
+                    # block. Numbered parts are computed (title on
+                    # part 1, attribution on last); only a single
+                    # paragraph over the cap still needs a human edit.
+                    parts = numbered_split_parts(text)
+                    if parts is None:
+                        con.execute(
+                            "UPDATE items SET split_plan = ?, updated_at = ?"
+                            " WHERE key = ?",
+                            (None, now_iso(), key),
+                        )
+                        con.commit()
+                        set_note(con, key, f"blocked: {why}")
+                        report["blocked"].append(
+                            {"key": key, "reason": why, "split_plan": None})
+                        print(f"[BLOCKED] {key}: {why}")
+                        continue
+                    plan = {"parts": len(parts),
+                            "part_chars": [len(p) for p in parts]}
+                    con.execute(
+                        "UPDATE items SET split_plan = ?, updated_at = ?"
+                        " WHERE key = ?",
+                        (json.dumps(plan), now_iso(), key),
+                    )
+                    con.commit()
+                else:
+                    parts = [text]
+                    plan = None
                 if already_sent(con, key):
                     report["skipped"].append(
                         {"key": key, "reason": "idempotency key already sent"})
@@ -124,30 +191,70 @@ def run_worker(db_path=None, live=False, report_file=None,
                         "article_id": item["article_id"],
                         "title": item["title"],
                         "chars": len(text),
+                        "parts": len(parts),
+                        "part_chars": [len(p) for p in parts],
+                        "split_plan": plan,
                         "text_preview": text[:300],
                         "verdict": "WOULD_SEND_IF_UNFROZEN",
                     })
-                    print(f"[DRY-RUN] {key}: would send ({len(text)} chars); "
-                          "nothing recorded as sent")
+                    print(f"[DRY-RUN] {key}: would send {len(parts)} part(s) "
+                          f"({len(text)} chars); nothing recorded as sent")
                     continue
-                # Live path — only reachable with all gates passing.
+                # Live path — only reachable with all gates passing
+                # (including the channel allow-list, P1-36).
+                ok_cad, cad_why = cadence_ok(con)
+                if not ok_cad:
+                    set_note(con, key, f"blocked: {cad_why}")
+                    report["blocked"].append({"key": key, "reason": cad_why})
+                    print(f"[BLOCKED] {key}: {cad_why}")
+                    continue
                 send = sender or send_via_bot_api
                 chat_id = os.environ["BRIDGE_CHANNEL_ID"]
-                try:
-                    message_id = send(text, chat_id)
-                except Exception as e:
-                    set_note(con, key, f"send failed: {e}; stays published_app")
+                # Atomic send+record (P1-35): mark sending BEFORE
+                # the first network call, record ALL part ids in one
+                # transaction with the status flip afterwards.
+                set_status(con, key, "sending")
+                message_ids = []
+                failed = None
+                for part in parts:
+                    try:
+                        message_ids.append(send(part, chat_id))
+                    except Exception as e:
+                        failed = e
+                        break
+                if failed is not None:
+                    # Partial failure: the item stays in "sending"
+                    # with its partial ids in the note, for operator
+                    # reconciliation — never silently re-sent, never
+                    # marked sent on a partial delivery.
+                    set_note(con, key,
+                             f"send failed mid-split: {failed}; "
+                             f"partial message ids: {message_ids}; stays sending")
                     report["blocked"].append(
-                        {"key": key, "reason": f"send failed: {e}"})
-                    print(f"[FAILED] {key}: {e}; stays published_app")
+                        {"key": key, "reason": f"send failed: {failed}",
+                         "partial_message_ids": message_ids})
+                    print(f"[FAILED] {key}: {failed}; stays sending")
                     continue
-                record_sent(con, key, [message_id])
+                ok_rec, rec_why = record_sent(con, key, message_ids)
+                if not ok_rec:
+                    set_note(con, key, f"record failed: {rec_why}; stays sending")
+                    report["blocked"].append({"key": key, "reason": rec_why})
+                    print(f"[BLOCKED] {key}: {rec_why}")
+                    continue
                 report["network_used"] = True
                 report["live_sends"] += 1
                 report["sent"].append(
-                    {"key": key, "message_id": message_id})
-                print(f"[SENT] {key}: message_id {message_id}")
+                    {"key": key, "message_ids": message_ids})
+                print(f"[SENT] {key}: message_ids {message_ids}")
     except LockHeld:
+        # M7 (P2-10): the report is ALWAYS rewritten, including on
+        # lock contention — a stale report must never masquerade
+        # as the current run's result.
+        report["mode"] = "skipped: lock held"
+        report["skipped"].append({"reason": "another send is running (lock held)"})
+        report_file.parent.mkdir(parents=True, exist_ok=True)
+        report_file.write_text(json.dumps(report, ensure_ascii=False, indent=1),
+                               encoding="utf-8")
         print("skipped: another send is running (lock held)")
         con.close()
         return 2, report

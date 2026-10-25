@@ -22,6 +22,10 @@ private object Keys {
     val THEME = stringPreferencesKey("theme") // system | light | dark | sepia
     val NOTIFICATIONS = booleanPreferencesKey("notifications_enabled")
     val INVITE_OK = booleanPreferencesKey("invite_ok")
+    // M7: only the SHA-256 hash of the entered code is stored, never
+    // the code itself. Clearing it (with inviteOk=false) is the
+    // re-lock path used by revocation and by the Settings lock button.
+    val INVITE_HASH = stringPreferencesKey("invite_hash")
     val FCM_TOKEN = stringPreferencesKey("fcm_token")
 }
 
@@ -30,16 +34,18 @@ data class Settings(
     val theme: String = "system",
     val notificationsEnabled: Boolean = true,
     val inviteOk: Boolean = false,
+    val inviteHash: String? = null,
     val fcmToken: String? = null,
 )
 
 /**
- * Invite-code check (Phase 1): the code itself is NOT baked into the
- * app. The control plane publishes the current code in the edge
- * config (see docs/control-plane-spec.md); the app fetches it at
- * first run and compares locally. Until the edge config exists, the
- * gate is open and inviteOk stays false — the gate must not be
- * "secured" by an embedded secret that ships in the APK.
+ * Invite gate (M7): the code itself is never baked into the app
+ * and never stored. The app hashes the entered code with SHA-256
+ * (InviteGate) and compares hashes only, against the bundled seed
+ * list on first run and the edge list after a sync. The old
+ * phase-1 note about an "open gate until the edge config exists"
+ * is superseded: the gate is closed by default and the feed stays
+ * locked until a valid code is entered.
  */
 /** Valid theme values (M5): anything else falls back to "system",
  * both on read and on write, so a corrupt stored value can never
@@ -57,6 +63,7 @@ class SettingsStore(private val context: Context) {
                 theme = (p[Keys.THEME] ?: "system").takeIf { it in VALID_THEMES } ?: "system",
                 notificationsEnabled = p[Keys.NOTIFICATIONS] ?: true,
                 inviteOk = p[Keys.INVITE_OK] ?: false,
+                inviteHash = p[Keys.INVITE_HASH],
                 fcmToken = p[Keys.FCM_TOKEN],
             )
         }
@@ -72,6 +79,18 @@ class SettingsStore(private val context: Context) {
 
     suspend fun setInviteOk(v: Boolean) =
         context.settingsStore.edit { it[Keys.INVITE_OK] = v }
+
+    suspend fun setInviteHash(hash: String?) =
+        context.settingsStore.edit {
+            if (hash == null) it.remove(Keys.INVITE_HASH) else it[Keys.INVITE_HASH] = hash
+        }
+
+    /** Re-lock: clear both the flag and the stored hash. */
+    suspend fun clearInvite() =
+        context.settingsStore.edit {
+            it[Keys.INVITE_OK] = false
+            it.remove(Keys.INVITE_HASH)
+        }
 
     suspend fun setFcmToken(v: String) =
         context.settingsStore.edit { it[Keys.FCM_TOKEN] = v }

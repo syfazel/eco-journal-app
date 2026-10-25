@@ -46,7 +46,8 @@ import kotlinx.coroutines.launch
  * it shows a numeric value plus a preview paragraph that scales
  * live. The screen scrolls, and its text scales with the setting
  * itself, so the slider's effect is visible without leaving the
- * screen. Invite behaviour is untouched (M7).
+ * screen. M7: invite state is now the real gate — confirmed text,
+ * a revocation note, and a manual re-lock button.
  */
 @Composable
 fun SettingsScreen(
@@ -194,12 +195,32 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = if (settings.inviteOk) {
-                "دسترسی با کد دعوت تأیید شده است."
+                stringResource(R.string.invite_confirmed)
             } else {
-                "کد دعوت هنوز تأیید نشده است (مرحلهٔ کنترل‌صفحه، فاز ۲)."
+                stringResource(R.string.invite_not_confirmed)
             },
             fontFamily = EcoFontFamily,
             fontSize = 16.sp * fontScale,
         )
+        if (settings.inviteOk) {
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = stringResource(R.string.invite_revocation_note),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Button(onClick = {
+                // M7: manual re-lock. Clears flag + stored hash,
+                // so the next launch shows the code-entry screen
+                // again. Cached articles are hidden, not deleted.
+                scope.launch { store.clearInvite() }
+            }) {
+                Text(
+                    text = stringResource(R.string.invite_lock_button),
+                    fontFamily = EcoFontFamily,
+                )
+            }
+        }
     }
 }
