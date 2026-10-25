@@ -53,6 +53,29 @@ object SyncTrace {
     const val RECON_KEY = "v5_seed_recon"
     const val MAX_ENTRIES = 40
 
+    // v5.1 diagnostics contract (shared with the UI worker — the
+    // UI renders these keys, it does not define them). Best-effort
+    // meta keys, JSON, counts/codes/epochs ONLY — never titles,
+    // URLs, hashes, tokens or invite codes. Every write below is
+    // swallowed and lives OUTSIDE Room transactions, so a
+    // diagnostics write can never change a sync outcome.
+    // - "v51_section_outcome": object keyed by section, each value
+    //   {code, fetched, missing, at, http}. fetched/missing use -1
+    //   for "not recorded" (same convention as the v5 trace); http
+    //   uses -1 when no single HTTP status describes the section
+    //   (e.g. per-item article fetches) or the section never
+    //   fetched. Written per section AS IT COMPLETES, never only
+    //   at the end of a pass, so a process kill mid-sync leaves
+    //   the completed sections' outcomes on disk.
+    // - "v51_network_state": last probe {online, at, code}.
+    // - "v51_seed_report": last seed computation {inserted,
+    //   missing, complete, at, version}. Written by BundledSeed on
+    //   every completed seed computation (fast path included).
+    const val SECTION_OUTCOME_KEY = "v51_section_outcome"
+    const val NETWORK_STATE_KEY = "v51_network_state"
+    const val SEED_REPORT_KEY = "v51_seed_report"
+    const val SYNC_IN_PROGRESS_KEY = "v51_sync_in_progress"
+
     data class TraceEntry(
         val at: Long,
         val section: String,
@@ -127,6 +150,72 @@ object SyncTrace {
             )
             while (arr.length() > MAX_ENTRIES) arr.remove(0)
             dao.upsertMeta(MetaEntity(BRANCH_KEY, arr.toString()))
+        } catch (_: Exception) {
+        }
+    }
+
+    /** v5.1: upsert one section's outcome into the keyed object. */
+    suspend fun recordSectionOutcome(
+        dao: ArticleDao,
+        section: String,
+        code: String,
+        fetched: Int,
+        missing: Int,
+        http: Int,
+    ) {
+        try {
+            val obj = try {
+                JSONObject(dao.metaValue(SECTION_OUTCOME_KEY) ?: "{}")
+            } catch (_: Exception) {
+                JSONObject()
+            }
+            obj.put(
+                section,
+                JSONObject()
+                    .put("code", code)
+                    .put("fetched", fetched)
+                    .put("missing", missing)
+                    .put("at", System.currentTimeMillis())
+                    .put("http", http),
+            )
+            dao.upsertMeta(MetaEntity(SECTION_OUTCOME_KEY, obj.toString()))
+        } catch (_: Exception) {
+        }
+    }
+
+    /** v5.1: last network probe. code "" on an online probe. */
+    suspend fun recordNetworkState(
+        dao: ArticleDao,
+        online: Boolean,
+        code: String,
+    ) {
+        try {
+            val obj = JSONObject()
+                .put("online", online)
+                .put("at", System.currentTimeMillis())
+                .put("code", code)
+            dao.upsertMeta(MetaEntity(NETWORK_STATE_KEY, obj.toString()))
+        } catch (_: Exception) {
+        }
+    }
+
+    /** v5.1: last seed computation. Callers write AFTER any Room
+     * transaction for the seed, never inside it. */
+    suspend fun recordSeedReport(
+        dao: ArticleDao,
+        inserted: Int,
+        missing: Int,
+        complete: Boolean,
+        version: Int,
+    ) {
+        try {
+            val obj = JSONObject()
+                .put("inserted", inserted)
+                .put("missing", missing)
+                .put("complete", complete)
+                .put("at", System.currentTimeMillis())
+                .put("version", version)
+            dao.upsertMeta(MetaEntity(SEED_REPORT_KEY, obj.toString()))
         } catch (_: Exception) {
         }
     }

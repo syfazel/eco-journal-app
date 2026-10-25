@@ -109,7 +109,10 @@ radar = fn_slice(repo, "private suspend fun syncRadarSection",
 for label, body, fallback in [("bundles", bundles, '"bundles.json"'),
                               ("radar", radar, '"radar.json"')]:
     status = body.index('section.status == "not_yet_published"')
-    fetch = body.index("httpGet(")
+    # v5.1 renamed the fetch helper to httpGetRetried (same guard
+    # order, same 404-pin semantics); accept either literal.
+    _cands = [i for i in (body.find("httpGet("), body.find("httpGetRetried(")) if i >= 0]
+    fetch = min(_cands)
     check(f"sync: {label} status guard before first fetch", status < fetch)
     check(f"sync: {label} status guard records NOT_YET_PUBLISHED",
           "SectionStates.NOT_YET_PUBLISHED" in body[:fetch])

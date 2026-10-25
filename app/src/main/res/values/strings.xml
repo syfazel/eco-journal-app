@@ -492,4 +492,18 @@
          no announcement) and nothing else. No behaviour, gate,
          cadence, night-law, or bar change. -->
     <string name="v5_feed_seeding">در حال بارگذاری بذر آفلاین…</string>
+    <!-- v5.1 shockproof (Worker 3, UI only): retained-feed status
+         line (shown above the held list while the live Room read
+         is empty) and Diagnostics v5.1 sections. The retained
+         line names what happened + the code; its exactly one
+         next step is the retry button next to it (Diagnostics
+         stays reachable from the sync row, as before). -->
+    <string name="v51_feed_retained">مقالات کش‌شدهٔ قبلی همچنان نمایش داده می‌شوند؛ خواندن تازهٔ حافظه خالی برگشت (کد %1$s).</string>
+    <string name="v51_diagnostics_section_outcome_title">نتیجهٔ بخش‌ها (نسخهٔ ۵٫۱)</string>
+    <string name="v51_diagnostics_section_outcome_none">هنوز نتیجهٔ بخشی ثبت نشده است</string>
+    <string name="v51_diagnostics_section_outcome_line">%1$s • کد: %2$s • دریافت: %3$s • جا مانده: %4$s • زمان: %5$s • HTTP: %6$s</string>
+    <string name="v51_diagnostics_network_title">وضعیت شبکه (نسخهٔ ۵٫۱)</string>
+    <string name="v51_diagnostics_network_none">هنوز وضعیت شبکه‌ای ثبت نشده است</string>
+    <string name="v51_diagnostics_seed_report_title">گزارش بذر (نسخهٔ ۵٫۱)</string>
+    <string name="v51_diagnostics_seed_report_none">هنوز گزارش بذری ثبت نشده است</string>
 </resources>

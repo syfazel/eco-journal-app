@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-25T21:10:51.738416+00:00",
+ "generated_at_utc": "2026-10-25T23:14:25.791813+00:00",
  "sources_read_only": [
   "/home/hatch/workspace/econ-news-blog/data_core/data_core.db",
   "/home/hatch/workspace/yasineco_bot/bot.db"
@@ -32,7 +32,7 @@
   "extracts_pending": 2560,
   "extracts_rejected": 277,
   "extracts_approved_posted_without_body": 84,
-  "drafts_rejected": 52,
+  "drafts_rejected": 53,
   "channel_posts_without_body_text_in_data_core": 23
  },
  "rules": [

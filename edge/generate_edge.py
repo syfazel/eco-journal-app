@@ -32,6 +32,12 @@ Outputs (all under edge/out/):
   channel_refs.json — channel_posts references (no invented text)
   manifest.json     — version 3, per-section hashes for delta sync
                       (Phase 1, see MANIFEST V3 below)
+  health.json       — v5.1 shockproof health file, written by this
+                      generator in the same run with the same
+                      generated_at_utc as the manifest: per-section
+                      count/file/hash (+ file SHA-256 for single-file
+                      sections) and the expected-absent file list,
+                      so the app can prove edge coherence at a glance
   join_keys.json    — version 1, guid <-> app_key <-> story_id <->
                       channel_message_id mapping (Phase 1)
   GENERATION_REPORT.json — exact counts + exclusions for auditing
@@ -679,6 +685,88 @@ def main():
     }
     with open(os.path.join(out_dir, "manifest.json"), "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=1)
+
+    # ---- HEALTH (v5.1 shockproof, edge contract only).
+    # Written by THIS generator in the same run, from the same
+    # manifest object and the same files just written, with the SAME
+    # generated_at_utc as the manifest — so it cannot drift from the
+    # manifest it describes. The app checks health.json first: if
+    # health matches the manifest it fetched, the edge is coherent;
+    # if health is absent (pre-v5.1 publish) the app falls back to
+    # manifest-only checks. Purely factual: counts, hashes, file
+    # SHA-256s, and the list of files that must NOT exist yet (their
+    # sections are not_yet_published / gated_frozen, so a 404 on
+    # them is expected, not a sync failure). health.json never
+    # contains its own hash (impossible) and never invents content.
+    def _file_sha256(fname):
+        with open(os.path.join(out_dir, fname), "rb") as fh:
+            return hashlib.sha256(fh.read()).hexdigest()
+
+    health = {
+        "format": "eco-journal-edge-health",
+        "version": 1,
+        "manifest_version": MANIFEST_VERSION,
+        "manifest_generated_at_utc": generated_at_utc,
+        "generated_at_utc": generated_at_utc,
+        "generator": MANIFEST_GENERATOR,
+        "sections": {
+            "articles": {
+                "count": len(article_entries),
+                "hash": manifest["sections"]["articles"]["hash"],
+                "file_pattern": "articles/*.json",
+                "files_listed_in": "manifest.json",
+            },
+            "shorts": {
+                "count": len(short_entries),
+                "hash": manifest["sections"]["shorts"]["hash"],
+                "file": "short_cards.json",
+                "file_sha256": _file_sha256("short_cards.json"),
+            },
+            "market": {
+                "count": len(snaps),
+                "hash": manifest["sections"]["market"]["hash"],
+                "file": "market.json",
+                "file_sha256": _file_sha256("market.json"),
+            },
+            "channel_refs": {
+                "count": len(refs),
+                "hash": manifest["sections"]["channel_refs"]["hash"],
+                "file": "channel_refs.json",
+                "file_sha256": _file_sha256("channel_refs.json"),
+            },
+            "invites": {
+                "count": len(invite_hashes),
+                "hash": manifest["sections"]["invites"]["hash"],
+                "file": "invite_hashes.json",
+                "file_sha256": _file_sha256("invite_hashes.json"),
+            },
+            "revocations": {
+                "count": len(revocation_hashes),
+                "hash": manifest["sections"]["revocations"]["hash"],
+                "file": "revocations.json",
+                "file_sha256": _file_sha256("revocations.json"),
+            },
+            "bundles": {"status": "not_yet_published", "count": 0, "file": None},
+            "radar": {"status": "not_yet_published", "count": 0, "file": None},
+            "nightly": {"status": "not_yet_published", "count": 0, "file": None},
+            "voices": {"status": "not_yet_published", "count": 0, "file": None},
+            "special_issues": {"status": "gated_frozen", "count": 0, "file": None},
+        },
+        "files": {
+            "manifest.json": _file_sha256("manifest.json"),
+            "index.json": _file_sha256("index.json"),
+            "join_keys.json": _file_sha256("join_keys.json"),
+        },
+        "expected_absent_files": [
+            "articles.json",
+            "bundles.json",
+            "radar.json",
+            "nightly.json",
+            "voices.json",
+        ],
+    }
+    with open(os.path.join(out_dir, "health.json"), "w", encoding="utf-8") as f:
+        json.dump(health, f, ensure_ascii=False, indent=1)
 
     # ---- AUDIT report (exact counts + exclusions)
     def count(sql, db="core"):

@@ -42,6 +42,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -205,6 +206,34 @@ fun FeedScreen(
     // the «بسته» tags on feed cards.
     val typedItems by repo.channelDao.visibleChannelFlow().collectAsState(initial = emptyList())
     val instantItems by repo.channelDao.instantChannelFlow().collectAsState(initial = emptyList())
+    // v5.1 shockproof — retained holder (FeedViewModel, single
+    // source of truth for what the feed shows). The Room flows
+    // above start at emptyList() on every (re)composition and
+    // can emit an empty list transiently; the held lists are
+    // replaced ONLY by a non-empty emission, never cleared by
+    // an empty one, so a populated feed cannot flip to empty
+    // on a loading flag, a sync pass, an invite re-check, or an
+    // Activity recreation (rotation: the ViewModel survives;
+    // process kill: the holder dies and Room + seed restore).
+    // Every emptiness decision below reads the display lists,
+    // never the raw flows.
+    val feedVm: FeedViewModel = viewModel()
+    val heldArticles by feedVm.heldArticles.collectAsState()
+    val heldTyped by feedVm.heldTyped.collectAsState()
+    val heldInstant by feedVm.heldInstant.collectAsState()
+    LaunchedEffect(all) { if (all.isNotEmpty()) feedVm.retainArticles(all) }
+    LaunchedEffect(typedItems) { if (typedItems.isNotEmpty()) feedVm.retainTyped(typedItems) }
+    LaunchedEffect(instantItems) { if (instantItems.isNotEmpty()) feedVm.retainInstant(instantItems) }
+    // Cache-first display lists: held wins whenever non-empty,
+    // otherwise the live Room emission.
+    val displayArticles = if (heldArticles.isNotEmpty()) heldArticles else all
+    val displayTyped = if (heldTyped.isNotEmpty()) heldTyped else typedItems
+    val displayInstant = if (heldInstant.isNotEmpty()) heldInstant else instantItems
+    // Retained-cache indicator: the article or typed list on
+    // screen is held while the live Room read is currently empty.
+    val articlesRetained = heldArticles.isNotEmpty() && all.isEmpty()
+    val typedRetained = heldTyped.isNotEmpty() && typedItems.isEmpty()
+    val showingRetained = articlesRetained || typedRetained
     val bundles by repo.channelDao.bundlesFlow().collectAsState(initial = emptyList())
     val bundleIds = remember(bundles) { bundles.map { it.bundleId }.toSet() }
     var selectedFormat by remember { mutableStateOf<String?>(null) }
@@ -276,8 +305,8 @@ fun FeedScreen(
     val storyByAppKey = remember(joinKeys) {
         joinKeys.mapNotNull { j -> j.storyId?.let { j.appKey to it } }.toMap()
     }
-    val typedFormatByStory = remember(typedItems) {
-        typedItems
+    val typedFormatByStory = remember(displayTyped) {
+        displayTyped
             .filter { it.status != "retracted" && it.storyId != null }
             .sortedByDescending { it.publishedAtEpoch }
             .associate { it.storyId!! to it.formatType }
@@ -287,7 +316,7 @@ fun FeedScreen(
     }
     // v4-H ticker topics: live war-room topics only (see
     // TickerTopics for the inclusion rule).
-    val tickerTopics = remember(instantItems) { TickerTopics.topics(instantItems) }
+    val tickerTopics = remember(displayInstant) { TickerTopics.topics(displayInstant) }
 
     // v4.0.1 (fix plan X1): the seed must always resolve. Before
     // this fix a throwing seed left `seeding` true forever (an
@@ -315,16 +344,39 @@ fun FeedScreen(
     // transaction per section, so count changes are transitions,
     // not a per-row log flood. Best-effort; never shown on the
     // feed itself, only on Diagnostics.
+    // v5.1: an urgent-all page whose rail has emptied falls back
+    // to the held feed instead of sitting on an empty list (the
+    // guard on the urgent-all page + the reset below). The
+    // branch therefore requires a non-empty rail — expressed
+    // here via the retained instant list, which is exactly
+    // equivalent: railOrder only reorders (and the pin-expiry
+    // step only reorders), it never filters, so an empty rail
+    // is exactly an empty retained instant list. A new
+    // "retained" branch records the held-cache state (live Room
+    // read empty, held list on screen) so Diagnostics can prove
+    // a flash was retention, not a vanish. Loading / empty now
+    // read the DISPLAY lists: loading never clears a held list,
+    // and empty requires held empty AND Room empty (display
+    // empty implies both), i.e. a genuinely empty DB.
     val feedBranch = when {
-        showUrgentAll -> "urgent_all"
+        showUrgentAll && displayInstant.isNotEmpty() -> "urgent_all"
         selectedFormat != null && query.isBlank() -> "filter"
         searchResults != null -> "search"
-        seeding && all.isEmpty() -> "loading"
-        all.isEmpty() && typedItems.isEmpty() -> "empty"
+        showingRetained -> "retained"
+        seeding && displayArticles.isEmpty() && displayTyped.isEmpty() -> "loading"
+        displayArticles.isEmpty() && displayTyped.isEmpty() -> "empty"
         else -> "front_page"
     }
+    // Effect keys are the v5 P1 pins (raw flow sizes + branch):
+    // a display list only ever changes on a raw emission, and a
+    // retained transition always changes the branch, so these
+    // keys fire on every transition the trace must record. The
+    // RECORDED counts are the display sizes (what the user saw).
     LaunchedEffect(feedBranch, all.size, typedItems.size) {
-        SyncTrace.recordFeedBranch(repo.dao, feedBranch, all.size, typedItems.size)
+        SyncTrace.recordFeedBranch(repo.dao, feedBranch, displayArticles.size, displayTyped.size)
+    }
+    LaunchedEffect(showUrgentAll, displayInstant.isEmpty()) {
+        if (showUrgentAll && displayInstant.isEmpty()) showUrgentAll = false
     }
 
     // Hoisted sync runner (moved up from below the search field so
@@ -401,13 +453,36 @@ fun FeedScreen(
         } else {
             delay(300)
             val trimmed = query.trim()
-            searchResults = repo.dao.search(escapeLikeQuery(trimmed))
-            typedSearchResults = repo.channelDao.searchChannel(escapeLikeQuery(trimmed))
+            val roomResults = repo.dao.search(escapeLikeQuery(trimmed))
+            val roomTyped = repo.channelDao.searchChannel(escapeLikeQuery(trimmed))
+            // v5.1: a Room search over a transiently empty read
+            // must not report "no results" while a held list
+            // exists — fall back to an in-memory substring
+            // search over the held lists (display only; the
+            // Room query above stays the authority whenever
+            // it returns anything).
+            searchResults = if (roomResults.isEmpty() && heldArticles.isNotEmpty()) {
+                heldArticles.filter { a ->
+                    a.title.contains(trimmed, ignoreCase = true) ||
+                        a.summary.contains(trimmed, ignoreCase = true) ||
+                        a.bodyBlocks.any { it.contains(trimmed, ignoreCase = true) }
+                }
+            } else {
+                roomResults
+            }
+            typedSearchResults = if (roomTyped.isEmpty() && heldTyped.isNotEmpty()) {
+                heldTyped.filter { t ->
+                    t.headline.contains(trimmed, ignoreCase = true) ||
+                        t.body.contains(trimmed, ignoreCase = true)
+                }
+            } else {
+                roomTyped
+            }
         }
     }
 
-    val sections = remember(all) {
-        val present = all.map { it.category to it.categoryFa }.distinct().toMap()
+    val sections = remember(displayArticles) {
+        val present = displayArticles.map { it.category to it.categoryFa }.distinct().toMap()
         val orderedKeys = CATEGORY_ORDER.filter { it in present } +
             (present.keys - CATEGORY_ORDER.toSet()).sortedBy { present[it] }
         listOf(Section(null, "همه")) +
@@ -469,9 +544,14 @@ fun FeedScreen(
         )
         // Urgent rail (spec 5.3): pinned at the top of the feed,
         // visible regardless of the format filter selection.
+        // v5.1: the rail reads the retained instant list, and
+        // the urgent-all page below requires a non-empty rail,
+        // so an emptied rail falls through to the held feed
+        // instead of an empty page. The pinned-card expiry rule
+        // itself is unchanged.
         val railNow = System.currentTimeMillis()
-        val railOrdered = remember(instantItems, railNow) {
-            val ordered = ChannelLists.railOrder(instantItems)
+        val railOrdered = remember(displayInstant, railNow) {
+            val ordered = ChannelLists.railOrder(displayInstant)
             if (ordered.isEmpty()) {
                 ordered
             } else {
@@ -488,7 +568,7 @@ fun FeedScreen(
                 }
             }
         }
-        if (showUrgentAll) {
+        if (showUrgentAll && railOrdered.isNotEmpty()) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin),
@@ -710,9 +790,12 @@ fun FeedScreen(
         Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         val activeFilter = selectedFormat
         if (activeFilter != null && query.isBlank()) {
-            val filtered = remember(typedItems, activeFilter) {
+            // v5.1: the filter reads the retained typed list, so
+            // a transiently empty Room read cannot turn a
+            // populated filter view into a filter-empty page.
+            val filtered = remember(displayTyped, activeFilter) {
                 ChannelLists.dedupLatest(
-                    typedItems.filter { it.formatType == activeFilter }
+                    displayTyped.filter { it.formatType == activeFilter }
                 )
             }
             if (filtered.isEmpty()) {
@@ -822,7 +905,7 @@ fun FeedScreen(
                     }
                 }
             }
-        } else if (seeding && all.isEmpty()) {
+        } else if (seeding && displayArticles.isEmpty() && displayTyped.isEmpty()) {
             // Proper loading state: shown only while the seed is
             // actually running and nothing is cached yet. Once the
             // seed reports (even partially), an empty cache shows
@@ -837,7 +920,16 @@ fun FeedScreen(
                     .padding(EcoDesignTokens.Spacing.PageMargin)
                     .semantics { contentDescription = seedingDesc },
             )
-        } else if (all.isEmpty() && typedItems.isEmpty()) {
+        } else if (displayArticles.isEmpty() && displayTyped.isEmpty()) {
+            // v5.1: this branch is reachable ONLY when the held
+            // lists are empty AND the live Room read is empty
+            // (display empty implies both) — i.e. the DB is
+            // genuinely empty, not merely mid-sync, loading, or
+            // mid-re-check. The cause lines below are unchanged
+            // (seed failure / offline / error code / no sync
+            // ever); the single recovery step is the retry, with
+            // Diagnostics and the section index as navigation
+            // (both also reachable from the sync row / Settings).
             // v5 P3 empty state (plan §2 language): what
             // happened + the code + the way forward, and a
             // static section index so an empty cache still
@@ -939,13 +1031,26 @@ fun FeedScreen(
             // newest day first, slots in fixed order within a day,
             // deduped by story_id. Computed here, rendered inside
             // the page's single LazyColumn by FrontPageTabs.
-            val typedGroups = remember(typedItems) {
-                groupTypedByDaySlot(typedItems)
+            val typedGroups = remember(displayTyped) {
+                groupTypedByDaySlot(displayTyped)
+            }
+            // v5.1 retained-cache status: one honest line above
+            // the held list (what happened + code) with exactly
+            // one next step (retry). It is NOT a "up to date"
+            // claim and it never clears the list.
+            val retainedCode = lastSyncError?.takeIf { it.isNotBlank() }
+                ?: stringResource(R.string.diagnostics_no_value)
+            val retainedLine = if (showingRetained) {
+                stringResource(R.string.v51_feed_retained, retainedCode)
+            } else {
+                null
             }
             FrontPageTabs(
                 sections = sections,
                 pagerState = pagerState,
-                all = all,
+                all = displayArticles,
+                retainedLine = retainedLine,
+                onRetainedRetry = runSync,
                 onOpen = onOpen,
                 fontScale = fontScale,
                 typedFormatFor = typedFormatFor,
@@ -1076,8 +1181,39 @@ private fun FrontPageTabs(
     onSync: () -> Unit = {},
     // v4-H RED path: article -> newest typed format for its story.
     typedFormatFor: (ArticleEntity) -> String? = { null },
+    // v5.1 retained-cache status (see the caller): a non-blocking
+    // line above the tabs, with exactly one next step (retry).
+    // Null when the live Room read is healthy — the line must
+    // never appear next to a fresh list.
+    retainedLine: String? = null,
+    onRetainedRetry: () -> Unit = {},
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
+        if (retainedLine != null) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(
+                    horizontal = EcoDesignTokens.Spacing.PageMargin,
+                ),
+            ) {
+                Text(
+                    text = retainedLine,
+                    fontFamily = EcoFontFamily,
+                    fontSize = EcoDesignTokens.Type.Meta * fontScale,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.weight(1f),
+                )
+                TextButton(
+                    onClick = onRetainedRetry,
+                    modifier = Modifier.heightIn(min = 48.dp),
+                ) {
+                    Text(
+                        stringResource(R.string.sync_retry),
+                        fontFamily = EcoFontFamily,
+                    )
+                }
+            }
+        }
         ScrollableTabRow(
             selectedTabIndex = pagerState.currentPage,
             edgePadding = EcoDesignTokens.Spacing.PageMargin,

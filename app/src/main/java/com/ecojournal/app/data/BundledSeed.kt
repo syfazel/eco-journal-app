@@ -88,6 +88,11 @@ object BundledSeed {
             storedHash != null && storedHash == hash &&
             dao.marketCount() > 0 && dao.formulaCount() > 0
         ) {
+            // v5.1: the fast path is still a completed seed
+            // computation, so it still refreshes the seed report
+            // (otherwise Diagnostics would show a stale report
+            // from an older bundle after an update).
+            SyncTrace.recordSeedReport(dao, 0, 0, true, BUNDLED_SEED_VERSION)
             return SeedReport(0, 0, 0, true)
         }
 
@@ -242,6 +247,14 @@ object BundledSeed {
                 dao.upsertMeta(MetaEntity("seed_version", BUNDLED_SEED_VERSION.toString()))
             }
         }
+        // v5.1: seed report AFTER the transaction, never inside
+        // it (diagnostics contract: swallowed, outside
+        // transactions). The seed reads assets only, so this runs
+        // to completion with zero network, and the feed is
+        // populated from seed alone when the edge is unreachable.
+        SyncTrace.recordSeedReport(
+            dao, fresh.size, missingIds.size, complete, BUNDLED_SEED_VERSION,
+        )
         return SeedReport(
             inserted = fresh.size,
             missing = missingIds.size,

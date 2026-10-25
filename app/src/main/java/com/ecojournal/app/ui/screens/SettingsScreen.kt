@@ -540,6 +540,11 @@ fun SettingsScreen(
                 // M7: manual re-lock. Clears flag + stored hash,
                 // so the next launch shows the code-entry screen
                 // again. Cached articles are hidden, not deleted.
+                // v5.1: mark the lock as user-initiated BEFORE
+                // clearing, so MainActivity's flip guard can
+                // tell this explicit lock apart from a transient
+                // settings emission that lost flag + hash.
+                com.ecojournal.app.InviteLockSignal.manualLockRequested = true
                 scope.launch { store.clearInvite() }
             }, modifier = Modifier.heightIn(min = 48.dp)) {
                 Text(

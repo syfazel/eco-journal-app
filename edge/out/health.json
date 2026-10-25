@@ -1,0 +1,83 @@
+{
+ "format": "eco-journal-edge-health",
+ "version": 1,
+ "manifest_version": 3,
+ "manifest_generated_at_utc": "2026-10-25T23:14:25.791813+00:00",
+ "generated_at_utc": "2026-10-25T23:14:25.791813+00:00",
+ "generator": "edge/generate_edge.py (Phase 1, LAB ONLY)",
+ "sections": {
+  "articles": {
+   "count": 249,
+   "hash": "911464c59bbdb24eb4165289184a0369d20b72bda543870b35ac61ade1c53e01",
+   "file_pattern": "articles/*.json",
+   "files_listed_in": "manifest.json"
+  },
+  "shorts": {
+   "count": 32,
+   "hash": "f82217071091be17b6a936a73a1d573de99ce235ae3a62c10c99af7ca95b0966",
+   "file": "short_cards.json",
+   "file_sha256": "a002dc4f899f204c86004fce65dbe677eb721f098ae90087982803bb172c1160"
+  },
+  "market": {
+   "count": 164,
+   "hash": "01f08b3914adb48cde9956936856dc3de56b7beb5e48a13ed768795e585a2be6",
+   "file": "market.json",
+   "file_sha256": "fde0393794114595a6df3fa00125957bfd794edf672402ae6e293ff822566be8"
+  },
+  "channel_refs": {
+   "count": 23,
+   "hash": "b3141cc140a575c61adc7c12884712a61b7ccd6c090450cbef3a68a4122eabd1",
+   "file": "channel_refs.json",
+   "file_sha256": "703630d008c34d1d4c8d4eeb5bb3e681b40c0a3715468f173db7767e109f4f46"
+  },
+  "invites": {
+   "count": 10,
+   "hash": "ac3277308df19745b5bb1c33220ba5c0dc32cad22203da064524c5b8800cbdde",
+   "file": "invite_hashes.json",
+   "file_sha256": "f2612641ca9363c43c55c3366eebe45b365c53a817a89b8ddb9a99f1f60cd48e"
+  },
+  "revocations": {
+   "count": 4,
+   "hash": "7be8ec9a676a7a77f8c0d71e25d37c16983b1765ae6c0bb0808b31a406c290e0",
+   "file": "revocations.json",
+   "file_sha256": "6cb4d530f02150a02e53429d07009fe4b6e9c8ee4de0386547b47ab77c7d6c47"
+  },
+  "bundles": {
+   "status": "not_yet_published",
+   "count": 0,
+   "file": null
+  },
+  "radar": {
+   "status": "not_yet_published",
+   "count": 0,
+   "file": null
+  },
+  "nightly": {
+   "status": "not_yet_published",
+   "count": 0,
+   "file": null
+  },
+  "voices": {
+   "status": "not_yet_published",
+   "count": 0,
+   "file": null
+  },
+  "special_issues": {
+   "status": "gated_frozen",
+   "count": 0,
+   "file": null
+  }
+ },
+ "files": {
+  "manifest.json": "11db37ab4dcc34584440958c84ef3d5024bde3ce48c4c42b281cc0c5ed94c9b8",
+  "index.json": "ce9fd11e3426495301d9296b44655242cbac40a38a91695f25020c24ee1b644b",
+  "join_keys.json": "b0bdd09b54a9f2ac74b716eac8fb0a49f9687189bb0449679dd45018028e16d1"
+ },
+ "expected_absent_files": [
+  "articles.json",
+  "bundles.json",
+  "radar.json",
+  "nightly.json",
+  "voices.json"
+ ]
+}

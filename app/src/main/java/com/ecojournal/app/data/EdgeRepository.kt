@@ -1,17 +1,23 @@
 package com.ecojournal.app.data
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.room.withTransaction
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import org.json.JSONArray
@@ -115,6 +121,32 @@ private fun httpGet(url: String): HttpOutcome {
     }
 }
 
+/**
+ * v5.1 per-section retry: NETWORK errors only, with a short
+ * in-app backoff (500 ms, then 1000 ms). An HTTP error — 404,
+ * 403, anything else — is returned immediately and is NEVER
+ * retried: retrying a 404 cannot help and the v5 404-pin
+ * behaviour for guarded sections depends on a single attempt
+ * per manifest state. Callers that loop over many files
+ * (article files, nightly editions) do NOT use this helper:
+ * they keep their existing single/double-attempt fetch, because
+ * retrying every file would blow the per-sync bound.
+ */
+private suspend fun httpGetRetried(url: String, attempts: Int = 3): HttpOutcome {
+    var last: HttpOutcome = HttpOutcome.NetworkError
+    repeat(attempts) { i ->
+        when (val outcome = httpGet(url)) {
+            is HttpOutcome.Ok -> return outcome
+            is HttpOutcome.HttpError -> return outcome
+            is HttpOutcome.NetworkError -> {
+                last = outcome
+                if (i < attempts - 1) delay(500L shl i)
+            }
+        }
+    }
+    return last
+}
+
 private fun HttpOutcome.toFailedCode(): String = when (this) {
     is HttpOutcome.HttpError -> when (status) {
         404 -> "http_404"
@@ -133,6 +165,20 @@ private fun edgeBase(): String? {
 }
 
 class EdgeRepository(context: Context) {
+    companion object {
+        // v5.1 process-wide sync mutex. Every EdgeRepository
+        // instance is a fresh object (FeedScreen, Diagnostics,
+        // SyncWorker each build their own), so an instance mutex
+        // would serialise nothing. The companion mutex serialises
+        // ALL sync passes in this process — launch sync, periodic
+        // worker and manual refresh — so two passes can never
+        // interleave transactions or double-report progress.
+        // A caller that loses the race simply waits; the lock is
+        // held for at most one bounded sync pass (300 s, see
+        // syncLocked), never indefinitely.
+        private val syncMutex = Mutex()
+    }
+
     // v4.0.1 sync-progress signal (fix plan X5): while the articles
     // section is fetching, (fetched, total); null otherwise. The
     // feed shows it in the sync line so a long fetch reads as
@@ -182,6 +228,97 @@ class EdgeRepository(context: Context) {
         SyncTrace.record(dao, section, code, fetched, missing, state)
     }
 
+    // v5.1 diagnostics-contract writer. Call sites sit next to
+    // the existing trace() calls, i.e. OUTSIDE Room transactions,
+    // and the write itself is swallowed — a diagnostics failure
+    // can never change a section outcome.
+    private suspend fun recordV51(
+        section: String,
+        code: String,
+        fetched: Int,
+        missing: Int,
+        http: Int,
+    ) {
+        SyncTrace.recordSectionOutcome(dao, section, code, fetched, missing, http)
+    }
+
+    // v5.1 offline probe. Uses ONLY the declared
+    // ACCESS_NETWORK_STATE permission (manifest) — no new
+    // permission is invented. A null ConnectivityManager (cannot
+    // prove offline) reads as online so sync still attempts the
+    // fetch and reports its real outcome; a null active network
+    // reads as offline so sync returns the fixed "network" code
+    // immediately instead of hanging on connect timeouts.
+    private fun isOnline(): Boolean {
+        return try {
+            val manager = appContext.getSystemService(Context.CONNECTIVITY_SERVICE)
+                as? ConnectivityManager ?: return true
+            val network = manager.activeNetwork ?: return false
+            val caps = manager.getNetworkCapabilities(network) ?: return false
+            caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        } catch (_: Exception) {
+            true
+        }
+    }
+
+    // v5.1 process-death state. Written before a pass starts and
+    // cleared in a NonCancellable finally when the pass ends
+    // (success, failure or timeout). A kill mid-sync therefore
+    // leaves "1:<startedEpoch>" behind — never a success hash:
+    // section hashes are still stored only on that section's
+    // complete success, inside its own transaction. The next pass
+    // overwrites the stale flag; it is diagnosis state, not a
+    // lock, so a stale flag can never block a later sync.
+    private suspend fun markSyncStart(now: Long) {
+        try {
+            dao.upsertMeta(MetaEntity(SyncTrace.SYNC_IN_PROGRESS_KEY, "1:$now"))
+        } catch (_: Exception) {
+        }
+    }
+
+    private suspend fun markSyncEnd() {
+        withContext(NonCancellable) {
+            try {
+                dao.upsertMeta(MetaEntity(SyncTrace.SYNC_IN_PROGRESS_KEY, "0"))
+            } catch (_: Exception) {
+            }
+        }
+    }
+
+    // v5.1 section isolation for the function-call sections
+    // (channel_typed, bundles, radar, nightly): an unexpected
+    // exception inside one section function must not abort the
+    // whole pass. The section is recorded FAILED with the fixed
+    // code "section_error" and the pass continues with the next
+    // section. Network/parse failures never reach here — those
+    // sections already return FAILED outcomes themselves.
+    private suspend fun failSection(key: String, now: Long) {
+        try {
+            recordSectionMeta(key, SectionStates.FAILED, "section_error", null, 0, now, null, null)
+        } catch (_: Exception) {
+        }
+        trace(key, "section_error", -1, -1, SectionStates.FAILED)
+        recordV51(key, "section_error", -1, 0, -1)
+    }
+
+    // v5.1: derive a v51 outcome line from a section function's
+    // returned outcome. fetched is -1 (not recorded) for these
+    // sections because SectionOutcome carries only the missing
+    // count; the per-section state + error code are authoritative.
+    private suspend fun recordV51FromOutcome(outcome: SectionOutcome) {
+        val code = when (outcome.state) {
+            SectionStates.UP_TO_DATE,
+            SectionStates.NOT_YET_PUBLISHED,
+            SectionStates.GATED_FROZEN -> ""
+            SectionStates.PARTIAL -> "partial"
+            SectionStates.UNKNOWN -> "no_section"
+            SectionStates.FAILED -> dao.metaValue(SyncSections.errorKey(outcome.key))
+                ?.takeIf { it.isNotBlank() } ?: "failed"
+            else -> "failed"
+        }
+        recordV51(outcome.key, code, -1, outcome.missingCount, -1)
+    }
+
     // Phase 1 Update Engine: sync() fetches manifest.json (v3)
     // FIRST. A parseable v3 manifest takes the per-section path
     // below; a missing manifest (an older Pages deploy) falls back
@@ -193,49 +330,103 @@ class EdgeRepository(context: Context) {
     // re-downloads an unchanged body: per-item hash comparison
     // still skips unchanged items, and it never bypasses the
     // invite gate or the revocation re-check.
+    // v5.1: the public entry point is a mutex serialiser around
+    // syncLocked. Callers keep calling sync(); the lock, the
+    // offline fast path, the in-progress flag and the overall
+    // bound all live inside, so no caller can bypass them.
     suspend fun sync(forceRefresh: Boolean = false): SyncResult {
+        return syncMutex.withLock { syncLocked(forceRefresh) }
+    }
+
+    private suspend fun syncLocked(forceRefresh: Boolean = false): SyncResult {
         val base = edgeBase() ?: return SyncResult.NotConfigured
-        return when (val outcome = httpGet("$base/manifest.json")) {
-            is HttpOutcome.Ok -> {
-                val manifest = ManifestParser.parse(outcome.body)
-                if (manifest == null) {
-                    recordAttempt("bad_manifest")
-                    trace("manifest", "bad_manifest", -1, -1, "failed")
-                    SyncResult.Failed("bad_manifest")
-                } else {
-                    trace("manifest", "ok", -1, -1, "ok")
-                    val res = syncV3(
-                        base, manifest, forceRefresh, null,
-                        if (forceRefresh) "manual" else "periodic_or_foreground",
-                    )
-                    _syncProgress.value = null
-                    res
-                }
-            }
-            // v4.0.1 manifest-failure split (fix plan F6/X6): a
-            // network failure cannot be rescued by the legacy path
-            // (it needs the same network), so report it honestly
-            // instead of misreporting the index fetch's code. Only
-            // a 404 (an older Pages deploy without a manifest)
-            // falls back to legacy; other HTTP errors are reported
-            // as themselves.
-            is HttpOutcome.NetworkError -> {
+        val startedAt = System.currentTimeMillis()
+        markSyncStart(startedAt)
+        try {
+            // v5.1 offline fast path: no active network means the
+            // manifest fetch would hang on connect timeouts and
+            // then misreport. Return the fixed "network" code
+            // immediately; the cache is untouched and the worker
+            // retries on its backoff (or on the next launch).
+            if (!isOnline()) {
                 recordAttempt("network")
+                SyncTrace.recordNetworkState(dao, false, "network")
                 trace("manifest", "network", -1, -1, "failed")
-                SyncResult.Failed("network")
+                return SyncResult.Failed("network")
             }
-            is HttpOutcome.HttpError -> {
-                if (outcome.status == 404) {
-                    trace("manifest", "http_404", -1, -1, "legacy_fallback")
-                    syncLegacy()
-                } else {
-                    val code = outcome.toFailedCode()
-                    recordAttempt(code)
-                    trace("manifest", code, -1, -1, "failed")
-                    SyncResult.Failed(code)
+            SyncTrace.recordNetworkState(dao, true, "")
+            return when (val outcome = httpGetRetried("$base/manifest.json")) {
+                is HttpOutcome.Ok -> {
+                    val manifest = ManifestParser.parse(outcome.body)
+                    if (manifest == null) {
+                        recordAttempt("bad_manifest")
+                        trace("manifest", "bad_manifest", -1, -1, "failed")
+                        SyncResult.Failed("bad_manifest")
+                    } else {
+                        trace("manifest", "ok", -1, -1, "ok")
+                        syncV3Bounded(
+                            base, manifest, forceRefresh, null,
+                            if (forceRefresh) "manual" else "periodic_or_foreground",
+                        )
+                    }
+                }
+                // v4.0.1 manifest-failure split (fix plan F6/X6): a
+                // network failure cannot be rescued by the legacy path
+                // (it needs the same network), so report it honestly
+                // instead of misreporting the index fetch's code. Only
+                // a 404 (an older Pages deploy without a manifest)
+                // falls back to legacy; other HTTP errors are reported
+                // as themselves.
+                is HttpOutcome.NetworkError -> {
+                    recordAttempt("network")
+                    SyncTrace.recordNetworkState(dao, isOnline(), "network")
+                    trace("manifest", "network", -1, -1, "failed")
+                    SyncResult.Failed("network")
+                }
+                is HttpOutcome.HttpError -> {
+                    if (outcome.status == 404) {
+                        trace("manifest", "http_404", -1, -1, "legacy_fallback")
+                        syncLegacy()
+                    } else {
+                        val code = outcome.toFailedCode()
+                        recordAttempt(code)
+                        trace("manifest", code, -1, -1, "failed")
+                        SyncResult.Failed(code)
+                    }
                 }
             }
+        } finally {
+            _syncProgress.value = null
+            markSyncEnd()
         }
+    }
+
+    // v5.1 overall per-sync bound. The articles loop already has
+    // its own 240 s deadline; this 300 s bound covers the WHOLE
+    // pass (all sections + invites + notifications), so a slow
+    // edge can never make a sync feel unbounded. On timeout the
+    // sections that already completed keep their transactions
+    // and their success hashes (per-section isolation); sections
+    // not yet run simply do not run, the global clock does not
+    // advance, and the result is Partial — never a half-marked
+    // success. The progress signal is cleared by the caller's
+    // finally block.
+    private suspend fun syncV3Bounded(
+        base: String,
+        manifest: EdgeManifest,
+        forceRefresh: Boolean,
+        onlySection: String?,
+        pollPath: String,
+    ): SyncResult {
+        val res = withTimeoutOrNull(300_000L) {
+            syncV3(base, manifest, forceRefresh, onlySection, pollPath)
+        }
+        if (res != null) return res
+        recordAttempt("partial")
+        trace("sync", "timeout", -1, -1, "partial")
+        return SyncResult.Partial(
+            emptyList(), 0, dao.allIds().size, emptyList(),
+        )
     }
 
     // Per-section force-refresh from Diagnostics. Re-reads the
@@ -246,26 +437,47 @@ class EdgeRepository(context: Context) {
     // nothing to fetch for it yet.
     suspend fun syncOnly(sectionKey: String, forceRefresh: Boolean = true): SyncResult {
         if (sectionKey !in SyncSections.ALL) return SyncResult.Failed("unknown_section")
+        return syncMutex.withLock { syncOnlyLocked(sectionKey, forceRefresh) }
+    }
+
+    private suspend fun syncOnlyLocked(
+        sectionKey: String,
+        forceRefresh: Boolean = true,
+    ): SyncResult {
         val base = edgeBase() ?: return SyncResult.NotConfigured
-        val outcome = httpGet("$base/manifest.json")
-        val manifest = if (outcome is HttpOutcome.Ok) {
-            ManifestParser.parse(outcome.body)
-        } else {
-            null
-        }
-        if (manifest == null) {
-            val code = when (outcome) {
-                is HttpOutcome.Ok -> "bad_manifest"
-                else -> outcome.toFailedCode()
+        markSyncStart(System.currentTimeMillis())
+        try {
+            // v5.1: same offline fast path as a full sync — a
+            // manual section refresh offline reports "network"
+            // immediately instead of hanging.
+            if (!isOnline()) {
+                recordAttempt("network")
+                SyncTrace.recordNetworkState(dao, false, "network")
+                trace("manifest", "network", -1, -1, "failed")
+                return SyncResult.Failed("network")
             }
-            recordAttempt(code)
-            trace("manifest", code, -1, -1, "failed")
-            return SyncResult.Failed(code)
+            SyncTrace.recordNetworkState(dao, true, "")
+            val outcome = httpGetRetried("$base/manifest.json")
+            val manifest = if (outcome is HttpOutcome.Ok) {
+                ManifestParser.parse(outcome.body)
+            } else {
+                null
+            }
+            if (manifest == null) {
+                val code = when (outcome) {
+                    is HttpOutcome.Ok -> "bad_manifest"
+                    else -> outcome.toFailedCode()
+                }
+                recordAttempt(code)
+                trace("manifest", code, -1, -1, "failed")
+                return SyncResult.Failed(code)
+            }
+            trace("manifest", "ok", -1, -1, "ok")
+            return syncV3Bounded(base, manifest, forceRefresh, sectionKey, "manual")
+        } finally {
+            _syncProgress.value = null
+            markSyncEnd()
         }
-        trace("manifest", "ok", -1, -1, "ok")
-        val res = syncV3(base, manifest, forceRefresh, sectionKey, "manual")
-        _syncProgress.value = null
-        return res
     }
 
     // Per-section Diagnostics snapshot. Counts for articles, shorts
@@ -322,9 +534,12 @@ class EdgeRepository(context: Context) {
         }
     }
 
-    private fun fetchJoinGuids(base: String, joinKeysFile: String?): Map<String, String> {
+    private suspend fun fetchJoinGuids(base: String, joinKeysFile: String?): Map<String, String> {
         val file = joinKeysFile?.takeIf { it.isNotBlank() } ?: "join_keys.json"
-        val text = when (val outcome = httpGet("$base/$file")) {
+        // v5.1: 2 attempts, network errors only (httpGetRetried
+        // never retries an HTTP error). A failure here is still
+        // non-fatal: the caller proceeds with an empty map.
+        val text = when (val outcome = httpGetRetried("$base/$file", attempts = 2)) {
             is HttpOutcome.Ok -> outcome.body
             else -> return emptyMap()
         }
@@ -430,6 +645,7 @@ class EdgeRepository(context: Context) {
             if (section == null) {
                 outcomes.add(SectionOutcome(SyncSections.ARTICLES, SectionStates.UNKNOWN, 0))
                 trace(SyncSections.ARTICLES, "no_section", -1, -1, SectionStates.UNKNOWN)
+                recordV51(SyncSections.ARTICLES, "no_section", -1, -1, -1)
             } else {
                 val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.ARTICLES))
                 // v4.0.1 self-healing hash guard (fix plan X7): a
@@ -446,6 +662,7 @@ class EdgeRepository(context: Context) {
                     )
                     outcomes.add(SectionOutcome(SyncSections.ARTICLES, SectionStates.UP_TO_DATE, 0))
                     trace(SyncSections.ARTICLES, "", 0, 0, SectionStates.UP_TO_DATE)
+                    recordV51(SyncSections.ARTICLES, "", 0, 0, -1)
                 } else {
                     val plan = DeltaPlanner.plan(
                         section.items, storedHashes, existingKeys, requiresFile = true,
@@ -530,6 +747,11 @@ class EdgeRepository(context: Context) {
                         fresh.size, missing,
                         if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
                     )
+                    recordV51(
+                        SyncSections.ARTICLES,
+                        if (complete) "" else "partial",
+                        fresh.size, missing, -1,
+                    )
                     newKeys.addAll(fresh.map { it.appKey })
                     missingTotal += missing
                     if (!complete) anyRequiredIncomplete = true
@@ -551,6 +773,7 @@ class EdgeRepository(context: Context) {
             if (section == null) {
                 outcomes.add(SectionOutcome(SyncSections.SHORTS, SectionStates.UNKNOWN, 0))
                 trace(SyncSections.SHORTS, "no_section", -1, -1, SectionStates.UNKNOWN)
+                recordV51(SyncSections.SHORTS, "no_section", -1, -1, -1)
             } else {
                 val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.SHORTS))
                 // v4.0.1 self-healing hash guard (fix plan X7).
@@ -565,15 +788,25 @@ class EdgeRepository(context: Context) {
                     )
                     outcomes.add(SectionOutcome(SyncSections.SHORTS, SectionStates.UP_TO_DATE, 0))
                     trace(SyncSections.SHORTS, "", 0, 0, SectionStates.UP_TO_DATE)
+                    recordV51(SyncSections.SHORTS, "", 0, 0, -1)
                 } else {
                     val plan = DeltaPlanner.plan(
                         section.items, storedHashes, existingKeys, requiresFile = false,
                     )
                     val fresh = mutableListOf<ArticleEntity>()
                     val missingKeys = mutableListOf<String>()
+                    var shortsHttp = -1
                     if (plan.toFetch.isNotEmpty()) {
-                        val shortsText = when (val outcome = httpGet("$base/short_cards.json")) {
-                            is HttpOutcome.Ok -> outcome.body
+                        // v5.1: network-only retry for the single
+                        // shorts file; an HTTP error is final.
+                        val shortsOutcome = httpGetRetried("$base/short_cards.json")
+                        shortsHttp = if (shortsOutcome is HttpOutcome.HttpError) {
+                            shortsOutcome.status
+                        } else {
+                            -1
+                        }
+                        val shortsText = when (shortsOutcome) {
+                            is HttpOutcome.Ok -> shortsOutcome.body
                             else -> null
                         }
                         if (shortsText == null) {
@@ -650,6 +883,11 @@ class EdgeRepository(context: Context) {
                         fresh.size, missing,
                         if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
                     )
+                    recordV51(
+                        SyncSections.SHORTS,
+                        if (complete) "" else "partial",
+                        fresh.size, missing, shortsHttp,
+                    )
                     newKeys.addAll(fresh.map { it.appKey })
                     missingTotal += missing
                     if (!complete) anyRequiredIncomplete = true
@@ -672,6 +910,7 @@ class EdgeRepository(context: Context) {
             if (section == null) {
                 outcomes.add(SectionOutcome(SyncSections.MARKET, SectionStates.UNKNOWN, 0))
                 trace(SyncSections.MARKET, "no_section", -1, -1, SectionStates.UNKNOWN)
+                recordV51(SyncSections.MARKET, "no_section", -1, -1, -1)
             } else {
                 val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.MARKET))
                 // v4.0.1 self-healing hash guard (fix plan X7).
@@ -685,8 +924,16 @@ class EdgeRepository(context: Context) {
                     )
                     outcomes.add(SectionOutcome(SyncSections.MARKET, SectionStates.UP_TO_DATE, 0))
                     trace(SyncSections.MARKET, "", 0, 0, SectionStates.UP_TO_DATE)
+                    recordV51(SyncSections.MARKET, "", 0, 0, -1)
                 } else {
-                    val marketOutcome = httpGet("$base/${section.file ?: "market.json"}")
+                    // v5.1: network-only retry for the single
+                    // market file; an HTTP error is final.
+                    val marketOutcome = httpGetRetried("$base/${section.file ?: "market.json"}")
+                    val marketHttp = if (marketOutcome is HttpOutcome.HttpError) {
+                        marketOutcome.status
+                    } else {
+                        -1
+                    }
                     val marketText = if (marketOutcome is HttpOutcome.Ok) {
                         marketOutcome.body
                     } else {
@@ -699,6 +946,7 @@ class EdgeRepository(context: Context) {
                             null, 0, now, null, null,
                         )
                         trace(SyncSections.MARKET, code, -1, -1, SectionStates.FAILED)
+                        recordV51(SyncSections.MARKET, code, -1, -1, marketHttp)
                         anyRequiredIncomplete = true
                         outcomes.add(SectionOutcome(SyncSections.MARKET, SectionStates.FAILED, 0))
                     } else {
@@ -768,6 +1016,7 @@ class EdgeRepository(context: Context) {
                                 null, 0, now, null, null,
                             )
                             trace(SyncSections.MARKET, "bad_market", -1, -1, SectionStates.FAILED)
+                            recordV51(SyncSections.MARKET, "bad_market", -1, -1, -1)
                             anyRequiredIncomplete = true
                             outcomes.add(
                                 SectionOutcome(SyncSections.MARKET, SectionStates.FAILED, 0)
@@ -816,6 +1065,11 @@ class EdgeRepository(context: Context) {
                                 if (complete) SectionStates.UP_TO_DATE
                                 else SectionStates.PARTIAL,
                             )
+                            recordV51(
+                                SyncSections.MARKET,
+                                if (complete) "" else "partial",
+                                marketFresh.size, corruptSnaps, -1,
+                            )
                             // Phase 4 alert evaluation (§4.6): on
                             // every market-section sync completion
                             // (and on manual market refresh, which
@@ -846,6 +1100,7 @@ class EdgeRepository(context: Context) {
             if (section == null) {
                 outcomes.add(SectionOutcome(SyncSections.CHANNEL_REFS, SectionStates.UNKNOWN, 0))
                 trace(SyncSections.CHANNEL_REFS, "no_section", -1, -1, SectionStates.UNKNOWN)
+                recordV51(SyncSections.CHANNEL_REFS, "no_section", -1, -1, -1)
             } else {
                 val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.CHANNEL_REFS))
                 if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
@@ -857,8 +1112,16 @@ class EdgeRepository(context: Context) {
                         SectionOutcome(SyncSections.CHANNEL_REFS, SectionStates.UP_TO_DATE, 0)
                     )
                     trace(SyncSections.CHANNEL_REFS, "", 0, 0, SectionStates.UP_TO_DATE)
+                    recordV51(SyncSections.CHANNEL_REFS, "", 0, 0, -1)
                 } else {
-                    val refsOutcome = httpGet("$base/${section.file ?: "channel_refs.json"}")
+                    // v5.1: network-only retry for the single
+                    // refs file; an HTTP error is final.
+                    val refsOutcome = httpGetRetried("$base/${section.file ?: "channel_refs.json"}")
+                    val refsHttp = if (refsOutcome is HttpOutcome.HttpError) {
+                        refsOutcome.status
+                    } else {
+                        -1
+                    }
                     if (refsOutcome is HttpOutcome.Ok) {
                         db.withTransaction {
                             recordSectionMeta(
@@ -871,6 +1134,7 @@ class EdgeRepository(context: Context) {
                                 SyncSections.CHANNEL_REFS, SectionStates.UP_TO_DATE, 0
                             )
                         )
+                        recordV51(SyncSections.CHANNEL_REFS, "", 0, 0, 200)
                     } else {
                         val code = refsOutcome.toFailedCode()
                         recordSectionMeta(
@@ -878,6 +1142,7 @@ class EdgeRepository(context: Context) {
                             null, 0, now, null, null,
                         )
                         trace(SyncSections.CHANNEL_REFS, code, -1, -1, SectionStates.FAILED)
+                        recordV51(SyncSections.CHANNEL_REFS, code, -1, -1, refsHttp)
                         anyRequiredIncomplete = true
                         outcomes.add(
                             SectionOutcome(SyncSections.CHANNEL_REFS, SectionStates.FAILED, 0)
@@ -925,11 +1190,17 @@ class EdgeRepository(context: Context) {
                         SyncSections.INVITES, "", inviteLists.first.size, 0,
                         SectionStates.UP_TO_DATE,
                     )
+                    recordV51(
+                        SyncSections.INVITES, "", inviteLists.first.size, 0, -1,
+                    )
                 }
                 if (wants(SyncSections.REVOCATIONS)) {
                     trace(
                         SyncSections.REVOCATIONS, "", inviteLists.second.size, 0,
                         SectionStates.UP_TO_DATE,
+                    )
+                    recordV51(
+                        SyncSections.REVOCATIONS, "", inviteLists.second.size, 0, -1,
                     )
                 }
                 if (wants(SyncSections.INVITES)) {
@@ -952,6 +1223,7 @@ class EdgeRepository(context: Context) {
                     // last_sync_at.
                     outcomes.add(SectionOutcome(SyncSections.INVITES, SectionStates.FAILED, 0))
                     trace(SyncSections.INVITES, "invite_fetch", -1, -1, SectionStates.FAILED)
+                    recordV51(SyncSections.INVITES, "invite_fetch", -1, -1, -1)
                 }
                 if (wants(SyncSections.REVOCATIONS)) {
                     recordSectionMeta(
@@ -964,6 +1236,7 @@ class EdgeRepository(context: Context) {
                         SectionOutcome(SyncSections.REVOCATIONS, SectionStates.FAILED, 0)
                     )
                     trace(SyncSections.REVOCATIONS, "invite_fetch", -1, -1, SectionStates.FAILED)
+                    recordV51(SyncSections.REVOCATIONS, "invite_fetch", -1, -1, -1)
                 }
             }
         }
@@ -975,7 +1248,17 @@ class EdgeRepository(context: Context) {
         // No new sync mechanism is invented here.
         val phase2Anomalies = AnomalyBag()
         if (wants(SyncSections.CHANNEL_TYPED)) {
-            outcomes.add(syncChannelTypedSection(base, manifest, forceRefresh, now, phase2Anomalies, pollPath).also {
+            // v5.1 isolation: an unexpected throw inside the
+            // section function degrades that section only.
+            var typedOutcomeIsolated = false
+            val typedOutcome = try {
+                syncChannelTypedSection(base, manifest, forceRefresh, now, phase2Anomalies, pollPath)
+            } catch (_: Exception) {
+                typedOutcomeIsolated = true
+                failSection(SyncSections.CHANNEL_TYPED, now)
+                SectionOutcome(SyncSections.CHANNEL_TYPED, SectionStates.FAILED, 0)
+            }
+            outcomes.add(typedOutcome.also {
                 if (it.key in SyncSections.REQUIRED &&
                     (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL)
                 ) {
@@ -983,9 +1266,20 @@ class EdgeRepository(context: Context) {
                 }
                 missingTotal += it.missingCount
             })
+            // failSection already wrote the v51 line; a normal
+            // outcome still needs one.
+            if (!typedOutcomeIsolated) recordV51FromOutcome(typedOutcome)
         }
         if (wants(SyncSections.BUNDLES)) {
-            outcomes.add(syncBundlesSection(base, manifest, forceRefresh, now, phase2Anomalies).also {
+            var bundlesOutcomeIsolated = false
+            val bundlesOutcome = try {
+                syncBundlesSection(base, manifest, forceRefresh, now, phase2Anomalies)
+            } catch (_: Exception) {
+                bundlesOutcomeIsolated = true
+                failSection(SyncSections.BUNDLES, now)
+                SectionOutcome(SyncSections.BUNDLES, SectionStates.FAILED, 0)
+            }
+            outcomes.add(bundlesOutcome.also {
                 if (it.key in SyncSections.REQUIRED &&
                     (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL)
                 ) {
@@ -993,9 +1287,18 @@ class EdgeRepository(context: Context) {
                 }
                 missingTotal += it.missingCount
             })
+            if (!bundlesOutcomeIsolated) recordV51FromOutcome(bundlesOutcome)
         }
         if (wants(SyncSections.RADAR)) {
-            outcomes.add(syncRadarSection(base, manifest, forceRefresh, now, phase2Anomalies).also {
+            var radarOutcomeIsolated = false
+            val radarOutcome = try {
+                syncRadarSection(base, manifest, forceRefresh, now, phase2Anomalies)
+            } catch (_: Exception) {
+                radarOutcomeIsolated = true
+                failSection(SyncSections.RADAR, now)
+                SectionOutcome(SyncSections.RADAR, SectionStates.FAILED, 0)
+            }
+            outcomes.add(radarOutcome.also {
                 if (it.key in SyncSections.REQUIRED &&
                     (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL)
                 ) {
@@ -1003,6 +1306,7 @@ class EdgeRepository(context: Context) {
                 }
                 missingTotal += it.missingCount
             })
+            if (!radarOutcomeIsolated) recordV51FromOutcome(radarOutcome)
         }
         // Phase 5 nightly section: same Phase 1 rules (manifest
         // first, per-section hash, one transaction, hash stored
@@ -1010,7 +1314,16 @@ class EdgeRepository(context: Context) {
         // the cache — yesterday's edition stays with an honest
         // failure line, never a blank Nightly section, P5-4).
         if (wants(SyncSections.NIGHTLY)) {
-            outcomes.add(syncNightlySection(base, manifest, forceRefresh, now).also {
+            // v5.1 isolation, same shape as the Phase 2 sections.
+            var nightlyOutcomeIsolated = false
+            val nightlyOutcome = try {
+                syncNightlySection(base, manifest, forceRefresh, now)
+            } catch (_: Exception) {
+                nightlyOutcomeIsolated = true
+                failSection(SyncSections.NIGHTLY, now)
+                SectionOutcome(SyncSections.NIGHTLY, SectionStates.FAILED, 0)
+            }
+            outcomes.add(nightlyOutcome.also {
                 if (it.key in SyncSections.REQUIRED &&
                     (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL)
                 ) {
@@ -1018,6 +1331,7 @@ class EdgeRepository(context: Context) {
                 }
                 missingTotal += it.missingCount
             })
+            if (!nightlyOutcomeIsolated) recordV51FromOutcome(nightlyOutcome)
         }
         // Computed (overwrite-for-today) Phase 2 anomaly codes:
         // caps, bundle-shape flags. Parse anomalies (above) are
@@ -1046,18 +1360,26 @@ class EdgeRepository(context: Context) {
             SyncSections.VOICES, SyncSections.SPECIAL_ISSUES,
         )) {
             if (!wants(key)) continue
-            val section = manifest.sections[key]
-            val state = when (section?.status) {
-                "gated_frozen" -> SectionStates.GATED_FROZEN
-                "not_yet_published" -> SectionStates.NOT_YET_PUBLISHED
-                "" -> SectionStates.NOT_YET_PUBLISHED
-                null -> SectionStates.UNKNOWN
-                else -> SectionStates.UNKNOWN
+            // v5.1 isolation: a meta-write failure for one gated
+            // section must not abort the global-clock block below.
+            try {
+                val section = manifest.sections[key]
+                val state = when (section?.status) {
+                    "gated_frozen" -> SectionStates.GATED_FROZEN
+                    "not_yet_published" -> SectionStates.NOT_YET_PUBLISHED
+                    "" -> SectionStates.NOT_YET_PUBLISHED
+                    null -> SectionStates.UNKNOWN
+                    else -> SectionStates.UNKNOWN
+                }
+                recordSectionMeta(
+                    key, state, "", section?.count ?: 0, 0, now, null, null,
+                )
+                outcomes.add(SectionOutcome(key, state, 0))
+                recordV51(key, "", 0, 0, -1)
+            } catch (_: Exception) {
+                trace(key, "section_error", -1, -1, SectionStates.FAILED)
+                recordV51(key, "section_error", -1, -1, -1)
             }
-            recordSectionMeta(
-                key, state, "", section?.count ?: 0, 0, now, null, null,
-            )
-            outcomes.add(SectionOutcome(key, state, 0))
         }
 
         // Legacy global metas, kept for the feed's last-sync line:
@@ -1148,7 +1470,7 @@ class EdgeRepository(context: Context) {
         var latestChain: EdgeChain? = null
         val missingKeys = mutableListOf<String>()
         if (plan.toFetch.isNotEmpty()) {
-            val text = when (val outcome = httpGet("$base/${section.file ?: "channel_typed.json"}")) {
+            val text = when (val outcome = httpGetRetried("$base/${section.file ?: "channel_typed.json"}")) {
                 is HttpOutcome.Ok -> outcome.body
                 else -> null
             }
@@ -1313,7 +1635,7 @@ class EdgeRepository(context: Context) {
             trace(key, "", 0, 0, SectionStates.UP_TO_DATE)
             return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
         }
-        val bundleOutcome = httpGet("$base/${section.file ?: "bundles.json"}")
+        val bundleOutcome = httpGetRetried("$base/${section.file ?: "bundles.json"}")
         val text = when (bundleOutcome) {
             is HttpOutcome.Ok -> bundleOutcome.body
             else -> null
@@ -1434,7 +1756,7 @@ class EdgeRepository(context: Context) {
             trace(key, "", 0, 0, SectionStates.UP_TO_DATE)
             return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
         }
-        val radarOutcome = httpGet("$base/${section.file ?: "radar.json"}")
+        val radarOutcome = httpGetRetried("$base/${section.file ?: "radar.json"}")
         val text = when (radarOutcome) {
             is HttpOutcome.Ok -> radarOutcome.body
             else -> null
@@ -1553,7 +1875,7 @@ class EdgeRepository(context: Context) {
             trace(key, "", 0, 0, SectionStates.UP_TO_DATE)
             return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
         }
-        val indexOutcome = httpGet("$base/${section.file ?: "nightly.json"}")
+        val indexOutcome = httpGetRetried("$base/${section.file ?: "nightly.json"}")
         val indexText = when (indexOutcome) {
             is HttpOutcome.Ok -> indexOutcome.body
             else -> null
@@ -2589,9 +2911,12 @@ class EdgeRepository(context: Context) {
      * Returns null when either file cannot be fetched or parsed —
      * callers must then skip the re-check, never lock on a failure.
      */
-    private fun fetchInviteLists(base: String): Pair<List<String>, List<String>>? {
-        fun hashes(url: String): List<String>? {
-            val text = when (val outcome = httpGet(url)) {
+    private suspend fun fetchInviteLists(base: String): Pair<List<String>, List<String>>? {
+        suspend fun hashes(url: String): List<String>? {
+            // v5.1: 2 attempts, network errors only. A failure
+            // still yields null and the re-check is skipped —
+            // offline must never lock a reader out.
+            val text = when (val outcome = httpGetRetried(url, attempts = 2)) {
                 is HttpOutcome.Ok -> outcome.body
                 else -> return null
             }

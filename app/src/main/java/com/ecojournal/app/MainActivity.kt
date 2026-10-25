@@ -53,6 +53,7 @@ import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.MarketSnapshot
 import com.ecojournal.app.data.UpdateUiState
 import com.ecojournal.app.data.SettingsStore
+import com.ecojournal.app.data.SyncTrace
 import com.ecojournal.app.ui.screens.AnalysisScreen
 import com.ecojournal.app.ui.screens.ArticleScreen
 import com.ecojournal.app.ui.screens.BookmarksScreen // M6: now in its own file, moved verbatim from the deleted CategoriesScreen.kt
@@ -82,6 +83,28 @@ private data class Tab(
     val labelRes: Int,
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
 )
+
+/**
+ * v5.1 invite-gate flip guard (UI only; the gate itself and the
+ * hash handling are untouched).
+ *
+ * The SettingsScreen manual re-lock button sets this flag before
+ * clearing the invite (see SettingsScreen). MainActivity reads
+ * it to tell an explicit user lock apart from a transient
+ * settings emission that lost the flag AND the hash (e.g. a
+ * corrupt DataStore read falling back to empty preferences):
+ * the latter must never flip a signed-in, populated app back to
+ * the code-entry screen. The flag is cleared as soon as a valid
+ * invite is observed again, so an old manual lock can never
+ * poison a later transient failure. A genuine revocation needs
+ * no flag: EdgeRepository clears only the flag and KEEPS the
+ * stored hash, so it is recognised by the hash still being
+ * present (see the gate below) and always locks.
+ */
+object InviteLockSignal {
+    @Volatile
+    var manualLockRequested: Boolean = false
+}
 
 // M3 (P1-12): real icons, not four identical bullets. The label
 // itself is the content description, so TalkBack announces the tab.
@@ -141,7 +164,50 @@ class MainActivity : ComponentActivity() {
                     // until a valid code is entered (InviteScreen).
                     // The gate replaces the old unconditional
                     // startDestination = "feed".
-                    if (!settings.inviteOk) {
+                    // v5.1 shockproof — the re-check must NEVER
+                    // flip a signed-in app back to an empty /
+                    // locked screen on a transient failure. The
+                    // data layer already guarantees this for
+                    // fetch failures (EdgeRepository skips the
+                    // re-check entirely when the edge lists are
+                    // unfetchable, and only a successfully
+                    // fetched list can re-lock, with the stored
+                    // hash kept). This gate closes the remaining
+                    // UI-level flip: a settings emission that
+                    // lost BOTH the flag and the hash after this
+                    // process already saw a valid invite is a
+                    // corrupt/transient read, not a revocation,
+                    // so the session is kept and the suppression
+                    // is traced (branch "gate_held", visible on
+                    // Diagnostics). It locks when: the flag is
+                    // false and the hash is still present
+                    // (genuine revocation), the user tapped
+                    // re-lock (InviteLockSignal), or no invite
+                    // was ever seen in this process (fresh
+                    // install). A kept session is re-resolved by
+                    // the next successful sync re-check: a truly
+                    // revoked hash then locks via the hash-kept
+                    // path. A kept session is never presented
+                    // as an empty feed — the held feed stays.
+                    var gateEverOk by remember { mutableStateOf(false) }
+                    LaunchedEffect(settings.inviteOk) {
+                        if (settings.inviteOk) {
+                            gateEverOk = true
+                            InviteLockSignal.manualLockRequested = false
+                        }
+                    }
+                    val gateHeld = !settings.inviteOk &&
+                        settings.inviteHash == null &&
+                        !InviteLockSignal.manualLockRequested &&
+                        gateEverOk
+                    LaunchedEffect(gateHeld) {
+                        if (gateHeld) {
+                            SyncTrace.recordFeedBranch(
+                                repo.dao, "gate_held", -1, -1,
+                            )
+                        }
+                    }
+                    if (!settings.inviteOk && !gateHeld) {
                         InviteScreen(
                             repo = repo,
                             store = store,

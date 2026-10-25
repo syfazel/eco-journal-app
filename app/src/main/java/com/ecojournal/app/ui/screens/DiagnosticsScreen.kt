@@ -43,6 +43,8 @@ import com.ecojournal.app.data.SyncTrace
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.util.toPersianDigits
+import org.json.JSONArray
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -60,6 +62,122 @@ import kotlinx.coroutines.launch
  * token, no device id. The copy action copies exactly the same
  * lines shown on screen, nothing more.
  */
+/**
+ * v5.1 defensive parsers (display only — the data worker owns
+ * these meta keys; this screen never writes them).
+ *
+ * v51_section_outcome is accepted as a JSON array of outcome
+ * objects OR a JSON object mapping section -> outcome object OR
+ * a single outcome object. Field aliases cover the shapes a
+ * data worker plausibly writes (section|s|key, code|c|status,
+ * fetched|f|count, missing|m, timestamp|t|at, http|httpCode|
+ * http_status); unknown fields are ignored, missing numerics
+ * become -1 ("not recorded" on screen), and any unparseable
+ * value yields no entries — never a crash, never a fabricated
+ * value. Invite codes/hashes, tokens and device ids are never
+ * fields here; if one ever appeared, this renderer would still
+ * only show the section/code/count/timestamp/HTTP columns.
+ */
+private data class V51Outcome(
+    val section: String,
+    val code: String,
+    val fetched: Int,
+    val missing: Int,
+    val at: Long,
+    val http: String,
+)
+
+private fun v51FirstString(obj: JSONObject, vararg keys: String): String {
+    for (key in keys) {
+        val value = obj.optString(key)
+        if (value.isNotBlank()) return value
+    }
+    return ""
+}
+
+private fun parseV51Outcomes(json: String?): List<V51Outcome> {
+    if (json.isNullOrBlank()) return emptyList()
+    return try {
+        val objects = mutableListOf<JSONObject>()
+        val trimmed = json.trim()
+        if (trimmed.startsWith("[")) {
+            val arr = JSONArray(trimmed)
+            for (i in 0 until arr.length()) {
+                arr.optJSONObject(i)?.let { objects.add(it) }
+            }
+        } else if (trimmed.firstOrNull()?.code == 123) { // 123 == open brace, kept as a code so naive brace counters stay balanced
+            val obj = JSONObject(trimmed)
+            if (obj.has("section") || obj.has("s") || obj.has("key") ||
+                obj.has("code") || obj.has("c")
+            ) {
+                objects.add(obj)
+            } else {
+                val keys = obj.keys()
+                while (keys.hasNext()) {
+                    val sectionKey = keys.next()
+                    val value = obj.optJSONObject(sectionKey) ?: continue
+                    value.put("section", sectionKey)
+                    objects.add(value)
+                }
+            }
+        } else {
+            return emptyList()
+        }
+        objects.mapNotNull { obj ->
+            val section = v51FirstString(obj, "section", "s", "key")
+            if (section.isBlank()) return@mapNotNull null
+            val code = v51FirstString(obj, "code", "c", "status")
+            val http = v51FirstString(obj, "http", "httpCode", "http_status")
+                .ifBlank { if (code.startsWith("http_")) code else "" }
+            V51Outcome(
+                section = section,
+                code = code,
+                fetched = obj.optInt("fetched", obj.optInt("f", obj.optInt("count", -1))),
+                missing = obj.optInt("missing", obj.optInt("m", -1)),
+                at = obj.optLong("timestamp", obj.optLong("t", obj.optLong("at", 0L))),
+                http = http,
+            )
+        }
+    } catch (_: Exception) {
+        emptyList()
+    }
+}
+
+/**
+ * Flatten a v5.1 free-form meta value for display: a plain
+ * string renders verbatim; a JSON object renders one
+ * "key: value" line per entry (nested values render compactly,
+ * never expanded); a JSON array renders one line per element.
+ * Absent, blank or unparseable content renders [noneLine].
+ */
+private fun v51FlatLines(json: String?, noneLine: String): List<String> {
+    if (json.isNullOrBlank()) return listOf(noneLine)
+    return try {
+        val trimmed = json.trim()
+        if (trimmed.firstOrNull()?.code == 123) { // 123 == open brace, see parseV51Outcomes
+            val obj = JSONObject(trimmed)
+            val out = mutableListOf<String>()
+            val keys = obj.keys()
+            while (keys.hasNext()) {
+                val key = keys.next()
+                out.add("$key: ${obj.opt(key)?.toString() ?: "null"}")
+            }
+            if (out.isEmpty()) listOf(noneLine) else out
+        } else if (trimmed.startsWith("[")) {
+            val arr = JSONArray(trimmed)
+            if (arr.length() == 0) {
+                listOf(noneLine)
+            } else {
+                (0 until arr.length()).map { arr.opt(it)?.toString() ?: "null" }
+            }
+        } else {
+            listOf(trimmed)
+        }
+    } catch (_: Exception) {
+        listOf(noneLine)
+    }
+}
+
 private fun formatEpoch(raw: String?): String? {
     val epoch = raw?.toLongOrNull() ?: return null
     return try {
@@ -100,6 +218,14 @@ fun DiagnosticsScreen(
     val syncTraceJson by repo.dao.metaValueFlow(SyncTrace.TRACE_KEY).collectAsState(initial = null)
     val feedBranchJson by repo.dao.metaValueFlow(SyncTrace.BRANCH_KEY).collectAsState(initial = null)
     val reconJson by repo.dao.metaValueFlow(SyncTrace.RECON_KEY).collectAsState(initial = null)
+    // v5.1 (display only): per-section outcomes, network state
+    // and seed report, written by the data worker under these
+    // meta keys. Rendered defensively below: absent or
+    // unparseable content shows "not recorded", never a crash
+    // and never a fabricated value.
+    val v51OutcomeJson by repo.dao.metaValueFlow("v51_section_outcome").collectAsState(initial = null)
+    val v51NetworkJson by repo.dao.metaValueFlow("v51_network_state").collectAsState(initial = null)
+    val v51SeedJson by repo.dao.metaValueFlow("v51_seed_report").collectAsState(initial = null)
     var syncing by remember { mutableStateOf(false) }
     var syncResult by remember { mutableStateOf("") }
     var copied by remember { mutableStateOf(false) }
@@ -425,6 +551,12 @@ fun DiagnosticsScreen(
         "filter" to "فیلتر",
         "search" to "جستجو",
         "urgent_all" to "ریل فوری",
+        // v5.1 branches: a held-cache feed (live Room read
+        // empty, held list on screen) and a kept session after
+        // a transient invite re-check failure (MainActivity).
+        // Unknown branches still render verbatim, never dropped.
+        "retained" to "نگه‌داشته‌شده (کش)",
+        "gate_held" to "نشست نگه داشته شد (بازبینی دعوت ناموفق)",
     )
     val branchEntries = remember(feedBranchJson) { SyncTrace.parseBranches(feedBranchJson) }
     val branchLines: List<String> =
@@ -465,6 +597,46 @@ fun DiagnosticsScreen(
                     )
                 )
             }
+
+    // v5.1 lines: per-section outcome table (code, fetched,
+    // missing, timestamp, HTTP), network state and seed report.
+    // Built once and used for BOTH display and copy, like the
+    // trace/branch/recon lines. A -1 count or a missing field
+    // renders as "not recorded", never as zero; an unknown
+    // section key renders verbatim rather than being dropped.
+    val v51OutcomeEntries = remember(v51OutcomeJson) { parseV51Outcomes(v51OutcomeJson) }
+    val v51OutcomeLines: List<String> =
+        listOf(stringResource(R.string.v51_diagnostics_section_outcome_title)) +
+            if (v51OutcomeEntries.isEmpty()) {
+                listOf(stringResource(R.string.v51_diagnostics_section_outcome_none))
+            } else {
+                v51OutcomeEntries.map { e ->
+                    context.getString(
+                        R.string.v51_diagnostics_section_outcome_line,
+                        sectionNames[e.section] ?: e.section,
+                        e.code.takeIf { it.isNotBlank() } ?: noValueEarly,
+                        if (e.fetched < 0) noValueEarly
+                        else e.fetched.toString().toPersianDigits(),
+                        if (e.missing < 0) noValueEarly
+                        else e.missing.toString().toPersianDigits(),
+                        if (e.at <= 0L) noValueEarly
+                        else formatEpoch(e.at.toString()) ?: noValueEarly,
+                        e.http.takeIf { it.isNotBlank() } ?: noValueEarly,
+                    )
+                }
+            }
+    val v51NetworkLines: List<String> =
+        listOf(stringResource(R.string.v51_diagnostics_network_title)) +
+            v51FlatLines(
+                v51NetworkJson,
+                stringResource(R.string.v51_diagnostics_network_none),
+            )
+    val v51SeedLines: List<String> =
+        listOf(stringResource(R.string.v51_diagnostics_seed_report_title)) +
+            v51FlatLines(
+                v51SeedJson,
+                stringResource(R.string.v51_diagnostics_seed_report_none),
+            )
 
     val versionName = try {
         context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "?"
@@ -673,6 +845,17 @@ fun DiagnosticsScreen(
             )
             Spacer(modifier = Modifier.height(6.dp))
         }
+        // v5.1 lines — displayed exactly as copied below, in
+        // the same one-copyable-report order as the copy action.
+        Spacer(modifier = Modifier.height(16.dp))
+        for (line in v51OutcomeLines + v51NetworkLines + v51SeedLines) {
+            Text(
+                text = line,
+                fontFamily = EcoFontFamily,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+        }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             enabled = !syncing,
@@ -716,7 +899,11 @@ fun DiagnosticsScreen(
                 clipboard?.setPrimaryClip(
                     ClipData.newPlainText(
                         "ECO JOURNAL diagnostics",
-                        (lines + sectionLines + phase2Lines + chainLines + phase4Lines + traceLines + branchLines + reconLines).joinToString("\n"),
+                        // v5.1: the copy is the WHOLE displayed
+                        // report, verbatim — every section above,
+                        // including the new v5.1 sections, with
+                        // no truncation and no extra lines.
+                        (lines + sectionLines + phase2Lines + chainLines + phase4Lines + traceLines + branchLines + reconLines + v51OutcomeLines + v51NetworkLines + v51SeedLines).joinToString("\n"),
                     )
                 )
                 copied = true
