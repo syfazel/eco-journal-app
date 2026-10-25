@@ -1,0 +1,56 @@
+# Publishes the static edge (edge/out/) to GitHub Pages.
+#
+# DESIGN NOTE — why CI does NOT regenerate the edge:
+# edge/generate_edge.py reads the lab database, which is NOT in this
+# repo and must never be committed. So the edge snapshot is generated
+# in the lab and COMMITTED here; this workflow only publishes what
+# is committed. When new editorial content is approved, regenerate
+# in the lab (python3 edge/generate_edge.py), commit edge/out/ and
+# the bundled assets copy (app/src/main/assets/seed/), and push —
+# Pages republishes automatically.
+#
+# Published layout: edge/out/index.json becomes
+#   https://<user>.github.io/<repo>/index.json
+# so EdgeConfig.BASE_URL is the Pages root WITHOUT any "/out" suffix
+# (see README.md "Wiring the edge URL").
+#
+# ONE-TIME repo setting (needs a logged-in owner, cannot be done
+# from this VM yet): Settings → Pages → Build and deployment →
+# Source: "GitHub Actions". Until that toggle is set, this workflow
+# runs but Pages serves nothing.
+name: Publish edge to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "edge/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+      - name: Set up Pages
+        uses: actions/configure-pages@v5
+      - name: Upload edge snapshot
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: edge/out
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

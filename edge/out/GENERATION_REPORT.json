@@ -1,0 +1,31 @@
+{
+ "generated_at_utc": "2026-10-25T13:37:14.913204+00:00",
+ "sources_read_only": [
+  "/home/hatch/workspace/econ-news-blog/data_core/data_core.db",
+  "/home/hatch/workspace/yasineco_bot/bot.db"
+ ],
+ "exported": {
+  "full_articles": 249,
+  "short_cards": 32,
+  "index_entries": 281,
+  "market_snapshots": 164,
+  "market_formulas_active": 4,
+  "channel_refs": 23
+ },
+ "summary_sources_full_articles": {
+  "from_items_summary": 249,
+  "from_body_excerpt_first_paragraph": 0
+ },
+ "excluded_never_shipped_as_articles": {
+  "extracts_pending": 2560,
+  "extracts_rejected": 277,
+  "extracts_approved_posted_without_body": 84,
+  "drafts_rejected": 52,
+  "channel_posts_without_body_text_in_data_core": 23
+ },
+ "rules": [
+  "No invented article text. Bodies and body_fa copied verbatim.",
+  "No .env file opened. No token printed or embedded.",
+  "Nothing written outside app/edge/out/."
+ ]
+}

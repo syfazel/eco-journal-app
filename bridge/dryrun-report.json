@@ -1,0 +1,97 @@
+{
+ "generated_at_utc": "2026-10-25T13:49:05.485519+00:00",
+ "mode": "dry-run",
+ "channel_open": false,
+ "network_used": false,
+ "live_sends": 0,
+ "cases": [
+  {
+   "case": "seed fixtures loaded",
+   "pass": true,
+   "detail": "2 real articles from edge/out/"
+  },
+  {
+   "case": "status walk e50b71b564b7",
+   "pass": true,
+   "detail": "reached published_app"
+  },
+  {
+   "case": "channel format e50b71b564b7",
+   "pass": true,
+   "detail": "valid, 780 chars"
+  },
+  {
+   "case": "dry-run send e50b71b564b7",
+   "pass": true,
+   "detail": "logged as WOULD_SEND_IF_UNFROZEN; live send refused (channel frozen); nothing recorded as sent"
+  },
+  {
+   "case": "status walk c22c825cfb8c",
+   "pass": true,
+   "detail": "reached published_app"
+  },
+  {
+   "case": "channel format c22c825cfb8c",
+   "pass": true,
+   "detail": "valid, 1943 chars"
+  },
+  {
+   "case": "dry-run send c22c825cfb8c",
+   "pass": true,
+   "detail": "logged as WOULD_SEND_IF_UNFROZEN; live send refused (channel frozen); nothing recorded as sent"
+  },
+  {
+   "case": "in-memory duplicate skip",
+   "pass": true,
+   "detail": "second processing of same key skipped"
+  },
+  {
+   "case": "unapproved jump refused",
+   "pass": true,
+   "detail": "illegal transition review -> queued"
+  },
+  {
+   "case": "review -> published_channel refused",
+   "pass": true,
+   "detail": "illegal transition review -> published_channel"
+  },
+  {
+   "case": "draft -> approved refused",
+   "pass": true,
+   "detail": "illegal transition draft -> approved"
+  },
+  {
+   "case": "queued -> published_channel refused",
+   "pass": true,
+   "detail": "illegal transition queued -> published_channel"
+  },
+  {
+   "case": "cap validator fires on 5000-char filler",
+   "pass": true,
+   "detail": "over Telegram cap: 5114 chars (cap 4096, excess 1018); needs a Phase 2 splitting decision, never silent truncation"
+  }
+ ],
+ "would_send": [
+  {
+   "article_id": "e50b71b564b7402cb7f0261466e66619",
+   "title": "وعده ترامپ به آمریکایی‌ها درباره جنگ با ایران",
+   "idempotency_key": "article:e50b71b564b7402cb7f0261466e66619",
+   "chars": 780,
+   "format_valid": true,
+   "gate_channel_open": false,
+   "verdict": "WOULD_SEND_IF_UNFROZEN",
+   "text_preview": "وعده ترامپ به آمریکایی‌ها درباره جنگ با ایران\n\nترامپ همچون روزهای گذشته در حالیکه جمهوری‌خواهان را در آستانه شکست در انتخابات میان‌دوره‌ای می‌بیند، مدعی شد: قیمت نفت به‌محض پایان جنگ در ایران، باز هم کاهش خواهد یافت.\n\nبه گزارش همشهری آنلاین، ترامپ البته اشاره‌ای به افزایش قابل توجه قیمت نفت در روزها"
+  },
+  {
+   "article_id": "c22c825cfb8c4ccb9289749b3ce88646",
+   "title": "هشدار؛ در صورت حمله مجدد آمریکا؛ ایران این اهداف را نابود خواهد کرد",
+   "idempotency_key": "article:c22c825cfb8c4ccb9289749b3ce88646",
+   "chars": 1943,
+   "format_valid": true,
+   "gate_channel_open": false,
+   "verdict": "WOULD_SEND_IF_UNFROZEN",
+   "text_preview": "هشدار؛ در صورت حمله مجدد آمریکا؛ ایران این اهداف را نابود خواهد کرد\n\nروزنامه وال‌استریت ژورنال گزارش داد ایران در پیام‌های رسمی و دیپلماتیک محرمانه به کشورهای منطقه هشدار داده است که در صورت ازسرگیری حملات آمریکا و رژیم صهیونیستی، دامنه پاسخ نظامی تهران فراتر از پادگان‌ها خواهد بود.\n\nبه گزارش همشهری"
+  }
+ ],
+ "note": "Dry-run only. No message was sent, no token was read, and nothing was recorded as sent. Scratch state (if any) is lab-only and is not the production sent-record."
+}

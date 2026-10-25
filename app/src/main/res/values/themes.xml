@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Activity window theme only; the visible theme is Compose
+         (see ui/theme/Theme.kt). NoActionBar because the app draws
+         its own Material3 bars. -->
+    <style name="Theme.EcoJournal" parent="Theme.Material3.DayNight.NoActionBar" />
+</resources>

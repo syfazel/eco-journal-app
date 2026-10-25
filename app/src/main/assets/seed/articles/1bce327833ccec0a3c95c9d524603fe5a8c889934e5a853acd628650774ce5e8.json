@@ -1,0 +1,42 @@
+{
+ "id": "newsdesk:https://www.aljazeera.com/?t=1792528212",
+ "kind": "article",
+ "title": "شکایت واردکننده آمریکایی از ترامپ بر سر تعرفه ۵۰ درصدی کالاهای کانادایی",
+ "summary": "The lawsuit argues Trump bypassed Congress and misused a Depression-era law to impose tariffs on Canadian imports.",
+ "summary_source": "items.summary",
+ "body_blocks": [
+  "A US food importer is suing US President Donald Trump over his 50 percent tariffs on Canadian goods, arguing he lacks the legal authority to impose sweeping tariffs without congressional approval.",
+  "Gellert Global Group, a New Jersey-based company that imports Canadian cheese, filed the lawsuit on Tuesday in the US Court of International Trade in New York.",
+  "The company says the tariffs are driving up its costs and disrupting its relationships with suppliers on both sides of the border. Between September 16 and October 11, Gellert had paid more than $520,000 in duties, according to the complaint.",
+  "“Gellert Global Group has spent generations building trusted relationships with suppliers, customers and partners across the food industry,” said Thomas Gellert, the company’s co-chief executive officer, in a press release. “These tariffs disrupt those relationships overnight and create costs and uncertainty that ripple through the entire supply chain.”",
+  "The lawsuit challenges Trump’s decision to use a Depression-era law to impose tariffs on a wide range of Canadian products, including dairy products, furniture, clothing and wine.",
+  "Trump first imposed the 50 percent tariffs over the summer, accusing Canada of discriminating against American-made cars, alcohol and dairy products. He expanded the measures in September, adding more products in response to Canadian retaliatory tariffs.",
+  "The lawsuit argues that the law doesn’t apply to the Canadian policies the Trump administration says are discriminatory, since two of them “arose in response to the president’s own tariffs, while the third involves Canadian dairy policy governed by the US-Mexico-Canada Agreement (USMCA)”.",
+  "It also questions why Canadian cheese is being taxed over disputes involving alcohol and cars.",
+  "“No president should have the power to pull a dormant statute off the shelf and use it to impose sweeping tariffs or import bans without the limits Congress required,” said Sara Albrecht, chairman and CEO of the Liberty Justice Center, a nonprofit legal organisation that filed the suit on Gellert’s behalf.",
+  "The White House did not immediately respond to a request for comment, according to the Reuters news agency.",
+  "At the centre of the case is Section 338 of the Smoot-Hawley Tariff Act of 1930, which allows the president to impose tariffs of up to 50 percent on imports from countries found to discriminate against American businesses.",
+  "The provision had never been used until Trump invoked it this year.",
+  "The lawsuit argues that newer laws passed by Congress since then, such as Section 301 of the Trade Act of 1974, require investigations, public comment and other safeguards that Gellert says the Trump administration has bypassed, and that these override Section 338.",
+  "“The administration cannot skip those protections by reaching for a 1930 statute that no president had ever used to impose a tariff,” said Jeffrey Schwab, the Liberty Justice Center’s senior counsel and director of litigation.",
+  "In addition, the lawsuit says that even if Trump is allowed to use the older law, he hasn’t met its requirements, including waiting 30 days before tariffs can be collected on new products added to the list.",
+  "The administration only waited seven days to start collecting tariffs on cheese in September, according to the lawsuit.",
+  "Gellert is asking the court to declare the tariffs illegal, stop them from being collected, and order refunds with interest for importers who have been impacted.",
+  "The lawsuit marks the fourth major legal challenge to Trump’s tariffs.",
+  "In February, the US Supreme Court struck down most of the tariffs he imposed in 2025, and a trade court later ruled against a temporary 10 percent global tariff. A separate challenge to tariffs imposed over alleged forced labour in international trade is still pending."
+ ],
+ "points": [
+  "شکایت واردکننده آمریکایی از ترامپ بر سر تعرفه ۵۰ درصدی کالاهای کانادایی"
+ ],
+ "why_matters": null,
+ "category": "general",
+ "category_fa": "عمومی",
+ "source": "الجزیره",
+ "source_slug": null,
+ "original_url": "https://www.aljazeera.com/economy/2026/10/20/us-food-importer-sues-trump-over-50-percent-tariffs-on-canadian-goods?traffic_source=rss",
+ "published_at": "Tue, 20 Oct 2026 21:19:12 +0000",
+ "extracted_at": "2026-10-22T02:08:33.039390+03:30",
+ "channel_message_id": null,
+ "publish_status": "approved",
+ "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
+}

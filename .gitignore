@@ -1,0 +1,38 @@
+# ECO JOURNAL app — .gitignore (LAB, Phase 1 setup)
+# Intent: the repo must be pushable as-is with zero secrets in it.
+# edge/out/ is INTENTIONALLY committed: GitHub Pages serves the
+# committed snapshot (CI does not regenerate it — the source
+# database is not in this repo; regeneration happens in the lab).
+
+# Android / Gradle build outputs
+.gradle/
+build/
+app/build/
+*.apk
+*.aab
+
+# Local SDK / IDE config
+local.properties
+*.iml
+.idea/
+*.DS_Store
+
+# Signing keys — NEVER commit. Release signing is a separate,
+# later decision by Yasin, with a key he creates himself.
+*.jks
+*.keystore
+
+# Firebase — supplied later by the owner, NEVER committed.
+# The app compiles and runs without it (FCM is optional at runtime;
+# see docs/firebase-setup.md).
+google-services.json
+app/google-services.json
+
+# Secrets of any kind
+*.env
+*.pem
+*.key
+
+# Lab dry-run bridge state — scratch only, NOT the production
+# sent-record. See bridge/dryrun.py.
+bridge/.dryrun-state/
