@@ -2822,5 +2822,11 @@
    "description_fa": "اسپرد درصدی بین دو نرخ: (الف − ب) ÷ ب × ۱۰۰. کاربرد استاندارد: اسپرد تتر نسبت به دلار آزاد."
   }
  ],
+ "market_alerts": {
+  "bubble_threshold_pct": null,
+  "spread_threshold_pct": null,
+  "source": "admin-settings",
+  "updated_at_tehran": null
+ },
  "lineage_note": "Numbers are copied verbatim from data_core.prices; derived values use data_core.formulas definitions (implied_usd, intrinsic_emami, bubble_pct, spread_pct)."
 }
