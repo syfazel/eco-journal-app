@@ -63,7 +63,10 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     // Real bottom-nav / reader icons (M3, P1-12): version from the BOM.
+    // Core alone does NOT provide Bookmark/BookmarkBorder/ShowChart in
+    // this BOM (cloud build 40213937473 proved it); extended does.
     implementation("androidx.compose.material:material-icons-core")
+    implementation("androidx.compose.material:material-icons-extended")
     // XML window theme parent Theme.Material3.DayNight.NoActionBar
     // (themes.xml) comes from the Material XML library, NOT from
     // androidx.compose.material3 — without this, AAPT linking fails.

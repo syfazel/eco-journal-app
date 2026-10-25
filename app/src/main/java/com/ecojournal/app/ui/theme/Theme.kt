@@ -145,7 +145,10 @@ fun EcoTheme(
     }
     MaterialTheme(
         colorScheme = colors,
-        typography = Typography(defaultFontFamily = EcoFontFamily),
+        // No defaultFontFamily here: material3 1.3.0 (BOM 2024.09.00)
+        // has no such Typography parameter (cloud build 40213937473).
+        // Vazirmatn reaches texts via per-Text fontFamily = EcoFontFamily.
+        typography = Typography(),
         content = content,
     )
 }
