@@ -69,6 +69,10 @@ PHASE3_GENERATOR = ("edge/merge_staging.py (Phase 3 Tier A, LAB ONLY) + "
                     "edge/generate_edge.py (Phase 1, LAB ONLY)")
 PHASE5_GENERATOR = ("edge/generate_phase5_fixtures.py (Phase 5, LAB ONLY) + "
                     "edge/generate_edge.py (Phase 1, LAB ONLY)")
+# Full-sync (S1/S2/S3, 2026-10-26): channel_typed + radar overlays on a
+# Phase 1 base. The generator string must stay exact here, or verify
+# fails closed rather than blessing an edge it cannot attribute.
+FULLSYNC_GENERATOR = "edge/fullsync.py (S1/S2/S3, 2026-10-26)"
 GATE_PROVENANCE = "muse-editorial (delegated by Yasin 2026-10-18)"
 CHAIN_FIELDS = ("channel_message_id", "channel_posted_epoch",
                 "staged_epoch", "gate_decided_epoch", "gate_decision",
@@ -150,7 +154,7 @@ def verify(out_dir):
         fail(checks, "manifest version is %r, expected 3" % manifest.get("version"))
     else:
         ok(checks, "manifest version 3")
-    if manifest.get("generator") not in (PHASE1_GENERATOR, PHASE3_GENERATOR, PHASE5_GENERATOR):
+    if manifest.get("generator") not in (PHASE1_GENERATOR, PHASE3_GENERATOR, PHASE5_GENERATOR, FULLSYNC_GENERATOR):
         fail(checks, "manifest generator string mismatch: %r" % manifest.get("generator"))
     else:
         ok(checks, "manifest generator string exact")

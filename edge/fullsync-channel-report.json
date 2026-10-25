@@ -1,0 +1,23 @@
+{
+ "generator": "generate_channel_typed.py (S1)",
+ "generated_at_utc": "2026-10-25T23:58:10.297979+00:00",
+ "posted_rows_read": 583,
+ "channel_typed_items": 560,
+ "by_format": {
+  "VERIFY": 147,
+  "FLASH": 17,
+  "WIRE": 297,
+  "WATCH": 25,
+  "MARKET": 53,
+  "GEOPOL": 21
+ },
+ "excluded": {
+  "sitrep_no_body": 23,
+  "unknown_fmt": 0,
+  "duplicate_mid": 0,
+  "blank_title": 0
+ },
+ "urgency_score_covered": 504,
+ "urgency_score_null": 56,
+ "golden_rule": "posted table only; queue (night-held) never read"
+}

@@ -1,0 +1,160 @@
+{
+ "generator": "regenerate_fullsync.py (S2)",
+ "generated_at_utc": "2026-10-25T23:56:56.578720+00:00",
+ "changed": false,
+ "before": {
+  "articles": {
+   "count": 249,
+   "status": null,
+   "hash": "911464c59bbd",
+   "file": null
+  },
+  "shorts": {
+   "count": 32,
+   "status": null,
+   "hash": "f82217071091",
+   "file": null
+  },
+  "market": {
+   "count": 164,
+   "status": null,
+   "hash": "01f08b3914ad",
+   "file": "market.json"
+  },
+  "channel_refs": {
+   "count": 23,
+   "status": null,
+   "hash": "b3141cc140a5",
+   "file": "channel_refs.json"
+  },
+  "invites": {
+   "count": null,
+   "status": null,
+   "hash": "ac3277308df1",
+   "file": "invite_hashes.json"
+  },
+  "revocations": {
+   "count": null,
+   "status": null,
+   "hash": "7be8ec9a676a",
+   "file": "revocations.json"
+  },
+  "bundles": {
+   "count": 0,
+   "status": "not_yet_published",
+   "hash": "",
+   "file": null
+  },
+  "radar": {
+   "count": 10,
+   "status": "published",
+   "hash": "3c913fbe014e",
+   "file": "radar.json"
+  },
+  "nightly": {
+   "count": 0,
+   "status": "not_yet_published",
+   "hash": "",
+   "file": null
+  },
+  "voices": {
+   "count": 0,
+   "status": "not_yet_published",
+   "hash": "",
+   "file": null
+  },
+  "special_issues": {
+   "count": 0,
+   "status": "gated_frozen",
+   "hash": "",
+   "file": null
+  },
+  "channel_typed": {
+   "count": 560,
+   "status": "published",
+   "hash": "5d94462af28a",
+   "file": "channel_typed.json"
+  }
+ },
+ "after": {
+  "articles": {
+   "count": 249,
+   "status": null,
+   "hash": "911464c59bbd",
+   "file": null
+  },
+  "shorts": {
+   "count": 32,
+   "status": null,
+   "hash": "f82217071091",
+   "file": null
+  },
+  "market": {
+   "count": 164,
+   "status": null,
+   "hash": "01f08b3914ad",
+   "file": "market.json"
+  },
+  "channel_refs": {
+   "count": 23,
+   "status": null,
+   "hash": "b3141cc140a5",
+   "file": "channel_refs.json"
+  },
+  "invites": {
+   "count": null,
+   "status": null,
+   "hash": "ac3277308df1",
+   "file": "invite_hashes.json"
+  },
+  "revocations": {
+   "count": null,
+   "status": null,
+   "hash": "7be8ec9a676a",
+   "file": "revocations.json"
+  },
+  "bundles": {
+   "count": 0,
+   "status": "not_yet_published",
+   "hash": "",
+   "file": null
+  },
+  "radar": {
+   "count": 10,
+   "status": "published",
+   "hash": "3c913fbe014e",
+   "file": "radar.json"
+  },
+  "nightly": {
+   "count": 0,
+   "status": "not_yet_published",
+   "hash": "",
+   "file": null
+  },
+  "voices": {
+   "count": 0,
+   "status": "not_yet_published",
+   "hash": "",
+   "file": null
+  },
+  "special_issues": {
+   "count": 0,
+   "status": "gated_frozen",
+   "hash": "",
+   "file": null
+  },
+  "channel_typed": {
+   "count": 560,
+   "status": "published",
+   "hash": "5d94462af28a",
+   "file": "channel_typed.json"
+  }
+ },
+ "nightly": "held (U4 gate — section untouched)",
+ "gates_untouched": [
+  "bundles",
+  "voices",
+  "special_issues"
+ ],
+ "verify": "publish_edge --verify-only PASS"
+}

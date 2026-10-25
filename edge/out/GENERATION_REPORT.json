@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-25T23:14:25.791813+00:00",
+ "generated_at_utc": "2026-10-25T23:56:42.909784+00:00",
  "sources_read_only": [
   "/home/hatch/workspace/econ-news-blog/data_core/data_core.db",
   "/home/hatch/workspace/yasineco_bot/bot.db"
@@ -19,9 +19,9 @@
   "shorts_category": "uncategorised",
   "shorts_category_fa": "دسته‌بندی‌نشده",
   "channel_message_id_non_null": 0,
-  "invite_hashes_source": "out_dir (as-is)",
+  "invite_hashes_source": "canonical edge/out (copied verbatim)",
   "invite_hashes_count": 10,
-  "revocation_hashes_source": "out_dir (as-is)",
+  "revocation_hashes_source": "canonical edge/out (copied verbatim)",
   "revocation_hashes_count": 4
  },
  "summary_sources_full_articles": {
@@ -41,5 +41,8 @@
   "Nothing written outside app/edge/out/ (or the --out dir inside the app root).",
   "Shorts carry explicit category 'uncategorised'; channel_message_id is never fabricated (null until the bridge staging path populates it).",
   "Invite/revocation files carry hashes only and are owned by bridge/control.py; this generator never rewrites the canonical copies."
- ]
+ ],
+ "channel_typed": 560,
+ "radar": 10,
+ "fullsync": "S1+S3 overlays applied; nightly held (U4); see fullsync-*-report.json"
 }
