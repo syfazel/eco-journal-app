@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.devtools.ksp")
 }
 
@@ -36,9 +37,9 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.7.1"
-    }
+    // NOTE: no composeOptions block — with Kotlin 2.0 the Compose
+    // compiler version is driven by the kotlin.plugin.compose plugin
+    // above (2.0.21), not by kotlinCompilerExtensionVersion.
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
