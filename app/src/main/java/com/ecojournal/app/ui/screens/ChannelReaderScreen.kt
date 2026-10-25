@@ -33,6 +33,7 @@ import com.ecojournal.app.data.ChannelLists
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.Jalali
 import com.ecojournal.app.ui.components.TypedCard
+import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import kotlinx.coroutines.launch
 
@@ -90,7 +91,7 @@ fun ChannelReaderScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .padding(EcoDesignTokens.Spacing.PageMargin),
     ) {
         if (!loaded) {
             return@Column
@@ -101,7 +102,7 @@ fun ChannelReaderScreen(
                 text = stringResource(R.string.channel_not_found),
                 fontFamily = EcoFontFamily,
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.PageMargin))
             Button(onClick = onBack) {
                 Text(text = stringResource(R.string.article_back), fontFamily = EcoFontFamily)
             }
@@ -137,20 +138,41 @@ fun ChannelReaderScreen(
             onOpenMarket = onOpenMarket,
             fontScale = fontScale,
         )
+        // v5 P3 body-empty state (shared rule with the
+        // article reader, plan §1 R1): a non-SITREP typed
+        // item with a blank body used to render as a card
+        // that silently ends. SITREP items are excluded:
+        // their body is normally blank and their sections
+        // carry the content (TypedCard already shows the
+        // incomplete line when those are missing). Exactly
+        // one next step — back — since channel items arrive
+        // only via sync, which the feed owns.
+        if (current.body.isBlank() && current.formatType != "SITREP") {
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
+            Text(
+                text = stringResource(R.string.v5_reader_body_empty),
+                fontFamily = EcoFontFamily,
+                color = MaterialTheme.colorScheme.error,
+            )
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
+            Button(onClick = onBack) {
+                Text(text = stringResource(R.string.article_back), fontFamily = EcoFontFamily)
+            }
+        }
         if (timeline.size > 1) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.PageMargin))
             Text(
                 text = stringResource(R.string.channel_timeline_title),
                 fontSize = 20.sp * fontScale,
                 fontFamily = EcoFontFamily,
                 fontWeight = FontWeight.Bold,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             val latest = timeline.maxByOrNull { it.publishedAtEpoch }
             if (latest != null && latest.appKey != current.appKey) {
                 Text(
                     text = stringResource(R.string.channel_latest_update),
-                    fontSize = 13.sp,
+                    fontSize = EcoDesignTokens.Type.Meta,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -181,14 +203,14 @@ private fun TimelineRow(
     ) {
         Text(
             text = Jalali.formatShamsiDateTime(item.publishedAtEpoch),
-            fontSize = 13.sp,
+            fontSize = EcoDesignTokens.Type.Meta,
             fontFamily = EcoFontFamily,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(modifier = Modifier.padding(horizontal = 4.dp))
         Text(
             text = item.headline,
-            fontSize = 15.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
             fontFamily = EcoFontFamily,
         )
     }

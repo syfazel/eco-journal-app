@@ -29,7 +29,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.ecojournal.app.R
 import com.ecojournal.app.data.Attribution
 import com.ecojournal.app.data.AttributionRules
@@ -40,6 +39,7 @@ import com.ecojournal.app.data.DomainBars
 import com.ecojournal.app.data.Formats
 import com.ecojournal.app.data.Jalali
 import com.ecojournal.app.data.Verdicts
+import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.util.formatPersianDouble
 import com.ecojournal.app.util.toPersianDigits
@@ -83,21 +83,21 @@ fun DomainBarStrip(
                 .height(22.dp)
                 .background(Color(argb))
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(EcoDesignTokens.Spacing.ElementGap))
         Text(
             text = label,
-            fontSize = 12.sp,
+            fontSize = EcoDesignTokens.Type.Meta,
             fontFamily = EcoFontFamily,
             fontWeight = FontWeight.Bold,
             color = textColor,
             modifier = Modifier
                 .background(Color(argb))
-                .padding(horizontal = 8.dp, vertical = 3.dp),
+                .padding(horizontal = EcoDesignTokens.Spacing.ElementGap, vertical = 3.dp),
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = stringResource(R.string.domain_bar_category_suffix),
-            fontSize = 12.sp,
+            fontSize = EcoDesignTokens.Type.Meta,
             fontFamily = EcoFontFamily,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -118,13 +118,13 @@ fun FormatBadge(item: ChannelItemEntity, modifier: Modifier = Modifier) {
     val badgeDesc = stringResource(R.string.format_badge_desc, badgeText)
     Text(
         text = badgeText,
-        fontSize = 12.sp,
+        fontSize = EcoDesignTokens.Type.Meta,
         fontFamily = EcoFontFamily,
         fontWeight = FontWeight.Bold,
         color = textColor,
         modifier = modifier
             .background(bg)
-            .padding(horizontal = 8.dp, vertical = 3.dp)
+            .padding(horizontal = EcoDesignTokens.Spacing.ElementGap, vertical = 3.dp)
             .semantics { contentDescription = badgeDesc },
     )
 }
@@ -139,13 +139,13 @@ fun CrisisChip(level: String?, modifier: Modifier = Modifier) {
     val levelDesc = stringResource(R.string.crisis_level_desc, level)
     Text(
         text = level,
-        fontSize = 12.sp,
+        fontSize = EcoDesignTokens.Type.Meta,
         fontFamily = EcoFontFamily,
         fontWeight = FontWeight.Bold,
         color = textColor,
         modifier = modifier
             .background(bg)
-            .padding(horizontal = 8.dp, vertical = 3.dp)
+            .padding(horizontal = EcoDesignTokens.Spacing.ElementGap, vertical = 3.dp)
             .semantics { contentDescription = levelDesc },
     )
 }
@@ -257,7 +257,7 @@ fun TypedCard(
             .background(MaterialTheme.colorScheme.background)
             .semantics { contentDescription = "خبر: ${item.headline}" }
             .clickable(role = Role.Button, onClickLabel = stringResource(R.string.article_open), onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = EcoDesignTokens.Spacing.PageMargin, vertical = 12.dp),
     ) {
         // Cross-phase category bar: typed items are the red-alert
         // category, so every typed card carries the RED bar with
@@ -270,29 +270,29 @@ fun TypedCard(
         Row {
             FormatBadge(item = item)
             if (item.formatType == "SITREP") {
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(EcoDesignTokens.Spacing.ElementGap))
                 if (item.crisisLevel != null) {
                     CrisisChip(level = item.crisisLevel)
                 } else {
                     Text(
                         text = stringResource(R.string.sitrep_level_missing),
-                        fontSize = 12.sp,
+                        fontSize = EcoDesignTokens.Type.Meta,
                         fontFamily = EcoFontFamily,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             } else if (item.crisisLevel != null) {
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(EcoDesignTokens.Spacing.ElementGap))
                 CrisisChip(level = item.crisisLevel)
             }
             if (item.urgencyScore != null && item.urgencyScore in 0..100) {
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(EcoDesignTokens.Spacing.ElementGap))
                 Text(
                     text = stringResource(
                         R.string.urgent_score_tag,
                         item.urgencyScore.toString().toPersianDigits(),
                     ),
-                    fontSize = 12.sp,
+                    fontSize = EcoDesignTokens.Type.Meta,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -302,7 +302,7 @@ fun TypedCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = positionTag,
-                fontSize = 12.sp,
+                fontSize = EcoDesignTokens.Type.Meta,
                 fontFamily = EcoFontFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -311,7 +311,7 @@ fun TypedCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = stringResource(R.string.morning_bundle_held_tag),
-                fontSize = 12.sp,
+                fontSize = EcoDesignTokens.Type.Meta,
                 fontFamily = EcoFontFamily,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -321,7 +321,7 @@ fun TypedCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = stringResource(R.string.expired_pin_label),
-                fontSize = 12.sp,
+                fontSize = EcoDesignTokens.Type.Meta,
                 fontFamily = EcoFontFamily,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -330,8 +330,8 @@ fun TypedCard(
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = item.headline,
-            fontSize = 18.sp * fontScale,
-            lineHeight = 26.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
+            lineHeight = EcoDesignTokens.LineHeight.RowHeadline * fontScale,
             fontFamily = EcoFontFamily,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -345,21 +345,21 @@ fun TypedCard(
             if (item.verdictText != null) {
                 Text(
                     text = if (chip != null) "$chip: ${item.verdictText}" else item.verdictText,
-                    fontSize = 15.sp * fontScale,
-                    lineHeight = 22.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
+                    lineHeight = EcoDesignTokens.LineHeight.RowSummary * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             } else {
                 Text(
                     text = stringResource(R.string.format_incomplete_line),
-                    fontSize = 15.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             }
         }
         if (item.formatType == "MARKET") {
@@ -367,8 +367,8 @@ fun TypedCard(
             if (prices != null) {
                 Text(
                     text = prices,
-                    fontSize = 15.sp * fontScale,
-                    lineHeight = 22.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
+                    lineHeight = EcoDesignTokens.LineHeight.RowSummary * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -378,44 +378,44 @@ fun TypedCard(
                         Modifier
                     },
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             } else {
                 Text(
                     text = stringResource(R.string.format_incomplete_line),
-                    fontSize = 15.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             }
         }
         if (item.body.isNotBlank()) {
             Text(
                 text = item.body,
-                fontSize = 15.sp * fontScale,
-                lineHeight = 22.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
+                lineHeight = EcoDesignTokens.LineHeight.RowSummary * fontScale,
                 fontFamily = EcoFontFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = if (preview) 3 else Int.MAX_VALUE,
                 overflow = TextOverflow.Ellipsis,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         }
         if (item.formatType == "SITREP") {
             val sections = parseSitrepSections(item.sitrepSectionsJson)
             if (sections.isEmpty()) {
                 Text(
                     text = stringResource(R.string.format_incomplete_line),
-                    fontSize = 15.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             } else {
                 for (section in sections) {
                     Text(
                         text = section.heading,
-                        fontSize = 15.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                         fontFamily = EcoFontFamily,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
@@ -423,8 +423,8 @@ fun TypedCard(
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = section.body,
-                        fontSize = 15.sp * fontScale,
-                        lineHeight = 22.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
+                        lineHeight = EcoDesignTokens.LineHeight.RowSummary * fontScale,
                         fontFamily = EcoFontFamily,
                         color = MaterialTheme.colorScheme.onBackground,
                     )
@@ -433,17 +433,17 @@ fun TypedCard(
                 if (sections.size != 5) {
                     Text(
                         text = stringResource(R.string.format_incomplete_line),
-                        fontSize = 15.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                         fontFamily = EcoFontFamily,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 }
             }
             val watch = parseWatchNext(item.watchNextJson)
             Text(
                 text = stringResource(R.string.sitrep_watch_next_title),
-                fontSize = 15.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                 fontFamily = EcoFontFamily,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
@@ -453,8 +453,8 @@ fun TypedCard(
                 val storyId = row.linkedStoryId
                 Text(
                     text = "• ${row.title}",
-                    fontSize = 15.sp * fontScale,
-                    lineHeight = 22.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
+                    lineHeight = EcoDesignTokens.LineHeight.RowSummary * fontScale,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = if (storyId != null && onOpenStory != null) {
@@ -468,11 +468,11 @@ fun TypedCard(
             if (watch.size != 2) {
                 Text(
                     text = stringResource(R.string.format_incomplete_line),
-                    fontSize = 15.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             }
         }
         // Byline: Shamsi date + Tehran time, Persian digits, and
@@ -482,7 +482,7 @@ fun TypedCard(
             Jalali.formatShamsiDateTime(item.publishedAtEpoch)
         Text(
             text = byline,
-            fontSize = 12.sp,
+            fontSize = EcoDesignTokens.Type.Meta,
             fontFamily = EcoFontFamily,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -490,7 +490,7 @@ fun TypedCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = stringResource(R.string.bundle_tag),
-                fontSize = 12.sp,
+                fontSize = EcoDesignTokens.Type.Meta,
                 fontFamily = EcoFontFamily,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
@@ -501,13 +501,13 @@ fun TypedCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = stringResource(R.string.story_timeline_hint),
-                fontSize = 12.sp,
+                fontSize = EcoDesignTokens.Type.Meta,
                 fontFamily = EcoFontFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
         if (attribution != Attribution.WIRE && item.sourceLink != null) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             var sourceError by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
             Button(onClick = {
                 sourceError = false

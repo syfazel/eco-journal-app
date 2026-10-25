@@ -19,7 +19,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.ecojournal.app.R
 import com.ecojournal.app.data.ArticleEntity
 import com.ecojournal.app.data.DomainBars
@@ -30,7 +29,7 @@ import com.ecojournal.app.ui.theme.EcoFontFamily
 @Composable
 fun NewspaperRule(modifier: Modifier = Modifier) {
     HorizontalDivider(
-        thickness = 1.dp,
+        thickness = EcoDesignTokens.Rules.Story,
         color = MaterialTheme.colorScheme.outlineVariant,
         modifier = modifier,
     )
@@ -66,7 +65,7 @@ fun NewspaperKicker(article: ArticleEntity, modifier: Modifier = Modifier) {
     }
     Text(
         text = text,
-        fontSize = 12.sp,
+        fontSize = EcoDesignTokens.Type.Meta,
         fontFamily = EcoFontFamily,
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.primary,
@@ -81,7 +80,7 @@ fun NewspaperByline(article: ArticleEntity, modifier: Modifier = Modifier) {
     val text = if (date.isNullOrBlank()) article.source else "${article.source} • $date"
     Text(
         text = text,
-        fontSize = 12.sp,
+        fontSize = EcoDesignTokens.Type.Meta,
         fontFamily = EcoFontFamily,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = modifier,
@@ -175,7 +174,7 @@ fun NewspaperHeroArticle(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
             .then(rowClick(article, onClick))
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(horizontal = EcoDesignTokens.Spacing.PageMargin, vertical = EcoDesignTokens.Spacing.PageMargin),
     ) {
         if (domainBar != com.ecojournal.app.data.DomainBar.NONE && barLabel != null) {
             DomainBarStrip(bar = domainBar, label = barLabel)
@@ -186,7 +185,7 @@ fun NewspaperHeroArticle(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = stringResource(R.string.duplicate_title),
-                fontSize = 12.sp,
+                fontSize = EcoDesignTokens.Type.Meta,
                 fontFamily = EcoFontFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -194,21 +193,21 @@ fun NewspaperHeroArticle(
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = article.title,
-            fontSize = 26.sp * fontScale,
-            lineHeight = 34.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.HeroHeadline * fontScale,
+            lineHeight = EcoDesignTokens.LineHeight.HeroHeadline * fontScale,
             fontFamily = EcoFontFamily,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         if (article.summary.isNotBlank()) {
             // Hero summaries were untruncated (P2-09): a long hero
             // could dominate a whole page. Six lines keeps the
             // broadsheet hierarchy without hiding the section.
             Text(
                 text = article.summary,
-                fontSize = 16.sp * fontScale,
-                lineHeight = 24.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
+                lineHeight = EcoDesignTokens.LineHeight.HeroSummary * fontScale,
                 fontFamily = EcoFontFamily,
                 color = MaterialTheme.colorScheme.onBackground,
                 maxLines = 6,
@@ -238,7 +237,7 @@ fun NewspaperArticleRow(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
             .then(rowClick(article, onClick))
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = EcoDesignTokens.Spacing.PageMargin, vertical = 12.dp),
     ) {
         if (domainBar != com.ecojournal.app.data.DomainBar.NONE && barLabel != null) {
             DomainBarStrip(bar = domainBar, label = barLabel)
@@ -249,7 +248,7 @@ fun NewspaperArticleRow(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = stringResource(R.string.duplicate_title),
-                fontSize = 12.sp,
+                fontSize = EcoDesignTokens.Type.Meta,
                 fontFamily = EcoFontFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -257,8 +256,8 @@ fun NewspaperArticleRow(
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = article.title,
-            fontSize = 18.sp * fontScale,
-            lineHeight = 26.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
+            lineHeight = EcoDesignTokens.LineHeight.RowHeadline * fontScale,
             fontFamily = EcoFontFamily,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground,
@@ -269,14 +268,14 @@ fun NewspaperArticleRow(
         if (article.summary.isNotBlank()) {
             Text(
                 text = article.summary,
-                fontSize = 15.sp * fontScale,
-                lineHeight = 22.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
+                lineHeight = EcoDesignTokens.LineHeight.RowSummary * fontScale,
                 fontFamily = EcoFontFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         }
         NewspaperByline(article = article)
         Spacer(modifier = Modifier.height(12.dp))

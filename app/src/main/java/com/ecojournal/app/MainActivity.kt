@@ -326,6 +326,9 @@ class MainActivity : ComponentActivity() {
                                     tickerEnabled = settings.tickerEnabled,
                                     reducedMotion = settings.reducedMotion,
                                     onOpenDiagnostics = { nav.navigate("diagnostics") },
+                                    // v5 P3: empty-state section
+                                    // index opens the hub.
+                                    onOpenSections = { nav.navigate("sections") },
                                     // v4-I: update banner state, shared
                                     // with the Settings card via the
                                     // session flow (never two states).

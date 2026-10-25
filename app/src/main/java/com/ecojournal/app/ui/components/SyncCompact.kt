@@ -22,8 +22,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.ecojournal.app.R
+import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.ui.theme.EcoFontFamily
 
 /**
@@ -64,7 +64,7 @@ fun CompactSyncRow(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = EcoDesignTokens.Spacing.PageMargin)
             .semantics { contentDescription = statusDesc },
     ) {
         IconButton(
@@ -83,18 +83,26 @@ fun CompactSyncRow(
                 modifier = Modifier.size(20.dp),
                 strokeWidth = 2.dp,
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(EcoDesignTokens.Spacing.ElementGap))
         }
         Text(
             text = statusDesc,
             fontFamily = EcoFontFamily,
-            fontSize = 12.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.SyncRow * fontScale,
             color = if (syncFailed) {
                 MaterialTheme.colorScheme.error
             } else {
                 MaterialTheme.colorScheme.onSurfaceVariant
             },
-            maxLines = 1,
+            // v5 P3 (plan §1 M4/F1): the row keeps one line
+            // normally, but gets TWO lines when it carries a
+            // failure — the pre-P3 one-line ellipsis truncated
+            // the state the row exists to report. An error
+            // code is never ellipsized away: codes live on
+            // the feed digest / empty-state lines (which are
+            // never single-line-ellipsized), not inside this
+            // status text.
+            maxLines = if (syncFailed) 2 else 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),
         )
@@ -105,10 +113,10 @@ fun CompactSyncRow(
             Text(
                 text = lastSyncText,
                 fontFamily = EcoFontFamily,
-                fontSize = 11.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.Meta * fontScale,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
-                modifier = Modifier.padding(start = 8.dp),
+                modifier = Modifier.padding(start = EcoDesignTokens.Spacing.ElementGap),
             )
         }
         if (syncFailed && !syncing) {

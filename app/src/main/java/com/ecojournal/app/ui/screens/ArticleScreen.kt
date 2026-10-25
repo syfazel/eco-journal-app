@@ -40,7 +40,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.ecojournal.app.R
 import com.ecojournal.app.data.ArticleEntity
 import com.ecojournal.app.data.BookmarkEntity
@@ -56,6 +55,7 @@ import com.ecojournal.app.ui.components.NewspaperDoubleRule
 import com.ecojournal.app.ui.components.NewspaperKicker
 import com.ecojournal.app.ui.components.ReadingRuler
 import com.ecojournal.app.ui.components.StoryArcStrip
+import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import kotlinx.coroutines.launch
 
@@ -190,20 +190,20 @@ fun ArticleScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(inner)
-                        .padding(16.dp),
+                        .padding(EcoDesignTokens.Spacing.PageMargin),
                 ) {
                     Text(
                         text = stringResource(R.string.article_not_found),
                         fontFamily = EcoFontFamily,
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.PageMargin))
                     Button(onClick = onBack) {
                         Text(
                             stringResource(R.string.article_back),
                             fontFamily = EcoFontFamily,
                         )
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                     OutlinedButton(
                         onClick = {
                             scope.launch {
@@ -224,15 +224,20 @@ fun ArticleScreen(
             }
             return@Scaffold
         }
-        val headlineSize = 28.sp * fontScale
-        val baseBody = 18.sp * fontScale
+        // v5 P3: reader scale is the P2 token scale, not a new
+        // size — headline 28sp at 1.35x line, body 18sp at 1.75x
+        // (calm 2.0x). Token line heights are 38/32/36sp, so the
+        // pre-P3 products (37.8/31.5/36) round to the token by
+        // at most 0.5sp; no resize is intended.
+        val headlineSize = EcoDesignTokens.Type.ReaderHeadline * fontScale
+        val baseBody = EcoDesignTokens.Type.ReaderBody * fontScale
         // v4-H H1 calm mode: taller line height, no overlays, no
         // arc navigation chrome during reading. Attribution is
         // never removed: the byline (verbatim source) always stays.
         val bodyLine = if (readerSettings.calmMode) {
-            baseBody * 2.0f
+            EcoDesignTokens.LineHeight.ReaderBodyCalm * fontScale
         } else {
-            baseBody * 1.75f
+            EcoDesignTokens.LineHeight.ReaderBody * fontScale
         }
         // v4-H: Box so the draggable reading ruler can overlay
         // the scrolling column without reflowing any text.
@@ -246,7 +251,7 @@ fun ArticleScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+                .padding(EcoDesignTokens.Spacing.PageMargin),
         ) {
             // Cross-phase category bar on the reader header.
             // v4-H RED path: an article whose story has a typed
@@ -263,11 +268,11 @@ fun ArticleScreen(
                 Spacer(modifier = Modifier.height(6.dp))
             }
             NewspaperKicker(article = a)
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             Text(
                 text = a.title,
                 fontSize = headlineSize,
-                lineHeight = headlineSize * 1.35f,
+                lineHeight = EcoDesignTokens.LineHeight.ReaderHeadline * fontScale,
                 fontFamily = EcoFontFamily,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
@@ -276,7 +281,7 @@ fun ArticleScreen(
             NewspaperByline(article = a)
             Spacer(modifier = Modifier.height(14.dp))
             NewspaperDoubleRule()
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.PageMargin))
             // Bookmark toggle at the top (P1-08): before M3 the
             // only toggle sat after the entire body.
             val bookmarkStateText = if (bookmarked) {
@@ -299,7 +304,7 @@ fun ArticleScreen(
                     fontFamily = EcoFontFamily,
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.PageMargin))
             // v4-H H2 arc strip: versions of this story, oldest
             // first. Hidden in calm mode; absent entirely for a
             // single-version story (StoryArc returns empty).
@@ -313,7 +318,7 @@ fun ArticleScreen(
                         onOpenChannel = onOpenChannel,
                         fontScale = fontScale,
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.PageMargin))
                 }
             }
             // Short cards (P1-06): the stored summary is a
@@ -330,7 +335,7 @@ fun ArticleScreen(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.PageMargin))
             }
             // Key points (P1-05): present in most full articles,
             // parsed and stored, but never shown before M3.
@@ -343,7 +348,7 @@ fun ArticleScreen(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 for (point in points) {
                     Text(
                         text = "• $point",
@@ -352,9 +357,9 @@ fun ArticleScreen(
                         fontFamily = EcoFontFamily,
                         color = MaterialTheme.colorScheme.onBackground,
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             }
             for (block in a.bodyBlocks) {
                 Text(
@@ -376,7 +381,7 @@ fun ArticleScreen(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 Text(
                     text = a.whyMatters,
                     fontSize = baseBody,
@@ -384,6 +389,45 @@ fun ArticleScreen(
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
+                Spacer(modifier = Modifier.height(14.dp))
+            }
+            // v5 P3 body-empty state (plan §1 R1): a cached
+            // article with no body used to render as a
+            // near-blank page (or, with a summary, as a page
+            // that silently ends after the standfirst). The
+            // test is the body itself only: a summary, key
+            // points, or why-it-matters block does not hide
+            // a missing body. The state names what happened
+            // and offers exactly one next step — re-fetch
+            // from the edge (the not-found retry path). The
+            // top-bar back button is the way out, not a
+            // second step on this line.
+            val bodyEmpty = a.bodyBlocks.none { it.isNotBlank() }
+            if (bodyEmpty) {
+                Text(
+                    text = stringResource(R.string.v5_reader_body_empty),
+                    fontSize = baseBody,
+                    lineHeight = bodyLine,
+                    fontFamily = EcoFontFamily,
+                    color = MaterialTheme.colorScheme.error,
+                )
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
+                OutlinedButton(
+                    onClick = {
+                        scope.launch {
+                            loadAttempted = false
+                            repo.fetchOne(articleId)
+                            article = repo.dao.byAppKey(articleId)
+                                ?: repo.dao.byId(articleId)
+                            loadAttempted = true
+                        }
+                    },
+                ) {
+                    Text(
+                        stringResource(R.string.article_not_found_retry),
+                        fontFamily = EcoFontFamily,
+                    )
+                }
                 Spacer(modifier = Modifier.height(14.dp))
             }
             // Original source link, opened in the user's own browser.
@@ -423,7 +467,7 @@ fun ArticleScreen(
                     Text(stringResource(R.string.open_source), fontFamily = EcoFontFamily)
                 }
                 if (sourceError) {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                     Text(
                         text = stringResource(R.string.open_source_failed),
                         fontFamily = EcoFontFamily,

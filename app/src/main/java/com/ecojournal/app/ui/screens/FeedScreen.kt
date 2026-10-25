@@ -52,7 +52,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.ecojournal.app.R
 import com.ecojournal.app.data.ArticleEntity
 import com.ecojournal.app.data.BundledSeed
@@ -60,6 +59,8 @@ import com.ecojournal.app.data.ChannelItemEntity
 import com.ecojournal.app.data.ChannelLists
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.Formats
+import com.ecojournal.app.data.SectionStates
+import com.ecojournal.app.data.SyncSections
 import com.ecojournal.app.data.PendingUpdate
 import com.ecojournal.app.data.UpdateUiState
 import com.ecojournal.app.data.Jalali
@@ -73,6 +74,7 @@ import com.ecojournal.app.ui.components.ArticleCard
 import com.ecojournal.app.ui.components.CompactSyncRow
 import com.ecojournal.app.ui.components.Masthead
 import com.ecojournal.app.ui.components.TypedCard
+import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.util.escapeLikeQuery
 import com.ecojournal.app.util.formatPersianInt
@@ -84,6 +86,33 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private data class Section(val key: String?, val label: String)
+
+/**
+ * v5 P3 feed digest (see FeedScreen): a manifest failure code,
+ * plus failed sections in fixed order with their codes.
+ * Presentation labels only — never a new section key.
+ */
+private data class FeedDigest(
+    val manifestCode: String?,
+    val failed: List<Pair<String, String>>,
+)
+
+/** Persian label for a sync-section key, for the digest line. */
+private fun sectionLabelFa(key: String): String = when (key) {
+    SyncSections.ARTICLES -> "مقالات"
+    SyncSections.SHORTS -> "گزیده‌ها"
+    SyncSections.MARKET -> "بازار"
+    SyncSections.CHANNEL_REFS -> "ارجاعات کانال"
+    SyncSections.CHANNEL_TYPED -> "خبرهای کانال"
+    SyncSections.BUNDLES -> "بسته‌ها"
+    SyncSections.RADAR -> "رادار"
+    SyncSections.NIGHTLY -> "نسخهٔ شبانه"
+    SyncSections.VOICES -> "صداها"
+    SyncSections.SPECIAL_ISSUES -> "ویژه‌نامه‌ها"
+    SyncSections.INVITES -> "دعوت‌ها"
+    SyncSections.REVOCATIONS -> "ابطال‌ها"
+    else -> key
+}
 
 /**
  * Fixed, stable section order (M3, P1-10). Sections used to be
@@ -148,6 +177,10 @@ fun FeedScreen(
     // queries are untouched by this parameter.
     reducedMotion: Boolean = false,
     onOpenDiagnostics: (() -> Unit)? = null,
+    // v5 P3: sections-hub entry for the empty-state section
+    // index (plan §2). Null when unwired (previews): the index
+    // names still render, only the button is hidden.
+    onOpenSections: (() -> Unit)? = null,
     // v4-I: remote app-update banner state, shared with the
     // Settings card through the session flow. All default to
     // "no banner" so unwired callers (previews) stay unchanged.
@@ -194,6 +227,47 @@ fun FeedScreen(
         .collectAsState(initial = null)
     val lastSyncError by repo.dao.metaValueFlow("last_sync_error_code")
         .collectAsState(initial = null)
+    // v5 P3 feed digest (plan §2 "sync truth on the feed"): a
+    // one-line digest of the P1 sync trace, shown under the
+    // sync row when anything is wrong, with Diagnostics one
+    // tap away. It never replaces Diagnostics, and it
+    // disappears (not a fake "everything is fine" banner)
+    // when nothing has failed. Derivation, all from the
+    // existing trace — no new sync behaviour, no new query:
+    // latest trace entry per section; "failed" sections in
+    // SyncSections.ALL order; a manifest failure wins over
+    // section failures because it blocks everything. The
+    // "worst code" is the manifest code, else the first
+    // failed section's code in that fixed order. States
+    // "up_to_date" / "partial" / "not_yet_published" /
+    // "unknown" never produce a digest line on their own:
+    // a partial section is reported by the sync row + the
+    // empty state, and an unpublished section is not a
+    // failure (that is the Phase 4 A2 story, unchanged).
+    val traceJson by repo.dao.metaValueFlow(SyncTrace.TRACE_KEY)
+        .collectAsState(initial = null)
+    val feedDigest = remember(traceJson) {
+        val latest = mutableMapOf<String, SyncTrace.TraceEntry>()
+        for (entry in SyncTrace.parseTrace(traceJson)) {
+            latest[entry.section] = entry
+        }
+        val manifestEntry = latest["manifest"]
+        val manifestCode = if (manifestEntry?.state == SectionStates.FAILED) {
+            manifestEntry.code.ifBlank { "failed" }
+        } else {
+            null
+        }
+        val failed = SyncSections.ALL.mapNotNull { key ->
+            val entry = latest[key]
+            if (entry?.state == SectionStates.FAILED) {
+                key to entry.code.ifBlank { "failed" }
+            } else {
+                null
+            }
+        }
+        if (manifestCode == null && failed.isEmpty()) null
+        else FeedDigest(manifestCode, failed)
+    }
     // v4-H RED path: article appKey -> story_id (join_keys), then
     // story_id -> newest typed format (visible typed items). An
     // article whose story has a typed item IS a red-alert item.
@@ -390,7 +464,7 @@ fun FeedScreen(
             onDownload = onUpdateDownload,
             onInstall = onUpdateInstall,
             onDismiss = onUpdateDismiss,
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin),
         )
         // Urgent rail (spec 5.3): pinned at the top of the feed,
         // visible regardless of the format filter selection.
@@ -416,7 +490,7 @@ fun FeedScreen(
         if (showUrgentAll) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin),
             ) {
                 TextButton(onClick = { showUrgentAll = false }) {
                     Text(stringResource(R.string.article_back), fontFamily = EcoFontFamily)
@@ -444,13 +518,13 @@ fun FeedScreen(
             Column(modifier = Modifier.padding(horizontal = 0.dp)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin),
                 ) {
                     Text(
                         text = "🔴 ${stringResource(R.string.urgent_rail_title)}",
                         fontFamily = EcoFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
@@ -466,7 +540,7 @@ fun FeedScreen(
                 if (railOrdered.size > 5) {
                     TextButton(
                         onClick = { showUrgentAll = true },
-                        modifier = Modifier.padding(horizontal = 16.dp),
+                        modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin),
                     ) {
                         Text(
                             text = stringResource(
@@ -478,7 +552,7 @@ fun FeedScreen(
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         }
         OutlinedTextField(
             value = query,
@@ -503,9 +577,9 @@ fun FeedScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = EcoDesignTokens.Spacing.PageMargin),
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         // v4-H (V12): ONE compact sync line instead of the old
         // button + status + last-sync + offline block. Same runner
         // (runSync), same messages, same retry; failures still
@@ -540,7 +614,66 @@ fun FeedScreen(
             onOpenDiagnostics = onOpenDiagnostics,
             fontScale = fontScale,
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        // v5 P3 digest line (see the feedDigest computation
+        // above): visible only while NOT syncing and only
+        // when the trace records a failure. Exactly one next
+        // step — Diagnostics — because retry already lives
+        // on the sync row itself; a second retry here would
+        // be a second step on the same state.
+        val digest = feedDigest
+        if (!syncing && digest != null) {
+            val digestText = when {
+                digest.manifestCode != null ->
+                    if (digest.manifestCode == "network") {
+                        context.getString(
+                            R.string.v5_state_offline,
+                            digest.manifestCode,
+                        )
+                    } else {
+                        context.getString(
+                            R.string.v5_feed_digest_manifest,
+                            digest.manifestCode,
+                        )
+                    }
+                digest.failed.size == 1 ->
+                    context.getString(
+                        R.string.v5_state_section_failed,
+                        sectionLabelFa(digest.failed[0].first),
+                        digest.failed[0].second,
+                    )
+                else -> context.getString(
+                    R.string.v5_feed_digest_failed,
+                    formatPersianInt(digest.failed.size),
+                    digest.failed[0].second,
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(
+                    horizontal = EcoDesignTokens.Spacing.PageMargin,
+                ),
+            ) {
+                Text(
+                    text = digestText,
+                    fontFamily = EcoFontFamily,
+                    fontSize = EcoDesignTokens.Type.Meta * fontScale,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.weight(1f),
+                )
+                if (onOpenDiagnostics != null) {
+                    TextButton(
+                        onClick = onOpenDiagnostics,
+                        modifier = Modifier.heightIn(min = 48.dp),
+                    ) {
+                        Text(
+                            stringResource(R.string.sync_details),
+                            fontFamily = EcoFontFamily,
+                        )
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         // Format filter chips (spec 3.2): single-select, feed
         // only, session-only. Selecting a format shows ONLY that
         // format's typed cards (slot-grouped); «همه» restores the
@@ -549,7 +682,7 @@ fun FeedScreen(
         Row(
             modifier = Modifier
                 .horizontalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = EcoDesignTokens.Spacing.PageMargin),
         ) {
             val filterChips = listOf(null) + Formats.ALL.keys.toList()
             for (chip in filterChips) {
@@ -573,7 +706,7 @@ fun FeedScreen(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         val activeFilter = selectedFormat
         if (activeFilter != null && query.isBlank()) {
             val filtered = remember(typedItems, activeFilter) {
@@ -582,11 +715,24 @@ fun FeedScreen(
                 )
             }
             if (filtered.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.feed_typed_empty),
-                    fontFamily = EcoFontFamily,
-                    modifier = Modifier.padding(16.dp),
-                )
+                // v5 P3 honest filter empty (plan §1 F3): the
+                // old line ("هنوز خبری منتشر نشده است") read
+                // exactly like a cache empty. This line names
+                // the filter as the cause, and its exactly one
+                // next step clears the filter (session-only,
+                // same as tapping the «همه» chip).
+                Column(modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin)) {
+                    Text(
+                        text = stringResource(R.string.v5_feed_filter_empty),
+                        fontFamily = EcoFontFamily,
+                    )
+                    TextButton(onClick = { selectedFormat = null }) {
+                        Text(
+                            stringResource(R.string.v5_feed_filter_clear),
+                            fontFamily = EcoFontFamily,
+                        )
+                    }
+                }
             } else {
                 TypedDaySlotGroups(
                     items = filtered,
@@ -606,11 +752,22 @@ fun FeedScreen(
             // results join below the article results, badges shown,
             // not format-filtered (spec 3.2).
             if (results.isEmpty() && typedSearchResults.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.search_no_results),
-                    fontFamily = EcoFontFamily,
-                    modifier = Modifier.padding(16.dp),
-                )
+                // v5 P3: the search empty keeps its own string
+                // (never confusable with the feed empty — plan
+                // §1 F4) and gains exactly one next step:
+                // clearing the query restores the pager.
+                Column(modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin)) {
+                    Text(
+                        text = stringResource(R.string.search_no_results),
+                        fontFamily = EcoFontFamily,
+                    )
+                    TextButton(onClick = { query = "" }) {
+                        Text(
+                            stringResource(R.string.v5_feed_search_clear),
+                            fontFamily = EcoFontFamily,
+                        )
+                    }
+                }
             } else {
                 Column(modifier = Modifier.fillMaxSize()) {
                     Text(
@@ -619,9 +776,9 @@ fun FeedScreen(
                             formatPersianInt(results.size + typedSearchResults.size),
                         ),
                         fontFamily = EcoFontFamily,
-                        fontSize = 13.sp,
+                        fontSize = EcoDesignTokens.Type.Meta,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin, vertical = EcoDesignTokens.Spacing.ElementGap),
                     )
                     val titleCounts = results.groupingBy { it.title }.eachCount()
                     val seenTitles = mutableSetOf<String>()
@@ -656,31 +813,52 @@ fun FeedScreen(
             // actually running and nothing is cached yet. Once the
             // seed reports (even partially), an empty cache shows
             // the empty message below, never a permanent spinner.
-            CircularProgressIndicator(modifier = Modifier.padding(16.dp))
+            CircularProgressIndicator(modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin))
         } else if (all.isEmpty() && typedItems.isEmpty()) {
-            // v4.0.1 (fix plan X4): the empty state is no longer a
-            // dead end. It names the last error code (when one was
-            // recorded) and offers retry + Diagnostics, so a blank
-            // feed always has a way forward and a reportable cause.
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = stringResource(R.string.feed_empty),
-                    fontFamily = EcoFontFamily,
-                )
+            // v5 P3 empty state (plan §2 language): what
+            // happened + the code + the way forward, and a
+            // static section index so an empty cache still
+            // teaches the sections (plan §1 F5 / §2). First
+            // line by cause: seed failure keeps its own line;
+            // an offline code uses the fixed offline string;
+            // any other recorded code keeps the existing
+            // error line; with no sync ever and no code, the
+            // fixed no-sync string (not the old feed_empty
+            // text, which implied an edge setup step that no
+            // longer applies). The old feed_empty string is
+            // kept only for the narrow case of an empty cache
+            // AFTER a sync was recorded — a state the digest
+            // + Diagnostics must then explain.
+            Column(modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin)) {
                 val errorCode = lastSyncError?.takeIf { it.isNotBlank() }
                 if (seedFailed) {
                     Text(
                         text = stringResource(R.string.feed_empty_seed_failed),
                         fontFamily = EcoFontFamily,
                         color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(top = 8.dp),
+                    )
+                } else if (errorCode == "network") {
+                    Text(
+                        text = stringResource(R.string.v5_state_offline, errorCode),
+                        fontFamily = EcoFontFamily,
+                        color = MaterialTheme.colorScheme.error,
                     )
                 } else if (errorCode != null) {
                     Text(
                         text = stringResource(R.string.feed_empty_error, errorCode),
                         fontFamily = EcoFontFamily,
                         color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.padding(top = 8.dp),
+                        modifier = Modifier.padding(top = EcoDesignTokens.Spacing.ElementGap),
+                    )
+                } else if (lastSyncAt == null) {
+                    Text(
+                        text = stringResource(R.string.v5_state_empty_no_sync),
+                        fontFamily = EcoFontFamily,
+                    )
+                } else {
+                    Text(
+                        text = stringResource(R.string.feed_empty),
+                        fontFamily = EcoFontFamily,
                     )
                 }
                 TextButton(onClick = runSync) {
@@ -689,6 +867,37 @@ fun FeedScreen(
                 if (onOpenDiagnostics != null) {
                     TextButton(onClick = onOpenDiagnostics) {
                         Text(stringResource(R.string.sync_details), fontFamily = EcoFontFamily)
+                    }
+                }
+                // Static section index (plan §2): the data-
+                // driven tabs cannot exist on an empty cache
+                // (exactly one "همه" tab), so the empty state
+                // itself lists the sections. These are the
+                // sections-hub destinations (P2); gated
+                // sections (voices, special issues) are NOT
+                // listed here — they stay gated, never
+                // advertised as destinations.
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.BlockGap))
+                Text(
+                    text = stringResource(R.string.v5_feed_section_index_title),
+                    fontFamily = EcoFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = EcoDesignTokens.Type.SectionHeader * fontScale,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
+                Text(
+                    text = stringResource(R.string.v5_feed_section_index_names),
+                    fontFamily = EcoFontFamily,
+                    fontSize = EcoDesignTokens.Type.Meta * fontScale,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                if (onOpenSections != null) {
+                    TextButton(onClick = onOpenSections) {
+                        Text(
+                            stringResource(R.string.v5_feed_section_index_open),
+                            fontFamily = EcoFontFamily,
+                        )
                     }
                 }
             }
@@ -713,6 +922,7 @@ fun FeedScreen(
                 onTabClick = { index ->
                     scope.launch { pagerState.animateScrollToPage(index) }
                 },
+                onSync = runSync,
                 typedGroups = typedGroups,
                 onOpenChannel = onOpenChannel,
                 onOpenBundle = onOpenBundle,
@@ -775,8 +985,8 @@ private fun TypedDaySlotGroups(
                         text = group.dayKey.toPersianDigits().replace("-", "/"),
                         fontFamily = EcoFontFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp * fontScale,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
+                        modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin, vertical = EcoDesignTokens.Spacing.ElementGap),
                     )
                 }
             }
@@ -789,9 +999,9 @@ private fun TypedDaySlotGroups(
                     ),
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.SectionHeader * fontScale,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                    modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin, vertical = 6.dp),
                 )
             }
             items(group.items, key = { it.appKey }) { item ->
@@ -826,13 +1036,18 @@ private fun FrontPageTabs(
     onOpenBundle: (String) -> Unit = {},
     bundleIds: Set<String> = emptySet(),
     onOpenMarket: () -> Unit = {},
+    // v5 P3: the per-section empty's exactly one next step
+    // is a sync retry (a section tab cannot be empty while
+    // another tab is populated unless the cache or the last
+    // sync is the cause — retry is the honest step).
+    onSync: () -> Unit = {},
     // v4-H RED path: article -> newest typed format for its story.
     typedFormatFor: (ArticleEntity) -> String? = { null },
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         ScrollableTabRow(
             selectedTabIndex = pagerState.currentPage,
-            edgePadding = 16.dp,
+            edgePadding = EcoDesignTokens.Spacing.PageMargin,
             containerColor = MaterialTheme.colorScheme.background,
             contentColor = MaterialTheme.colorScheme.primary,
         ) {
@@ -894,8 +1109,8 @@ private fun FrontPageTabs(
                                     text = group.dayKey.toPersianDigits().replace("-", "/"),
                                     fontFamily = EcoFontFamily,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 18.sp * fontScale,
-                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                    fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
+                                    modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin, vertical = EcoDesignTokens.Spacing.ElementGap),
                                 )
                             }
                         }
@@ -908,9 +1123,9 @@ private fun FrontPageTabs(
                                 ),
                                 fontFamily = EcoFontFamily,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp * fontScale,
+                                fontSize = EcoDesignTokens.Type.SectionHeader * fontScale,
                                 color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                                modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin, vertical = 6.dp),
                             )
                         }
                         items(group.items, key = { it.appKey }) { item ->
@@ -943,11 +1158,22 @@ private fun FrontPageTabs(
                     }
                 }
             } else if (shown.isEmpty()) {
-                Text(
-                    text = stringResource(R.string.section_empty),
-                    fontFamily = EcoFontFamily,
-                    modifier = Modifier.padding(16.dp),
-                )
+                // v5 P3: a section tab with no rows names
+                // itself as the scope ("in this section") —
+                // it is never the feed-empty text — and
+                // offers exactly one next step (sync retry).
+                Column(modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin)) {
+                    Text(
+                        text = stringResource(R.string.section_empty),
+                        fontFamily = EcoFontFamily,
+                    )
+                    TextButton(onClick = onSync) {
+                        Text(
+                            stringResource(R.string.sync_retry),
+                            fontFamily = EcoFontFamily,
+                        )
+                    }
+                }
             } else {
                 val titleCounts = shown.groupingBy { it.title }.eachCount()
                 val seenTitles = mutableSetOf<String>()

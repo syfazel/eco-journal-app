@@ -461,4 +461,17 @@
     <string name="v5_state_section_failed">بخش %1$s به‌روز نشد (کد %2$s)</string>
     <string name="v5_state_offline">دستگاه آفلاین است؛ فقط مقالات کش‌شده نمایش داده می‌شوند (کد %1$s)</string>
     <string name="v5_state_gated">این بخش فعلاً متوقف است</string>
+    <!-- v5 P3 (feed + reader rebuild): fixed state language for the
+         feed digest, honest filter/search empties, the empty-state
+         section index, and the body-empty reader state. No string
+         here changes sync, gating, or cadence behaviour. -->
+    <string name="v5_feed_digest_failed">%1$s بخش به‌روز نشد (کد %2$s)</string>
+    <string name="v5_feed_digest_manifest">فهرست انتشار دریافت نشد (کد %1$s)</string>
+    <string name="v5_feed_filter_empty">برای این قالب هنوز خبری منتشر نشده است؛ این خالی بودنِ فیلتر است، نه خالی بودنِ حافظهٔ مقالات.</string>
+    <string name="v5_feed_filter_clear">نمایش همه</string>
+    <string name="v5_feed_search_clear">پاک کردن جست‌وجو</string>
+    <string name="v5_feed_section_index_title">بخش‌های روزنامه</string>
+    <string name="v5_feed_section_index_names">بسته‌ها • نسخهٔ شبانه • تحلیل • روش کار</string>
+    <string name="v5_feed_section_index_open">مشاهدهٔ همهٔ بخش‌ها</string>
+    <string name="v5_reader_body_empty">متن این مطلب در حافظهٔ دستگاه نیست؛ همگام‌سازی دوباره ممکن است آن را بیاورد.</string>
 </resources>
