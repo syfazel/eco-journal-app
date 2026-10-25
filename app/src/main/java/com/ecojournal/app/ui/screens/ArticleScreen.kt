@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -276,6 +277,7 @@ fun ArticleScreen(
                 fontFamily = EcoFontFamily,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.semantics { heading() },
             )
             Spacer(modifier = Modifier.height(10.dp))
             NewspaperByline(article = a)

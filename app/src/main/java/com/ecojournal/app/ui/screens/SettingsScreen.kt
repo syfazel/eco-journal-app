@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -122,6 +123,7 @@ fun SettingsScreen(
             text = stringResource(R.string.settings_font_heading),
             fontFamily = EcoFontFamily,
             fontSize = 16.sp * fontScale,
+            modifier = Modifier.semantics { heading() },
         )
         Text(
             text = "${stringResource(R.string.font_size_label)}: " +
@@ -153,6 +155,7 @@ fun SettingsScreen(
             text = stringResource(R.string.settings_theme_heading),
             fontFamily = EcoFontFamily,
             fontSize = 16.sp * fontScale,
+            modifier = Modifier.semantics { heading() },
         )
         for ((key, labelRes) in listOf(
             "system" to R.string.theme_system,
@@ -179,8 +182,16 @@ fun SettingsScreen(
             text = stringResource(R.string.reader_helpers_title),
             fontFamily = EcoFontFamily,
             fontSize = 16.sp * fontScale,
+            modifier = Modifier.semantics { heading() },
         )
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        // v5 P5: label + switch merge into one TalkBack node
+        // (the Phase 7 pattern from the per-service toggles
+        // below); before this the bare switch announced with
+        // no label at all.
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.semantics(mergeDescendants = true) {},
+        ) {
             Switch(
                 checked = settings.tickerEnabled,
                 onCheckedChange = { v -> scope.launch { store.setTickerEnabled(v) } },
@@ -195,7 +206,10 @@ fun SettingsScreen(
         // v5 P2: reduced-motion toggle for the ticker. Session
         // pause lives on the ticker itself; this is the
         // persistent control (no infinite motion without one).
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.semantics(mergeDescendants = true) {},
+        ) {
             Switch(
                 checked = settings.reducedMotion,
                 onCheckedChange = { v -> scope.launch { store.setReducedMotion(v) } },
@@ -213,7 +227,10 @@ fun SettingsScreen(
             fontSize = 12.sp * fontScale,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.semantics(mergeDescendants = true) {},
+        ) {
             Switch(
                 checked = settings.readingRuler,
                 onCheckedChange = { v -> scope.launch { store.setReadingRuler(v) } },
@@ -231,7 +248,10 @@ fun SettingsScreen(
             fontSize = 12.sp * fontScale,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.semantics(mergeDescendants = true) {},
+        ) {
             Switch(
                 checked = settings.calmMode,
                 onCheckedChange = { v -> scope.launch { store.setCalmMode(v) } },
@@ -254,6 +274,7 @@ fun SettingsScreen(
             text = stringResource(R.string.settings_notifications_heading),
             fontFamily = EcoFontFamily,
             fontSize = 16.sp * fontScale,
+            modifier = Modifier.semantics { heading() },
         )
         Switch(
             checked = settings.notificationsEnabled,
@@ -342,6 +363,7 @@ fun SettingsScreen(
             text = stringResource(R.string.settings_notifications_heading_p4),
             fontFamily = EcoFontFamily,
             fontSize = 16.sp * fontScale,
+            modifier = Modifier.semantics { heading() },
         )
         Text(
             text = stringResource(R.string.settings_notifications_master_desc),
@@ -399,6 +421,7 @@ fun SettingsScreen(
             text = stringResource(R.string.settings_quiet_heading),
             fontFamily = EcoFontFamily,
             fontSize = 16.sp * fontScale,
+            modifier = Modifier.semantics { heading() },
         )
         Switch(
             checked = settings.quietHoursEnabled,
@@ -594,6 +617,7 @@ fun SettingsScreen(
             text = stringResource(R.string.app_update_title),
             fontFamily = EcoFontFamily,
             fontSize = 16.sp * fontScale,
+            modifier = Modifier.semantics { heading() },
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
@@ -604,7 +628,11 @@ fun SettingsScreen(
             fontFamily = EcoFontFamily,
             fontSize = 14.sp * fontScale,
         )
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        // v5 P5: merged label + switch, as above.
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.semantics(mergeDescendants = true) {},
+        ) {
             Text(
                 text = stringResource(R.string.app_update_auto_check),
                 fontFamily = EcoFontFamily,

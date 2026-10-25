@@ -43,6 +43,8 @@ import com.ecojournal.app.data.SyncSections
 import com.ecojournal.app.ui.components.DomainBarStrip
 import com.ecojournal.app.ui.components.TypedCard
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.util.toLatinDigits
@@ -95,6 +97,7 @@ fun BundlesScreen(
                     fontSize = EcoDesignTokens.Type.HeroHeadline * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
+                    modifier = Modifier.semantics { heading() },
                 )
                 Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 // Frozen Special Issues: the single line, nothing else.

@@ -487,4 +487,9 @@
     <string name="v5_diagnostics_optional_tag">اختیاری</string>
     <string name="v5_bookmark_orphan_retracted">از منبع پس گرفته شده است.</string>
     <string name="v5_bookmark_orphan_missing">دیگر در حافظهٔ دستگاه نیست.</string>
+    <!-- v5 P5 (polish + accessibility): TalkBack label for the
+         feed seeding spinner (previously a bare indicator with
+         no announcement) and nothing else. No behaviour, gate,
+         cadence, night-law, or bar change. -->
+    <string name="v5_feed_seeding">در حال بارگذاری بذر آفلاین…</string>
 </resources>

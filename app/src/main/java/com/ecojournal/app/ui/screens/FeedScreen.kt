@@ -4,6 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -721,7 +722,14 @@ fun FeedScreen(
                 // the filter as the cause, and its exactly one
                 // next step clears the filter (session-only,
                 // same as tapping the «همه» chip).
-                Column(modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin)) {
+                // v5 P5: this short state sits in the feed's
+                // non-scrolling root Column, so at 1.3x it must
+                // scroll on its own or its button clips.
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .padding(EcoDesignTokens.Spacing.PageMargin),
+                ) {
                     Text(
                         text = stringResource(R.string.v5_feed_filter_empty),
                         fontFamily = EcoFontFamily,
@@ -756,7 +764,13 @@ fun FeedScreen(
                 // (never confusable with the feed empty — plan
                 // §1 F4) and gains exactly one next step:
                 // clearing the query restores the pager.
-                Column(modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin)) {
+                // v5 P5: same scroll rule as the filter empty
+                // above — a short state in a non-scrolling root.
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .padding(EcoDesignTokens.Spacing.PageMargin),
+                ) {
                     Text(
                         text = stringResource(R.string.search_no_results),
                         fontFamily = EcoFontFamily,
@@ -813,7 +827,16 @@ fun FeedScreen(
             // actually running and nothing is cached yet. Once the
             // seed reports (even partially), an empty cache shows
             // the empty message below, never a permanent spinner.
-            CircularProgressIndicator(modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin))
+            // v5 P5: the bare indicator announced nothing to
+            // TalkBack; it now carries the seeding description
+            // (precomputed: stringResource cannot run inside
+            // the semantics block).
+            val seedingDesc = stringResource(R.string.v5_feed_seeding)
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .padding(EcoDesignTokens.Spacing.PageMargin)
+                    .semantics { contentDescription = seedingDesc },
+            )
         } else if (all.isEmpty() && typedItems.isEmpty()) {
             // v5 P3 empty state (plan §2 language): what
             // happened + the code + the way forward, and a
@@ -829,7 +852,17 @@ fun FeedScreen(
             // kept only for the narrow case of an empty cache
             // AFTER a sync was recorded — a state the digest
             // + Diagnostics must then explain.
-            Column(modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin)) {
+            // v5 P5: the empty state is the longest short state
+            // (first line + two buttons + section index + hub
+            // button) in the feed's non-scrolling root Column;
+            // at 1.3x on a small phone its tail clipped. It now
+            // scrolls on its own, like every other screen's
+            // short state.
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(EcoDesignTokens.Spacing.PageMargin),
+            ) {
                 val errorCode = lastSyncError?.takeIf { it.isNotBlank() }
                 if (seedFailed) {
                     Text(

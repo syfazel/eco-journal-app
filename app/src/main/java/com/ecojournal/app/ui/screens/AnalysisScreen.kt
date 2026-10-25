@@ -25,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -113,6 +115,7 @@ fun AnalysisScreen(
                 fontFamily = EcoFontFamily,
                 fontSize = 20.sp * fontScale,
                 fontWeight = FontWeight.Bold,
+                modifier = Modifier.semantics { heading() },
             )
             if (nightlyFailed) {
                 Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))

@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,6 +53,7 @@ fun VoicesScreen(
             fontFamily = EcoFontFamily,
             fontSize = 20.sp * fontScale,
             fontWeight = FontWeight.Bold,
+            modifier = Modifier.semantics { heading() },
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
@@ -78,6 +81,7 @@ fun SpecialIssuesScreen(
             fontFamily = EcoFontFamily,
             fontSize = 20.sp * fontScale,
             fontWeight = FontWeight.Bold,
+            modifier = Modifier.semantics { heading() },
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
