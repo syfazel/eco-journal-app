@@ -60,4 +60,51 @@
     <string name="invite_lock_button">قفل کردن دسترسی (بازگشت به صفحهٔ کد)</string>
     <string name="font_size_label">اندازهٔ فونت</string>
     <string name="font_preview">این یک پاراگراف نمونه است تا اندازهٔ فونت انتخاب‌شده را همین‌جا ببینید.</string>
+    <!-- M8: settings headings, market sentences, diagnostics (P2-01). -->
+    <string name="settings_font_heading">اندازهٔ فونت مقاله</string>
+    <string name="settings_theme_heading">پوسته</string>
+    <string name="settings_notifications_heading">اعلان مقالات تازه</string>
+    <string name="settings_notifications_desc">روشن یا خاموش کردن اعلان مقالات تازه</string>
+    <string name="settings_diagnostics_button">تشخیص و وضعیت برنامه</string>
+    <string name="section_label">بخش %1$s</string>
+    <string name="market_title">بورد بازار</string>
+    <string name="market_loading">در حال بارگذاری دادهٔ بازار…</string>
+    <string name="market_unavailable">دادهٔ بازار در دسترس نیست.</string>
+    <string name="market_unavailable_detail">بذر همراه برنامه اجرا شد ولی هیچ اسنپ‌شاتی در حافظه نیست؛ فایل بازار ممکن است خراب یا ناقص باشد. با تلاش دوباره، بذر از همان‌جایی که مانده ادامه می‌دهد و چیزی از اول ساخته نمی‌شود.</string>
+    <string name="market_retry">تلاش دوباره</string>
+    <string name="market_latest_snapshot">آخرین اسنپ‌شات: %1$s</string>
+    <string name="market_last_update">آخرین به‌روزرسانی: %1$s</string>
+    <string name="market_snapshot_id">شناسهٔ اسنپ‌شات: %1$s</string>
+    <string name="market_stale">⚠ دادهٔ بازار قدیمی است (بیش از ۲۴ ساعت). این اسنپ‌شات از حافظهٔ محلی است و با همگام‌سازی آینده به‌روز می‌شود.</string>
+    <string name="market_compare_previous">مقایسه با اسنپ‌شات قبل: %1$s</string>
+    <string name="market_snapshot_count">تعداد اسنپ‌شات‌ها: %1$s</string>
+    <string name="market_formulas_title">فرمول‌های محاسبه‌شده</string>
+    <string name="market_formulas_empty">فرمولی در دسترس نیست. فرمول‌ها همراه بذر بازار وارد می‌شوند؛ اگر خالی ماند، با همگام‌سازی آینده به‌روز می‌شوند.</string>
+    <string name="market_formula_value">مقدار محاسبه‌شده: %1$s</string>
+    <string name="market_formula_uncomputable">محاسبه ممکن نشد؛ یک یا چند ورودی در این اسنپ‌شات موجود نیست.</string>
+    <string name="market_inputs">ورودی‌ها:</string>
+    <string name="market_change_vs_previous">تغییر نسبت به قبل: %1$s</string>
+    <string name="market_no_change">بدون تغییر نسبت به اسنپ‌شات قبل</string>
+    <!-- M8: diagnostics screen — counts and status only. No PII, no
+         content, no codes, no tokens, no device ids are shown here. -->
+    <string name="diagnostics_title">تشخیص و وضعیت برنامه</string>
+    <string name="diagnostics_back">بازگشت</string>
+    <string name="diagnostics_version">نسخهٔ برنامه: %1$s (ساخت %2$s)</string>
+    <string name="diagnostics_articles">مقالات کش‌شده: %1$s</string>
+    <string name="diagnostics_market">اسنپ‌شات‌های بازار: %1$s</string>
+    <string name="diagnostics_formulas">فرمول‌های بازار: %1$s</string>
+    <string name="diagnostics_bookmarks">ذخیره‌شده‌ها: %1$s</string>
+    <string name="diagnostics_seed_version">نسخهٔ بذر: %1$s</string>
+    <string name="diagnostics_edge_url">لبهٔ انتشار: %1$s</string>
+    <string name="diagnostics_last_sync">آخرین همگام‌سازی موفق: %1$s</string>
+    <string name="diagnostics_last_attempt">آخرین تلاش همگام‌سازی: %1$s</string>
+    <string name="diagnostics_last_error">آخرین خطای همگام‌سازی: %1$s</string>
+    <string name="diagnostics_no_value">ثبت نشده است</string>
+    <string name="diagnostics_index_present">فهرست انتشار: موجود است</string>
+    <string name="diagnostics_index_absent">فهرست انتشار: موجود نیست</string>
+    <string name="diagnostics_sync_retry">همگام‌سازی دوباره</string>
+    <string name="diagnostics_copy">کپی گزارش تشخیص</string>
+    <string name="diagnostics_copied">گزارش تشخیص کپی شد.</string>
+    <string name="diagnostics_sync_result">نتیجهٔ همگام‌سازی: %1$s</string>
+    <string name="gate_loading">در حال بررسی دسترسی…</string>
 </resources>

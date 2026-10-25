@@ -218,6 +218,14 @@ interface ArticleDao {
     @Query("SELECT EXISTS(SELECT 1 FROM bookmarks WHERE appKey = :appKey)")
     suspend fun isBookmarked(appKey: String): Boolean
 
+    // M8 diagnostics: query-only counts, no schema change, so no
+    // migration is needed for these two methods.
+    @Query("SELECT COUNT(*) FROM articles WHERE status != 'retracted'")
+    fun articleCountFlow(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM bookmarks")
+    fun bookmarkCountFlow(): Flow<Int>
+
     @Query("SELECT id FROM articles")
     suspend fun allIds(): List<String>
 

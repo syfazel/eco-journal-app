@@ -172,7 +172,7 @@ fun FeedScreen(
     ) {
         // Masthead: ECO JOURNAL only. No other publication name appears.
         Text(
-            text = "ECO JOURNAL",
+            text = stringResource(R.string.app_name),
             fontSize = 32.sp * fontScale,
             fontFamily = EcoFontFamily,
             fontWeight = FontWeight.Bold,
@@ -401,6 +401,10 @@ private fun FrontPageTabs(
             contentColor = MaterialTheme.colorScheme.primary,
         ) {
             sections.forEachIndexed { index, section ->
+                // M8: stringResource is a composable call, so the
+                // description is resolved here, not inside the
+                // non-composable semantics block below.
+                val tabDescription = stringResource(R.string.section_label, section.label)
                 Tab(
                     selected = pagerState.currentPage == index,
                     onClick = { onTabClick(index) },
@@ -416,7 +420,7 @@ private fun FrontPageTabs(
                         )
                     },
                     modifier = Modifier.semantics {
-                        contentDescription = "بخش ${section.label}"
+                        contentDescription = tabDescription
                     },
                 )
             }

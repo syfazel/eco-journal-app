@@ -5,12 +5,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShowChart
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -26,19 +32,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.ecojournal.app.R
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.MarketSnapshot
 import com.ecojournal.app.data.SettingsStore
 import com.ecojournal.app.ui.screens.ArticleScreen
 import com.ecojournal.app.ui.screens.BookmarksScreen // M6: now in its own file, moved verbatim from the deleted CategoriesScreen.kt
+import com.ecojournal.app.ui.screens.DiagnosticsScreen
 import com.ecojournal.app.ui.screens.FeedScreen
 import com.ecojournal.app.ui.screens.InviteScreen
 import com.ecojournal.app.ui.screens.MarketScreen
@@ -68,20 +79,38 @@ class MainActivity : ComponentActivity() {
         val repo = EdgeRepository(this)
         val store = SettingsStore(this)
         setContent {
-            val settings by store.settings.collectAsState(
-                initial = com.ecojournal.app.data.Settings()
-            )
+            // M8 gate loading fix: initial = null, so "no value
+            // yet" is distinct from "stored inviteOk=false". The
+            // gate is only shown after a real DataStore emission;
+            // before that, a loading state is shown instead of
+            // flashing the code-entry screen at a returning reader
+            // (the known M7 limitation this fixes).
+            val settingsOrNull by store.settings.collectAsState(initial = null)
             val darkSystem = isSystemInDarkTheme()
             // Whole app is RTL-first (Persian UI).
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-                EcoTheme(theme = settings.theme, darkSystem = darkSystem) {
+                EcoTheme(theme = settingsOrNull?.theme ?: "system", darkSystem = darkSystem) {
+                    val settings = settingsOrNull
+                    if (settings == null) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                CircularProgressIndicator()
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Text(
+                                    text = stringResource(R.string.gate_loading),
+                                    fontFamily = EcoFontFamily,
+                                )
+                            }
+                        }
+                        return@EcoTheme
+                    }
                     // M7 real invite gate: the feed stays locked
                     // until a valid code is entered (InviteScreen).
                     // The gate replaces the old unconditional
-                    // startDestination = "feed". Known limitation
-                    // (M8 polish): the very first DataStore emission
-                    // is inviteOk=false, so a returning reader may
-                    // briefly see the gate before the feed appears.
+                    // startDestination = "feed".
                     if (!settings.inviteOk) {
                         InviteScreen(
                             repo = repo,
@@ -103,14 +132,16 @@ class MainActivity : ComponentActivity() {
                             nav.navigate("article/${Uri.encode(pendingId)}")
                         }
                     }
-                    // The reader has its own top bar (M3, P1-08);
-                    // the bottom bar is hidden there so no tab
-                    // sits selected for a route that is not a tab.
+                    // The reader has its own top bar (M3, P1-08),
+                    // and diagnostics (M8) is a settings detail
+                    // screen; the bottom bar is hidden on both so
+                    // no tab sits selected for a route that is not
+                    // a tab.
                     val backEntry by nav.currentBackStackEntryAsState()
-                    val onReader = backEntry?.destination?.route
-                        ?.substringBefore("/") == "article"
+                    val hideBar = backEntry?.destination?.route
+                        ?.substringBefore("/") in setOf("article", "diagnostics")
                     Scaffold(
-                        bottomBar = { if (!onReader) BottomBar(nav) },
+                        bottomBar = { if (!hideBar) BottomBar(nav) },
                     ) { inner ->
                         val pad = Modifier.padding(inner)
                         // Market board from Room (M2, M4): the bundled
@@ -118,10 +149,10 @@ class MainActivity : ComponentActivity() {
                         // market_formulas on first run, so the board
                         // — including computed formulas — works
                         // offline. The edge is not consulted here:
-                        // BASE_URL stays unwired until the M5
-                        // decision, and the sync pass (not this
-                        // screen) is what refreshes Room from the
-                        // edge. Seed-done state is tracked so the
+                        // the M5-wired edge URL is used by the sync
+                        // pass (not this screen), which is what
+                        // refreshes Room from the edge. Seed-done
+                        // state is tracked so the
                         // screen can tell "still seeding" (loading)
                         // from "seed ran, market still empty"
                         // (error with retry) instead of guessing
@@ -222,6 +253,16 @@ class MainActivity : ComponentActivity() {
                                     settings = settings,
                                     store = store,
                                     fontScale = settings.fontScale,
+                                    onDiagnostics = { nav.navigate("diagnostics") },
+                                )
+                            }
+                            // M8 diagnostics: counts/status only,
+                            // no PII; reached from Settings.
+                            composable("diagnostics") {
+                                DiagnosticsScreen(
+                                    repo = repo,
+                                    fontScale = settings.fontScale,
+                                    onBack = { nav.popBackStack() },
                                 )
                             }
                         }

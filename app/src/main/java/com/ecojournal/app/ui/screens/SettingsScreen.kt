@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -28,6 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -53,10 +56,14 @@ import kotlinx.coroutines.launch
 fun SettingsScreen(
     settings: Settings,
     store: SettingsStore,
+    onDiagnostics: () -> Unit = {},
     modifier: Modifier = Modifier,
     fontScale: Float = 1f,
 ) {
     val scope = rememberCoroutineScope()
+    // M8: declared at the top so the Switch semantics below can
+    // use it (the old declaration sat after the Switch block).
+    val context = LocalContext.current
     var sliderValue by remember(settings.fontScale) { mutableStateOf(settings.fontScale) }
     Column(
         modifier = modifier
@@ -65,7 +72,7 @@ fun SettingsScreen(
             .padding(16.dp),
     ) {
         Text(
-            text = "اندازهٔ فونت مقاله",
+            text = stringResource(R.string.settings_font_heading),
             fontFamily = EcoFontFamily,
             fontSize = 16.sp * fontScale,
         )
@@ -91,7 +98,7 @@ fun SettingsScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "پوسته",
+            text = stringResource(R.string.settings_theme_heading),
             fontFamily = EcoFontFamily,
             fontSize = 16.sp * fontScale,
         )
@@ -103,6 +110,7 @@ fun SettingsScreen(
         )) {
             Button(
                 onClick = { scope.launch { store.setTheme(key) } },
+                modifier = Modifier.heightIn(min = 48.dp),
             ) {
                 Text(
                     text = label + if (settings.theme == key) " ✓" else "",
@@ -113,12 +121,15 @@ fun SettingsScreen(
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "اعلان مقالات تازه",
+            text = stringResource(R.string.settings_notifications_heading),
             fontFamily = EcoFontFamily,
             fontSize = 16.sp * fontScale,
         )
         Switch(
             checked = settings.notificationsEnabled,
+            modifier = Modifier.semantics {
+                contentDescription = context.getString(R.string.settings_notifications_desc)
+            },
             onCheckedChange = { v ->
                 scope.launch { store.setNotifications(v) }
             },
@@ -133,7 +144,6 @@ fun SettingsScreen(
         // Hoisted (not conditional): the launcher must be
         // registered on every composition, not only when the
         // guidance block is visible.
-        val context = LocalContext.current
         var permissionCheck by remember { mutableStateOf(0) }
         val permissionLauncher = rememberLauncherForActivityResult(
             ActivityResultContracts.RequestPermission(),
@@ -163,7 +173,7 @@ fun SettingsScreen(
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
                     }
-                }) {
+                }, modifier = Modifier.heightIn(min = 48.dp)) {
                     Text(
                         text = stringResource(R.string.notif_request_button),
                         fontFamily = EcoFontFamily,
@@ -184,7 +194,7 @@ fun SettingsScreen(
                         )
                     )
                     permissionCheck++
-                }) {
+                }, modifier = Modifier.heightIn(min = 48.dp)) {
                     Text(
                         text = stringResource(R.string.notif_open_settings),
                         fontFamily = EcoFontFamily,
@@ -215,12 +225,23 @@ fun SettingsScreen(
                 // so the next launch shows the code-entry screen
                 // again. Cached articles are hidden, not deleted.
                 scope.launch { store.clearInvite() }
-            }) {
+            }, modifier = Modifier.heightIn(min = 48.dp)) {
                 Text(
                     text = stringResource(R.string.invite_lock_button),
                     fontFamily = EcoFontFamily,
                 )
             }
+        }
+        // M8: diagnostics screen entry (counts/status only, no PII).
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = onDiagnostics,
+            modifier = Modifier.heightIn(min = 48.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.settings_diagnostics_button),
+                fontFamily = EcoFontFamily,
+            )
         }
     }
 }

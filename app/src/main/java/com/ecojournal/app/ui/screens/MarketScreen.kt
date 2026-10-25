@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -12,9 +13,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ecojournal.app.R
 import com.ecojournal.app.data.ComputedFormula
 import com.ecojournal.app.data.MarketSnapshot
 import com.ecojournal.app.ui.theme.EcoFontFamily
@@ -71,7 +74,10 @@ private fun formatPrice(value: Double, decimals: Int): String {
 private fun changeText(now: Double, prev: Double?, decimals: Int): String? {
     if (prev == null || prev == 0.0) return null
     val delta = now - prev
-    if (delta == 0.0) return "بدون تغییر نسبت به اسنپ‌شات قبل"
+    // M8: a zero delta returns null; the caller renders the
+    // market_no_change string resource instead, so no user-facing
+    // sentence stays hard-coded here.
+    if (delta == 0.0) return null
     val arrow = if (delta > 0) "▲" else "▼"
     val sign = if (delta > 0) "+" else "−"
     val pct = kotlin.math.abs(delta / prev * 100.0)
@@ -120,7 +126,7 @@ fun MarketScreen(
             .padding(16.dp),
     ) {
         Text(
-            text = "بورد بازار",
+            text = stringResource(R.string.market_title),
             fontFamily = EcoFontFamily,
             fontSize = 20.sp * fontScale,
             fontWeight = FontWeight.Bold,
@@ -128,7 +134,7 @@ fun MarketScreen(
         Spacer(modifier = Modifier.height(12.dp))
         if (!seedDone) {
             Text(
-                text = "در حال بارگذاری دادهٔ بازار…",
+                text = stringResource(R.string.market_loading),
                 fontFamily = EcoFontFamily,
                 fontSize = 16.sp * fontScale,
             )
@@ -136,24 +142,24 @@ fun MarketScreen(
         }
         if (latest == null) {
             Text(
-                text = "دادهٔ بازار در دسترس نیست.",
+                text = stringResource(R.string.market_unavailable),
                 fontFamily = EcoFontFamily,
                 fontSize = 16.sp * fontScale,
                 fontWeight = FontWeight.Bold,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "بذر همراه برنامه اجرا شد ولی هیچ اسنپ‌شاتی " +
-                    "در حافظه نیست؛ فایل بازار ممکن است خراب یا " +
-                    "ناقص باشد. با تلاش دوباره، بذر از همان‌جایی " +
-                    "که مانده ادامه می‌دهد و چیزی از اول ساخته نمی‌شود.",
+                text = stringResource(R.string.market_unavailable_detail),
                 fontFamily = EcoFontFamily,
                 fontSize = 16.sp * fontScale,
             )
             Spacer(modifier = Modifier.height(12.dp))
-            Button(onClick = onRetry) {
+            Button(
+                onClick = onRetry,
+                modifier = Modifier.heightIn(min = 48.dp),
+            ) {
                 Text(
-                    text = "تلاش دوباره",
+                    text = stringResource(R.string.market_retry),
                     fontFamily = EcoFontFamily,
                     fontSize = 16.sp * fontScale,
                 )
@@ -164,13 +170,13 @@ fun MarketScreen(
             System.currentTimeMillis() - it > 24L * 60L * 60L * 1000L
         } ?: true
         Text(
-            text = "آخرین اسنپ‌شات: ${latest.tsTehran}",
+            text = stringResource(R.string.market_latest_snapshot, latest.tsTehran),
             fontFamily = EcoFontFamily,
             fontSize = 16.sp * fontScale,
         )
         ageText(latest.tsEpoch)?.let {
             Text(
-                text = "آخرین به‌روزرسانی: $it",
+                text = stringResource(R.string.market_last_update, it),
                 fontFamily = EcoFontFamily,
                 fontSize = 16.sp * fontScale,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -178,7 +184,7 @@ fun MarketScreen(
         }
         if (latest.snapshotId.isNotBlank()) {
             Text(
-                text = "شناسهٔ اسنپ‌شات: ${latest.snapshotId}",
+                text = stringResource(R.string.market_snapshot_id, latest.snapshotId),
                 fontFamily = EcoFontFamily,
                 fontSize = 16.sp * fontScale,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -186,16 +192,14 @@ fun MarketScreen(
         }
         if (stale) {
             Text(
-                text = "⚠ دادهٔ بازار قدیمی است (بیش از ۲۴ ساعت). " +
-                    "این اسنپ‌شات از حافظهٔ محلی است و با همگام‌سازی " +
-                    "آینده به‌روز می‌شود.",
+                text = stringResource(R.string.market_stale),
                 fontFamily = EcoFontFamily,
                 fontSize = 16.sp * fontScale,
             )
         }
         previous?.let {
             Text(
-                text = "مقایسه با اسنپ‌شات قبل: ${it.tsTehran}",
+                text = stringResource(R.string.market_compare_previous, it.tsTehran),
                 fontFamily = EcoFontFamily,
                 fontSize = 16.sp * fontScale,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -226,25 +230,34 @@ fun MarketScreen(
                 fontSize = 16.sp * fontScale,
             )
             if (field.value != null) {
-                changeText(field.value, field.previous, field.decimals)?.let { change ->
+                if (field.previous != null && field.value == field.previous) {
                     Text(
-                        text = "تغییر نسبت به قبل: $change",
+                        text = stringResource(R.string.market_no_change),
                         fontFamily = EcoFontFamily,
                         fontSize = 14.sp * fontScale,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                } else {
+                    changeText(field.value, field.previous, field.decimals)?.let { change ->
+                        Text(
+                            text = stringResource(R.string.market_change_vs_previous, change),
+                            fontFamily = EcoFontFamily,
+                            fontSize = 14.sp * fontScale,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "تعداد اسنپ‌شات‌ها: ${formatPersianInt(snapshotCount)}",
+            text = stringResource(R.string.market_snapshot_count, formatPersianInt(snapshotCount)),
             fontFamily = EcoFontFamily,
             fontSize = 16.sp * fontScale,
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "فرمول‌های محاسبه‌شده",
+            text = stringResource(R.string.market_formulas_title),
             fontFamily = EcoFontFamily,
             fontSize = 18.sp * fontScale,
             fontWeight = FontWeight.Bold,
@@ -252,9 +265,7 @@ fun MarketScreen(
         if (formulas.isEmpty()) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "فرمولی در دسترس نیست. فرمول‌ها همراه بذر " +
-                    "بازار وارد می‌شوند؛ اگر خالی ماند، با همگام‌سازی " +
-                    "آینده به‌روز می‌شوند.",
+                text = stringResource(R.string.market_formulas_empty),
                 fontFamily = EcoFontFamily,
                 fontSize = 16.sp * fontScale,
             )
@@ -268,14 +279,13 @@ fun MarketScreen(
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = "مقدار محاسبه‌شده: ${formulaValueText(f)}",
+                text = stringResource(R.string.market_formula_value, formulaValueText(f)),
                 fontFamily = EcoFontFamily,
                 fontSize = 16.sp * fontScale,
             )
             if (f.value == null) {
                 Text(
-                    text = "محاسبه ممکن نشد؛ یک یا چند ورودی در این " +
-                        "اسنپ‌شات موجود نیست.",
+                    text = stringResource(R.string.market_formula_uncomputable),
                     fontFamily = EcoFontFamily,
                     fontSize = 14.sp * fontScale,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -290,7 +300,7 @@ fun MarketScreen(
             }
             if (f.inputs.isNotEmpty()) {
                 Text(
-                    text = "ورودی‌ها:",
+                    text = stringResource(R.string.market_inputs),
                     fontFamily = EcoFontFamily,
                     fontSize = 14.sp * fontScale,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

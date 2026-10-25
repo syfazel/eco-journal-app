@@ -57,7 +57,7 @@ fun InviteScreen(
             .padding(24.dp),
     ) {
         Text(
-            text = "ECO JOURNAL",
+            text = stringResource(R.string.app_name),
             fontFamily = EcoFontFamily,
             fontSize = 32.sp * fontScale,
         )

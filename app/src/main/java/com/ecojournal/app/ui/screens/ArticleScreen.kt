@@ -120,7 +120,7 @@ fun ArticleScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = article?.categoryFa ?: "ECO JOURNAL",
+                        text = article?.categoryFa ?: stringResource(R.string.app_name),
                         fontFamily = EcoFontFamily,
                     )
                 },
