@@ -1,14 +1,9 @@
 package com.ecojournal.app
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -34,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -81,7 +75,11 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                 EcoTheme(theme = settings.theme, darkSystem = darkSystem) {
                     val nav = rememberNavController()
-                    RequestNotificationPermission()
+                    // M5 (P2-16): notification permission is NOT
+                    // requested blindly on launch any more. It is
+                    // requested from Settings with a rationale, only
+                    // when notifications are ON and the permission
+                    // is missing (see SettingsScreen).
                     // Notification deep link: open the tapped article.
                     val pendingId = Notifications.openArticleId(intent)
                     LaunchedEffect(pendingId) {
@@ -249,24 +247,6 @@ private fun BottomBar(nav: NavHostController) {
                 },
                 label = { Text(tab.label, fontFamily = EcoFontFamily) },
             )
-        }
-    }
-}
-
-@Composable
-private fun RequestNotificationPermission() {
-    val context = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission(),
-    ) { /* granted or not: polling fallback still works offline */ }
-    LaunchedEffect(Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.POST_NOTIFICATIONS,
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 }

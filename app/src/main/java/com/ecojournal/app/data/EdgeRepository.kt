@@ -8,16 +8,20 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * Edge URL decision (docs/vnext-decisions.md, M5 step): the Pages
+ * Edge URL decision (docs/vnext-decisions.md §2, M5): the Pages
  * root https://syfazel.github.io/eco-journal-app/ — WITHOUT any
- * /out suffix. It is NOT wired here yet: until the repo's Pages
- * source is set to "GitHub Actions" (an M5 owner toggle), the
- * workflow serves nothing, so BASE_URL stays blank, sync()
- * returns Result.NotConfigured, and the app shows only what is
- * already cached — it never invents content and never ships a
+ * /out suffix, because .github/workflows/pages.yml publishes
+ * edge/out/index.json as <root>/index.json. The repo's Pages
+ * source was switched to "GitHub Actions" via the GitHub API in
+ * M5, so the workflow now serves the edge. If Pages is not yet
+ * serving (or the device is offline), sync() returns a fixed
+ * error code and the app keeps showing only what is already
+ * cached — it never invents content and never ships a
  * placeholder feed. The edge is static JSON produced by
  * edge/generate_edge.py; the app talks to nothing else. No token,
- * key or secret is used here.
+ * key or secret is used here. Callers must use [edgeBase] (the
+ * URL without a trailing slash), never the raw constant, so
+ * "$base/index.json" never becomes a double-slash URL.
  *
  * Sync rules (M2), replacing the old "hash on partial" behaviour:
  * - An article is fetched only if it is absent, or if its stored
@@ -37,9 +41,17 @@ import org.json.JSONObject
  * - Per-entry corruption is counted and skipped, never a crash.
  */
 object EdgeConfig {
-    const val BASE_URL: String = ""
+    const val BASE_URL: String = "https://syfazel.github.io/eco-journal-app/"
 }
 
+/**
+ * Fixed sync error codes (M5, P1-25). The UI maps each code to a
+ * fixed Persian string; raw exception text and HTTP internals are
+ * never shown to the user and never stored as free text.
+ * Codes: "network" (offline/DNS/timeout), "http_404",
+ * "http_403", "http_other" (any other non-200), "bad_index"
+ * (index.json unparsable), "insecure_edge" (non-HTTPS base).
+ */
 sealed class SyncResult {
     data object NotConfigured : SyncResult()
     data class Ok(val newArticleAppKeys: List<String>, val totalCached: Int) : SyncResult()
@@ -48,24 +60,55 @@ sealed class SyncResult {
         val missingCount: Int,
         val totalCached: Int,
     ) : SyncResult()
-    data class Failed(val reason: String) : SyncResult()
+    data class Failed(val code: String) : SyncResult()
 }
 
-private fun httpGet(url: String): String? {
-    val conn = (URL(url).openConnection() as HttpURLConnection).apply {
+private sealed class HttpOutcome {
+    data class Ok(val body: String) : HttpOutcome()
+    data class HttpError(val status: Int) : HttpOutcome()
+    data object NetworkError : HttpOutcome()
+}
+
+private fun httpGet(url: String): HttpOutcome {
+    val conn = try {
+        URL(url).openConnection() as HttpURLConnection
+    } catch (_: Exception) {
+        return HttpOutcome.NetworkError
+    }
+    conn.apply {
         connectTimeout = 15_000
         readTimeout = 30_000
         setRequestProperty("Accept", "application/json")
+        setRequestProperty("User-Agent", "ECO-JOURNAL-Android/1.0")
     }
     return try {
         if (conn.responseCode != HttpURLConnection.HTTP_OK) {
-            null
+            HttpOutcome.HttpError(conn.responseCode)
         } else {
-            conn.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
+            HttpOutcome.Ok(conn.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() })
         }
+    } catch (_: Exception) {
+        HttpOutcome.NetworkError
     } finally {
         conn.disconnect()
     }
+}
+
+private fun HttpOutcome.toFailedCode(): String = when (this) {
+    is HttpOutcome.HttpError -> when (status) {
+        404 -> "http_404"
+        403 -> "http_403"
+        else -> "http_other"
+    }
+    HttpOutcome.NetworkError -> "network"
+    is HttpOutcome.Ok -> "http_other"
+}
+
+/** Trailing-slash-free base, or null when the edge is not usable. */
+private fun edgeBase(): String? {
+    val base = EdgeConfig.BASE_URL.trimEnd('/')
+    if (base.isBlank() || !base.startsWith("https://")) return null
+    return base
 }
 
 class EdgeRepository(context: Context) {
@@ -73,19 +116,32 @@ class EdgeRepository(context: Context) {
     val dao: ArticleDao = db.articleDao()
     private val settings = SettingsStore(context)
 
+    /** Records an attempt (M5): attempt time on every real attempt,
+     * and a fixed error code — "" only on a complete success, so
+     * the feed can always show an honest last-sync state. */
+    private suspend fun recordAttempt(code: String) {
+        val now = System.currentTimeMillis()
+        dao.upsertMeta(MetaEntity("last_sync_attempt_at", now.toString()))
+        dao.upsertMeta(MetaEntity("last_sync_error_code", code))
+    }
+
     /** Full sync: index first, then only missing or changed items. */
     suspend fun sync(): SyncResult {
-        val base = EdgeConfig.BASE_URL
-        if (base.isBlank()) return SyncResult.NotConfigured
-        val indexText = try {
-            httpGet("$base/index.json")
-        } catch (e: Exception) {
-            return SyncResult.Failed(e.message ?: "network error")
-        } ?: return SyncResult.Failed("index.json not reachable")
+        val base = edgeBase() ?: return SyncResult.NotConfigured
+        val indexOutcome = httpGet("$base/index.json")
+        val indexText = when (indexOutcome) {
+            is HttpOutcome.Ok -> indexOutcome.body
+            else -> {
+                val code = indexOutcome.toFailedCode()
+                recordAttempt(code)
+                return SyncResult.Failed(code)
+            }
+        }
         val index = try {
             JSONObject(indexText)
-        } catch (e: Exception) {
-            return SyncResult.Failed("bad index.json: ${e.message}")
+        } catch (_: Exception) {
+            recordAttempt("bad_index")
+            return SyncResult.Failed("bad_index")
         }
         val hash = index.optString("hash_sha256", "")
         val entries = index.optJSONArray("entries") ?: JSONArray()
@@ -139,10 +195,9 @@ class EdgeRepository(context: Context) {
             val file = entry.optString("file")
             val appKey = entry.optStringOrNull("app_key")?.takeIf { it.isNotBlank() }
                 ?: ArticleKeys.appKeyFor(entry.optString("id"))
-            val text = try {
-                httpGet("$base/$file")
-            } catch (_: Exception) {
-                null
+            val text = when (val outcome = httpGet("$base/$file")) {
+                is HttpOutcome.Ok -> outcome.body
+                else -> null
             }
             if (text == null) {
                 missingKeys.add(appKey)
@@ -156,10 +211,9 @@ class EdgeRepository(context: Context) {
         }
 
         if (shortIds.isNotEmpty()) {
-            val shortsText = try {
-                httpGet("$base/short_cards.json")
-            } catch (_: Exception) {
-                null
+            val shortsText = when (val outcome = httpGet("$base/short_cards.json")) {
+                is HttpOutcome.Ok -> outcome.body
+                else -> null
             }
             if (shortsText == null) {
                 missingKeys.addAll(shortIds.map { ArticleKeys.appKeyFor(it) })
@@ -217,10 +271,9 @@ class EdgeRepository(context: Context) {
         var marketFresh = emptyList<MarketSnapshotEntity>()
         var formulasFresh = emptyList<MarketFormulaEntity>()
         var marketFailed = false
-        val marketText = try {
-            httpGet("$base/market.json")
-        } catch (_: Exception) {
-            null
+        val marketText = when (val outcome = httpGet("$base/market.json")) {
+            is HttpOutcome.Ok -> outcome.body
+            else -> null
         }
         if (marketText == null) {
             marketFailed = true
@@ -272,6 +325,7 @@ class EdgeRepository(context: Context) {
                 dao.deleteAllFormulas()
                 dao.upsertFormulas(formulasFresh)
             }
+            dao.upsertMeta(MetaEntity("last_sync_attempt_at", now.toString()))
             if (complete) {
                 if (hash.isNotBlank()) dao.upsertMeta(MetaEntity("index_hash", hash))
                 dao.upsertMeta(MetaEntity("last_sync_at", now.toString()))
@@ -294,13 +348,11 @@ class EdgeRepository(context: Context) {
      * through the same path (they have no per-article file).
      */
     suspend fun fetchOne(appKeyOrId: String): Boolean {
-        val base = EdgeConfig.BASE_URL
-        if (base.isBlank()) return false
-        val indexText = try {
-            httpGet("$base/index.json")
-        } catch (_: Exception) {
-            return false
-        } ?: return false
+        val base = edgeBase() ?: return false
+        val indexText = when (val outcome = httpGet("$base/index.json")) {
+            is HttpOutcome.Ok -> outcome.body
+            else -> return false
+        }
         val entries = try {
             JSONObject(indexText).optJSONArray("entries") ?: return false
         } catch (_: Exception) {
@@ -317,11 +369,10 @@ class EdgeRepository(context: Context) {
                 ?: ArticleKeys.appKeyFor(id)
             if (appKey != appKeyOrId && id != appKeyOrId) continue
             if (entry.optString("kind") == "short") {
-                val shortsText = try {
-                    httpGet("$base/short_cards.json")
-                } catch (_: Exception) {
-                    return false
-                } ?: return false
+                val shortsText = when (val outcome = httpGet("$base/short_cards.json")) {
+                    is HttpOutcome.Ok -> outcome.body
+                    else -> return false
+                }
                 return try {
                     val arr = JSONArray(shortsText)
                     for (j in 0 until arr.length()) {
@@ -337,11 +388,10 @@ class EdgeRepository(context: Context) {
                 }
             }
             if (entry.isNull("file")) return false
-            val text = try {
-                httpGet("$base/${entry.optString("file")}")
-            } catch (_: Exception) {
-                return false
-            } ?: return false
+            val text = when (val outcome = httpGet("$base/${entry.optString("file")}")) {
+                is HttpOutcome.Ok -> outcome.body
+                else -> return false
+            }
             return try {
                 dao.upsertAll(listOf(ArticleParsers.entityFromArticleJson(JSONObject(text))))
                 true
@@ -354,13 +404,11 @@ class EdgeRepository(context: Context) {
 
     /** Fetch market.json (snapshots + active formulas) from the edge. */
     suspend fun fetchMarket(): Triple<MarketSnapshot?, List<MarketFormula>, Int> {
-        val base = EdgeConfig.BASE_URL
-        if (base.isBlank()) return Triple(null, emptyList(), 0)
-        val text = try {
-            httpGet("$base/market.json")
-        } catch (_: Exception) {
-            null
-        } ?: return Triple(null, emptyList(), 0)
+        val base = edgeBase() ?: return Triple(null, emptyList(), 0)
+        val text = when (val outcome = httpGet("$base/market.json")) {
+            is HttpOutcome.Ok -> outcome.body
+            else -> return Triple(null, emptyList(), 0)
+        }
         return try {
             val obj = JSONObject(text)
             val snaps = obj.optJSONArray("snapshots") ?: JSONArray()

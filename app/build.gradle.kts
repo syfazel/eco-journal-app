@@ -88,11 +88,12 @@ dependencies {
     // WebP image loading with disk cache.
     implementation("io.coil-kt:coil-compose:2.7.0")
 
-    // FCM scaffolding ONLY. No google-services.json is committed and no
-    // Firebase key exists anywhere in this repo (see TODO in
-    // fcm/EcoMessagingService.kt). The dependency alone needs no key;
-    // enabling real push additionally requires the google-services
-    // Gradle plugin + google-services.json supplied by Yasin.
+    // FCM scaffolding ONLY, dormant by decision (M5,
+    // docs/vnext-decisions.md §3). No google-services.json is
+    // committed and no Firebase key exists anywhere in this repo.
+    // The dependency alone needs no key; enabling real push later
+    // (a new decision) would additionally require the
+    // google-services Gradle plugin + google-services.json.
     implementation("com.google.firebase:firebase-messaging:23.4.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling")

@@ -139,6 +139,10 @@ interface ArticleDao {
     @Query("SELECT value FROM meta WHERE `key` = :key LIMIT 1")
     suspend fun metaValue(key: String): String?
 
+    /** Reactive meta read (M5): the feed shows last-sync time live. */
+    @Query("SELECT value FROM meta WHERE `key` = :key LIMIT 1")
+    fun metaValueFlow(key: String): Flow<String?>
+
     @Query("SELECT value FROM meta WHERE `key` = 'index_hash'")
     suspend fun indexHash(): String?
 

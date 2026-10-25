@@ -12,7 +12,21 @@
     <string name="sync_new_articles">%1$s مقالهٔ تازه دریافت شد.</string>
     <string name="sync_partial">همگام‌سازی ناقص ماند؛ %1$s مقاله در تلاش بعدی دوباره دریافت می‌شوند.</string>
     <string name="sync_not_configured">لبهٔ انتشار هنوز تنظیم نشده است. فقط مقالات کش‌شده نمایش داده می‌شوند.</string>
-    <string name="sync_failed">همگام‌سازی ناموفق بود: %1$s</string>
+    <!-- M5: fixed-string sync failures — no raw exception text, no
+         HTTP internals in user-facing text (P1-25). -->
+    <string name="sync_failed">همگام‌سازی ناموفق بود. مقالات کش‌شده نمایش داده می‌شوند؛ بعداً دوباره تلاش کنید.</string>
+    <string name="sync_failed_offline">همگام‌سازی ناموفق بود: دستگاه آفلاین است یا شبکه در دسترس نیست. مقالات کش‌شده نمایش داده می‌شوند.</string>
+    <string name="sync_failed_http">همگام‌سازی ناموفق بود: لبهٔ انتشار در دسترس نیست. بعداً دوباره تلاش کنید.</string>
+    <string name="sync_failed_bad_index">همگام‌سازی ناموفق بود: فهرست انتشار خوانا نیست. بعداً دوباره تلاش کنید.</string>
+    <string name="sync_retry">تلاش دوباره</string>
+    <string name="sync_last_success">آخرین همگام‌سازی موفق: %1$s</string>
+    <string name="sync_never_succeeded">هنوز همگام‌سازی موفقی ثبت نشده است؛ فقط مقالات کش‌شده نمایش داده می‌شوند.</string>
+    <!-- M5: notification permission rationale and denial guidance (P2-16). -->
+    <string name="notif_rationale">برای اینکه از انتشار مقالهٔ تازه باخبر شوید، اجازهٔ اعلان لازم است. بدون آن، مقاله‌ها فقط با باز کردن اپ دیده می‌شوند.</string>
+    <string name="notif_request_button">اجازهٔ اعلان</string>
+    <string name="notif_denied_guidance">اعلان‌ها در تنظیمات سیستم این دستگاه خاموش‌اند. برای روشن کردن، از دکمهٔ زیر تنظیمات اپ را باز کنید و «اعلان‌ها» را فعال کنید.</string>
+    <string name="notif_open_settings">باز کردن تنظیمات اپ</string>
+    <string name="notif_check_again">بررسی دوباره</string>
     <string name="feed_empty">هنوز مقاله‌ای در حافظه نیست. دکمهٔ همگام‌سازی را بزنید تا پس از تنظیم لبهٔ انتشار، مقالات دریافت شوند.</string>
     <string name="section_empty">در این بخش هنوز مقاله‌ای در حافظه نیست.</string>
     <string name="article_not_found">مقاله یافت نشد. شاید هنوز همگام‌سازی نشده است.</string>

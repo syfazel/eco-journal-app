@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -29,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -60,6 +62,10 @@ import com.ecojournal.app.ui.components.NewspaperDoubleRule
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.util.escapeLikeQuery
 import com.ecojournal.app.util.formatPersianInt
+import com.ecojournal.app.util.toPersianDigits
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -120,7 +126,12 @@ fun FeedScreen(
     var searchResults by remember { mutableStateOf<List<ArticleEntity>?>(null) }
     var syncState by remember { mutableStateOf("") }
     var syncing by remember { mutableStateOf(false) }
+    var syncFailed by remember { mutableStateOf(false) }
     var seeding by remember { mutableStateOf(true) }
+    // Last successful sync (M5): reactive meta read, shown under
+    // the sync row so "up to date" is always verifiable.
+    val lastSyncAt by repo.dao.metaValueFlow("last_sync_at")
+        .collectAsState(initial = null)
 
     LaunchedEffect(Unit) {
         BundledSeed.ensureSeed(context)
@@ -204,49 +215,69 @@ fun FeedScreen(
         // Hoisted out of the click handler: stringResource is a
         // composable call and cannot run inside a coroutine launch.
         val syncInProgressText = stringResource(R.string.sync_in_progress)
+        // M5: one sync runner shared by the sync button and the
+        // retry button, so a failed sync always has a retry path.
+        // Fixed-string messages only (P1-25): the failure code is
+        // mapped here, raw errors never reach the UI.
+        val runSync: () -> Unit = {
+            scope.launch {
+                syncing = true
+                syncFailed = false
+                syncState = syncInProgressText
+                syncState = when (val r = repo.sync()) {
+                    is SyncResult.Ok -> {
+                        if (r.newArticleAppKeys.isEmpty()) {
+                            context.getString(
+                                R.string.sync_up_to_date,
+                                formatPersianInt(r.totalCached),
+                            )
+                        } else {
+                            context.getString(
+                                R.string.sync_new_articles,
+                                formatPersianInt(r.newArticleAppKeys.size),
+                            )
+                        }
+                    }
+                    is SyncResult.Partial -> {
+                        syncFailed = true
+                        context.getString(
+                            R.string.sync_partial,
+                            formatPersianInt(r.missingCount),
+                        )
+                    }
+                    is SyncResult.NotConfigured ->
+                        context.getString(R.string.sync_not_configured)
+                    is SyncResult.Failed -> {
+                        syncFailed = true
+                        when (r.code) {
+                            "network" -> context.getString(R.string.sync_failed_offline)
+                            "http_404", "http_403", "http_other" ->
+                                context.getString(R.string.sync_failed_http)
+                            "bad_index" -> context.getString(R.string.sync_failed_bad_index)
+                            else -> context.getString(R.string.sync_failed)
+                        }
+                    }
+                }
+                syncing = false
+            }
+        }
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp),
         ) {
             Button(
                 enabled = !syncing,
-                onClick = {
-                    scope.launch {
-                        syncing = true
-                        syncState = syncInProgressText
-                        syncState = when (val r = repo.sync()) {
-                            is SyncResult.Ok ->
-                                if (r.newArticleAppKeys.isEmpty()) {
-                                    context.getString(
-                                        R.string.sync_up_to_date,
-                                        formatPersianInt(r.totalCached),
-                                    )
-                                } else {
-                                    context.getString(
-                                        R.string.sync_new_articles,
-                                        formatPersianInt(r.newArticleAppKeys.size),
-                                    )
-                                }
-                            is SyncResult.Partial ->
-                                context.getString(
-                                    R.string.sync_partial,
-                                    formatPersianInt(r.missingCount),
-                                )
-                            is SyncResult.NotConfigured ->
-                                // No TODO leak in user-facing text
-                                // (P1-11): the edge URL decision lives
-                                // in docs/vnext-decisions.md, and the
-                                // toggle itself is an M5 step.
-                                context.getString(R.string.sync_not_configured)
-                            is SyncResult.Failed ->
-                                context.getString(R.string.sync_failed, r.reason)
-                        }
-                        syncing = false
-                    }
-                },
+                onClick = runSync,
                 modifier = Modifier.heightIn(min = 48.dp),
             ) {
                 Text(stringResource(R.string.sync_button), fontFamily = EcoFontFamily)
+            }
+            if (syncing) {
+                Spacer(modifier = Modifier.width(8.dp))
+                CircularProgressIndicator(
+                    modifier = Modifier.size(24.dp),
+                    strokeWidth = 2.dp,
+                )
             }
             Spacer(modifier = Modifier.width(8.dp))
             if (syncState.isNotBlank()) {
@@ -256,6 +287,30 @@ fun FeedScreen(
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+            }
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        ) {
+            // Last successful sync (M5, from meta): a date when a
+            // complete sync has been recorded, an honest "none yet"
+            // line otherwise — never a fake "up to date".
+            val lastSyncText = lastSyncAt?.toLongOrNull()?.let { epoch ->
+                val formatted = SimpleDateFormat("yyyy/MM/dd HH:mm", Locale("fa"))
+                    .format(Date(epoch)).toPersianDigits()
+                context.getString(R.string.sync_last_success, formatted)
+            } ?: context.getString(R.string.sync_never_succeeded)
+            Text(
+                text = lastSyncText,
+                fontFamily = EcoFontFamily,
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            if (syncFailed && !syncing) {
+                TextButton(onClick = runSync) {
+                    Text(stringResource(R.string.sync_retry), fontFamily = EcoFontFamily)
+                }
             }
         }
         Spacer(modifier = Modifier.height(12.dp))

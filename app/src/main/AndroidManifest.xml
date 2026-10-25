@@ -5,7 +5,9 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- M5 (P2-16): RECEIVE_BOOT_COMPLETED removed — no boot
+         receiver exists and WorkManager reschedules itself, so
+         the permission was dead weight. -->
 
     <application
         android:name=".EcoJournalApp"
@@ -26,11 +28,12 @@
             </intent-filter>
         </activity>
 
-        <!-- FCM scaffolding. Inactive until google-services.json and the
-             google-services Gradle plugin are supplied by Yasin (TODO in
-             fcm/EcoMessagingService.kt). Declaring the service here with
-             no keys committed is harmless: Firebase simply has no
-             project to register against until then. -->
+        <!-- FCM scaffolding, DORMANT BY DECISION (M5,
+             docs/vnext-decisions.md §3): no Firebase project, no
+             google-services.json, no FCM activation for the pilot.
+             Declaring the service here with no keys committed is
+             harmless: Firebase simply has no project to register
+             against. -->
         <service
             android:name=".fcm.EcoMessagingService"
             android:exported="false">

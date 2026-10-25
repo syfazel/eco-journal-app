@@ -23,10 +23,12 @@ class EcoJournalApp : Application() {
         CoroutineScope(Dispatchers.IO).launch {
             BundledSeed.ensureSeed(this@EcoJournalApp)
         }
-        // TODO (Firebase, Yasin): after google-services.json lands,
-        // subscribe to the "articles" topic here:
-        //   FirebaseMessaging.getInstance().subscribeToTopic("articles")
-        // It is deliberately NOT called until then: with no project
-        // configured it would only fail, and must never be faked.
+        // M5 decision (docs/vnext-decisions.md §3): NO Firebase/FCM
+        // for the vNext pilot — no project, no google-services.json,
+        // no topic subscription. Polling (SyncWorker, 15 min) plus
+        // local notifications is the only notification path. The
+        // FCM service stays dormant scaffolding; it is revisited
+        // only if push latency is proven a pilot blocker, as a new
+        // decision — never assumed here.
     }
 }
