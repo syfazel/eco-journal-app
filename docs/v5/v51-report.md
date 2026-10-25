@@ -160,18 +160,30 @@ verify_v5p4.py (httpGet( → httpGetRetried(, same guard order and 404-pin
 semantics, re-proven in verify_v51_data.py §7). v5p5: scope + version
 pins only. No behavioural check newly fails because of v5.1.
 
-## Publish
+## Publish (actuals)
 
 - Version bump: app/build.gradle.kts only (6 → 7, "5.0.0" → "5.1.0").
-- Push: rebase/fast-forward, never force-push. Cloud build green
-  (run id in the parent report). APK: build-output/app-debug-v5.1.apk,
-  aapt + shared-signing verified, force-added to Pages; version.json
-  regenerated with generate+verify on the REAL 5.1.0 APK (5.1.0/7 +
-  real SHA + real hosted apk_url, download hash MATCH verified live).
-- Live edge after publish: version.json 5.1.0/7, manifest counts
-  articles 249 / shorts 32 / market 164 / channel_refs 23 /
-  bundles-radar-nightly 0 not_yet_published, health.json 200 and
-  matching the manifest.
+- Code push: bbad02a (fast-forward from 8de721a, never force-push).
+  Cloud build GREEN, first round, zero fix rounds: run 40244448567
+  ("Android debug build", head bbad02a, success).
+- APK: build-output/app-debug-v5.1.apk, 24,737,112 bytes, SHA-256
+  37460257c8b2d58939e0380eab351b87a0d67a4ba56061e00fef396d8e068a18.
+  aapt: package com.ecojournal.app, 5.1.0/7, minSdk 26, targetSdk 34.
+  apksigner verify PASSED (lab JDK); signer cert SHA-256 45220b15…
+  (shared debug cert — installs over 5.0.0 without uninstall or invite
+  re-entry). APK-contents check: 249 assets/seed/articles/ files +
+  seed/index.json + market.json + short_cards.json present.
+- Edge push: ecef1ef (force-added edge/out/app-debug-v5.1.apk +
+  edge/out/version.json only). version.json regenerated with
+  generate+verify on the REAL 5.1.0 APK: VERIFY PASS (5.1.0/7, hash OK,
+  aapt identity OK), mandatory false.
+- Live edge after publish (parent re-checked): version.json 5.1.0/7 +
+  real SHA; apk_url download hash MATCH (37460257…068a18); manifest
+  counts articles 249 / shorts 32 / market 164 / channel_refs 23 /
+  bundles-radar-nightly 0 not_yet_published / special_issues
+  gated_frozen; health.json 200 and matching the manifest; live
+  edge-contract verifier 15/15 PASS (pre-publish it was 14/15, the only
+  failure being the unpublished health.json).
 
 ## Hard limits kept
 
