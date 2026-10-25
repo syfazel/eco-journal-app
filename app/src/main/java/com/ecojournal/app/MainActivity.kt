@@ -257,6 +257,15 @@ class MainActivity : ComponentActivity() {
                         // refresh button's result was discarded.
                         var marketSyncFailed by remember { mutableStateOf(false) }
                         var marketSyncError by remember { mutableStateOf("") }
+                        // v5 P4: true until the market section
+                        // records its first successful sync (its
+                        // per-section success clock is null) — the
+                        // figures are then still the bundled seed.
+                        // Defaults true so the seed line shows
+                        // until the first sectionStates load says
+                        // otherwise; the effect below runs on
+                        // first composition too.
+                        var marketSeedOnly by remember { mutableStateOf(true) }
                         LaunchedEffect(marketRefreshTick) {
                             if (marketRefreshTick > 0) {
                                 repo.syncOnly(
@@ -269,6 +278,7 @@ class MainActivity : ComponentActivity() {
                             }
                             marketSyncFailed = st?.state == "failed"
                             marketSyncError = st?.lastErrorCode.orEmpty()
+                            marketSeedOnly = st?.lastSyncAt == null
                         }
                         var marketPreviousEntity by remember {
                             mutableStateOf<com.ecojournal.app.data.MarketSnapshotEntity?>(null)
@@ -506,6 +516,7 @@ class MainActivity : ComponentActivity() {
                                     onRefreshMarket = { marketRefreshTick++ },
                                     marketSyncFailed = marketSyncFailed,
                                     marketSyncErrorCode = marketSyncError,
+                                    marketSeedOnly = marketSeedOnly,
                                 )
                             }
                             composable("bookmarks") {

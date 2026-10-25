@@ -39,6 +39,7 @@ import com.ecojournal.app.data.Phase6Parsing
 import com.ecojournal.app.data.TopStoriesRules
 import com.ecojournal.app.ui.components.DomainBarStrip
 import com.ecojournal.app.ui.theme.EcoFontFamily
+import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.util.toPersianDigits
 
 // Phase 6 — Analysis section (spec §2, §5).
@@ -105,7 +106,7 @@ fun AnalysisScreen(
         AnalysisDetailScreen(item = selected!!, onBack = { selected = null }, fontScale = fontScale)
         return
     }
-    LazyColumn(modifier = modifier.fillMaxSize().padding(16.dp)) {
+    LazyColumn(modifier = modifier.fillMaxSize().padding(EcoDesignTokens.Spacing.PageMargin)) {
         item {
             Text(
                 text = stringResource(R.string.analysis_title),
@@ -114,7 +115,7 @@ fun AnalysisScreen(
                 fontWeight = FontWeight.Bold,
             )
             if (nightlyFailed) {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 Text(
                     text = stringResource(
                         R.string.section_error_line,
@@ -122,7 +123,7 @@ fun AnalysisScreen(
                         nightlyErrorCode.ifBlank { "network" },
                     ),
                     fontFamily = EcoFontFamily,
-                    fontSize = 13.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.Meta * fontScale,
                     color = MaterialTheme.colorScheme.error,
                 )
             }
@@ -158,35 +159,35 @@ fun AnalysisScreen(
                     Text(
                         text = item.title,
                         fontFamily = EcoFontFamily,
-                        fontSize = 16.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
                         text = AnalysisTypes.badge(item.analysisType),
                         fontFamily = EcoFontFamily,
-                        fontSize = 13.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.Meta * fontScale,
                     )
                     if (item.thesisLine != null) {
                         Text(
                             text = item.thesisLine,
                             fontFamily = EcoFontFamily,
-                            fontSize = 13.sp * fontScale,
+                            fontSize = EcoDesignTokens.Type.Meta * fontScale,
                         )
                     }
                     Text(
                         text = stringResource(R.string.analysis_word_count, item.wordCount.toString().toPersianDigits()),
                         fontFamily = EcoFontFamily,
-                        fontSize = 13.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.Meta * fontScale,
                     )
                     if (item.correctionCount > 0) {
                         Text(
                             text = stringResource(R.string.analysis_correction_badge),
                             fontFamily = EcoFontFamily,
-                            fontSize = 13.sp * fontScale,
+                            fontSize = EcoDesignTokens.Type.Meta * fontScale,
                             fontWeight = FontWeight.Bold,
                         )
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 }
             }
         }
@@ -195,7 +196,7 @@ fun AnalysisScreen(
                 Text(
                     text = stringResource(R.string.analysis_held_note),
                     fontFamily = EcoFontFamily,
-                    fontSize = 13.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.Meta * fontScale,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
             }
@@ -207,7 +208,7 @@ fun AnalysisScreen(
             Text(
                 text = stringResource(R.string.topstories_title),
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                 fontWeight = FontWeight.Bold,
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -222,7 +223,7 @@ fun AnalysisScreen(
             Text(
                 text = stringResource(R.string.topstories_readonly_note),
                 fontFamily = EcoFontFamily,
-                fontSize = 13.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.Meta * fontScale,
             )
         }
     }
@@ -238,7 +239,7 @@ private fun AnalysisDetailScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .padding(EcoDesignTokens.Spacing.PageMargin),
     ) {
         Button(onClick = onBack) {
             Text(text = stringResource(R.string.analysis_back), fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale)
@@ -248,7 +249,7 @@ private fun AnalysisDetailScreen(
         val label = Phase6Bars.labelFor(item.formatType, item.category)
         if (label != null) {
             DomainBarStrip(bar = bar, label = label)
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         }
         Text(
             text = item.title,
@@ -259,20 +260,20 @@ private fun AnalysisDetailScreen(
         Text(
             text = item.byline,
             fontFamily = EcoFontFamily,
-            fontSize = 13.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.Meta * fontScale,
         )
         if (item.correctionCount > 0) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             Text(
                 text = stringResource(R.string.analysis_correction_badge),
                 fontFamily = EcoFontFamily,
-                fontSize = 13.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.Meta * fontScale,
                 fontWeight = FontWeight.Bold,
             )
             Text(
                 text = stringResource(R.string.analysis_correction_note),
                 fontFamily = EcoFontFamily,
-                fontSize = 13.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.Meta * fontScale,
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
@@ -281,7 +282,7 @@ private fun AnalysisDetailScreen(
             Text(
                 text = section.heading,
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                 fontWeight = FontWeight.Bold,
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -308,9 +309,9 @@ private fun AnalysisDetailScreen(
             Text(
                 text = item.consensus.asOfShamsi,
                 fontFamily = EcoFontFamily,
-                fontSize = 13.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.Meta * fontScale,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             ConsensusRows(title = "موافق", rows = item.consensus.agreement, fontScale = fontScale)
             ConsensusRows(title = "مخالف", rows = item.consensus.divergence, fontScale = fontScale)
         }
@@ -333,7 +334,7 @@ private fun AnalysisDetailScreen(
                 Text(
                     text = url,
                     fontFamily = EcoFontFamily,
-                    fontSize = 12.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.Meta * fontScale,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable(
                         role = Role.Button,
@@ -360,14 +361,14 @@ private fun ConsensusRows(title: String, rows: List<ConsensusRow>, fontScale: Fl
         Text(
             text = positionText,
             fontFamily = EcoFontFamily,
-            fontSize = 13.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.Meta * fontScale,
         )
         Text(
             text = "${row.outlet} — ${row.date}",
             fontFamily = EcoFontFamily,
-            fontSize = 12.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.Meta * fontScale,
         )
         Spacer(modifier = Modifier.height(4.dp))
     }
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
 }

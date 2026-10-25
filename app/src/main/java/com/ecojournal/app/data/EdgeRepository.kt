@@ -410,7 +410,17 @@ class EdgeRepository(context: Context) {
         val outcomes = mutableListOf<SectionOutcome>()
         val newKeys = mutableListOf<String>()
         var missingTotal = 0
-        var anyIncomplete = false
+        // v5 P4: the global clock and the whole-sync result are
+        // defined over REQUIRED sections only (SyncSections.
+        // REQUIRED). An optional section — bundles, radar,
+        // nightly, voices, special issues, invites, revocations —
+        // degrades independently with its own per-section state
+        // and reason, and can never again block last_sync_at.
+        // UNKNOWN (section absent from the manifest) never blocks
+        // either, matching the pre-P4 no_section behaviour; the
+        // live manifest carries no channel_typed section, so
+        // counting UNKNOWN would break the clock on the live edge.
+        var anyRequiredIncomplete = false
 
         fun wants(section: String): Boolean = onlySection == null || onlySection == section
 
@@ -432,7 +442,7 @@ class EdgeRepository(context: Context) {
                 if (hashUpToDate) {
                     recordSectionMeta(
                         SyncSections.ARTICLES, SectionStates.UP_TO_DATE, "",
-                        articleCount, 0, now, null, null,
+                        articleCount, 0, now, now, null,
                     )
                     outcomes.add(SectionOutcome(SyncSections.ARTICLES, SectionStates.UP_TO_DATE, 0))
                     trace(SyncSections.ARTICLES, "", 0, 0, SectionStates.UP_TO_DATE)
@@ -522,7 +532,7 @@ class EdgeRepository(context: Context) {
                     )
                     newKeys.addAll(fresh.map { it.appKey })
                     missingTotal += missing
-                    if (!complete) anyIncomplete = true
+                    if (!complete) anyRequiredIncomplete = true
                     outcomes.add(
                         SectionOutcome(
                             SyncSections.ARTICLES,
@@ -551,7 +561,7 @@ class EdgeRepository(context: Context) {
                     val count = shortCount
                     recordSectionMeta(
                         SyncSections.SHORTS, SectionStates.UP_TO_DATE, "",
-                        count, 0, now, null, null,
+                        count, 0, now, now, null,
                     )
                     outcomes.add(SectionOutcome(SyncSections.SHORTS, SectionStates.UP_TO_DATE, 0))
                     trace(SyncSections.SHORTS, "", 0, 0, SectionStates.UP_TO_DATE)
@@ -642,7 +652,7 @@ class EdgeRepository(context: Context) {
                     )
                     newKeys.addAll(fresh.map { it.appKey })
                     missingTotal += missing
-                    if (!complete) anyIncomplete = true
+                    if (!complete) anyRequiredIncomplete = true
                     outcomes.add(
                         SectionOutcome(
                             SyncSections.SHORTS,
@@ -671,7 +681,7 @@ class EdgeRepository(context: Context) {
                 ) {
                     recordSectionMeta(
                         SyncSections.MARKET, SectionStates.UP_TO_DATE, "",
-                        marketCount, 0, now, null, null,
+                        marketCount, 0, now, now, null,
                     )
                     outcomes.add(SectionOutcome(SyncSections.MARKET, SectionStates.UP_TO_DATE, 0))
                     trace(SyncSections.MARKET, "", 0, 0, SectionStates.UP_TO_DATE)
@@ -689,7 +699,7 @@ class EdgeRepository(context: Context) {
                             null, 0, now, null, null,
                         )
                         trace(SyncSections.MARKET, code, -1, -1, SectionStates.FAILED)
-                        anyIncomplete = true
+                        anyRequiredIncomplete = true
                         outcomes.add(SectionOutcome(SyncSections.MARKET, SectionStates.FAILED, 0))
                     } else {
                         var marketFresh = emptyList<MarketSnapshotEntity>()
@@ -758,7 +768,7 @@ class EdgeRepository(context: Context) {
                                 null, 0, now, null, null,
                             )
                             trace(SyncSections.MARKET, "bad_market", -1, -1, SectionStates.FAILED)
-                            anyIncomplete = true
+                            anyRequiredIncomplete = true
                             outcomes.add(
                                 SectionOutcome(SyncSections.MARKET, SectionStates.FAILED, 0)
                             )
@@ -812,7 +822,7 @@ class EdgeRepository(context: Context) {
                             // runs this same block via syncOnly).
                             // No separate alert poll, no push.
                             evaluateMarketAlerts(now)
-                            if (!complete) anyIncomplete = true
+                            if (!complete) anyRequiredIncomplete = true
                             outcomes.add(
                                 SectionOutcome(
                                     SyncSections.MARKET,
@@ -841,7 +851,7 @@ class EdgeRepository(context: Context) {
                 if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
                     recordSectionMeta(
                         SyncSections.CHANNEL_REFS, SectionStates.UP_TO_DATE, "",
-                        section.count, 0, now, null, null,
+                        section.count, 0, now, now, null,
                     )
                     outcomes.add(
                         SectionOutcome(SyncSections.CHANNEL_REFS, SectionStates.UP_TO_DATE, 0)
@@ -868,7 +878,7 @@ class EdgeRepository(context: Context) {
                             null, 0, now, null, null,
                         )
                         trace(SyncSections.CHANNEL_REFS, code, -1, -1, SectionStates.FAILED)
-                        anyIncomplete = true
+                        anyRequiredIncomplete = true
                         outcomes.add(
                             SectionOutcome(SyncSections.CHANNEL_REFS, SectionStates.FAILED, 0)
                         )
@@ -936,7 +946,10 @@ class EdgeRepository(context: Context) {
                         SyncSections.INVITES, SectionStates.FAILED, "invite_fetch",
                         null, 0, now, null, null,
                     )
-                    anyIncomplete = true
+                    // v5 P4: invites are optional for the global
+                    // clock — an invite-fetch failure skips the
+                    // re-check (as before) but never blocks
+                    // last_sync_at.
                     outcomes.add(SectionOutcome(SyncSections.INVITES, SectionStates.FAILED, 0))
                     trace(SyncSections.INVITES, "invite_fetch", -1, -1, SectionStates.FAILED)
                 }
@@ -945,7 +958,8 @@ class EdgeRepository(context: Context) {
                         SyncSections.REVOCATIONS, SectionStates.FAILED, "invite_fetch",
                         null, 0, now, null, null,
                     )
-                    anyIncomplete = true
+                    // v5 P4: revocations are optional for the global
+                    // clock, same as invites above.
                     outcomes.add(
                         SectionOutcome(SyncSections.REVOCATIONS, SectionStates.FAILED, 0)
                     )
@@ -962,24 +976,30 @@ class EdgeRepository(context: Context) {
         val phase2Anomalies = AnomalyBag()
         if (wants(SyncSections.CHANNEL_TYPED)) {
             outcomes.add(syncChannelTypedSection(base, manifest, forceRefresh, now, phase2Anomalies, pollPath).also {
-                if (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL) {
-                    anyIncomplete = true
+                if (it.key in SyncSections.REQUIRED &&
+                    (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL)
+                ) {
+                    anyRequiredIncomplete = true
                 }
                 missingTotal += it.missingCount
             })
         }
         if (wants(SyncSections.BUNDLES)) {
             outcomes.add(syncBundlesSection(base, manifest, forceRefresh, now, phase2Anomalies).also {
-                if (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL) {
-                    anyIncomplete = true
+                if (it.key in SyncSections.REQUIRED &&
+                    (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL)
+                ) {
+                    anyRequiredIncomplete = true
                 }
                 missingTotal += it.missingCount
             })
         }
         if (wants(SyncSections.RADAR)) {
             outcomes.add(syncRadarSection(base, manifest, forceRefresh, now, phase2Anomalies).also {
-                if (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL) {
-                    anyIncomplete = true
+                if (it.key in SyncSections.REQUIRED &&
+                    (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL)
+                ) {
+                    anyRequiredIncomplete = true
                 }
                 missingTotal += it.missingCount
             })
@@ -991,8 +1011,10 @@ class EdgeRepository(context: Context) {
         // failure line, never a blank Nightly section, P5-4).
         if (wants(SyncSections.NIGHTLY)) {
             outcomes.add(syncNightlySection(base, manifest, forceRefresh, now).also {
-                if (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL) {
-                    anyIncomplete = true
+                if (it.key in SyncSections.REQUIRED &&
+                    (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL)
+                ) {
+                    anyRequiredIncomplete = true
                 }
                 missingTotal += it.missingCount
             })
@@ -1039,10 +1061,15 @@ class EdgeRepository(context: Context) {
         }
 
         // Legacy global metas, kept for the feed's last-sync line:
-        // last_sync_at advances only on a fully complete pass.
+        // v5 P4: last_sync_at advances when every REQUIRED
+        // section completed (up to date or fresh success) in this
+        // pass, regardless of optional sections. An optional
+        // failure leaves last_sync_at advancing and records no
+        // global "partial" — the failure lives on that section's
+        // own state, the P3 digest, and its section screen.
         db.withTransaction {
             dao.upsertMeta(MetaEntity("last_sync_attempt_at", now.toString()))
-            if (!anyIncomplete && onlySection == null) {
+            if (!anyRequiredIncomplete && onlySection == null) {
                 dao.upsertMeta(MetaEntity("last_sync_at", now.toString()))
                 dao.upsertMeta(MetaEntity("last_sync_error_code", ""))
             } else if (onlySection == null) {
@@ -1074,7 +1101,12 @@ class EdgeRepository(context: Context) {
                 else -> SyncResult.Ok(newKeys, total, outcomes)
             }
         }
-        return if (anyIncomplete) {
+        // v5 P4: the whole-sync result follows the same
+        // required-only rule as the clock. Optional failures are
+        // still visible per section (outcomes list, Diagnostics,
+        // P3 digest, section screens) — they just never turn a
+        // required-complete pass into a whole-sync Partial.
+        return if (anyRequiredIncomplete) {
             SyncResult.Partial(newKeys, missingTotal, total, outcomes)
         } else {
             SyncResult.Ok(newKeys, total, outcomes)
@@ -1098,7 +1130,7 @@ class EdgeRepository(context: Context) {
         if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
             recordSectionMeta(
                 key, SectionStates.UP_TO_DATE, "",
-                channelDao.channelCount(), 0, now, null, null,
+                channelDao.channelCount(), 0, now, now, null,
             )
             // Held release is a time rule, not a new-content rule:
             // an up-to-date section still releases items whose
@@ -1232,11 +1264,51 @@ class EdgeRepository(context: Context) {
         val key = SyncSections.BUNDLES
         val section = manifest.sections[key]
             ?: return SectionOutcome(key, SectionStates.UNKNOWN, 0)
+        // v5 P4 (A2 fix, nightly guard mirrored): an unpublished
+        // or gated section is an honest zero state, not a
+        // fetchable section — NO fetch is attempted, so the live
+        // bundles state (not_yet_published, count 0, no file,
+        // blank hash) can never produce a bundles.json 404 again.
+        // A published section with no file field violates the
+        // edge contract (fetchable ⇒ file exists); it also never
+        // fetches a guessed default — it fails as missing_file.
+        if (section.status == "not_yet_published" || section.status == "gated_frozen") {
+            recordSectionMeta(
+                key, SectionStates.NOT_YET_PUBLISHED, "", section.count, 0, now, null, null,
+            )
+            trace(key, "", 0, 0, SectionStates.NOT_YET_PUBLISHED)
+            return SectionOutcome(key, SectionStates.NOT_YET_PUBLISHED, 0)
+        }
+        if (section.file.isNullOrBlank()) {
+            recordSectionMeta(
+                key, SectionStates.FAILED, "missing_file",
+                null, 0, now, null, null,
+            )
+            trace(key, "missing_file", -1, -1, SectionStates.FAILED)
+            return SectionOutcome(key, SectionStates.FAILED, 0)
+        }
+        // v5 P4: a known 404 is never re-run without a changed
+        // manifest. The guard sits BEFORE the up-to-date check
+        // and ignores forceRefresh on purpose: a manual retry
+        // re-reads the manifest, and only a changed hash unlocks
+        // a new fetch. The section error stays "http_404" (so
+        // section screens keep their 404 reason line); the trace
+        // code says "http_404_unchanged" so Diagnostics proves
+        // the fetch was skipped rather than repeated.
+        val failedHash = dao.metaValue(SyncSections.failedHashKey(key))
+        if (!failedHash.isNullOrBlank() && failedHash == section.hash) {
+            recordSectionMeta(
+                key, SectionStates.FAILED, "http_404",
+                null, 0, now, null, null,
+            )
+            trace(key, "http_404_unchanged", -1, -1, SectionStates.FAILED)
+            return SectionOutcome(key, SectionStates.FAILED, 0)
+        }
         val storedHash = dao.metaValue(SyncSections.hashKey(key))
         if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
             recordSectionMeta(
                 key, SectionStates.UP_TO_DATE, "",
-                channelDao.allBundles().size, 0, now, null, null,
+                channelDao.allBundles().size, 0, now, now, null,
             )
             trace(key, "", 0, 0, SectionStates.UP_TO_DATE)
             return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
@@ -1251,6 +1323,16 @@ class EdgeRepository(context: Context) {
                 key, SectionStates.FAILED, bundleOutcome.toFailedCode(),
                 null, 0, now, null, null,
             )
+            // A 404 pins the manifest hash; any other failure
+            // leaves the previous pin untouched (it is inert once
+            // the hash differs, and a success clears it below).
+            if (bundleOutcome is HttpOutcome.HttpError && bundleOutcome.status == 404 &&
+                section.hash.isNotBlank()
+            ) {
+                dao.upsertMeta(
+                    MetaEntity(SyncSections.failedHashKey(key), section.hash)
+                )
+            }
             trace(key, bundleOutcome.toFailedCode(), -1, -1, SectionStates.FAILED)
             return SectionOutcome(key, SectionStates.FAILED, 0)
         }
@@ -1274,6 +1356,12 @@ class EdgeRepository(context: Context) {
         val complete = corrupt == 0
         db.withTransaction {
             if (parsed.isNotEmpty()) channelDao.upsertBundles(parsed)
+            // v5 P4: a successful fetch clears any known-404 pin
+            // for this section, so the next manifest state is
+            // judged on its own hash.
+            if (complete) {
+                dao.upsertMeta(MetaEntity(SyncSections.failedHashKey(key), ""))
+            }
             recordSectionMeta(
                 key,
                 if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
@@ -1307,11 +1395,41 @@ class EdgeRepository(context: Context) {
         val key = SyncSections.RADAR
         val section = manifest.sections[key]
             ?: return SectionOutcome(key, SectionStates.UNKNOWN, 0)
+        // v5 P4 (A2 fix, nightly guard mirrored — same shape as
+        // bundles): unpublished/gated ⇒ no fetch, ever; a
+        // published section with no file ⇒ missing_file, never a
+        // guessed radar.json fetch; a known 404 with an unchanged
+        // manifest hash ⇒ skipped fetch (trace code
+        // "http_404_unchanged", section error stays "http_404").
+        if (section.status == "not_yet_published" || section.status == "gated_frozen") {
+            recordSectionMeta(
+                key, SectionStates.NOT_YET_PUBLISHED, "", section.count, 0, now, null, null,
+            )
+            trace(key, "", 0, 0, SectionStates.NOT_YET_PUBLISHED)
+            return SectionOutcome(key, SectionStates.NOT_YET_PUBLISHED, 0)
+        }
+        if (section.file.isNullOrBlank()) {
+            recordSectionMeta(
+                key, SectionStates.FAILED, "missing_file",
+                null, 0, now, null, null,
+            )
+            trace(key, "missing_file", -1, -1, SectionStates.FAILED)
+            return SectionOutcome(key, SectionStates.FAILED, 0)
+        }
+        val failedHash = dao.metaValue(SyncSections.failedHashKey(key))
+        if (!failedHash.isNullOrBlank() && failedHash == section.hash) {
+            recordSectionMeta(
+                key, SectionStates.FAILED, "http_404",
+                null, 0, now, null, null,
+            )
+            trace(key, "http_404_unchanged", -1, -1, SectionStates.FAILED)
+            return SectionOutcome(key, SectionStates.FAILED, 0)
+        }
         val storedHash = dao.metaValue(SyncSections.hashKey(key))
         if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
             recordSectionMeta(
                 key, SectionStates.UP_TO_DATE, "",
-                channelDao.radarCount(), 0, now, null, null,
+                channelDao.radarCount(), 0, now, now, null,
             )
             trace(key, "", 0, 0, SectionStates.UP_TO_DATE)
             return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
@@ -1326,6 +1444,13 @@ class EdgeRepository(context: Context) {
                 key, SectionStates.FAILED, radarOutcome.toFailedCode(),
                 null, 0, now, null, null,
             )
+            if (radarOutcome is HttpOutcome.HttpError && radarOutcome.status == 404 &&
+                section.hash.isNotBlank()
+            ) {
+                dao.upsertMeta(
+                    MetaEntity(SyncSections.failedHashKey(key), section.hash)
+                )
+            }
             trace(key, radarOutcome.toFailedCode(), -1, -1, SectionStates.FAILED)
             return SectionOutcome(key, SectionStates.FAILED, 0)
         }
@@ -1371,6 +1496,11 @@ class EdgeRepository(context: Context) {
         val complete = corrupt == 0
         db.withTransaction {
             if (parsed.isNotEmpty()) channelDao.upsertRadarSignals(parsed)
+            // v5 P4: a successful fetch clears any known-404 pin,
+            // same as bundles above.
+            if (complete) {
+                dao.upsertMeta(MetaEntity(SyncSections.failedHashKey(key), ""))
+            }
             recordSectionMeta(
                 key,
                 if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
@@ -1417,7 +1547,7 @@ class EdgeRepository(context: Context) {
         if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
             recordSectionMeta(
                 key, SectionStates.UP_TO_DATE, "",
-                nightlyDao.latestEditionCount(), 0, now, null, null,
+                nightlyDao.latestEditionCount(), 0, now, now, null,
             )
             pruneNightlyEditions()
             trace(key, "", 0, 0, SectionStates.UP_TO_DATE)

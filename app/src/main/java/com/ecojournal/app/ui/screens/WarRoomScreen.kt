@@ -44,6 +44,7 @@ import com.ecojournal.app.data.SyncSections
 import com.ecojournal.app.ui.components.CrisisChip
 import com.ecojournal.app.ui.components.TypedCard
 import com.ecojournal.app.ui.theme.EcoFontFamily
+import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.util.toPersianDigits
 import kotlinx.coroutines.launch
 
@@ -119,15 +120,15 @@ fun WarRoomScreen(
 
     LazyColumn(modifier = modifier.fillMaxSize()) {
         item {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin)) {
                 Text(
                     text = stringResource(R.string.war_room_title),
-                    fontSize = 26.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.HeroHeadline * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.semantics { heading() },
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 // Header block (spec 4.1), always first, always visible.
                 if (headerLevel != null) {
                     Row {
@@ -135,7 +136,7 @@ fun WarRoomScreen(
                             text = stringResource(
                                 R.string.war_room_level, headerLevel,
                             ),
-                            fontSize = 18.sp * fontScale,
+                            fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
                             fontFamily = EcoFontFamily,
                             fontWeight = FontWeight.Bold,
                         )
@@ -145,7 +146,7 @@ fun WarRoomScreen(
                 } else {
                     Text(
                         text = stringResource(R.string.war_room_level_missing),
-                        fontSize = 18.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
                         fontFamily = EcoFontFamily,
                         fontWeight = FontWeight.Bold,
                     )
@@ -154,7 +155,7 @@ fun WarRoomScreen(
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = warWhy!!,
-                        fontSize = 15.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                         fontFamily = EcoFontFamily,
                     )
                 }
@@ -205,13 +206,13 @@ fun WarRoomScreen(
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = context.getString(R.string.feed_offline_line, lastSyncText),
-                        fontSize = 12.sp,
+                        fontSize = EcoDesignTokens.Type.Meta,
                         fontFamily = EcoFontFamily,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 if (typedState?.state == "failed" || radarState?.state == "failed") {
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                     for (s in listOfNotNull(typedState, radarState)) {
                         if (s.state != "failed") continue
                         Text(
@@ -227,7 +228,7 @@ fun WarRoomScreen(
                                 },
                                 s.lastErrorCode.ifBlank { "network" },
                             ),
-                            fontSize = 13.sp,
+                            fontSize = EcoDesignTokens.Type.Meta,
                             fontFamily = EcoFontFamily,
                             color = MaterialTheme.colorScheme.error,
                         )
@@ -250,6 +251,40 @@ fun WarRoomScreen(
                         }
                     }
                 }
+                // v5 P4: an unpublished radar section is a reason,
+                // not an error. The re-check button only re-reads
+                // the manifest (syncOnly re-records the state);
+                // with the P4 status guard it never fetches a
+                // missing radar.json.
+                if (radarState?.state == "not_yet_published") {
+                    Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
+                    Text(
+                        text = context.getString(
+                            R.string.v5_state_section_not_published,
+                            context.getString(R.string.diagnostics_section_name_radar),
+                        ),
+                        fontSize = EcoDesignTokens.Type.Meta,
+                        fontFamily = EcoFontFamily,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Button(
+                        enabled = busySection == null,
+                        onClick = {
+                            scope.launch {
+                                busySection = SyncSections.RADAR
+                                repo.syncOnly(SyncSections.RADAR, forceRefresh = true)
+                                sectionStates = repo.sectionStates()
+                                busySection = null
+                            }
+                        },
+                        modifier = Modifier.heightIn(min = 48.dp),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.v5_section_recheck),
+                            fontFamily = EcoFontFamily,
+                        )
+                    }
+                }
             }
         }
         // SITREP list (spec 4.3): newest first, FULL bodies.
@@ -259,16 +294,16 @@ fun WarRoomScreen(
                 fontSize = 20.sp * fontScale,
                 fontFamily = EcoFontFamily,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin),
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         }
         if (sitreps.isEmpty()) {
             item {
                 Text(
                     text = stringResource(R.string.war_room_no_sitrep),
                     fontFamily = EcoFontFamily,
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin),
                 )
             }
         } else {
@@ -301,14 +336,14 @@ fun WarRoomScreen(
                 fontSize = 20.sp * fontScale,
                 fontFamily = EcoFontFamily,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin),
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             if (todaySitreps.isEmpty()) {
                 Text(
                     text = stringResource(R.string.war_room_arc_empty),
                     fontFamily = EcoFontFamily,
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin),
                 )
             } else {
                 val chronological = ChannelLists.storyTimeline(
@@ -326,14 +361,14 @@ fun WarRoomScreen(
                 if (pathText != null) {
                     Text(
                         text = pathText,
-                        fontSize = 15.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                         fontFamily = EcoFontFamily,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 16.dp),
+                        modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin),
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 }
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                Column(modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin)) {
                     for (sitrep in chronological) {
                         Row(
                             modifier = Modifier
@@ -388,7 +423,7 @@ private fun RadarBlock(
     val todayCount = signals.count {
         Jalali.shamsiDayKey(it.detectedAtEpoch) == todayKey
     }
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+    Column(modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin)) {
         Text(
             text = stringResource(R.string.war_room_radar_title),
             fontSize = 20.sp * fontScale,
@@ -408,11 +443,11 @@ private fun RadarBlock(
                 R.string.war_room_radar_count,
                 todayCount.toString().toPersianDigits(),
             ),
-            fontSize = 13.sp,
+            fontSize = EcoDesignTokens.Type.Meta,
             fontFamily = EcoFontFamily,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         if (signals.isEmpty()) {
             Text(
                 text = stringResource(R.string.war_room_radar_empty),
@@ -446,7 +481,7 @@ private fun RadarBlock(
                 Spacer(modifier = Modifier.padding(horizontal = 2.dp))
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         val visibleSignals = if (severityFilter == null) {
             signals
         } else {
@@ -481,7 +516,7 @@ private fun RadarBlock(
                         layer.toString().toPersianDigits(),
                     )
                 } + " (${inLayer.size.toString().toPersianDigits()})",
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                 fontFamily = EcoFontFamily,
                 fontWeight = FontWeight.Bold,
                 // Phase 7: the layer header used to be a bare
@@ -500,7 +535,7 @@ private fun RadarBlock(
                 RadarRow(signal = signal, stale = false, onOpenStory = onOpenStory, fontScale = fontScale)
             }
             if (stale.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 Text(
                     text = stringResource(R.string.radar_stale_title),
                     fontSize = 14.sp * fontScale,
@@ -539,7 +574,7 @@ private fun RadarRow(
             if (severityText != null) {
                 Text(
                     text = severityText,
-                    fontSize = 13.sp,
+                    fontSize = EcoDesignTokens.Type.Meta,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                 )
@@ -548,7 +583,7 @@ private fun RadarRow(
             if (stale) {
                 Text(
                     text = stringResource(R.string.radar_stale_tag),
-                    fontSize = 12.sp,
+                    fontSize = EcoDesignTokens.Type.Meta,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -556,7 +591,7 @@ private fun RadarRow(
             }
             Text(
                 text = signal.title,
-                fontSize = 15.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                 fontFamily = EcoFontFamily,
             )
         }
@@ -565,7 +600,7 @@ private fun RadarRow(
             Jalali.formatShamsiDateTime(signal.detectedAtEpoch)
         Text(
             text = byline,
-            fontSize = 12.sp,
+            fontSize = EcoDesignTokens.Type.Meta,
             fontFamily = EcoFontFamily,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -580,7 +615,7 @@ private fun RadarRow(
                     signal.firstSeenTehran ?: "—",
                     signal.lastSeenTehran ?: "—",
                 ),
-                fontSize = 12.sp,
+                fontSize = EcoDesignTokens.Type.Meta,
                 fontFamily = EcoFontFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -591,7 +626,7 @@ private fun RadarRow(
                     R.string.radar_topics,
                     signal.matchedTopics.joinToString("، "),
                 ),
-                fontSize = 12.sp,
+                fontSize = EcoDesignTokens.Type.Meta,
                 fontFamily = EcoFontFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -607,7 +642,7 @@ private fun RadarRow(
         if (signal.storyId != null && signal.linkedAppKey == null) {
             Text(
                 text = stringResource(R.string.radar_not_yet_in_app),
-                fontSize = 12.sp,
+                fontSize = EcoDesignTokens.Type.Meta,
                 fontFamily = EcoFontFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

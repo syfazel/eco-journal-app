@@ -39,6 +39,7 @@ import com.ecojournal.app.data.SyncResult
 import com.ecojournal.app.data.SyncSections
 import com.ecojournal.app.data.SyncTrace
 import com.ecojournal.app.ui.theme.EcoFontFamily
+import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.util.toPersianDigits
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -155,6 +156,15 @@ fun DiagnosticsScreen(
         SyncSections.INVITES to stringResource(R.string.diagnostics_section_name_invites),
         SyncSections.REVOCATIONS to stringResource(R.string.diagnostics_section_name_revocations),
     )
+    // v5 P4: required/optional marker. The display loop and the
+    // copy lines (sectionLines) both use this helper, so copy
+    // stays exactly what is shown: an optional section never
+    // masquerades as a required one when its clock is empty.
+    val optionalTag = stringResource(R.string.v5_diagnostics_optional_tag)
+    val sectionDisplayName: (String) -> String = { key ->
+        val base = sectionNames[key] ?: key
+        if (key in SyncSections.REQUIRED) base else "$base ($optionalTag)"
+    }
     val stateNames = mapOf(
         "up_to_date" to stringResource(R.string.diagnostics_state_up_to_date),
         "partial" to stringResource(R.string.diagnostics_state_partial),
@@ -165,7 +175,7 @@ fun DiagnosticsScreen(
     )
     val noValueEarly = stringResource(R.string.diagnostics_no_value)
     val sectionLines = sectionStates.flatMap { s ->
-        val name = sectionNames[s.section] ?: s.section
+        val name = sectionDisplayName(s.section)
         val stateLabel = stateNames[s.state] ?: s.state
         listOf(
             context.getString(
@@ -501,6 +511,12 @@ fun DiagnosticsScreen(
             R.string.diagnostics_last_sync,
             formatEpoch(lastSync) ?: noValue,
         ),
+        // v5 P4: the global clock's scope, stated next to the
+        // clock itself — required sections only, so an
+        // unpublished optional section never reads as a stuck
+        // sync. This line is part of `lines`, so the copy action
+        // carries it exactly as shown.
+        stringResource(R.string.v5_diagnostics_global_clock),
         stringResource(
             R.string.diagnostics_last_attempt,
             formatEpoch(lastAttempt) ?: noValue,
@@ -522,7 +538,7 @@ fun DiagnosticsScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .padding(EcoDesignTokens.Spacing.PageMargin),
     ) {
         Text(
             text = stringResource(R.string.diagnostics_title),
@@ -535,12 +551,12 @@ fun DiagnosticsScreen(
             Text(
                 text = line,
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
             )
             Spacer(modifier = Modifier.height(6.dp))
         }
         if (syncResult.isNotBlank()) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             Text(
                 text = syncResult,
                 fontFamily = EcoFontFamily,
@@ -563,7 +579,7 @@ fun DiagnosticsScreen(
         )
         Spacer(modifier = Modifier.height(12.dp))
         for (s in sectionStates) {
-            val name = sectionNames[s.section] ?: s.section
+            val name = sectionDisplayName(s.section)
             val stateLabel = stateNames[s.state] ?: s.state
             Text(
                 text = context.getString(
@@ -573,7 +589,7 @@ fun DiagnosticsScreen(
                     s.itemCount.toString().toPersianDigits(),
                 ),
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
             )
             Text(
                 text = context.getString(
@@ -618,7 +634,7 @@ fun DiagnosticsScreen(
             Text(
                 text = line,
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
             )
             Spacer(modifier = Modifier.height(6.dp))
         }
@@ -630,7 +646,7 @@ fun DiagnosticsScreen(
             Text(
                 text = line,
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
             )
             Spacer(modifier = Modifier.height(6.dp))
         }
@@ -640,7 +656,7 @@ fun DiagnosticsScreen(
             Text(
                 text = line,
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
             )
             Spacer(modifier = Modifier.height(6.dp))
         }
@@ -650,7 +666,7 @@ fun DiagnosticsScreen(
             Text(
                 text = line,
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
             )
             Spacer(modifier = Modifier.height(6.dp))
         }
@@ -689,7 +705,7 @@ fun DiagnosticsScreen(
                 fontFamily = EcoFontFamily,
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         Button(
             onClick = {
                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE)
@@ -710,7 +726,7 @@ fun DiagnosticsScreen(
             )
         }
         if (copied) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             Text(
                 text = stringResource(R.string.diagnostics_copied),
                 fontFamily = EcoFontFamily,

@@ -46,6 +46,7 @@ import com.ecojournal.app.data.MarketSeries
 import com.ecojournal.app.data.MarketSnapshot
 import com.ecojournal.app.data.MarketThresholds
 import com.ecojournal.app.ui.theme.EcoFontFamily
+import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.util.formatPersianDouble
 import com.ecojournal.app.util.formatPersianInt
 import com.ecojournal.app.util.toPersianDigits
@@ -165,6 +166,11 @@ fun MarketScreen(
     // section state so the tab shows its own failed line.
     marketSyncFailed: Boolean = false,
     marketSyncErrorCode: String = "",
+    // v5 P4: true while the market section has never recorded a
+    // successful sync (per-section success clock still null), so
+    // the figures on screen are still the bundled seed, not live
+    // edge data. MainActivity derives this from sectionStates.
+    marketSeedOnly: Boolean = false,
 ) {
     // Phase 4 history state, hoisted ABOVE the early returns below:
     // remember calls must not sit behind a conditional return.
@@ -176,7 +182,7 @@ fun MarketScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .padding(EcoDesignTokens.Spacing.PageMargin),
     ) {
         Text(
             text = stringResource(R.string.market_title),
@@ -186,7 +192,7 @@ fun MarketScreen(
             modifier = Modifier.semantics { heading() },
         )
         if (marketSyncFailed) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             Text(
                 text = stringResource(
                     R.string.section_error_line,
@@ -194,7 +200,7 @@ fun MarketScreen(
                     marketSyncErrorCode.ifBlank { "network" },
                 ),
                 fontFamily = EcoFontFamily,
-                fontSize = 13.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.Meta * fontScale,
                 color = MaterialTheme.colorScheme.error,
             )
         }
@@ -203,7 +209,7 @@ fun MarketScreen(
             Text(
                 text = stringResource(R.string.market_loading),
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
             )
             return@Column
         }
@@ -211,14 +217,14 @@ fun MarketScreen(
             Text(
                 text = stringResource(R.string.market_unavailable),
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                 fontWeight = FontWeight.Bold,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             Text(
                 text = stringResource(R.string.market_unavailable_detail),
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
             )
             Spacer(modifier = Modifier.height(12.dp))
             Button(
@@ -228,7 +234,7 @@ fun MarketScreen(
                 Text(
                     text = stringResource(R.string.market_retry),
                     fontFamily = EcoFontFamily,
-                    fontSize = 16.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                 )
             }
             return@Column
@@ -239,13 +245,13 @@ fun MarketScreen(
         Text(
             text = stringResource(R.string.market_latest_snapshot, latest.tsTehran),
             fontFamily = EcoFontFamily,
-            fontSize = 16.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
         )
         ageText(latest.tsEpoch)?.let {
             Text(
                 text = stringResource(R.string.market_last_update, it),
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -253,7 +259,7 @@ fun MarketScreen(
             Text(
                 text = stringResource(R.string.market_snapshot_id, latest.snapshotId),
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -261,18 +267,38 @@ fun MarketScreen(
             Text(
                 text = stringResource(R.string.market_stale),
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
             )
         }
         previous?.let {
             Text(
                 text = stringResource(R.string.market_compare_previous, it.tsTehran),
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        // v5 P4: the seed date, on screen at last. While no live
+        // market sync has ever succeeded, the newest snapshot is
+        // the bundled seed's (2026-10-24 in the shipped seed), and
+        // the screen now says so instead of leaving the staleness
+        // to a code comment. The date comes from the snapshot
+        // itself (its tsTehran date part), never a hard-coded
+        // string, so a future seed re-dates the line by itself.
+        // Once any market sync succeeds, the per-section clock is
+        // set and this line disappears.
+        if (marketSeedOnly) {
+            Text(
+                text = stringResource(
+                    R.string.v5_market_seed_line,
+                    latest.tsTehran.substringBefore("T"),
+                ),
+                fontFamily = EcoFontFamily,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         val fields = listOf(
             PriceField("برنت (دلار)", latest.brent, previous?.brent, 2),
             PriceField("انس طلا (دلار)", latest.xauUsd, previous?.xauUsd, 2),
@@ -289,12 +315,12 @@ fun MarketScreen(
             PriceField("شاخص S&P 500", latest.sp500, previous?.sp500, 2),
         )
         for (field in fields) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             Text(
                 text = "${field.label}: " +
                     if (field.value == null) "—" else formatPrice(field.value, field.decimals),
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
             )
             if (field.value != null) {
                 if (field.previous != null && field.value == field.previous) {
@@ -316,39 +342,39 @@ fun MarketScreen(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         Text(
             text = stringResource(R.string.market_snapshot_count, formatPersianInt(snapshotCount)),
             fontFamily = EcoFontFamily,
-            fontSize = 16.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = stringResource(R.string.market_formulas_title),
             fontFamily = EcoFontFamily,
-            fontSize = 18.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
             fontWeight = FontWeight.Bold,
         )
         if (formulas.isEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             Text(
                 text = stringResource(R.string.market_formulas_empty),
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
             )
         }
         for (f in formulas) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             Text(
                 text = "${f.name} (v${f.version})",
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                 fontWeight = FontWeight.Bold,
             )
             Text(
                 text = stringResource(R.string.market_formula_value, formulaValueText(f)),
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
             )
             if (f.value == null) {
                 Text(
@@ -362,7 +388,7 @@ fun MarketScreen(
                 Text(
                     text = it,
                     fontFamily = EcoFontFamily,
-                    fontSize = 16.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                 )
             }
             if (f.inputs.isNotEmpty()) {
@@ -388,7 +414,7 @@ fun MarketScreen(
         Text(
             text = stringResource(R.string.market_alert_banner_title),
             fontFamily = EcoFontFamily,
-            fontSize = 18.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
             fontWeight = FontWeight.Bold,
         )
         val bubbleValue = formulas.firstOrNull { it.name == "bubble_pct" }?.value
@@ -402,11 +428,11 @@ fun MarketScreen(
             spreadValue >= thresholds.spreadPct &&
             dismissedSpreadSnapshotId != latest.snapshotId
         if (thresholds == null || !thresholds.anySet) {
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             Text(
                 text = stringResource(R.string.market_alert_off),
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
             )
             Text(
                 text = stringResource(R.string.market_alert_off_detail),
@@ -416,7 +442,7 @@ fun MarketScreen(
             )
         } else {
             if (bubbleOn) {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 Text(
                     text = stringResource(
                         R.string.market_alert_banner_bubble,
@@ -424,7 +450,7 @@ fun MarketScreen(
                         formatPersianDouble(thresholds.bubblePct!!, 1),
                     ),
                     fontFamily = EcoFontFamily,
-                    fontSize = 16.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.error,
                 )
@@ -442,7 +468,7 @@ fun MarketScreen(
                 }
             }
             if (spreadOn) {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 Text(
                     text = stringResource(
                         R.string.market_alert_banner_spread,
@@ -450,7 +476,7 @@ fun MarketScreen(
                         formatPersianDouble(thresholds.spreadPct!!, 1),
                     ),
                     fontFamily = EcoFontFamily,
-                    fontSize = 16.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.error,
                 )
@@ -468,7 +494,7 @@ fun MarketScreen(
                 }
             }
             if (!bubbleOn && !spreadOn) {
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 Text(
                     text = stringResource(R.string.market_alert_off_detail),
                     fontFamily = EcoFontFamily,
@@ -477,7 +503,7 @@ fun MarketScreen(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         Text(
             text = stringResource(R.string.market_alert_latency_note),
             fontFamily = EcoFontFamily,
@@ -489,7 +515,7 @@ fun MarketScreen(
         Text(
             text = stringResource(R.string.market_history_title),
             fontFamily = EcoFontFamily,
-            fontSize = 18.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
             fontWeight = FontWeight.Bold,
         )
         val nowMs = System.currentTimeMillis()
@@ -498,7 +524,7 @@ fun MarketScreen(
         )
         val orderedHistory = historySnapshots
             .filter { it.tsEpoch != null }.sortedBy { it.tsEpoch }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         Row {
             for (range in MarketRange.entries) {
                 val label = when (range) {
@@ -519,7 +545,7 @@ fun MarketScreen(
                 Spacer(modifier = Modifier.padding(horizontal = 2.dp))
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         Button(onClick = { seriesMenuOpen = true }) {
             Text(
                 text = stringResource(R.string.market_history_series_label, historySeries.labelFa),
@@ -540,12 +566,12 @@ fun MarketScreen(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         if (history.snapshotsInRange.isEmpty()) {
             Text(
                 text = stringResource(R.string.market_history_empty),
                 fontFamily = EcoFontFamily,
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                 fontWeight = FontWeight.Bold,
             )
             if (orderedHistory.isNotEmpty()) {
@@ -674,7 +700,7 @@ fun MarketScreen(
                 Text(
                     text = stringResource(R.string.market_history_point_title),
                     fontFamily = EcoFontFamily,
-                    fontSize = 16.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
@@ -690,7 +716,7 @@ fun MarketScreen(
                             ?.let { formatPersianDouble(it, historySeries.decimals) } ?: "—",
                     ),
                     fontFamily = EcoFontFamily,
-                    fontSize = 16.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                 )
                 val detailFields = listOf(
                     PriceField("برنت (دلار)", selected.brent, selectedPrev?.brent, 2),
@@ -756,7 +782,7 @@ fun MarketScreen(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         Button(
             onClick = onRefreshMarket,
             modifier = Modifier.heightIn(min = 48.dp),

@@ -44,6 +44,7 @@ import com.ecojournal.app.ui.components.DomainBarStrip
 import com.ecojournal.app.ui.components.TypedCard
 import androidx.compose.ui.semantics.Role
 import com.ecojournal.app.ui.theme.EcoFontFamily
+import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.util.toLatinDigits
 import com.ecojournal.app.util.toPersianDigits
 import kotlinx.coroutines.launch
@@ -88,34 +89,38 @@ fun BundlesScreen(
     val bundlesState = sectionStates.firstOrNull { it.section == SyncSections.BUNDLES }
     LazyColumn(modifier = modifier.fillMaxSize()) {
         item {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin)) {
                 Text(
                     text = stringResource(R.string.bundles_title),
-                    fontSize = 26.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.HeroHeadline * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 // Frozen Special Issues: the single line, nothing else.
                 Text(
                     text = stringResource(R.string.special_issues_frozen),
-                    fontSize = 15.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                if (bundlesState?.state == "failed") {
-                    Spacer(modifier = Modifier.height(8.dp))
+                // v5 P4: an unpublished bundles section is a
+                // reason, not an error — and its re-check never
+                // fetches. syncOnly re-reads the manifest and the
+                // P4 status guard re-records NOT_YET_PUBLISHED
+                // without touching bundles.json (which does not
+                // exist on the edge). The empty line below stays
+                // as the "no bundles yet" statement.
+                if (bundlesState?.state == "not_yet_published") {
+                    Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                     Text(
                         text = context.getString(
-                            R.string.section_error_line,
-                            // Phase 7: raw "bundles" key used to leak
-                            // into reader-facing copy.
+                            R.string.v5_state_section_not_published,
                             context.getString(R.string.diagnostics_section_name_bundles),
-                            bundlesState.lastErrorCode.ifBlank { "network" },
                         ),
-                        fontSize = 13.sp,
+                        fontSize = EcoDesignTokens.Type.Meta,
                         fontFamily = EcoFontFamily,
-                        color = MaterialTheme.colorScheme.error,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Button(
                         enabled = busySection == null,
@@ -130,12 +135,76 @@ fun BundlesScreen(
                         modifier = Modifier.heightIn(min = 48.dp),
                     ) {
                         Text(
-                            text = stringResource(R.string.sync_retry),
+                            text = stringResource(R.string.v5_section_recheck),
                             fontFamily = EcoFontFamily,
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+                if (bundlesState?.state == "failed") {
+                    Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
+                    Text(
+                        text = context.getString(
+                            R.string.section_error_line,
+                            // Phase 7: raw "bundles" key used to leak
+                            // into reader-facing copy.
+                            context.getString(R.string.diagnostics_section_name_bundles),
+                            bundlesState.lastErrorCode.ifBlank { "network" },
+                        ),
+                        fontSize = EcoDesignTokens.Type.Meta,
+                        fontFamily = EcoFontFamily,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                    // v5 P4: a 404 here is a known-404 story, not
+                    // a "try again and hope" story. The button
+                    // still calls syncOnly (it re-reads the
+                    // manifest), but the repo skips the fetch
+                    // while the manifest hash is unchanged, so
+                    // the retry cannot re-run the same 404.
+                    if (bundlesState.lastErrorCode == "http_404") {
+                        Text(
+                            text = stringResource(R.string.v5_bundles_404_reason),
+                            fontSize = EcoDesignTokens.Type.Meta,
+                            fontFamily = EcoFontFamily,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Button(
+                            enabled = busySection == null,
+                            onClick = {
+                                scope.launch {
+                                    busySection = SyncSections.BUNDLES
+                                    repo.syncOnly(SyncSections.BUNDLES, forceRefresh = true)
+                                    sectionStates = repo.sectionStates()
+                                    busySection = null
+                                }
+                            },
+                            modifier = Modifier.heightIn(min = 48.dp),
+                        ) {
+                            Text(
+                                text = stringResource(R.string.v5_section_recheck),
+                                fontFamily = EcoFontFamily,
+                            )
+                        }
+                    } else {
+                        Button(
+                            enabled = busySection == null,
+                            onClick = {
+                                scope.launch {
+                                    busySection = SyncSections.BUNDLES
+                                    repo.syncOnly(SyncSections.BUNDLES, forceRefresh = true)
+                                    sectionStates = repo.sectionStates()
+                                    busySection = null
+                                }
+                            },
+                            modifier = Modifier.heightIn(min = 48.dp),
+                        ) {
+                            Text(
+                                text = stringResource(R.string.sync_retry),
+                                fontFamily = EcoFontFamily,
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
             }
         }
         if (bundles.isEmpty()) {
@@ -143,7 +212,7 @@ fun BundlesScreen(
                 Text(
                     text = stringResource(R.string.bundles_empty),
                     fontFamily = EcoFontFamily,
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin),
                 )
             }
         } else {
@@ -159,11 +228,11 @@ fun BundlesScreen(
                             onClickLabel = stringResource(R.string.open_bundle_desc, bundle.title),
                             onClick = { onOpenBundle(bundle.bundleId) },
                         )
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                        .padding(horizontal = EcoDesignTokens.Spacing.PageMargin, vertical = 12.dp),
                 ) {
                     Text(
                         text = bundle.title,
-                        fontSize = 18.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
                         fontFamily = EcoFontFamily,
                         fontWeight = FontWeight.Bold,
                     )
@@ -174,7 +243,7 @@ fun BundlesScreen(
                                 R.string.bundle_day_count,
                                 bundle.memberAppKeys.size.toString().toPersianDigits(),
                             ) + " • ${formatBundleDate(bundle.bundleDateShamsi)}",
-                        fontSize = 13.sp,
+                        fontSize = EcoDesignTokens.Type.Meta,
                         fontFamily = EcoFontFamily,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -241,7 +310,7 @@ fun BundlePageScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp),
+            .padding(EcoDesignTokens.Spacing.PageMargin),
     ) {
         if (!loaded) {
             return@Column
@@ -294,12 +363,12 @@ fun BundlePageScreen(
                     formatBundleDate(b.bundleDateShamsi),
                     syncText,
                 ),
-                fontSize = 13.sp,
+                fontSize = EcoDesignTokens.Type.Meta,
                 fontFamily = EcoFontFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         OutlinedButton(onClick = {
             scope.launch {
                 if (bookmarked) {
@@ -337,7 +406,7 @@ fun BundlePageScreen(
                 fontFamily = EcoFontFamily,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         }
         val orderIndex = b.memberAppKeys.withIndex()
             .associate { it.value to it.index }
@@ -422,7 +491,7 @@ fun BundlePageScreen(
             Column(modifier = Modifier.padding(vertical = 8.dp)) {
                 Text(
                     text = stringResource(R.string.night_desk_title),
-                    fontSize = 18.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                 )
@@ -431,7 +500,7 @@ fun BundlePageScreen(
                         R.string.night_desk_subtitle,
                         nd.memberAppKeys.size.toString().toPersianDigits(),
                     ),
-                    fontSize = 13.sp,
+                    fontSize = EcoDesignTokens.Type.Meta,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -462,7 +531,7 @@ fun BundlePageScreen(
                             )
                             Text(
                                 text = "• ${ndItem.headline}",
-                                fontSize = 15.sp * fontScale,
+                                fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                                 fontFamily = EcoFontFamily,
                             )
                         }
@@ -484,7 +553,7 @@ fun BundlePageScreen(
             if (index == sitrepMembers.lastIndex) {
                 Text(
                     text = stringResource(R.string.channel_latest_update),
-                    fontSize = 13.sp,
+                    fontSize = EcoDesignTokens.Type.Meta,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

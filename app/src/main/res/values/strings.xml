@@ -474,4 +474,17 @@
     <string name="v5_feed_section_index_names">بسته‌ها • نسخهٔ شبانه • تحلیل • روش کار</string>
     <string name="v5_feed_section_index_open">مشاهدهٔ همهٔ بخش‌ها</string>
     <string name="v5_reader_body_empty">متن این مطلب در حافظهٔ دستگاه نیست؛ همگام‌سازی دوباره ممکن است آن را بیاورد.</string>
+    <!-- v5 P4 (sections + sync/diagnostics rebuild): fixed state
+         language for unpublished sections, the bundles known-404
+         retry, the market seed-date line, bookmark orphan reasons,
+         and the Diagnostics required-only global clock. No string
+         here changes gating, cadence, night law, or bar rules. -->
+    <string name="v5_state_section_not_published">بخش %1$s هنوز منتشر نشده است؛ فایلی برای دریافت ندارد.</string>
+    <string name="v5_bundles_404_reason">فایل بسته‌ها روی سرور پیدا نشد؛ تا فهرست انتشار سرور عوض نشود، تلاش دوباره همان نتیجه را می‌دهد.</string>
+    <string name="v5_section_recheck">بازبینی وضعیت از سرور</string>
+    <string name="v5_market_seed_line">این ارقام از بستهٔ همراه برنامه‌اند (تازه‌ترین دادهٔ بسته: %1$s) و هنوز با همگام‌سازی زندهٔ بازار به‌روز نشده‌اند.</string>
+    <string name="v5_diagnostics_global_clock">ساعت سراسری بالا فقط بخش‌های الزامی (مقالات، کوتاه‌ها، بازار، خبرهای کانال) را می‌سنجد؛ بخش اختیاریِ منتشرنشده آن را متوقف نمی‌کند.</string>
+    <string name="v5_diagnostics_optional_tag">اختیاری</string>
+    <string name="v5_bookmark_orphan_retracted">از منبع پس گرفته شده است.</string>
+    <string name="v5_bookmark_orphan_missing">دیگر در حافظهٔ دستگاه نیست.</string>
 </resources>

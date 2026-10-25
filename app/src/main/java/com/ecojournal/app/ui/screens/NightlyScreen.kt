@@ -43,6 +43,7 @@ import com.ecojournal.app.data.SectionSyncState
 import com.ecojournal.app.data.SyncSections
 import com.ecojournal.app.ui.components.DomainBarStrip
 import com.ecojournal.app.ui.theme.EcoFontFamily
+import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.util.formatPersianDouble
 import com.ecojournal.app.util.toPersianDigits
 import kotlinx.coroutines.flow.first
@@ -131,23 +132,23 @@ fun NightlyScreen(
     val hero = editions.firstOrNull()
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         item {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin)) {
                 Text(
                     text = stringResource(R.string.nightly_title),
-                    fontSize = 26.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.HeroHeadline * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.semantics { heading() },
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 if (nightlyState?.state == "failed" && hero != null) {
                     Text(
                         text = stringResource(R.string.nightly_failed_line),
-                        fontSize = 13.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.Meta * fontScale,
                         fontFamily = EcoFontFamily,
                         color = MaterialTheme.colorScheme.error,
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 }
                 if (hero == null) {
                     // Honest empty state (spec §5.14). A failed
@@ -156,7 +157,7 @@ fun NightlyScreen(
                     // fall back to, and no fake edition is shown.
                     Text(
                         text = stringResource(R.string.nightly_empty),
-                        fontSize = 15.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                         fontFamily = EcoFontFamily,
                     )
                 } else {
@@ -169,7 +170,7 @@ fun NightlyScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.nightly_search_title),
-                    fontSize = 18.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                 )
@@ -179,7 +180,7 @@ fun NightlyScreen(
                     label = { Text(stringResource(R.string.nightly_search_hint), fontFamily = EcoFontFamily) },
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
                 OutlinedButton(
                     onClick = {
                         scopedEdition = if (scopedEdition == null) hero?.editionId else null
@@ -203,6 +204,20 @@ fun NightlyScreen(
                             fontFamily = EcoFontFamily,
                         )
                     } else {
+                        // v5 P4: the search header states its count
+                        // honestly (same fixed string as the feed
+                        // search header), so a truncated-looking
+                        // list is never mistaken for the whole
+                        // archive.
+                        Text(
+                            text = stringResource(
+                                R.string.search_results_count,
+                                results!!.size.toString().toPersianDigits(),
+                            ),
+                            fontSize = EcoDesignTokens.Type.Meta * fontScale,
+                            fontFamily = EcoFontFamily,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                         for (item in results!!) {
                             Column(
                                 modifier = Modifier
@@ -219,13 +234,13 @@ fun NightlyScreen(
                                 EditionItemBar(item)
                                 Text(
                                     text = item.title,
-                                    fontSize = 15.sp * fontScale,
+                                    fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                                     fontFamily = EcoFontFamily,
                                     fontWeight = FontWeight.Bold,
                                 )
                                 Text(
                                     text = item.editionId,
-                                    fontSize = 12.sp * fontScale,
+                                    fontSize = EcoDesignTokens.Type.Meta * fontScale,
                                     fontFamily = EcoFontFamily,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
@@ -236,13 +251,13 @@ fun NightlyScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.nightly_fresh_title),
-                    fontSize = 18.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
                     text = stringResource(R.string.nightly_archive_entry),
-                    fontSize = 13.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.Meta * fontScale,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -257,28 +272,28 @@ fun NightlyScreen(
                         onClickLabel = stringResource(R.string.open_edition_desc, item.editionId),
                         onClick = { onOpenEdition(item.editionId) },
                     )
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .padding(horizontal = EcoDesignTokens.Spacing.PageMargin, vertical = 12.dp)
             ) {
                 EditionItemBar(item)
                 Text(
                     text = item.title,
-                    fontSize = 15.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
                     text = item.editionId,
-                    fontSize = 12.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.Meta * fontScale,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
         item {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(EcoDesignTokens.Spacing.PageMargin)) {
                 Text(
                     text = stringResource(R.string.nightly_dossiers_title),
-                    fontSize = 18.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                 )
@@ -295,13 +310,13 @@ fun NightlyScreen(
                     ) {
                         Text(
                             text = dossier.topicTitleFa,
-                            fontSize = 15.sp * fontScale,
+                            fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                             fontFamily = EcoFontFamily,
                             fontWeight = FontWeight.Bold,
                         )
                         Text(
                             text = dossier.dossierId,
-                            fontSize = 12.sp * fontScale,
+                            fontSize = EcoDesignTokens.Type.Meta * fontScale,
                             fontFamily = EcoFontFamily,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -310,14 +325,14 @@ fun NightlyScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = stringResource(R.string.nightly_archive_title),
-                    fontSize = 18.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowHeadline * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                 )
             }
         }
         items(editions.drop(1)) { edition ->
-            Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
+            Column(modifier = Modifier.padding(horizontal = EcoDesignTokens.Spacing.PageMargin, vertical = 4.dp)) {
                 EditionRow(
                     edition = edition,
                     onOpen = { onOpenEdition(edition.editionId) },
@@ -360,14 +375,14 @@ private fun EditionRow(
                     R.string.nightly_version_corrected,
                     edition.version.toString().toPersianDigits(),
                 ),
-                fontSize = 13.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.Meta * fontScale,
                 fontFamily = EcoFontFamily,
                 color = MaterialTheme.colorScheme.error,
             )
         }
         Text(
             text = stringResource(R.string.nightly_last_updated, edition.generatedAtTehran),
-            fontSize = 12.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.Meta * fontScale,
             fontFamily = EcoFontFamily,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -398,7 +413,7 @@ fun EditionPageScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp)
+            .padding(EcoDesignTokens.Spacing.PageMargin)
     ) {
         Button(onClick = onBack) {
             Text(text = "بازگشت", fontFamily = EcoFontFamily)
@@ -411,14 +426,14 @@ fun EditionPageScreen(
             // action the reader triggers from the Nightly tab.
             Text(
                 text = stringResource(R.string.nightly_not_kept_locally),
-                fontSize = 15.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                 fontFamily = EcoFontFamily,
             )
             return@Column
         }
         Text(
             text = ed.shamsiDate,
-            fontSize = 26.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.HeroHeadline * fontScale,
             fontFamily = EcoFontFamily,
             fontWeight = FontWeight.Bold,
         )
@@ -435,11 +450,11 @@ fun EditionPageScreen(
         }
         Text(
             text = stringResource(R.string.nightly_last_updated, ed.generatedAtTehran),
-            fontSize = 13.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.Meta * fontScale,
             fontFamily = EcoFontFamily,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Spacing.ElementGap))
         val bookmarked = ed.bookmarked
         OutlinedButton(
             onClick = {
@@ -515,14 +530,14 @@ fun EditionPageScreen(
                             R.string.nightly_word_count,
                             item.wordCount.toString().toPersianDigits(),
                         ) + " • " + item.sourceName,
-                    fontSize = 12.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.Meta * fontScale,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 if (item.verbatimBadge != null) {
                     Text(
                         text = item.verbatimBadge,
-                        fontSize = 12.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.Meta * fontScale,
                         fontFamily = EcoFontFamily,
                         fontWeight = FontWeight.Bold,
                     )
@@ -536,7 +551,7 @@ fun EditionPageScreen(
                             corr.optInt("version_after", ed.version).toString().toPersianDigits(),
                             corr.optInt("version_before", 1).toString().toPersianDigits(),
                         ),
-                        fontSize = 13.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.Meta * fontScale,
                         fontFamily = EcoFontFamily,
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -545,7 +560,7 @@ fun EditionPageScreen(
                     Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = item.body,
-                        fontSize = 15.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                         fontFamily = EcoFontFamily,
                     )
                 }
@@ -579,7 +594,7 @@ fun EditionPageScreen(
             } else {
                 Text(
                     text = snap.optString("close_ts_tehran"),
-                    fontSize = 13.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.Meta * fontScale,
                     fontFamily = EcoFontFamily,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -589,7 +604,7 @@ fun EditionPageScreen(
                             R.string.nightly_stale_close,
                             snap.optString("close_ts_tehran"),
                         ),
-                        fontSize = 13.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.Meta * fontScale,
                         fontFamily = EcoFontFamily,
                         color = MaterialTheme.colorScheme.error,
                     )
@@ -624,7 +639,7 @@ fun EditionPageScreen(
             }
             Text(
                 text = stringResource(R.string.nightly_alert_history_title),
-                fontSize = 16.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                 fontFamily = EcoFontFamily,
                 fontWeight = FontWeight.Bold,
             )
@@ -642,7 +657,7 @@ fun EditionPageScreen(
                         if (anyThreshold) R.string.nightly_no_alerts_today
                         else R.string.nightly_alert_no_threshold
                     ),
-                    fontSize = 13.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.Meta * fontScale,
                     fontFamily = EcoFontFamily,
                 )
             } else {
@@ -667,7 +682,7 @@ fun EditionPageScreen(
                                 }
                             ),
                         ),
-                        fontSize = 13.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.Meta * fontScale,
                         fontFamily = EcoFontFamily,
                     )
                 }
@@ -698,7 +713,7 @@ fun EditionPageScreen(
                 }
                 Text(
                     text = b.optString("title"),
-                    fontSize = 15.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                 )
@@ -720,7 +735,7 @@ fun EditionPageScreen(
             if (nightDesk != null) {
                 Text(
                     text = stringResource(R.string.nightly_night_desk_title),
-                    fontSize = 16.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                 )
@@ -728,7 +743,7 @@ fun EditionPageScreen(
                 if (ndItems.length() == 0) {
                     Text(
                         text = nightDesk.optString("state_note", ""),
-                        fontSize = 13.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.Meta * fontScale,
                         fontFamily = EcoFontFamily,
                     )
                 } else {
@@ -750,7 +765,7 @@ fun EditionPageScreen(
             if (arc.length() > 0) {
                 Text(
                     text = stringResource(R.string.nightly_sitrep_arc_title),
-                    fontSize = 16.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.HeroSummary * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                 )
@@ -803,7 +818,7 @@ fun EditionPageScreen(
                 }
                 Text(
                     text = a.optString("title"),
-                    fontSize = 15.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                 )
@@ -820,7 +835,7 @@ fun EditionPageScreen(
                     for (i in 0 until rows.length()) {
                         Text(
                             text = "$key: " + rows.optString(i),
-                            fontSize = 13.sp * fontScale,
+                            fontSize = EcoDesignTokens.Type.Meta * fontScale,
                             fontFamily = EcoFontFamily,
                         )
                     }
@@ -833,7 +848,7 @@ fun EditionPageScreen(
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = stringResource(R.string.nightly_special_paused),
-            fontSize = 15.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
             fontFamily = EcoFontFamily,
             fontWeight = FontWeight.Bold,
         )
@@ -874,7 +889,7 @@ fun EditionPageScreen(
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = stringResource(R.string.nightly_archive_entry),
-            fontSize = 13.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.Meta * fontScale,
             fontFamily = EcoFontFamily,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -896,14 +911,14 @@ fun EditionPageScreen(
             ) {
                 Text(
                     text = dossier?.topicTitleFa ?: dossierId,
-                    fontSize = 15.sp * fontScale,
+                    fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                     fontFamily = EcoFontFamily,
                     fontWeight = FontWeight.Bold,
                 )
                 if (dossier != null && dossier.lastUpdatedTehran > ed.cutTehran) {
                     Text(
                         text = stringResource(R.string.nightly_dossier_updated_since),
-                        fontSize = 12.sp * fontScale,
+                        fontSize = EcoDesignTokens.Type.Meta * fontScale,
                         fontFamily = EcoFontFamily,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -929,7 +944,7 @@ fun DossierPageScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(16.dp)
+            .padding(EcoDesignTokens.Spacing.PageMargin)
     ) {
         Button(onClick = onBack) {
             Text(text = "بازگشت", fontFamily = EcoFontFamily)
@@ -939,7 +954,7 @@ fun DossierPageScreen(
         if (d == null) {
             Text(
                 text = stringResource(R.string.nightly_not_kept_locally),
-                fontSize = 15.sp * fontScale,
+                fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
                 fontFamily = EcoFontFamily,
             )
             return@Column
@@ -952,14 +967,14 @@ fun DossierPageScreen(
         )
         Text(
             text = d.dossierId,
-            fontSize = 12.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.Meta * fontScale,
             fontFamily = EcoFontFamily,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = d.summary,
-            fontSize = 15.sp * fontScale,
+            fontSize = EcoDesignTokens.Type.RowSummary * fontScale,
             fontFamily = EcoFontFamily,
         )
         Spacer(modifier = Modifier.height(12.dp))

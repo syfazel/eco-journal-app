@@ -61,7 +61,27 @@ object SyncSections {
         RADAR, NIGHTLY, INVITES, REVOCATIONS,
     )
 
+    // v5 P4: sections whose completion defines the global clock
+    // (last_sync_at) and the whole-sync result. Every other
+    // section degrades independently: its failure is recorded
+    // per section and surfaced on its own screen + the P3 digest,
+    // but it never blocks the global clock. Plan §3 Phase 4
+    // names exactly these five; channel_typed is required in
+    // name, but the live manifest carries no channel_typed
+    // section, so it reports UNKNOWN and never blocks (UNKNOWN
+    // never counts as incomplete — see EdgeRepository.syncV3).
+    val REQUIRED: Set<String> = setOf(
+        ARTICLES, SHORTS, MARKET, CHANNEL_REFS, CHANNEL_TYPED,
+    )
+
     fun hashKey(section: String) = "sync_section_${section}_hash"
+
+    // v5 P4: the manifest hash at which a bundles/radar section
+    // file last 404'd. A retry with an UNCHANGED manifest hash
+    // must not re-fetch the same missing file (see
+    // syncBundlesSection / syncRadarSection); a changed hash
+    // clears the guard by mismatch. Blank = no known 404.
+    fun failedHashKey(section: String) = "sync_section_${section}_failed_hash"
     fun stateKey(section: String) = "sync_section_${section}_state"
     fun lastSyncKey(section: String) = "sync_section_${section}_last_sync_at"
     fun lastAttemptKey(section: String) = "sync_section_${section}_last_attempt_at"
