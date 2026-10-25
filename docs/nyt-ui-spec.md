@@ -83,11 +83,12 @@
 
 ## Bottom navigation
 - Now: صفحه اصلی / بازار / ذخیره‌شده‌ها / تنظیمات.
-- The old `categories` route is kept but delegates to the home
-  front page, rather than being deleted, so any code that
-  references that route still lands somewhere sensible.
-  `CategoriesScreen.kt` itself is left untouched (its rows now
-  render in the same newspaper style via the shared card).
+- M6: the old `categories` route and `CategoriesScreen.kt` are
+  deleted, not delegated. Categories live only as tabs on the home
+  front page; a route that just re-rendered the feed was pure
+  duplication. `BookmarksScreen` (which used to share that file)
+  was moved verbatim to its own file and is unchanged, still
+  reachable from the bookmarks bottom-nav tab.
 
 ## Verification status (honest)
 - All changed Kotlin files were checked for brace/paren balance

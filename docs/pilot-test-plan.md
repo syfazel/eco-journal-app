@@ -55,8 +55,10 @@ URL is intentionally still empty and FCM is scaffold-only, so:
    reopen it from Bookmarks. Report anything that looks wrong.
 5. **Search** — search for a word from an article title you saw
    (e.g. «نفت» or «طلا»); confirm results appear offline.
-6. **Categories** — open Categories, pick one category, confirm
-   only that category's articles show.
+6. **Categories (feed tabs)** — there is NO separate Categories
+   screen (deleted in M6). On the home feed, swipe/tap a category
+   tab and confirm only that category's articles show, and that the
+   tab list matches the categories actually present in the cache.
 7. **Market board** — open the market section; confirm the
    snapshot DATE is shown and that stale data is labelled as
    stale (the bundled snapshot is dated 2026-10-24 — it is a

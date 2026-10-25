@@ -165,12 +165,9 @@ interface ArticleDao {
     @Query("SELECT * FROM articles WHERE appKey = :appKey LIMIT 1")
     suspend fun byAppKey(appKey: String): ArticleEntity?
 
-    @Query(
-        "SELECT * FROM articles WHERE category = :category " +
-            "AND status != 'retracted' " +
-            "ORDER BY publishedAtEpoch DESC, publishedAt DESC"
-    )
-    suspend fun byCategory(category: String): List<ArticleEntity>
+    // M6: byCategory() deleted with CategoriesScreen.kt. It had zero
+    // callers (grep verified); section filtering happens in the feed
+    // from dao.allFlow(), not from a per-category query.
 
     /**
      * Offline search (M3, P1-04). Searches titles, summaries, body

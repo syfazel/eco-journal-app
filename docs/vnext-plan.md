@@ -573,7 +573,16 @@ next hidden error).
   in-app guidance appears, app keeps working.
 
 ### M6 — Categories decision (fixes P0-09, P1-13)
-- **Decision first, code second:** either (A) wire `CategoriesScreen`
+- **M6 IMPLEMENTED — option (B) chosen by parent decision, not
+  re-opened:** `CategoriesScreen.kt` deleted, the fake `categories`
+  route deleted, dead `byCategory()` DAO method deleted.
+  `BookmarksScreen` was moved verbatim from that file into its own
+  file (body verified identical) and stays on the bookmarks
+  bottom-nav tab. Pilot checklist step 6 and the UI spec now say
+  categories = feed tabs, no separate screen. Pilot item F4 is
+  therefore the option-B branch: categories provably absent, no UI
+  text promises a categories screen.
+- **Decision first, code second (original plan text):** either (A) wire `CategoriesScreen`
   properly — fix its two-LazyColumn layout (chips row with bounded height
   + article list with weight), use the same fixed section order as the
   feed, and add a bottom-nav or feed-header entry that actually navigates

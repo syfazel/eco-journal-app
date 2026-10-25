@@ -38,7 +38,7 @@ import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.MarketSnapshot
 import com.ecojournal.app.data.SettingsStore
 import com.ecojournal.app.ui.screens.ArticleScreen
-import com.ecojournal.app.ui.screens.BookmarksScreen
+import com.ecojournal.app.ui.screens.BookmarksScreen // M6: now in its own file, moved verbatim from the deleted CategoriesScreen.kt
 import com.ecojournal.app.ui.screens.FeedScreen
 import com.ecojournal.app.ui.screens.MarketScreen
 import com.ecojournal.app.ui.screens.SettingsScreen
@@ -175,19 +175,12 @@ class MainActivity : ComponentActivity() {
                                     onBack = { nav.popBackStack() },
                                 )
                             }
-                            // Old Categories destination, kept harmless:
-                            // sections now live as tabs on the home front
-                            // page, so this route delegates to it instead
-                            // of being deleted (other code may reference it).
-                            composable("categories") {
-                                FeedScreen(
-                                    repo = repo,
-                                    onOpen = { appKey ->
-                                        nav.navigate("article/${Uri.encode(appKey)}")
-                                    },
-                                    fontScale = settings.fontScale,
-                                )
-                            }
+                            // M6: the old fake "categories" route is
+                            // deleted, not delegated. Sections live as
+                            // tabs on the home front page, and a route
+                            // that just re-rendered the feed was pure
+                            // duplication. No code referenced it (grep
+                            // verified at deletion time).
                             composable("market") {
                                 MarketScreen(
                                     latest = marketLatest,
