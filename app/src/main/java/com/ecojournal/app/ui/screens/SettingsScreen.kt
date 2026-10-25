@@ -97,6 +97,10 @@ fun SettingsScreen(
     onMethod: () -> Unit = {},
     onVoices: () -> Unit = {},
     onSpecialIssues: () -> Unit = {},
+    // v5 P2: sections hub entry (bundles / nightly / analysis /
+    // method in one place). The hub is NOT a bottom-bar item —
+    // the bar stays at five — so it is reached from here.
+    onSections: () -> Unit = {},
     modifier: Modifier = Modifier,
     fontScale: Float = 1f,
     // Phase 4: threshold PRESENCE only (never the value — the
@@ -188,6 +192,27 @@ fun SettingsScreen(
                 fontSize = 14.sp * fontScale,
             )
         }
+        // v5 P2: reduced-motion toggle for the ticker. Session
+        // pause lives on the ticker itself; this is the
+        // persistent control (no infinite motion without one).
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Switch(
+                checked = settings.reducedMotion,
+                onCheckedChange = { v -> scope.launch { store.setReducedMotion(v) } },
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.ticker_motion_toggle),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+            )
+        }
+        Text(
+            text = stringResource(R.string.ticker_motion_desc),
+            fontFamily = EcoFontFamily,
+            fontSize = 12.sp * fontScale,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         Row(verticalAlignment = Alignment.CenterVertically) {
             Switch(
                 checked = settings.readingRuler,
@@ -541,6 +566,19 @@ fun SettingsScreen(
         ) {
             Text(
                 text = stringResource(R.string.settings_special_issues_button),
+                fontFamily = EcoFontFamily,
+            )
+        }
+        // v5 P2: sections hub entry. Gated sections (voices /
+        // special issues) are NOT hub destinations — they stay
+        // reachable only via their gated placeholders above.
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = onSections,
+            modifier = Modifier.heightIn(min = 48.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.sections_hub_title),
                 fontFamily = EcoFontFamily,
             )
         }

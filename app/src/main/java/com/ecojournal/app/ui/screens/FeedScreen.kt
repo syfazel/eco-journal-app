@@ -143,6 +143,10 @@ fun FeedScreen(
     // compact sync row (details live in Diagnostics, not on the
     // page). Both default to the pre-H behaviour when unwired.
     tickerEnabled: Boolean = true,
+    // v5 P2: persistent reduced-motion setting, passed straight
+    // through to the masthead ticker. Feed branching, sync, and
+    // queries are untouched by this parameter.
+    reducedMotion: Boolean = false,
     onOpenDiagnostics: (() -> Unit)? = null,
     // v4-I: remote app-update banner state, shared with the
     // Settings card through the session flow. All default to
@@ -373,6 +377,7 @@ fun FeedScreen(
             topics = tickerTopics,
             tickerEnabled = tickerEnabled,
             fontScale = fontScale,
+            reducedMotion = reducedMotion,
         )
         Spacer(modifier = Modifier.height(12.dp))
         // v4-I: compact update banner, directly under the

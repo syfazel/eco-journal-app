@@ -12,11 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShowChart
 import androidx.compose.material.icons.filled.Warning
@@ -70,10 +67,12 @@ import com.ecojournal.app.ui.screens.EditionPageScreen
 import com.ecojournal.app.ui.screens.MarketScreen
 import com.ecojournal.app.ui.screens.MethodScreen
 import com.ecojournal.app.ui.screens.NightlyScreen
+import com.ecojournal.app.ui.screens.SectionsHubScreen
 import com.ecojournal.app.ui.screens.SettingsScreen
 import com.ecojournal.app.ui.screens.SpecialIssuesScreen
 import com.ecojournal.app.ui.screens.VoicesScreen
 import com.ecojournal.app.ui.screens.WarRoomScreen
+import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.ui.theme.EcoTheme
 import com.ecojournal.app.util.Notifications
@@ -86,23 +85,18 @@ private data class Tab(
 
 // M3 (P1-12): real icons, not four identical bullets. The label
 // itself is the content description, so TalkBack announces the tab.
-// Phase 2 adds War Room and Bundles as top-level tabs (spec 4,
-// 8.1): War Room is a SECTION, not a feed tab, and Bundles is
-// its own top-level entry — neither is a parallel service.
+// v5 P2 (plan §2 navigation): the bar is FIVE destinations only
+// (feed, warroom, market, bookmarks, settings). Bundles, Nightly,
+// Analysis, and Method moved to the sections hub (route
+// "sections", reached from Settings) — the eight-item bar's
+// wrapped/split labels were plan §1 M3. War Room is a SECTION,
+// not a feed tab, and red-alert items stay inside it with bar +
+// badge (bar rule §0); nothing here creates a parallel service
+// or a separate red-alert tab. The old routes still exist as
+// hub destinations; only the bar changed.
 private val TABS = listOf(
     Tab("feed", R.string.tab_feed, Icons.Filled.Home),
     Tab("warroom", R.string.tab_warroom, Icons.Filled.Warning),
-    Tab("bundles", R.string.tab_bundles, Icons.Filled.List),
-    // Phase 5: Nightly section, top-level alongside Feed /
-    // Market / War Room / Bundles (spec §5.14). It is the
-    // edition section, not a parallel service and not a
-    // separate tab for war-room/red-alert (bar rule §0).
-    Tab("nightly", R.string.tab_nightly, Icons.Filled.DarkMode),
-    // Phase 6: Analysis is a standalone section (spec §2), and
-    // the nightly edition links to the same story_id — two views
-    // of one item, never two copies. Not a war-room tab: red-alert
-    // items stay inside it with bar + badge (bar rule §0).
-    Tab("analysis", R.string.tab_analysis, Icons.Filled.Article),
     Tab("market", R.string.tab_market, Icons.Filled.ShowChart),
     Tab("bookmarks", R.string.tab_bookmarks, Icons.Filled.Bookmark),
     Tab("settings", R.string.tab_settings, Icons.Filled.Settings),
@@ -330,6 +324,7 @@ class MainActivity : ComponentActivity() {
                                     // v4-H: ticker toggle + Diagnostics
                                     // entry for the compact sync row.
                                     tickerEnabled = settings.tickerEnabled,
+                                    reducedMotion = settings.reducedMotion,
                                     onOpenDiagnostics = { nav.navigate("diagnostics") },
                                     // v4-I: update banner state, shared
                                     // with the Settings card via the
@@ -544,6 +539,16 @@ class MainActivity : ComponentActivity() {
                             composable("specialissues") {
                                 SpecialIssuesScreen(fontScale = settings.fontScale)
                             }
+                            // v5 P2: sections hub (not a tab).
+                            composable("sections") {
+                                SectionsHubScreen(
+                                    onOpenBundles = { nav.navigate("bundles") },
+                                    onOpenNightly = { nav.navigate("nightly") },
+                                    onOpenAnalysis = { nav.navigate("analysis") },
+                                    onOpenMethod = { nav.navigate("method") },
+                                    fontScale = settings.fontScale,
+                                )
+                            }
                             composable("settings") {
                                 SettingsScreen(
                                     settings = settings,
@@ -553,6 +558,7 @@ class MainActivity : ComponentActivity() {
                                     onMethod = { nav.navigate("method") },
                                     onVoices = { nav.navigate("voices") },
                                     onSpecialIssues = { nav.navigate("specialissues") },
+                                    onSections = { nav.navigate("sections") },
                                     // Presence only — never the value.
                                     marketThresholdSet = !p4BubbleMeta.isNullOrBlank() ||
                                         !p4SpreadMeta.isNullOrBlank(),
@@ -597,7 +603,20 @@ private fun BottomBar(nav: NavHostController) {
                         contentDescription = stringResource(tab.labelRes),
                     )
                 },
-                label = { Text(stringResource(tab.labelRes), fontFamily = EcoFontFamily) },
+                // v5 P2: 12sp token label, one line — the 14sp
+                // default is what wrapped labels on the old
+                // eight-item bar (plan §1 M3). The bar itself has
+                // no fontScale parameter, so the token size is
+                // used as-is; the 0.85x–1.3x font-scale check
+                // belongs to the P5 device gate (G2/G5).
+                label = {
+                    Text(
+                        stringResource(tab.labelRes),
+                        fontFamily = EcoFontFamily,
+                        fontSize = EcoDesignTokens.Type.BottomBarLabel,
+                        maxLines = 1,
+                    )
+                },
             )
         }
     }

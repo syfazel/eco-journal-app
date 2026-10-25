@@ -446,4 +446,19 @@
     <string name="app_update_failed">به‌روزرسانی ناموفق بود (کد: %1$s)</string>
     <string name="app_update_need_permission">برای نصب، باید «نصب برنامه‌های ناشناس» برای ECO JOURNAL در تنظیمات سیستم روشن شود.</string>
     <string name="app_update_open_settings">باز کردن تنظیمات نصب</string>
+    <!-- v5 P2 design system: ticker pause / reduced motion, sections
+         hub, and fixed empty/error/offline language (plan §2).
+         v5_state_* strings are the fixed language P3 wires into
+         feed/reader states; they are defined here, not invented
+         per screen. No duplicate names (verifier-checked). -->
+    <string name="ticker_pause">توقف نوار اخبار زنده</string>
+    <string name="ticker_resume">ادامهٔ نوار اخبار زنده</string>
+    <string name="ticker_motion_toggle">کاهش حرکت (نوار ثابت به‌جای متحرک)</string>
+    <string name="ticker_motion_desc">با روشن بودن، نوار اخبار زنده به‌صورت ثابت نمایش داده می‌شود و حرکت بی‌پایان ندارد.</string>
+    <string name="sections_hub_title">بخش‌ها</string>
+    <string name="sections_hub_desc">بسته‌ها، نسخهٔ شبانه، تحلیل و روش کار در یک جا</string>
+    <string name="v5_state_empty_no_sync">هنوز مقاله‌ای در حافظه نیست و هیچ همگام‌سازی موفقی ثبت نشده است</string>
+    <string name="v5_state_section_failed">بخش %1$s به‌روز نشد (کد %2$s)</string>
+    <string name="v5_state_offline">دستگاه آفلاین است؛ فقط مقالات کش‌شده نمایش داده می‌شوند (کد %1$s)</string>
+    <string name="v5_state_gated">این بخش فعلاً متوقف است</string>
 </resources>

@@ -54,6 +54,9 @@ private object Keys {
     val READING_RULER = booleanPreferencesKey("reading_ruler")
     val CALM_MODE = booleanPreferencesKey("calm_mode")
     val TICKER_ENABLED = booleanPreferencesKey("ticker_enabled")
+    // v5 P2: persistent reduced-motion setting (DataStore key
+    // only — no Room schema change, no migration needed).
+    val REDUCED_MOTION = booleanPreferencesKey("reduced_motion")
     // v4-I remote app update. The pending record is the offered
     // binary only (version + URL + hash + changelog + flag) —
     // never an APK, never a token, never device data. A missing
@@ -95,6 +98,7 @@ data class Settings(
     val readingRuler: Boolean = false,
     val calmMode: Boolean = false,
     val tickerEnabled: Boolean = true,
+    val reducedMotion: Boolean = false,
     val updateCheckEnabled: Boolean = true,
     val dismissedUpdateCode: Long = 0L,
     val pendingUpdate: PendingUpdate? = null,
@@ -159,6 +163,7 @@ class SettingsStore(private val context: Context) {
                 readingRuler = p[Keys.READING_RULER] ?: false,
                 calmMode = p[Keys.CALM_MODE] ?: false,
                 tickerEnabled = p[Keys.TICKER_ENABLED] ?: true,
+                reducedMotion = p[Keys.REDUCED_MOTION] ?: false,
                 updateCheckEnabled = p[Keys.UPDATE_CHECK_ENABLED] ?: true,
                 dismissedUpdateCode = p[Keys.DISMISSED_UPDATE_CODE] ?: 0L,
                 pendingUpdate = run {
@@ -261,6 +266,10 @@ class SettingsStore(private val context: Context) {
 
     suspend fun setTickerEnabled(v: Boolean) =
         context.settingsStore.edit { it[Keys.TICKER_ENABLED] = v }
+
+    // v5 P2: persistent reduced-motion toggle for the ticker.
+    suspend fun setReducedMotion(v: Boolean) =
+        context.settingsStore.edit { it[Keys.REDUCED_MOTION] = v }
 
     suspend fun setFcmToken(v: String) =
         context.settingsStore.edit { it[Keys.FCM_TOKEN] = v }

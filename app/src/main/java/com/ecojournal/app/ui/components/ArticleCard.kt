@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.ecojournal.app.R
 import com.ecojournal.app.data.ArticleEntity
 import com.ecojournal.app.data.DomainBars
+import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.ui.theme.EcoFontFamily
 
 /** Thin light-grey rule between newspaper rows. */
@@ -35,17 +36,21 @@ fun NewspaperRule(modifier: Modifier = Modifier) {
     )
 }
 
-/** Double rule used under the masthead and under a reader header. */
+/**
+ * Double rule used under the masthead and under a reader header.
+ * v5 P2: thicknesses/gap now come from EcoDesignTokens.Rules
+ * (2dp + 2dp gap + 1dp, plan §2) instead of literals.
+ */
 @Composable
 fun NewspaperDoubleRule(modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         HorizontalDivider(
-            thickness = 2.dp,
+            thickness = EcoDesignTokens.Rules.DoubleThick,
             color = MaterialTheme.colorScheme.onBackground,
         )
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(EcoDesignTokens.Rules.DoubleGap))
         HorizontalDivider(
-            thickness = 1.dp,
+            thickness = EcoDesignTokens.Rules.DoubleThin,
             color = MaterialTheme.colorScheme.onBackground,
         )
     }
