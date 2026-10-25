@@ -23,6 +23,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,11 +31,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ecojournal.app.data.ArticleEntity
+import com.ecojournal.app.data.BundledSeed
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.SyncResult
 import com.ecojournal.app.ui.components.ArticleCard
@@ -50,7 +53,7 @@ private data class Section(val key: String?, val label: String)
  *
  * Sections are derived only from what is actually in the Room
  * cache: "همه" plus every distinct category present, in the
- * order it first appears in the cache (publishedAt DESC).
+ * order it first appears in the cache (publishedAtEpoch DESC).
  * No section, label or article is invented here.
  *
  * Search still runs offline over the Room cache only (titles
@@ -65,19 +68,23 @@ fun FeedScreen(
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
-    var all by remember { mutableStateOf<List<ArticleEntity>>(emptyList()) }
+    val context = LocalContext.current
+    // Reactive feed (M2): the list is a Room Flow, so it updates
+    // when the seed finishes, when a sync lands, or when a row is
+    // retracted — it is never a single once-only read that can
+    // permanently show an empty feed. The seed is also triggered
+    // here (idempotent and resumable), not only from Application
+    // onCreate, so the first read never races a fire-and-forget seed.
+    val all by repo.dao.allFlow().collectAsState(initial = emptyList())
     var query by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<ArticleEntity>?>(null) }
     var syncState by remember { mutableStateOf("") }
-    var loading by remember { mutableStateOf(true) }
+    var seeding by remember { mutableStateOf(true) }
 
-    suspend fun loadAll() {
-        loading = true
-        all = repo.dao.all()
-        loading = false
+    LaunchedEffect(Unit) {
+        BundledSeed.ensureSeed(context)
+        seeding = false
     }
-
-    LaunchedEffect(Unit) { loadAll() }
 
     // Offline search: re-run against the cache whenever the query changes.
     LaunchedEffect(query) {
@@ -141,17 +148,19 @@ fun FeedScreen(
                         syncState = "در حال همگام‌سازی…"
                         syncState = when (val r = repo.sync()) {
                             is SyncResult.Ok ->
-                                if (r.newArticleIds.isEmpty()) {
+                                if (r.newArticleAppKeys.isEmpty()) {
                                     "به‌روز است (${r.totalCached} مقاله در حافظه)."
                                 } else {
-                                    "${r.newArticleIds.size} مقالهٔ تازه دریافت شد."
+                                    "${r.newArticleAppKeys.size} مقالهٔ تازه دریافت شد."
                                 }
+                            is SyncResult.Partial ->
+                                "همگام‌سازی ناقص ماند؛ ${r.missingCount} مقاله در " +
+                                    "تلاش بعدی دوباره دریافت می‌شوند."
                             is SyncResult.NotConfigured ->
                                 "لبهٔ انتشار هنوز تنظیم نشده است (TODO در EdgeConfig). " +
                                     "فقط مقالات کش‌شده نمایش داده می‌شوند."
                             is SyncResult.Failed -> "همگام‌سازی ناموفق بود: ${r.reason}"
                         }
-                        loadAll()
                     }
                 },
             ) {
@@ -180,12 +189,16 @@ fun FeedScreen(
                 )
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    itemsIndexed(results, key = { _, a -> a.id }) { _, a ->
-                        ArticleCard(article = a, onClick = { onOpen(a.id) })
+                    itemsIndexed(results, key = { _, a -> a.appKey }) { _, a ->
+                        ArticleCard(article = a, onClick = { onOpen(a.appKey) })
                     }
                 }
             }
-        } else if (loading) {
+        } else if (seeding && all.isEmpty()) {
+            // Proper loading state: shown only while the seed is
+            // actually running and nothing is cached yet. Once the
+            // seed reports (even partially), an empty cache shows
+            // the empty message below, never a permanent spinner.
             CircularProgressIndicator(modifier = Modifier.padding(16.dp))
         } else if (all.isEmpty()) {
             Text(
@@ -266,10 +279,13 @@ private fun FrontPageTabs(
                 )
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    itemsIndexed(shown, key = { _, a -> a.id }) { index, a ->
+                    // `shown` keeps the epoch order of `all`, so
+                    // index 0 — the hero — is the newest article in
+                    // this section, not the newest raw date string.
+                    itemsIndexed(shown, key = { _, a -> a.appKey }) { index, a ->
                         ArticleCard(
                             article = a,
-                            onClick = { onOpen(a.id) },
+                            onClick = { onOpen(a.appKey) },
                             isHero = index == 0,
                         )
                     }

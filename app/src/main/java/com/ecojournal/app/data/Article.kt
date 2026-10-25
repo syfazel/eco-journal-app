@@ -8,6 +8,7 @@ package com.ecojournal.app.data
  */
 data class Article(
     val id: String,
+    val appKey: String = "",
     val kind: String, // "article" (full) or "short" (labelled گزیده)
     val title: String,
     val summary: String,
@@ -19,6 +20,9 @@ data class Article(
     val source: String,
     val sourceSlug: String? = null,
     val originalUrl: String? = null,    val publishedAt: String? = null,
+    val publishedAtEpoch: Long? = null,
+    val contentHash: String? = null,
+    val status: String = "approved",
     val channelMessageId: Long? = null,
     val publishStatus: String? = null,
     val provenance: String? = null,
@@ -47,6 +51,7 @@ data class EdgeIndex(
 
 data class MarketSnapshot(
     val tsTehran: String,
+    val tsEpoch: Long? = null,
     val brent: Double?,
     val xauUsd: Double?,
     val usdIrtFree: Double?,

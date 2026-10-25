@@ -31,6 +31,10 @@ import kotlinx.coroutines.launch
  * spec.md and the v2 package): data["article_id"] is the edge article
  * id; the service fetches that exact article and notifies locally.
  * No article body is trusted from the push payload itself.
+ *
+ * M1: the notification carries the article's appKey, not the
+ * verbatim id. fetchOne and byAppKey both accept an appKey, with a
+ * fallback to the verbatim id for older payloads.
  */
 class EcoMessagingService : FirebaseMessagingService() {
 
@@ -40,10 +44,11 @@ class EcoMessagingService : FirebaseMessagingService() {
         scope.launch {
             val repo = EdgeRepository(applicationContext)
             if (repo.fetchOne(articleId)) {
-                val entity = repo.dao.byId(articleId) ?: return@launch
+                val entity = repo.dao.byAppKey(articleId)
+                    ?: repo.dao.byId(articleId) ?: return@launch
                 Notifications.showNewArticle(
                     applicationContext,
-                    articleId = articleId,
+                    articleId = entity.appKey,
                     title = entity.title,
                     text = entity.summary,
                 )

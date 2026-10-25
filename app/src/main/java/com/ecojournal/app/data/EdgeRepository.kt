@@ -1,7 +1,7 @@
 package com.ecojournal.app.data
 
 import android.content.Context
-import androidx.room.Room
+import androidx.room.withTransaction
 import java.net.HttpURLConnection
 import java.net.URL
 import org.json.JSONArray
@@ -9,13 +9,32 @@ import org.json.JSONObject
 
 /**
  * TODO (Yasin, before first real sync): set EDGE_BASE_URL to the
- * published edge URL, e.g. https://<user>.github.io/<edge-repo>/out
+ * published edge URL, e.g. the GitHub Pages URL for the edge repo
  * (no trailing slash). Until then sync() returns
  * Result.NotConfigured and the app shows only what is already cached
  * — it never invents content and never ships a placeholder feed.
  *
  * The edge is static JSON produced by edge/generate_edge.py; the app
  * talks to nothing else. No token, key or secret is used here.
+ *
+ * Sync rules (M2), replacing the old "hash on partial" behaviour:
+ * - An article is fetched only if it is absent, or if its stored
+ *   content hash differs from the index entry's hash. A changed
+ *   body therefore replaces the old body in the same transaction
+ *   that records the sync; an unchanged body is never refetched.
+ *   NOTE: the current generator emits no content_hash, app_key or
+ *   status in index.json (verified 2026-10-25: 0 of 281 entries
+ *   carry them), so until the generator is extended, sync refetches
+ *   present articles (hash comparison falls back to fetch) and the
+ *   tombstone path stays dormant. The code paths are ready; the
+ *   generator fields are the remaining half of P0-05.
+ * - A retracted entry becomes a tombstone: the local row keeps its
+ *   bookmark link but leaves the feed (status = "retracted").
+ * - The index hash is written ONLY after a transaction that
+ *   fetched everything missing with zero corrupt entries. Any
+ *   failure yields Partial, and the next sync retries exactly the
+ *   missing set instead of declaring success.
+ * - Per-entry corruption is counted and skipped, never a crash.
  */
 object EdgeConfig {
     const val BASE_URL: String = ""
@@ -23,7 +42,12 @@ object EdgeConfig {
 
 sealed class SyncResult {
     data object NotConfigured : SyncResult()
-    data class Ok(val newArticleIds: List<String>, val totalCached: Int) : SyncResult()
+    data class Ok(val newArticleAppKeys: List<String>, val totalCached: Int) : SyncResult()
+    data class Partial(
+        val newArticleAppKeys: List<String>,
+        val missingCount: Int,
+        val totalCached: Int,
+    ) : SyncResult()
     data class Failed(val reason: String) : SyncResult()
 }
 
@@ -44,67 +68,12 @@ private fun httpGet(url: String): String? {
     }
 }
 
-private fun JSONObject.optStringOrNull(key: String): String? =
-    if (isNull(key)) null else optString(key)
-
-private fun JSONObject.stringList(key: String): List<String> {
-    val arr = optJSONArray(key) ?: return emptyList()
-    return (0 until arr.length()).map { arr.optString(it) }
-}
-
 class EdgeRepository(context: Context) {
-    private val db: AppDatabase = Room.databaseBuilder(
-        context.applicationContext,
-        AppDatabase::class.java,
-        "eco.db",
-    ).build()
+    private val db: AppDatabase = DatabaseProvider.get(context)
     val dao: ArticleDao = db.articleDao()
     private val settings = SettingsStore(context)
 
-    private fun entityFromArticleJson(obj: JSONObject): ArticleEntity {
-        val blocks = obj.stringList("body_blocks")
-        return ArticleEntity(
-            id = obj.getString("id"),
-            kind = obj.optString("kind", "article"),
-            title = obj.getString("title"),
-            summary = obj.optString("summary", ""),
-            bodyBlocks = blocks,
-            pointsJson = obj.optJSONArray("points")?.toString() ?: "[]",
-            whyMatters = obj.optStringOrNull("why_matters"),
-            category = obj.optString("category", "general"),
-            categoryFa = obj.optString("category_fa", "عمومی"),
-            source = obj.optString("source", ""),
-            originalUrl = obj.optStringOrNull("original_url"),
-            publishedAt = obj.optStringOrNull("published_at"),
-            channelMessageId = if (obj.isNull("channel_message_id")) null
-                else obj.optLong("channel_message_id"),
-            cachedAt = System.currentTimeMillis(),
-        )
-    }
-
-    private fun entityFromShortJson(obj: JSONObject): ArticleEntity {
-        // Short cards carry verbatim body_fa text as a single block.
-        // They are rendered with the "گزیده" label, never as full articles.
-        val text = obj.optString("text", "")
-        return ArticleEntity(
-            id = obj.getString("id"),
-            kind = "short",
-            title = obj.getString("title"),
-            summary = if (text.length <= 280) text else text.take(277) + "…",
-            bodyBlocks = listOf(text),
-            pointsJson = "[]",
-            whyMatters = null,
-            category = "general",
-            categoryFa = "عمومی",
-            source = obj.optString("source", ""),
-            originalUrl = obj.optStringOrNull("original_url"),
-            publishedAt = obj.optStringOrNull("decided_at"),
-            channelMessageId = null,
-            cachedAt = System.currentTimeMillis(),
-        )
-    }
-
-    /** Full sync: index first, then only articles not yet cached. */
+    /** Full sync: index first, then only missing or changed items. */
     suspend fun sync(): SyncResult {
         val base = EdgeConfig.BASE_URL
         if (base.isBlank()) return SyncResult.NotConfigured
@@ -119,67 +88,182 @@ class EdgeRepository(context: Context) {
             return SyncResult.Failed("bad index.json: ${e.message}")
         }
         val hash = index.optString("hash_sha256", "")
-        if (hash.isNotBlank() && dao.indexHash() == hash) {
-            return SyncResult.Ok(emptyList(), dao.allIds().size)
-        }
         val entries = index.optJSONArray("entries") ?: JSONArray()
-        val existing = dao.allIds().toSet()
+        val now = System.currentTimeMillis()
+
+        // Existing rows keyed by appKey, with their stored hashes.
+        val existingByKey = dao.all().associate { it.appKey to it }
+        val existingKeys = existingByKey.keys
+
         val toFetch = mutableListOf<JSONObject>()
         val shortIds = mutableListOf<String>()
+        val tombstones = mutableListOf<JSONObject>()
+        var corruptEntries = 0
+
         for (i in 0 until entries.length()) {
-            val e = entries.getJSONObject(i)
-            val id = e.optString("id")
-            if (id !in existing) {
-                if (e.optString("kind") == "short") shortIds.add(id)
-                else if (!e.isNull("file")) toFetch.add(e)
+            val entry = try {
+                entries.getJSONObject(i)
+            } catch (_: Exception) {
+                corruptEntries++
+                continue
+            }
+            val id = entry.optString("id")
+            if (id.isBlank()) {
+                corruptEntries++
+                continue
+            }
+            val appKey = entry.optStringOrNull("app_key")?.takeIf { it.isNotBlank() }
+                ?: ArticleKeys.appKeyFor(id)
+            val status = entry.optString("status", "approved")
+            if (status == "retracted") {
+                if (appKey in existingKeys) tombstones.add(entry)
+                continue
+            }
+            val stored = existingByKey[appKey]
+            val entryHash = entry.optStringOrNull("content_hash")
+            if (stored != null && entryHash != null && stored.contentHash == entryHash) {
+                continue
+            }
+            if (entry.optString("kind") == "short") {
+                shortIds.add(id)
+            } else if (!entry.isNull("file")) {
+                toFetch.add(entry)
+            } else {
+                corruptEntries++
             }
         }
+
         val fresh = mutableListOf<ArticleEntity>()
-        for (e in toFetch) {
-            val file = e.optString("file")
+        val missingKeys = mutableListOf<String>()
+        for (entry in toFetch) {
+            val file = entry.optString("file")
+            val appKey = entry.optStringOrNull("app_key")?.takeIf { it.isNotBlank() }
+                ?: ArticleKeys.appKeyFor(entry.optString("id"))
             val text = try {
                 httpGet("$base/$file")
             } catch (_: Exception) {
                 null
-            } ?: continue
-            try {
-                fresh.add(entityFromArticleJson(JSONObject(text)))
-            } catch (_: Exception) {
-                // Skip one corrupt file; never crash the whole sync.
+            }
+            if (text == null) {
+                missingKeys.add(appKey)
                 continue
             }
+            try {
+                fresh.add(ArticleParsers.entityFromArticleJson(JSONObject(text), now))
+            } catch (_: Exception) {
+                missingKeys.add(appKey)
+            }
         }
+
         if (shortIds.isNotEmpty()) {
             val shortsText = try {
                 httpGet("$base/short_cards.json")
             } catch (_: Exception) {
                 null
             }
-            if (shortsText != null) {
+            if (shortsText == null) {
+                missingKeys.addAll(shortIds.map { ArticleKeys.appKeyFor(it) })
+            } else {
                 try {
                     val arr = JSONArray(shortsText)
                     val wanted = shortIds.toSet()
+                    val found = mutableSetOf<String>()
                     for (i in 0 until arr.length()) {
-                        val o = arr.getJSONObject(i)
-                        if (o.optString("id") in wanted) {
-                            fresh.add(entityFromShortJson(o))
+                        val obj = try {
+                            arr.getJSONObject(i)
+                        } catch (_: Exception) {
+                            continue
+                        }
+                        val id = obj.optString("id")
+                        if (id in wanted) {
+                            found.add(id)
+                            try {
+                                fresh.add(ArticleParsers.entityFromShortJson(obj, now))
+                            } catch (_: Exception) {
+                                missingKeys.add(ArticleKeys.appKeyFor(id))
+                            }
                         }
                     }
+                    missingKeys.addAll(
+                        shortIds.filter { it !in found }.map { ArticleKeys.appKeyFor(it) }
+                    )
                 } catch (_: Exception) {
-                    // Short cards are additive; a bad file must not
-                    // block full articles already fetched.
+                    missingKeys.addAll(shortIds.map { ArticleKeys.appKeyFor(it) })
                 }
             }
         }
-        if (fresh.isNotEmpty()) dao.upsertAll(fresh)
-        if (hash.isNotBlank()) {
-            dao.upsertMeta(MetaEntity("index_hash", hash))
+
+        // Tombstones: keep the row, flip only its status, so a
+        // bookmark on it survives and the feed stops showing it.
+        val tombstoneRows = tombstones.mapNotNull { entry ->
+            val id = entry.optString("id")
+            val appKey = entry.optStringOrNull("app_key")?.takeIf { it.isNotBlank() }
+                ?: ArticleKeys.appKeyFor(id)
+            val stored = existingByKey[appKey] ?: return@mapNotNull null
+            stored.copy(
+                status = "retracted",
+                retractedAtEpoch = entry.optLong("retracted_at_epoch", 0L).takeIf { it > 0L } ?: now,
+                updatedAtEpoch = now,
+            )
         }
-        return SyncResult.Ok(fresh.map { it.id }, dao.allIds().size)
+
+        // Market travels in the same manifest-gated pass when the
+        // edge serves it; a market failure makes the sync Partial,
+        // never a silent success with stale market data.
+        var marketFresh = emptyList<MarketSnapshotEntity>()
+        var marketFailed = false
+        val marketText = try {
+            httpGet("$base/market.json")
+        } catch (_: Exception) {
+            null
+        }
+        if (marketText == null) {
+            marketFailed = true
+        } else {
+            try {
+                val snaps = JSONObject(marketText).optJSONArray("snapshots") ?: JSONArray()
+                val parsed = mutableListOf<MarketSnapshotEntity>()
+                for (i in 0 until snaps.length()) {
+                    try {
+                        parsed.add(ArticleParsers.marketEntityFromJson(snaps.getJSONObject(i)))
+                    } catch (_: Exception) {
+                        continue
+                    }
+                }
+                marketFresh = parsed
+            } catch (_: Exception) {
+                marketFailed = true
+            }
+        }
+
+        val complete = missingKeys.isEmpty() && corruptEntries == 0 && !marketFailed
+        val newKeys = fresh.map { it.appKey }
+        db.withTransaction {
+            if (fresh.isNotEmpty()) dao.upsertAll(fresh)
+            if (tombstoneRows.isNotEmpty()) dao.upsertAll(tombstoneRows)
+            if (marketFresh.isNotEmpty()) dao.upsertMarket(marketFresh)
+            if (complete) {
+                if (hash.isNotBlank()) dao.upsertMeta(MetaEntity("index_hash", hash))
+                dao.upsertMeta(MetaEntity("last_sync_at", now.toString()))
+                dao.upsertMeta(MetaEntity("last_sync_error_code", ""))
+            } else {
+                dao.upsertMeta(MetaEntity("last_sync_error_code", "partial"))
+            }
+        }
+        val total = dao.allIds().size
+        return if (complete) {
+            SyncResult.Ok(newKeys, total)
+        } else {
+            SyncResult.Partial(newKeys, missingKeys.size + corruptEntries, total)
+        }
     }
 
-    /** Fetch one article by id (used by FCM data messages). */
-    suspend fun fetchOne(id: String): Boolean {
+    /**
+     * Fetch one article by appKey, falling back to the verbatim
+     * source id for older deep links. Short cards are fetchable
+     * through the same path (they have no per-article file).
+     */
+    suspend fun fetchOne(appKeyOrId: String): Boolean {
         val base = EdgeConfig.BASE_URL
         if (base.isBlank()) return false
         val indexText = try {
@@ -193,19 +277,46 @@ class EdgeRepository(context: Context) {
             return false
         }
         for (i in 0 until entries.length()) {
-            val e = entries.getJSONObject(i)
-            if (e.optString("id") == id && !e.isNull("file")) {
-                val text = try {
-                    httpGet("$base/${e.optString("file")}")
+            val entry = try {
+                entries.getJSONObject(i)
+            } catch (_: Exception) {
+                continue
+            }
+            val id = entry.optString("id")
+            val appKey = entry.optStringOrNull("app_key")?.takeIf { it.isNotBlank() }
+                ?: ArticleKeys.appKeyFor(id)
+            if (appKey != appKeyOrId && id != appKeyOrId) continue
+            if (entry.optString("kind") == "short") {
+                val shortsText = try {
+                    httpGet("$base/short_cards.json")
                 } catch (_: Exception) {
                     return false
                 } ?: return false
                 return try {
-                    dao.upsertAll(listOf(entityFromArticleJson(JSONObject(text))))
-                    true
+                    val arr = JSONArray(shortsText)
+                    for (j in 0 until arr.length()) {
+                        val obj = arr.getJSONObject(j)
+                        if (obj.optString("id") == id) {
+                            dao.upsertAll(listOf(ArticleParsers.entityFromShortJson(obj)))
+                            return true
+                        }
+                    }
+                    false
                 } catch (_: Exception) {
                     false
                 }
+            }
+            if (entry.isNull("file")) return false
+            val text = try {
+                httpGet("$base/${entry.optString("file")}")
+            } catch (_: Exception) {
+                return false
+            } ?: return false
+            return try {
+                dao.upsertAll(listOf(ArticleParsers.entityFromArticleJson(JSONObject(text))))
+                true
+            } catch (_: Exception) {
+                false
             }
         }
         return false
@@ -224,16 +335,15 @@ class EdgeRepository(context: Context) {
             val obj = JSONObject(text)
             val snaps = obj.optJSONArray("snapshots") ?: JSONArray()
             var latest: MarketSnapshot? = null
+            var latestEpoch: Long? = null
             for (i in 0 until snaps.length()) {
-                val s = snaps.getJSONObject(i)
-                latest = MarketSnapshot(
-                    tsTehran = s.optString("ts_tehran", ""),
-                    brent = if (s.isNull("brent")) null else s.optDouble("brent"),
-                    xauUsd = if (s.isNull("xau_usd")) null else s.optDouble("xau_usd"),
-                    usdIrtFree = if (s.isNull("usd_irt_free")) null else s.optDouble("usd_irt_free"),
-                    usdtIrt = if (s.isNull("usdt_irt")) null else s.optDouble("usdt_irt"),
-                    sekkeEmami = if (s.isNull("sekke_emami")) null else s.optDouble("sekke_emami"),
-                )
+                val entity = ArticleParsers.marketEntityFromJson(snaps.getJSONObject(i))
+                val snap = ArticleParsers.marketSnapshotFromEntity(entity)
+                // Latest means max timestamp, not last array element.
+                if (latest == null || (snap.tsEpoch ?: Long.MIN_VALUE) > (latestEpoch ?: Long.MIN_VALUE)) {
+                    latest = snap
+                    latestEpoch = snap.tsEpoch
+                }
             }
             val forms = mutableListOf<MarketFormula>()
             val farr = obj.optJSONArray("formulas_active") ?: JSONArray()
@@ -255,7 +365,8 @@ class EdgeRepository(context: Context) {
         }
     }
 
-    fun entityToArticle(e: ArticleEntity): Article {        val points = try {
+    fun entityToArticle(e: ArticleEntity): Article {
+        val points = try {
             val arr = JSONArray(e.pointsJson)
             (0 until arr.length()).map { arr.optString(it) }
         } catch (_: Exception) {
@@ -263,6 +374,7 @@ class EdgeRepository(context: Context) {
         }
         return Article(
             id = e.id,
+            appKey = e.appKey,
             kind = e.kind,
             title = e.title,
             summary = e.summary,
@@ -274,7 +386,13 @@ class EdgeRepository(context: Context) {
             source = e.source,
             originalUrl = e.originalUrl,
             publishedAt = e.publishedAt,
+            publishedAtEpoch = e.publishedAtEpoch,
+            contentHash = e.contentHash,
+            status = e.status,
             channelMessageId = e.channelMessageId,
         )
     }
 }
+
+private fun JSONObject.optStringOrNull(key: String): String? =
+    if (isNull(key)) null else optString(key)

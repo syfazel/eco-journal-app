@@ -54,9 +54,12 @@ fun ArticleScreen(
     var article by remember { mutableStateOf<ArticleEntity?>(null) }
     var bookmarked by remember { mutableStateOf(false) }
 
+    // articleId is an appKey (M1). The verbatim source id is
+    // accepted as a fallback for older deep links only.
     LaunchedEffect(articleId) {
-        article = repo.dao.byId(articleId)
-        bookmarked = repo.dao.isBookmarked(articleId)
+        article = repo.dao.byAppKey(articleId) ?: repo.dao.byId(articleId)
+        val key = article?.appKey ?: articleId
+        bookmarked = repo.dao.isBookmarked(key)
     }
 
     val a = article
@@ -117,11 +120,11 @@ fun ArticleScreen(
             onClick = {
                 scope.launch {
                     if (bookmarked) {
-                        repo.dao.removeBookmark(a.id)
+                        repo.dao.removeBookmark(a.appKey)
                         bookmarked = false
                     } else {
                         repo.dao.addBookmark(
-                            BookmarkEntity(a.id, System.currentTimeMillis())
+                            BookmarkEntity(a.appKey, System.currentTimeMillis())
                         )
                         bookmarked = true
                     }

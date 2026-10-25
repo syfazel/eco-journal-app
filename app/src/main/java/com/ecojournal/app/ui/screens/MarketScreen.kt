@@ -36,12 +36,26 @@ fun MarketScreen(
         Spacer(modifier = Modifier.height(12.dp))
         if (latest == null) {
             Text(
-                text = "دادهٔ بازار هنوز دریافت نشده است. پس از تنظیم لبهٔ " +
-                    "انتشار، market.json همگام می‌شود.",
+                text = "دادهٔ بازار هنوز دریافت نشده است. بذر همراه برنامه " +
+                    "در اجرای اول وارد می‌شود؛ اگر خالی ماند، پس از تنظیم " +
+                    "لبهٔ انتشار market.json همگام می‌شود.",
                 fontFamily = EcoFontFamily,
             )
         } else {
             Text("آخرین اسنپ‌شات: ${latest.tsTehran}", fontFamily = EcoFontFamily)
+            // Staleness label (M2): a snapshot older than 24 hours
+            // is stale, not current. The bundled seed's newest
+            // snapshot is dated 2026-10-24, so on first run offline
+            // this label will honestly say so until a sync lands.
+            val stale = latest.tsEpoch?.let {
+                System.currentTimeMillis() - it > 24L * 60L * 60L * 1000L
+            } ?: true
+            if (stale) {
+                Text(
+                    text = "⚠ دادهٔ بازار قدیمی است (بیش از ۲۴ ساعت).",
+                    fontFamily = EcoFontFamily,
+                )
+            }
             latest.brent?.let { Text("برنت: $it", fontFamily = EcoFontFamily) }
             latest.xauUsd?.let { Text("انس طلا (دلار): $it", fontFamily = EcoFontFamily) }
             latest.usdIrtFree?.let { Text("دلار آزاد (تومان): $it", fontFamily = EcoFontFamily) }

@@ -11,19 +11,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ecojournal.app.data.ArticleEntity
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.ui.components.ArticleCard
 import com.ecojournal.app.ui.theme.EcoFontFamily
-import kotlinx.coroutines.launch
 
 /** Category browser. Category labels come from the edge data itself. */
 @Composable
@@ -32,13 +29,10 @@ fun CategoriesScreen(
     onOpen: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scope = rememberCoroutineScope()
-    var all by remember { mutableStateOf<List<ArticleEntity>>(emptyList()) }
+    // Reactive (M2): categories and their articles update when the
+    // cache changes, instead of a single once-only read at open.
+    val all by repo.dao.allFlow().collectAsState(initial = emptyList())
     var selected by remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(Unit) {
-        scope.launch { all = repo.dao.all() }
-    }
     val categories = all.map { it.category to it.categoryFa }.distinct().sortedBy { it.second }
     val shown = if (selected == null) all else all.filter { it.category == selected }
 
@@ -73,8 +67,8 @@ fun CategoriesScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.fillMaxSize(),
         ) {
-            items(shown, key = { it.id }) { a ->
-                ArticleCard(article = a, onClick = { onOpen(a.id) })
+            items(shown, key = { it.appKey }) { a ->
+                ArticleCard(article = a, onClick = { onOpen(a.appKey) })
             }
         }
     }
@@ -87,8 +81,9 @@ fun BookmarksScreen(
     onOpen: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var saved by remember { mutableStateOf<List<ArticleEntity>>(emptyList()) }
-    LaunchedEffect(Unit) { saved = repo.dao.bookmarked() }
+    // Reactive (M2): bookmarks update when the cache changes, and
+    // open by appKey (M1), matching how ArticleScreen stores them.
+    val saved by repo.dao.bookmarkedFlow().collectAsState(initial = emptyList())
     if (saved.isEmpty()) {
         Text(
             text = "هنوز چیزی ذخیره نکرده‌اید.",
@@ -101,8 +96,8 @@ fun BookmarksScreen(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = modifier.fillMaxSize(),
         ) {
-            items(saved, key = { it.id }) { a ->
-                ArticleCard(article = a, onClick = { onOpen(a.id) })
+            items(saved, key = { it.appKey }) { a ->
+                ArticleCard(article = a, onClick = { onOpen(a.appKey) })
             }
         }
     }

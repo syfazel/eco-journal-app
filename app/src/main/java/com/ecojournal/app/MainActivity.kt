@@ -2,6 +2,7 @@ package com.ecojournal.app
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -73,21 +74,28 @@ class MainActivity : ComponentActivity() {
                     val pendingId = Notifications.openArticleId(intent)
                     LaunchedEffect(pendingId) {
                         if (pendingId != null) {
-                            nav.navigate("article/$pendingId")
+                            nav.navigate("article/${Uri.encode(pendingId)}")
                         }
                     }
                     Scaffold(
                         bottomBar = { BottomBar(nav) },
                     ) { inner ->
                         val pad = Modifier.padding(inner)
-                        var marketLatest by remember { mutableStateOf<MarketSnapshot?>(null) }
+                        // Market board from Room (M2): the bundled seed
+                        // populates market_snapshots on first run, so
+                        // the board is not empty offline. Formulas
+                        // still come from the edge when available.
+                        val marketEntity by repo.dao.marketLatestFlow()
+                            .collectAsState(initial = null)
+                        val marketCount by repo.dao.marketCountFlow()
+                            .collectAsState(initial = 0)
                         var marketFormulas by remember { mutableStateOf<List<MarketFormula>>(emptyList()) }
-                        var marketCount by remember { mutableStateOf(0) }
                         LaunchedEffect(Unit) {
-                            val (latest, formulas, count) = repo.fetchMarket()
-                            marketLatest = latest
+                            val (_, formulas, _) = repo.fetchMarket()
                             marketFormulas = formulas
-                            marketCount = count
+                        }
+                        val marketLatest: MarketSnapshot? = marketEntity?.let {
+                            com.ecojournal.app.data.ArticleParsers.marketSnapshotFromEntity(it)
                         }
                         NavHost(
                             navController = nav,
@@ -95,12 +103,15 @@ class MainActivity : ComponentActivity() {
                             modifier = pad,
                         ) {
                             composable("feed") {
-                                FeedScreen(repo = repo, onOpen = { id ->
-                                    nav.navigate("article/$id")
+                                FeedScreen(repo = repo, onOpen = { appKey ->
+                                    nav.navigate("article/${Uri.encode(appKey)}")
                                 })
                             }
-                            composable("article/{id}") { back ->
-                                val id = back.arguments?.getString("id") ?: ""
+                            // Route argument is an appKey (M1), never
+                            // the verbatim source id. Uri.encode is
+                            // defensive: appKey itself is hex+dash.
+                            composable("article/{appKey}") { back ->
+                                val id = back.arguments?.getString("appKey") ?: ""
                                 ArticleScreen(
                                     repo = repo,
                                     articleId = id,
@@ -112,8 +123,8 @@ class MainActivity : ComponentActivity() {
                             // page, so this route delegates to it instead
                             // of being deleted (other code may reference it).
                             composable("categories") {
-                                FeedScreen(repo = repo, onOpen = { id ->
-                                    nav.navigate("article/$id")
+                                FeedScreen(repo = repo, onOpen = { appKey ->
+                                    nav.navigate("article/${Uri.encode(appKey)}")
                                 })
                             }
                             composable("market") {
@@ -124,8 +135,8 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable("bookmarks") {
-                                BookmarksScreen(repo = repo, onOpen = { id ->
-                                    nav.navigate("article/$id")
+                                BookmarksScreen(repo = repo, onOpen = { appKey ->
+                                    nav.navigate("article/${Uri.encode(appKey)}")
                                 })
                             }
                             composable("settings") {

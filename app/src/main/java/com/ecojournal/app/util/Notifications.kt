@@ -29,6 +29,11 @@ object Notifications {
         }
     }
 
+    /**
+     * articleId is an appKey (M1). Callers pass the stable surrogate,
+     * never the verbatim source id, so MainActivity can route it
+     * without encoding a slash, question mark or non-ASCII text.
+     */
     fun showNewArticle(
         context: Context,
         articleId: String,

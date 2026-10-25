@@ -24,30 +24,43 @@ class SyncWorker(
         val repo = EdgeRepository(applicationContext)
         return when (val r = repo.sync()) {
             is SyncResult.Ok -> {
-                if (r.newArticleIds.isNotEmpty()) {
-                    val dao = repo.dao
-                    for (id in r.newArticleIds.take(5)) {
-                        val e = dao.byId(id) ?: continue
-                        Notifications.showNewArticle(
-                            applicationContext,
-                            articleId = id,
-                            title = e.title,
-                            text = e.summary,
-                        )
-                    }
-                    if (r.newArticleIds.size > 5) {
-                        Notifications.showNewArticle(
-                            applicationContext,
-                            articleId = r.newArticleIds.first(),
-                            title = "مقالات تازه",
-                            text = "${r.newArticleIds.size} مقالهٔ تازه منتشر شد.",
-                        )
-                    }
-                }
+                notifyNew(applicationContext, repo, r.newArticleAppKeys)
                 Result.success()
+            }
+            is SyncResult.Partial -> {
+                // Partial sync still delivered fresh articles; tell
+                // the user about those, and retry later for the rest.
+                notifyNew(applicationContext, repo, r.newArticleAppKeys)
+                Result.retry()
             }
             is SyncResult.NotConfigured -> Result.success()
             is SyncResult.Failed -> Result.retry()
+        }
+    }
+
+    private suspend fun notifyNew(
+        context: Context,
+        repo: EdgeRepository,
+        appKeys: List<String>,
+    ) {
+        if (appKeys.isEmpty()) return
+        val dao = repo.dao
+        for (appKey in appKeys.take(5)) {
+            val e = dao.byAppKey(appKey) ?: continue
+            Notifications.showNewArticle(
+                context,
+                articleId = appKey,
+                title = e.title,
+                text = e.summary,
+            )
+        }
+        if (appKeys.size > 5) {
+            Notifications.showNewArticle(
+                context,
+                articleId = appKeys.first(),
+                title = "مقالات تازه",
+                text = "${appKeys.size} مقالهٔ تازه منتشر شد.",
+            )
         }
     }
 

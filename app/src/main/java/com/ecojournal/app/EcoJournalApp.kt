@@ -14,15 +14,14 @@ class EcoJournalApp : Application() {
         Notifications.ensureChannel(this)
         // 15-minute periodic edge sync (WorkManager minimum).
         SyncWorker.schedule(this)
-        // Offline-first seed (setup task): first launch populates the
-        // cache from the bundled snapshot in assets/seed/ (a verbatim
-        // copy of edge/out/). Runs only when the cache is empty and
-        // never overwrites; the app therefore works with zero network
-        // and before any GitHub Pages URL exists. Failures are
-        // swallowed inside seedIfEmpty — startup must never crash
+        // Offline-first seed (M2): resumable and verifiable. It
+        // seeds only what is missing, writes its success hash only
+        // on a complete transaction, and is serialised with the
+        // feed's own seed call by an internal mutex, so the two
+        // launch paths can no longer race. Startup must never crash
         // because a bundled file is unreadable.
         CoroutineScope(Dispatchers.IO).launch {
-            BundledSeed.seedIfEmpty(this@EcoJournalApp)
+            BundledSeed.ensureSeed(this@EcoJournalApp)
         }
         // TODO (Firebase, Yasin): after google-services.json lands,
         // subscribe to the "articles" topic here:
