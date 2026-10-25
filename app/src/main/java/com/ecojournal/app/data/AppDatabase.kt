@@ -247,6 +247,101 @@ data class NotificationHistoryEntity(
     val suppressedReason: String?,
 )
 
+/**
+ * Phase 5 nightly editions (spec §5.12). One row per edition_id +
+ * version; [isLatest] flags the displayed version. The app keeps
+ * only the latest version's full component JSON; older version
+ * files stay on the edge as the audit trail (see Nightly.kt).
+ * Component JSON is stored verbatim and parsed at render time,
+ * so a malformed sub-object degrades one component, never the
+ * whole edition. [bookmarked] pins the edition against the
+ * 30-edition prune (spec §5.13): a bookmarked edition is never
+ * pruned, and its items survive with it (orphan discipline, E5).
+ * Market-close alert history inside [marketCloseJson] is the
+ * Phase 4 market_alert_events rows as shipped in the edition —
+ * the app NEVER re-derives alert history from snapshots here
+ * (spec §5.9 / Phase 4 report §7.3).
+ */
+@Entity(
+    tableName = "nightly_editions",
+    primaryKeys = ["editionId", "version"],
+    indices = [Index(value = ["tehranDate"]), Index(value = ["isLatest"])],
+)
+data class NightlyEditionEntity(
+    val editionId: String,
+    val version: Int,
+    val shamsiDate: String,
+    val tehranDate: String,
+    val status: String,
+    val generatedAtTehran: String,
+    val publishedAtTehran: String?,
+    val cutTehran: String,
+    val contentHash: String?,
+    val articlesState: String,
+    val articlesJson: String,
+    val marketCloseState: String,
+    val marketCloseJson: String,
+    val digestsState: String,
+    val digestsJson: String,
+    val analysisState: String,
+    val analysisJson: String,
+    val specialIssuesState: String,
+    val correctionsState: String,
+    val correctionsJson: String,
+    val dossierLinksJson: String,
+    val isLatest: Boolean,
+    val bookmarked: Boolean,
+    val cachedAt: Long,
+)
+
+/** Phase 5 nightly edition article, keyed by edition_key
+ * (edition_id + story_id, spec §5.5). One story = one row per
+ * edition; the same story in another edition is another row. */
+@Entity(
+    tableName = "nightly_items",
+    indices = [Index(value = ["editionId"]), Index(value = ["storyId"])],
+)
+data class NightlyItemEntity(
+    @PrimaryKey val editionKey: String,
+    val editionId: String,
+    val version: Int,
+    val storyId: String,
+    val appKey: String?,
+    val kind: String,
+    val title: String,
+    val body: String,
+    val wordCount: Int,
+    val freshness: Double?,
+    val sourceName: String,
+    val sourceUrl: String?,
+    val verbatimBadge: String?,
+    val formatType: String?,
+    val crisisLevel: String?,
+    val category: String?,
+    val categoryFa: String?,
+    val slot: String?,
+    val bundleId: String?,
+    val position: Int?,
+)
+
+/** Phase 5 dossier page (spec §5.8): ONE living page per topic
+ * per Shamsi week. The dossier LIVES (it updates as its topic
+ * develops); past editions do NOT change when it updates — an
+ * edition links to the dossier as it stood at cut time, and the
+ * reader sees a "updated since this edition" line when it has
+ * moved on. Duplicate = shared canon story family, NEVER mere
+ * keyword overlap. */
+@Entity(tableName = "dossiers")
+data class DossierEntity(
+    @PrimaryKey val dossierId: String,
+    val topicTitleFa: String,
+    val storyIdsJson: String,
+    val firstSeenTehran: String,
+    val lastUpdatedTehran: String,
+    val summary: String,
+    val editionIdsJson: String,
+)
+
 /** Bundle bookmarks (spec 8.3): a bundle header bookmark is
  * independent of member item bookmarks, like article bookmarks. */
 @Entity(tableName = "bundle_bookmarks")
@@ -655,6 +750,77 @@ interface Phase4Dao {
     suspend fun suppressedCountsByReasonSince(fromEpoch: Long): List<NotificationReasonCount>
 }
 
+@Dao
+interface NightlyDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertEdition(edition: NightlyEditionEntity)
+
+    @Query("UPDATE nightly_editions SET isLatest = 0 WHERE editionId = :editionId AND version != :version")
+    suspend fun demoteOlderVersions(editionId: String, version: Int)
+
+    @Query("SELECT * FROM nightly_editions WHERE isLatest = 1 AND status != 'retracted' ORDER BY tehranDate DESC, editionId DESC")
+    fun latestEditionsFlow(): Flow<List<NightlyEditionEntity>>
+
+    @Query("SELECT * FROM nightly_editions WHERE editionId = :editionId AND isLatest = 1 LIMIT 1")
+    suspend fun latestEditionById(editionId: String): NightlyEditionEntity?
+
+    /** Retraction tombstone: the edition leaves every list, its
+     * items are dropped, but the row (and its bookmark flag)
+     * survives — the E5 orphan discipline, applied to editions. */
+    @Query("UPDATE nightly_editions SET status = 'retracted' WHERE editionId = :editionId")
+    suspend fun retractEdition(editionId: String)
+
+    @Query("SELECT * FROM nightly_editions WHERE editionId = :editionId ORDER BY version DESC LIMIT 1")
+    suspend fun anyEditionById(editionId: String): NightlyEditionEntity?
+
+    @Query("SELECT COUNT(*) FROM nightly_editions WHERE isLatest = 1")
+    suspend fun latestEditionCount(): Int
+
+    @Query("UPDATE nightly_editions SET bookmarked = :bookmarked WHERE editionId = :editionId AND isLatest = 1")
+    suspend fun setEditionBookmarked(editionId: String, bookmarked: Boolean)
+
+    @Query("DELETE FROM nightly_editions WHERE editionId = :editionId")
+    suspend fun deleteEdition(editionId: String)
+
+    /** Prune to the newest 30 non-bookmarked latest editions;
+     * bookmarked editions and their items always survive. */
+    @Query(
+        "SELECT editionId FROM nightly_editions WHERE isLatest = 1 AND bookmarked = 0 " +
+            "ORDER BY tehranDate DESC, editionId DESC LIMIT -1 OFFSET 30"
+    )
+    suspend fun prunableEditionIds(): List<String>
+
+    @Query("DELETE FROM nightly_items WHERE editionId = :editionId")
+    suspend fun deleteItemsForEdition(editionId: String)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertItems(items: List<NightlyItemEntity>)
+
+    @Query("SELECT * FROM nightly_items WHERE editionId = :editionId ORDER BY kind DESC, title ASC")
+    suspend fun itemsForEdition(editionId: String): List<NightlyItemEntity>
+
+    @Query("SELECT * FROM nightly_items WHERE editionId = :editionId AND editionKey = :editionKey LIMIT 1")
+    suspend fun itemByKey(editionId: String, editionKey: String): NightlyItemEntity?
+
+    /** Offline edition search (spec §5.13): title/body/source,
+     * optionally scoped to one edition_id facet. */
+    @Query(
+        "SELECT * FROM nightly_items WHERE (title LIKE '%' || :query || '%' OR body LIKE '%' || :query || '%' " +
+            "OR sourceName LIKE '%' || :query || '%') AND (:editionId IS NULL OR editionId = :editionId) " +
+            "ORDER BY editionId DESC, title ASC"
+    )
+    suspend fun searchItems(query: String, editionId: String?): List<NightlyItemEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertDossier(dossier: DossierEntity)
+
+    @Query("SELECT * FROM dossiers ORDER BY lastUpdatedTehran DESC, dossierId ASC")
+    fun dossiersFlow(): Flow<List<DossierEntity>>
+
+    @Query("SELECT * FROM dossiers WHERE dossierId = :dossierId LIMIT 1")
+    suspend fun dossierById(dossierId: String): DossierEntity?
+}
+
 /** GROUP BY result holder for notification_history counts by type. */
 data class NotificationTypeCount(
     val type: String,
@@ -666,6 +832,57 @@ data class NotificationReasonCount(
     val suppressedReason: String,
     val count: Int,
 )
+
+// Version 6 -> 7 migration (Phase 5). Additive only: three new
+// tables (nightly_editions, nightly_items, dossiers). No existing
+// table is altered, so a v6 install keeps its full cache.
+// NOTE on the spec text: it says "Room v5 → v6" because it was
+// written against the Phase 1 baseline; Phase 2 moved the
+// database to v5 and Phase 4 to v6, so Phase 5 is v6 → v7 — the
+// tables are exactly the spec's tables, only the version number
+// differs (same deviation pattern as Phase 4, recorded here).
+val MIGRATION_6_7: Migration = object : Migration(6, 7) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `nightly_editions` (" +
+                "`editionId` TEXT NOT NULL, `version` INTEGER NOT NULL, " +
+                "`shamsiDate` TEXT NOT NULL, `tehranDate` TEXT NOT NULL, " +
+                "`status` TEXT NOT NULL, `generatedAtTehran` TEXT NOT NULL, " +
+                "`publishedAtTehran` TEXT, `cutTehran` TEXT NOT NULL, " +
+                "`contentHash` TEXT, `articlesState` TEXT NOT NULL, " +
+                "`articlesJson` TEXT NOT NULL, `marketCloseState` TEXT NOT NULL, " +
+                "`marketCloseJson` TEXT NOT NULL, `digestsState` TEXT NOT NULL, " +
+                "`digestsJson` TEXT NOT NULL, `analysisState` TEXT NOT NULL, " +
+                "`analysisJson` TEXT NOT NULL, `specialIssuesState` TEXT NOT NULL, " +
+                "`correctionsState` TEXT NOT NULL, `correctionsJson` TEXT NOT NULL, " +
+                "`dossierLinksJson` TEXT NOT NULL, `isLatest` INTEGER NOT NULL, " +
+                "`bookmarked` INTEGER NOT NULL, `cachedAt` INTEGER NOT NULL, " +
+                "PRIMARY KEY(`editionId`, `version`))"
+        )
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_nightly_editions_tehranDate` ON `nightly_editions` (`tehranDate`)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_nightly_editions_isLatest` ON `nightly_editions` (`isLatest`)")
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `nightly_items` (" +
+                "`editionKey` TEXT NOT NULL, `editionId` TEXT NOT NULL, " +
+                "`version` INTEGER NOT NULL, `storyId` TEXT NOT NULL, " +
+                "`appKey` TEXT, `kind` TEXT NOT NULL, `title` TEXT NOT NULL, " +
+                "`body` TEXT NOT NULL, `wordCount` INTEGER NOT NULL, " +
+                "`freshness` REAL, `sourceName` TEXT NOT NULL, `sourceUrl` TEXT, " +
+                "`verbatimBadge` TEXT, `formatType` TEXT, `crisisLevel` TEXT, " +
+                "`category` TEXT, `categoryFa` TEXT, `slot` TEXT, `bundleId` TEXT, " +
+                "`position` INTEGER, PRIMARY KEY(`editionKey`))"
+        )
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_nightly_items_editionId` ON `nightly_items` (`editionId`)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_nightly_items_storyId` ON `nightly_items` (`storyId`)")
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `dossiers` (" +
+                "`dossierId` TEXT NOT NULL, `topicTitleFa` TEXT NOT NULL, " +
+                "`storyIdsJson` TEXT NOT NULL, `firstSeenTehran` TEXT NOT NULL, " +
+                "`lastUpdatedTehran` TEXT NOT NULL, `summary` TEXT NOT NULL, " +
+                "`editionIdsJson` TEXT NOT NULL, PRIMARY KEY(`dossierId`))"
+        )
+    }
+}
 
 // Version 5 -> 6 migration (Phase 4). Additive only: two new
 // tables + five new nullable/defaulted columns on radar_signals.
@@ -931,8 +1148,11 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
         BundleBookmarkEntity::class,
         MarketAlertEventEntity::class,
         NotificationHistoryEntity::class,
+        NightlyEditionEntity::class,
+        NightlyItemEntity::class,
+        DossierEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = false,
 )
 @TypeConverters(StringListConverter::class)
@@ -940,4 +1160,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun articleDao(): ArticleDao
     abstract fun channelDao(): ChannelDao
     abstract fun phase4Dao(): Phase4Dao
+    abstract fun nightlyDao(): NightlyDao
 }

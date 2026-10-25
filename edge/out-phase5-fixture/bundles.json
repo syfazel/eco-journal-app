@@ -1,0 +1,125 @@
+{
+ "label": "LAB FIXTURE",
+ "bundles": [
+  {
+   "bundle_id": "morning-bundle-1405-08-03",
+   "bundle_kind": "morning_bundle",
+   "title": "بسته صبح آزمایشگاهی",
+   "member_app_keys": [
+    "lab-watch-l2-night-held",
+    "lab-geopol-night-held",
+    "lab-sitrep-1000",
+    "lab-shortnews-1",
+    "lab-shortnews-2",
+    "lab-shortnews-3",
+    "lab-slotbundle-1",
+    "lab-slotbundle-2",
+    "lab-retracted"
+   ],
+   "bundle_date_shamsi": "1405-08-03",
+   "status": "posted",
+   "updated_at_epoch": 1792902600,
+   "content_hash": "aacf9bc56b33d95ce5d3f582166440ab519c734eb19cbc03b96d0faa8ca91d43"
+  },
+  {
+   "bundle_id": "lab-nightdesk",
+   "bundle_kind": "night_desk",
+   "title": "جامانده‌های دیشب",
+   "member_app_keys": [
+    "lab-nightdesk-01",
+    "lab-nightdesk-02",
+    "lab-nightdesk-03",
+    "lab-nightdesk-04",
+    "lab-nightdesk-05",
+    "lab-nightdesk-06",
+    "lab-nightdesk-07",
+    "lab-nightdesk-08",
+    "lab-nightdesk-09",
+    "lab-nightdesk-10",
+    "lab-nightdesk-11",
+    "lab-nightdesk-12"
+   ],
+   "bundle_date_shamsi": "1405-08-03",
+   "status": "posted",
+   "updated_at_epoch": 1792874100,
+   "content_hash": "e4fc1431b5f106842bbff9ff528959ce682d2644a10061ba43deba9ed087433b"
+  },
+  {
+   "bundle_id": "lab-shortnews",
+   "bundle_kind": "short_news",
+   "title": "خبرهای کوتاه آزمایشگاهی",
+   "member_app_keys": [
+    "lab-shortnews-1",
+    "lab-shortnews-2",
+    "lab-shortnews-3"
+   ],
+   "bundle_date_shamsi": "1405-08-03",
+   "status": "posted",
+   "updated_at_epoch": 1792900800,
+   "content_hash": "35391d3a9edb8918b725f446a6838eb9e0c0031a2f5823334e3670cf19704ecc"
+  },
+  {
+   "bundle_id": "lab-slotbundle",
+   "bundle_kind": "slot_bundle",
+   "title": "بسته بازه صبح آزمایشگاهی",
+   "member_app_keys": [
+    "lab-slotbundle-1",
+    "lab-slotbundle-2"
+   ],
+   "bundle_date_shamsi": "1405-08-03",
+   "status": "posted",
+   "updated_at_epoch": 1792903800,
+   "content_hash": "57e62beb53145803e1a0e2d7df3b3cf92e7ef6e61c51b65fad167ce2056f1302"
+  },
+  {
+   "bundle_id": "lab-marginalia",
+   "bundle_kind": "marginalia",
+   "title": "حاشیه‌های آزمایشگاهی",
+   "member_app_keys": [
+    "lab-marginalia-1",
+    "lab-marginalia-2"
+   ],
+   "bundle_date_shamsi": "1405-08-03",
+   "status": "posted",
+   "updated_at_epoch": 1792947600,
+   "content_hash": "cac279f2ffdc1faf49f301a862f0ab895dbcd9f7f26945b510c0469c64b08b6a"
+  },
+  {
+   "bundle_id": "lab-hourly",
+   "bundle_kind": "hourly_digest",
+   "title": "گزیده ساعتی آزمایشگاهی",
+   "member_app_keys": [
+    "lab-hourly-1",
+    "lab-hourly-2"
+   ],
+   "bundle_date_shamsi": "1405-08-03",
+   "status": "posted",
+   "updated_at_epoch": 1792951200,
+   "content_hash": "5cadf94ab012c541f544100fc9aa18e8e4e8a128079e47fe814e27dae71b9c2c"
+  },
+  {
+   "bundle_id": "lab-morning-digest",
+   "bundle_kind": "morning_digest",
+   "title": "گزیده صبح قدیمی (باید مسدود شود)",
+   "member_app_keys": [
+    "lab-geopol-day"
+   ],
+   "bundle_date_shamsi": "1405-08-03",
+   "status": "posted",
+   "updated_at_epoch": 1792902600,
+   "content_hash": "acda882f05788d8485e5144426815804a68f0347404691ef03cf4008ad89e708"
+  },
+  {
+   "bundle_id": "lab-unknown-kind",
+   "bundle_kind": "mystery_kind",
+   "title": "بسته با نوع ناشناخته",
+   "member_app_keys": [
+    "lab-geopol-day"
+   ],
+   "bundle_date_shamsi": "1405-08-03",
+   "status": "posted",
+   "updated_at_epoch": 1792902600,
+   "content_hash": "c3d90a2135b496e3a8575d460c6672653a0619075abc64e3c14e1a2808044bda"
+  }
+ ]
+}

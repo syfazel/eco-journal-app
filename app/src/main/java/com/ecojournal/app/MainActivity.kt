@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
@@ -59,7 +60,10 @@ import com.ecojournal.app.ui.screens.ChannelReaderScreen
 import com.ecojournal.app.ui.screens.DiagnosticsScreen
 import com.ecojournal.app.ui.screens.FeedScreen
 import com.ecojournal.app.ui.screens.InviteScreen
+import com.ecojournal.app.ui.screens.DossierPageScreen
+import com.ecojournal.app.ui.screens.EditionPageScreen
 import com.ecojournal.app.ui.screens.MarketScreen
+import com.ecojournal.app.ui.screens.NightlyScreen
 import com.ecojournal.app.ui.screens.SettingsScreen
 import com.ecojournal.app.ui.screens.WarRoomScreen
 import com.ecojournal.app.ui.theme.EcoFontFamily
@@ -81,6 +85,11 @@ private val TABS = listOf(
     Tab("feed", "صفحه اصلی", Icons.Filled.Home),
     Tab("warroom", "اتاق جنگ", Icons.Filled.Warning),
     Tab("bundles", "بسته‌ها", Icons.Filled.List),
+    // Phase 5: Nightly section, top-level alongside Feed /
+    // Market / War Room / Bundles (spec §5.14). It is the
+    // edition section, not a parallel service and not a
+    // separate tab for war-room/red-alert (bar rule §0).
+    Tab("nightly", "نسخهٔ شبانه", Icons.Filled.DarkMode),
     Tab("market", "بازار", Icons.Filled.ShowChart),
     Tab("bookmarks", "ذخیره‌شده‌ها", Icons.Filled.Bookmark),
     Tab("settings", "تنظیمات", Icons.Filled.Settings),
@@ -149,7 +158,10 @@ class MainActivity : ComponentActivity() {
                     // tab (the banner snapshot is the latest one
                     // the banner describes; the tab shows it).
                     val pendingMarketId = Notifications.openMarketSnapshotId(intent)
-                    LaunchedEffect(pendingId, pendingChannelId, pendingBundleId, pendingMarketId) {
+                    // Phase 5: a nightly notification tap opens
+                    // the edition page by edition_id.
+                    val pendingNightlyId = Notifications.openNightlyEditionId(intent)
+                    LaunchedEffect(pendingId, pendingChannelId, pendingBundleId, pendingMarketId, pendingNightlyId) {
                         if (pendingId != null) {
                             nav.navigate("article/${Uri.encode(pendingId)}")
                         }
@@ -162,6 +174,9 @@ class MainActivity : ComponentActivity() {
                         if (pendingMarketId != null) {
                             nav.navigate("market")
                         }
+                        if (pendingNightlyId != null) {
+                            nav.navigate("edition/${Uri.encode(pendingNightlyId)}")
+                        }
                     }
                     // The reader has its own top bar (M3, P1-08),
                     // and diagnostics (M8) is a settings detail
@@ -173,6 +188,7 @@ class MainActivity : ComponentActivity() {
                     val hideBar = backEntry?.destination?.route
                         ?.substringBefore("/") in setOf(
                         "article", "diagnostics", "channel", "bundle",
+                        "edition", "dossier",
                     )
                     Scaffold(
                         bottomBar = { if (!hideBar) BottomBar(nav) },
@@ -291,6 +307,47 @@ class MainActivity : ComponentActivity() {
                                     onOpenBundle = { bundleId ->
                                         nav.navigate("bundle/${Uri.encode(bundleId)}")
                                     },
+                                    fontScale = settings.fontScale,
+                                )
+                            }
+                            // Phase 5: Nightly section + edition
+                            // page + dossier page (spec §5.14).
+                            composable("nightly") {
+                                NightlyScreen(
+                                    repo = repo,
+                                    onOpenEdition = { editionId ->
+                                        nav.navigate("edition/${Uri.encode(editionId)}")
+                                    },
+                                    onOpenDossier = { dossierId ->
+                                        nav.navigate("dossier/${Uri.encode(dossierId)}")
+                                    },
+                                    fontScale = settings.fontScale,
+                                )
+                            }
+                            composable("edition/{editionId}") { back ->
+                                val id = back.arguments?.getString("editionId") ?: ""
+                                EditionPageScreen(
+                                    repo = repo,
+                                    editionId = id,
+                                    onOpenDossier = { dossierId ->
+                                        nav.navigate("dossier/${Uri.encode(dossierId)}")
+                                    },
+                                    onOpenEdition = { editionId ->
+                                        nav.navigate("edition/${Uri.encode(editionId)}")
+                                    },
+                                    onBack = { nav.popBackStack() },
+                                    fontScale = settings.fontScale,
+                                )
+                            }
+                            composable("dossier/{dossierId}") { back ->
+                                val id = back.arguments?.getString("dossierId") ?: ""
+                                DossierPageScreen(
+                                    repo = repo,
+                                    dossierId = id,
+                                    onOpenEdition = { editionId ->
+                                        nav.navigate("edition/${Uri.encode(editionId)}")
+                                    },
+                                    onBack = { nav.popBackStack() },
                                     fontScale = settings.fontScale,
                                 )
                             }

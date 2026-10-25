@@ -67,6 +67,8 @@ PHASE3_SECTIONS = EXPECTED_SECTIONS | {"channel_typed"}
 PHASE1_GENERATOR = "edge/generate_edge.py (Phase 1, LAB ONLY)"
 PHASE3_GENERATOR = ("edge/merge_staging.py (Phase 3 Tier A, LAB ONLY) + "
                     "edge/generate_edge.py (Phase 1, LAB ONLY)")
+PHASE5_GENERATOR = ("edge/generate_phase5_fixtures.py (Phase 5, LAB ONLY) + "
+                    "edge/generate_edge.py (Phase 1, LAB ONLY)")
 GATE_PROVENANCE = "muse-editorial (delegated by Yasin 2026-10-18)"
 CHAIN_FIELDS = ("channel_message_id", "channel_posted_epoch",
                 "staged_epoch", "gate_decided_epoch", "gate_decision",
@@ -148,7 +150,7 @@ def verify(out_dir):
         fail(checks, "manifest version is %r, expected 3" % manifest.get("version"))
     else:
         ok(checks, "manifest version 3")
-    if manifest.get("generator") not in (PHASE1_GENERATOR, PHASE3_GENERATOR):
+    if manifest.get("generator") not in (PHASE1_GENERATOR, PHASE3_GENERATOR, PHASE5_GENERATOR):
         fail(checks, "manifest generator string mismatch: %r" % manifest.get("generator"))
     else:
         ok(checks, "manifest generator string exact")
@@ -459,8 +461,155 @@ def verify(out_dir):
             ok(checks, "channel_typed manifest extras + chain objects valid "
                  "(%d items, %d with non-null message_id)"
                  % (len(typed_entries), len(seen_mid)))
-    for name, expect in (("nightly", "not_yet_published"),
-                         ("voices", "not_yet_published")):
+    # ---- Phase 5 nightly section (spec §5.12/§5.16).
+    # Either honestly not_yet_published (the live edge during the
+    # freeze, and every pre-Phase-5 edge) or published with full
+    # verification: section hash over FULL edition contents (R13,
+    # not the entry list), per-edition content hashes, floors
+    # recomputed from bodies, fresh-text recomputed for full
+    # articles (auditable only when the edition carries the
+    # channel post body), special issues paused with no content,
+    # no blog link, no model-probability key, verbatim
+    # allow-list, and a v1 audit file for every corrected edition.
+    def _nightly_words(text):
+        import re as _re
+        norm = (text or "").replace("\u200c", "")
+        norm = norm.translate(str.maketrans(
+            "۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789"))
+        return [w for w in _re.split(r"\s+", norm.strip()) if w]
+
+    def _nightly_fresh(article_body, channel_body):
+        import re as _re
+        def _words(t):
+            norm = (t or "").replace("\u200c", "")
+            norm = norm.translate(str.maketrans(
+                "۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789"))
+            stripped = _re.sub(r"[^\w\s]", " ", norm, flags=_re.UNICODE)
+            return [w.lower() for w in _re.split(r"\s+", stripped.strip()) if w]
+        aw = _words(article_body)
+        if len(aw) < 5:
+            return 0.0
+        agrams = {" ".join(aw[i:i + 5]) for i in range(len(aw) - 4)}
+        pw = _words(channel_body)
+        pgrams = {" ".join(pw[i:i + 5]) for i in range(len(pw) - 4)}
+        if not agrams:
+            return 0.0
+        return 1.0 - len(agrams & pgrams) / len(agrams)
+
+    def _walk_keys(obj, bad):
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                if "probab" in str(k).lower() or "forecast_direction" in str(k):
+                    bad.append(str(k))
+                _walk_keys(v, bad)
+        elif isinstance(obj, list):
+            for v in obj:
+                _walk_keys(v, bad)
+
+    nsec = sections.get("nightly", {})
+    if nsec.get("status") == "not_yet_published":
+        if nsec.get("count") != 0:
+            fail(checks, "nightly not_yet_published but count %r" % nsec.get("count"))
+        else:
+            ok(checks, "nightly honestly not_yet_published (count 0)")
+    elif nsec.get("status") == "published":
+        if nsec.get("file") != "nightly.json":
+            fail(checks, "nightly file is %r, expected nightly.json" % nsec.get("file"))
+        npath = os.path.join(out_dir, "nightly.json")
+        if not os.path.exists(npath):
+            fail(checks, "nightly published but nightly.json missing")
+        else:
+            nindex = load(out_dir, "nightly.json")
+            neditions = nindex.get("editions", [])
+            ndossiers = nindex.get("dossiers", [])
+            if nsec.get("count") != len(neditions):
+                fail(checks, "nightly count %r != index editions %d" % (nsec.get("count"), len(neditions)))
+            if len(nsec.get("items", [])) != len(neditions):
+                fail(checks, "nightly manifest items %d != index editions %d" % (
+                    len(nsec.get("items", [])), len(neditions)))
+            full_editions = []
+            for entry in neditions:
+                epath = os.path.join(out_dir, entry.get("file", ""))
+                if not os.path.exists(epath):
+                    fail(checks, "nightly edition file %s missing" % entry.get("file"))
+                    continue
+                ed = load(out_dir, entry["file"])
+                full_editions.append(ed)
+                if ed.get("edition_id") != entry.get("edition_id"):
+                    fail(checks, "nightly %s: edition_id mismatch with index" % entry.get("edition_id"))
+                if ed.get("version") != entry.get("version"):
+                    fail(checks, "nightly %s: version mismatch with index" % entry.get("edition_id"))
+                if ed.get("status") != entry.get("status"):
+                    fail(checks, "nightly %s: status mismatch with index" % entry.get("edition_id"))
+                recomputed = hashlib.sha256(canonical_json(
+                    {k: v for k, v in ed.items() if k != "content_hash"}
+                ).encode("utf-8")).hexdigest()
+                if recomputed != ed.get("content_hash"):
+                    fail(checks, "nightly %s: content_hash != recomputed" % entry.get("edition_id"))
+                if recomputed != entry.get("content_hash"):
+                    fail(checks, "nightly %s: index content_hash != edition content_hash" % entry.get("edition_id"))
+                if ed.get("status") == "draft":
+                    fail(checks, "nightly %s: DRAFT edition in published section" % entry.get("edition_id"))
+                comps = ed.get("components", {})
+                spec5 = comps.get("special_issues", {})
+                if spec5.get("state") != "paused" or spec5.get("items"):
+                    fail(checks, "nightly %s: special_issues not paused/empty" % entry.get("edition_id"))
+                bad_keys = []
+                _walk_keys(ed, bad_keys)
+                if bad_keys:
+                    fail(checks, "nightly %s: model-probability keys %s" % (entry.get("edition_id"), bad_keys))
+                for item in comps.get("articles", {}).get("items", []):
+                    body = item.get("body", "")
+                    wc = len(_nightly_words(body))
+                    if item.get("word_count") != wc:
+                        fail(checks, "nightly %s item %s: word_count %r != recomputed %d" % (
+                            entry.get("edition_id"), item.get("story_id"), item.get("word_count"), wc))
+                    if wc < 300:
+                        fail(checks, "nightly %s item %s: %d words < 300 floor" % (
+                            entry.get("edition_id"), item.get("story_id"), wc))
+                    if item.get("kind") == "full_article":
+                        if wc < 800:
+                            fail(checks, "nightly %s item %s: full article %d words < 800" % (
+                                entry.get("edition_id"), item.get("story_id"), wc))
+                        cpb = item.get("channel_post_body")
+                        if not cpb:
+                            fail(checks, "nightly %s item %s: full article without channel_post_body (freshness unauditable)" % (
+                                entry.get("edition_id"), item.get("story_id")))
+                        elif _nightly_fresh(body, cpb) < 0.60:
+                            fail(checks, "nightly %s item %s: fresh-text < 0.60" % (
+                                entry.get("edition_id"), item.get("story_id")))
+                    badge = item.get("verbatim_badge")
+                    if badge and "دنیای اقتصاد" not in badge and "تابناک" not in badge:
+                        fail(checks, "nightly %s item %s: verbatim badge not allow-listed" % (
+                            entry.get("edition_id"), item.get("story_id")))
+                    url = item.get("source_url") or ""
+                    if "blog" in url.lower():
+                        fail(checks, "nightly %s item %s: source_url is a blog link" % (
+                            entry.get("edition_id"), item.get("story_id")))
+                if int(ed.get("version", 1)) >= 2:
+                    import re as _re2
+                    v1name = _re2.sub(r"-v\d+\.json$", "-v1.json", entry.get("file", ""))
+                    if v1name == entry.get("file") or not os.path.exists(os.path.join(out_dir, v1name)):
+                        fail(checks, "nightly %s: corrected edition without v1 audit file" % entry.get("edition_id"))
+                    else:
+                        v1 = load(out_dir, v1name)
+                        if v1.get("edition_id") != entry.get("edition_id") or int(v1.get("version", 0)) != 1:
+                            fail(checks, "nightly %s: v1 audit file mismatch" % entry.get("edition_id"))
+            for d in ndossiers:
+                if len(_nightly_words(d.get("summary", ""))) < 300:
+                    fail(checks, "nightly dossier %s: summary < 300 words" % d.get("dossier_id"))
+            full_sorted = sorted(full_editions, key=lambda e: e.get("edition_id", ""))
+            doss_sorted = sorted(ndossiers, key=lambda d: d.get("dossier_id", ""))
+            if nsec.get("hash") != section_hash({"editions": full_sorted, "dossiers": doss_sorted}):
+                fail(checks, "nightly section hash mismatch (recomputed from full edition contents)")
+            else:
+                ok(checks, "nightly section hash recomputes from full contents (%d editions, %d dossiers)" % (
+                    len(full_sorted), len(doss_sorted)))
+            if not any(c[0] == "FAIL" and "nightly" in c[1] for c in checks):
+                ok(checks, "nightly editions verified: floors, fresh-text, paused special issues, v1 audit files")
+    else:
+        fail(checks, "nightly has unexpected status %r" % nsec.get("status"))
+    for name, expect in (("voices", "not_yet_published"),):
         sec = sections.get(name, {})
         if sec.get("status") != expect or sec.get("count") != 0:
             fail(checks, "%s section is %r, expected {%s, 0}" % (name, sec, expect))

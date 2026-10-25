@@ -133,6 +133,7 @@ class EdgeRepository(context: Context) {
     val dao: ArticleDao = db.articleDao()
     val channelDao: ChannelDao = db.channelDao()
     val phase4Dao: Phase4Dao = db.phase4Dao()
+    val nightlyDao: NightlyDao = db.nightlyDao()
     private val appContext: Context = context.applicationContext
     private val settings = SettingsStore(context)
 
@@ -214,6 +215,7 @@ class EdgeRepository(context: Context) {
                 SyncSections.CHANNEL_TYPED -> channelDao.channelCount()
                 SyncSections.BUNDLES -> channelDao.allBundles().size
                 SyncSections.RADAR -> channelDao.radarCount()
+                SyncSections.NIGHTLY -> nightlyDao.latestEditionCount()
                 else -> dao.metaValue(SyncSections.countKey(key))?.toIntOrNull() ?: 0
             }
             SectionSyncState(
@@ -809,6 +811,19 @@ class EdgeRepository(context: Context) {
                 missingTotal += it.missingCount
             })
         }
+        // Phase 5 nightly section: same Phase 1 rules (manifest
+        // first, per-section hash, one transaction, hash stored
+        // only on complete success, failed/corrupt never empties
+        // the cache — yesterday's edition stays with an honest
+        // failure line, never a blank Nightly section, P5-4).
+        if (wants(SyncSections.NIGHTLY)) {
+            outcomes.add(syncNightlySection(base, manifest, forceRefresh, now).also {
+                if (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL) {
+                    anyIncomplete = true
+                }
+                missingTotal += it.missingCount
+            })
+        }
         // Computed (overwrite-for-today) Phase 2 anomaly codes:
         // caps, bundle-shape flags. Parse anomalies (above) are
         // accumulated for the day instead.
@@ -817,10 +832,23 @@ class EdgeRepository(context: Context) {
             dispatchPhase4Notifications(now)
         }
 
+        // Phase 5 nightly notification: fires on the first
+        // successful nightly sync after publication (full syncs
+        // and nightly-only syncs alike); a failed nightly sync
+        // produces NO notification for an edition the app does
+        // not have (spec §5.15). Timing comes ONLY from
+        // NotificationPolicy.decide for NIGHTLY — this producer
+        // never re-implements night/quiet-hours timing.
+        if (onlySection == null || onlySection == SyncSections.NIGHTLY) {
+            dispatchNightlyNotifications(now)
+        }
         // Not-yet-published and gated sections: state comes from the
         // manifest, no fetch is attempted, nothing is invented.
+        // NIGHTLY left this list in Phase 5 (it is fetchable now);
+        // VOICES stays not-yet-published and SPECIAL_ISSUES stays
+        // gated_frozen under its separate freeze decision.
         for (key in listOf(
-            SyncSections.NIGHTLY, SyncSections.VOICES, SyncSections.SPECIAL_ISSUES,
+            SyncSections.VOICES, SyncSections.SPECIAL_ISSUES,
         )) {
             if (!wants(key)) continue
             val section = manifest.sections[key]
@@ -1165,6 +1193,315 @@ class EdgeRepository(context: Context) {
             if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
             corrupt,
         )
+    }
+
+    // ---- Phase 5 nightly section sync + notification producer ----
+
+    private suspend fun syncNightlySection(
+        base: String,
+        manifest: EdgeManifest,
+        forceRefresh: Boolean,
+        now: Long,
+    ): SectionOutcome {
+        val key = SyncSections.NIGHTLY
+        val section = manifest.sections[key]
+            ?: return SectionOutcome(key, SectionStates.UNKNOWN, 0)
+        // A manifest that still reports nightly as not_yet_published
+        // or gated (the live edge during the freeze) is an honest
+        // zero state, not a fetchable section — no fetch attempted.
+        if (section.status == "not_yet_published" || section.status == "gated_frozen") {
+            recordSectionMeta(key, SectionStates.NOT_YET_PUBLISHED, "", section.count, 0, now, null, null)
+            return SectionOutcome(key, SectionStates.NOT_YET_PUBLISHED, 0)
+        }
+        val storedHash = dao.metaValue(SyncSections.hashKey(key))
+        if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
+            recordSectionMeta(
+                key, SectionStates.UP_TO_DATE, "",
+                nightlyDao.latestEditionCount(), 0, now, null, null,
+            )
+            pruneNightlyEditions()
+            return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
+        }
+        val indexOutcome = httpGet("$base/${section.file ?: "nightly.json"}")
+        val indexText = when (indexOutcome) {
+            is HttpOutcome.Ok -> indexOutcome.body
+            else -> null
+        }
+        if (indexText == null) {
+            recordSectionMeta(key, SectionStates.FAILED, indexOutcome.toFailedCode(), null, 0, now, null, null)
+            return SectionOutcome(key, SectionStates.FAILED, 0)
+        }
+        // Stored content hashes are per edition_id (manifest item
+        // app_key = edition_id for nightly items).
+        val storedByEdition = mutableMapOf<String, String?>()
+        val bookmarkedByEdition = mutableMapOf<String, Boolean>()
+        for (row in nightlyDao.latestEditionsFlow().first()) {
+            storedByEdition[row.editionId] = row.contentHash
+            bookmarkedByEdition[row.editionId] = row.bookmarked
+        }
+        val toFetch = mutableListOf<ManifestItem>()
+        val retracted = mutableListOf<ManifestItem>()
+        var corrupt = 0
+        for (item in section.items) {
+            if (item.status == "retracted") {
+                if (item.appKey in storedByEdition) retracted.add(item)
+                continue
+            }
+            val stored = storedByEdition[item.appKey]
+            if (stored != null && item.contentHash != null && stored == item.contentHash) continue
+            if (item.file == null) {
+                corrupt++
+                continue
+            }
+            toFetch.add(item)
+        }
+        val parsedEditions = mutableListOf<NightlyEditionParsed>()
+        for (item in toFetch) {
+            val text = when (val outcome = httpGet("$base/${item.file}")) {
+                is HttpOutcome.Ok -> outcome.body
+                else -> null
+            }
+            if (text == null) {
+                corrupt++
+                continue
+            }
+            val parsed = try {
+                NightlyParsing.parseEdition(JSONObject(text))
+            } catch (_: Exception) {
+                null
+            }
+            if (parsed == null) {
+                // Corrupt edition: counted, skipped, rest of the
+                // section still applies (Phase 1 corrupt rule).
+                corrupt++
+            } else {
+                parsedEditions.add(parsed)
+            }
+        }
+        val dossiers = mutableListOf<DossierEntity>()
+        try {
+            val root = JSONObject(indexText)
+            val arr = root.optJSONArray("dossiers") ?: JSONArray()
+            for (i in 0 until arr.length()) {
+                val obj = try {
+                    arr.getJSONObject(i)
+                } catch (_: Exception) {
+                    continue
+                }
+                val triple = NightlyParsing.parseDossier(obj) ?: continue
+                dossiers.add(
+                    DossierEntity(
+                        dossierId = triple.first,
+                        topicTitleFa = triple.second,
+                        storyIdsJson = obj.optJSONArray("story_ids")?.toString() ?: "[]",
+                        firstSeenTehran = obj.optString("first_seen_tehran"),
+                        lastUpdatedTehran = obj.optString("last_updated_tehran"),
+                        summary = obj.optString("summary"),
+                        editionIdsJson = obj.optJSONArray("edition_ids")?.toString() ?: "[]",
+                    )
+                )
+            }
+        } catch (_: Exception) {
+            // A corrupt index dossiers block degrades dossiers
+            // only; editions parsed above still apply.
+            corrupt++
+        }
+        val complete = corrupt == 0
+        db.withTransaction {
+            if (dossiers.isNotEmpty()) {
+                for (d in dossiers) nightlyDao.upsertDossier(d)
+            }
+            for (parsed in parsedEditions) {
+                val wasBookmarked = bookmarkedByEdition[parsed.editionId] ?: false
+                nightlyDao.demoteOlderVersions(parsed.editionId, parsed.version)
+                nightlyDao.upsertEdition(
+                    NightlyEditionEntity(
+                        editionId = parsed.editionId,
+                        version = parsed.version,
+                        shamsiDate = parsed.shamsiDate,
+                        tehranDate = parsed.tehranDate,
+                        status = parsed.status,
+                        generatedAtTehran = parsed.generatedAtTehran,
+                        publishedAtTehran = parsed.publishedAtTehran,
+                        cutTehran = parsed.cutTehran,
+                        contentHash = parsed.contentHash,
+                        articlesState = parsed.articlesState,
+                        articlesJson = parsed.articlesJson,
+                        marketCloseState = parsed.marketCloseState,
+                        marketCloseJson = parsed.marketCloseJson,
+                        digestsState = parsed.digestsState,
+                        digestsJson = parsed.digestsJson,
+                        analysisState = parsed.analysisState,
+                        analysisJson = parsed.analysisJson,
+                        specialIssuesState = parsed.specialIssuesState,
+                        correctionsState = parsed.correctionsState,
+                        correctionsJson = parsed.correctionsJson,
+                        dossierLinksJson = parsed.dossierLinksJson,
+                        isLatest = true,
+                        bookmarked = wasBookmarked,
+                        cachedAt = now,
+                    )
+                )
+                nightlyDao.deleteItemsForEdition(parsed.editionId)
+                nightlyDao.upsertItems(
+                    parsed.items.map { item ->
+                        NightlyItemEntity(
+                            editionKey = item.editionKey,
+                            editionId = parsed.editionId,
+                            version = parsed.version,
+                            storyId = item.storyId,
+                            appKey = item.appKey,
+                            kind = item.kind,
+                            title = item.title,
+                            body = item.body,
+                            wordCount = item.wordCount,
+                            freshness = item.freshness,
+                            sourceName = item.sourceName,
+                            sourceUrl = item.sourceUrl,
+                            verbatimBadge = item.verbatimBadge,
+                            formatType = item.formatType,
+                            crisisLevel = item.crisisLevel,
+                            category = item.category,
+                            categoryFa = item.categoryFa,
+                            slot = item.slot,
+                            bundleId = item.bundleId,
+                            position = item.position,
+                        )
+                    }
+                )
+            }
+            for (item in retracted) {
+                nightlyDao.retractEdition(item.appKey)
+                nightlyDao.deleteItemsForEdition(item.appKey)
+            }
+            recordSectionMeta(
+                key,
+                if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
+                if (complete) "" else "partial",
+                nightlyDao.latestEditionCount(),
+                corrupt, now,
+                if (complete) now else null,
+                if (complete) section.hash else null,
+            )
+        }
+        pruneNightlyEditions()
+        return SectionOutcome(
+            key,
+            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
+            corrupt,
+        )
+    }
+
+    /** 30-edition archive prune (spec §5.13): bookmarked
+     * editions never pruned; pruning is by edition date, oldest
+     * first, never by size surprise. */
+    private suspend fun pruneNightlyEditions() {
+        for (editionId in nightlyDao.prunableEditionIds()) {
+            nightlyDao.deleteItemsForEdition(editionId)
+            nightlyDao.deleteEdition(editionId)
+        }
+    }
+
+    /**
+     * Phase 5 nightly notification producer (spec §5.15). It wires
+     * through Phase 4's NotificationPolicy.decide for NIGHTLY and
+     * NEVER re-implements timing: night (00:00–08:00) and quiet
+     * hours both defer to the first sync at/after max(08:00,
+     * quiet-hours end) — polling reality, same as the Phase 4
+     * deferred summary (the app cannot wake itself exactly at
+     * 08:00). NOTE on the policy's defer flag: decide() returns
+     * deferToSummary=false for night-suppressed non-urgent types;
+     * the producer still defers via its own pending set (below),
+     * because §5.15 requires a deferred nightly notification, not
+     * a dropped one — the timing rule is honoured, the flag is
+     * not the mechanism. A corrected version 2 does NOT re-notify
+     * as new: the notified set is keyed by edition_id, so the
+     * first version's notification suppresses later versions
+     * (the correction is visible on the edition page itself).
+     * A failed nightly sync produces nothing here: the guard
+     * below returns early when the section state is FAILED, so
+     * no notification can announce an edition the app does not
+     * have (P5-4). The EDITION itself is always in-app on sync
+     * regardless of notification timing — only the interruption
+     * is deferred. Default channel (eco_articles), never urgent.
+     */
+    private suspend fun dispatchNightlyNotifications(now: Long) {
+        if (dao.metaValue(SyncSections.stateKey(SyncSections.NIGHTLY)) == SectionStates.FAILED) {
+            return
+        }
+        val prefs = settings.settings.first().toNotificationPrefs()
+        val pending = readMetaStringSet("p5_pending_nightly").toMutableSet()
+        val notified = readMetaStringSet("p5_notified_nightly").toMutableSet()
+        val pendingSince = dao.metaValue("p5_pending_since")?.toLongOrNull()
+        // Flush pending editions first (one notification each —
+        // a nightly notification is per edition, not a summary).
+        val flushed = mutableSetOf<String>()
+        for (editionId in pending.toList()) {
+            val edition = nightlyDao.latestEditionById(editionId)
+            if (edition == null || edition.status == "retracted") {
+                flushed.add(editionId)
+                continue
+            }
+            val decision = NotificationPolicy.decide(prefs, NotificationType.NIGHTLY, now)
+            if (decision.fire) {
+                Notifications.showNightly(appContext, edition.editionId, edition.shamsiDate)
+                recordNotificationHistory(
+                    NotificationType.NIGHTLY, edition.shamsiDate, edition.editionId, now,
+                    pendingSince, null,
+                )
+                notified.add(editionId)
+                flushed.add(editionId)
+            } else if (decision.suppressedReason == SuppressedReason.TOGGLE_OFF ||
+                decision.suppressedReason == SuppressedReason.MASTER_OFF
+            ) {
+                // Suppressed by choice: marked, never a retro
+                // burst when toggled back on (Phase 4 rule).
+                recordNotificationHistory(
+                    NotificationType.NIGHTLY, edition.shamsiDate, edition.editionId, now,
+                    pendingSince, decision.suppressedReason,
+                )
+                notified.add(editionId)
+                flushed.add(editionId)
+            }
+            // Night/quiet suppression keeps the edition pending.
+        }
+        pending.removeAll(flushed)
+        // New editions: first successful sync after publication.
+        val latest = nightlyDao.latestEditionsFlow().first()
+        for (edition in latest) {
+            if (edition.editionId in notified || edition.editionId in pending) continue
+            val decision = NotificationPolicy.decide(prefs, NotificationType.NIGHTLY, now)
+            if (decision.fire) {
+                Notifications.showNightly(appContext, edition.editionId, edition.shamsiDate)
+                recordNotificationHistory(
+                    NotificationType.NIGHTLY, edition.shamsiDate, edition.editionId, now,
+                    null, null,
+                )
+                notified.add(edition.editionId)
+            } else if (decision.suppressedReason == SuppressedReason.NIGHT_LAW ||
+                decision.suppressedReason == SuppressedReason.QUIET_HOURS
+            ) {
+                recordNotificationHistory(
+                    NotificationType.NIGHTLY, edition.shamsiDate, edition.editionId, now,
+                    now, decision.suppressedReason,
+                )
+                if (pending.isEmpty()) {
+                    dao.upsertMeta(MetaEntity("p5_pending_since", now.toString()))
+                }
+                pending.add(edition.editionId)
+            } else {
+                recordNotificationHistory(
+                    NotificationType.NIGHTLY, edition.shamsiDate, edition.editionId, now,
+                    null, decision.suppressedReason,
+                )
+                notified.add(edition.editionId)
+            }
+        }
+        if (pending.isEmpty()) {
+            dao.upsertMeta(MetaEntity("p5_pending_since", ""))
+        }
+        writeMetaStringSet("p5_pending_nightly", pending)
+        writeMetaStringSet("p5_notified_nightly", notified)
     }
 
     // ---- Phase 2 Diagnostics data (counts only, never content) ----

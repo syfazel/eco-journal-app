@@ -47,6 +47,7 @@ object Notifications {
     private const val EXTRA_CHANNEL_ID = "channel_id"
     private const val EXTRA_BUNDLE_ID = "bundle_id"
     private const val EXTRA_MARKET_SNAPSHOT_ID = "market_snapshot_id"
+    private const val EXTRA_NIGHTLY_EDITION_ID = "nightly_edition_id"
 
     private fun articleNotificationId(articleId: String): Int =
         ("eco_article:$articleId").hashCode()
@@ -63,6 +64,9 @@ object Notifications {
         ("eco_market_alert:$metric:$snapshotId").hashCode()
 
     private fun deferredSummaryNotificationId(): Int = "eco_deferred_summary".hashCode()
+
+    private fun nightlyNotificationId(editionId: String): Int =
+        ("eco_nightly:$editionId").hashCode()
 
     fun ensureMarketAlertsChannel(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
@@ -254,6 +258,44 @@ object Notifications {
         manager.notify(id, notification)
     }
 
+    /**
+     * Phase 5 nightly notification (spec §5.15): default channel
+     * (eco_articles), NEVER the urgent channel, no sound override.
+     * Title = edition Shamsi date + "نسخهٔ شبانه"; body carries
+     * counts only, never a headline leak. Tap opens the edition
+     * page. Firing, deferral and dedup live in
+     * EdgeRepository.dispatchNightlyNotifications — this function
+     * only posts, never decides.
+     */
+    fun showNightly(
+        context: Context,
+        editionId: String,
+        shamsiDate: String,
+    ) {
+        ensureChannel(context)
+        val id = nightlyNotificationId(editionId)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            putExtra(EXTRA_NIGHTLY_EDITION_ID, editionId)
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pending = PendingIntent.getActivity(
+            context,
+            id,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle("$shamsiDate — نسخهٔ شبانه")
+            .setContentText("نسخهٔ شبانهٔ ECO JOURNAL منتشر شد.")
+            .setContentIntent(pending)
+            .setAutoCancel(true)
+            .build()
+        val manager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        manager.notify(id, notification)
+    }
+
     fun ensureChannel(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val manager =
@@ -353,4 +395,7 @@ object Notifications {
 
     fun openMarketSnapshotId(intent: Intent?): String? =
         intent?.getStringExtra(EXTRA_MARKET_SNAPSHOT_ID)
+
+    fun openNightlyEditionId(intent: Intent?): String? =
+        intent?.getStringExtra(EXTRA_NIGHTLY_EDITION_ID)
 }

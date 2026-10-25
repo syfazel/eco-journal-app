@@ -52,9 +52,13 @@ object SyncSections {
     )
 
     // Sections with real edge files the app fetches and caches.
+    // Phase 5 makes NIGHTLY fetchable (spec §5.12): per-edition
+    // files + nightly.json index, section hash over full edition
+    // contents (R13), never the entry list alone. VOICES and
+    // SPECIAL_ISSUES stay gated/not-yet-published.
     val FETCHABLE: Set<String> = setOf(
         ARTICLES, SHORTS, MARKET, CHANNEL_REFS, CHANNEL_TYPED, BUNDLES,
-        RADAR, INVITES, REVOCATIONS,
+        RADAR, NIGHTLY, INVITES, REVOCATIONS,
     )
 
     fun hashKey(section: String) = "sync_section_${section}_hash"
