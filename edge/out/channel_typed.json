@@ -1,8 +1,40 @@
 {
  "format": "eco-journal-channel-typed",
  "version": 1,
- "generated_at_utc": "2026-10-26T16:01:08.704989+00:00",
+ "generated_at_utc": "2026-10-26T16:31:04.771750+00:00",
  "items": [
+  {
+   "guid": "channel-1181",
+   "app_key": "a-cd48d12a644afee74df4",
+   "story_id": "story-cd48d12a644afee74df4",
+   "channel_message_id": 1181,
+   "format_type": "MARKET",
+   "headline": "برنت ۱۱۱٫۸۷ دلار؛ نبض بازار جنگ",
+   "body": "",
+   "source_name": "دادهٔ بازار",
+   "urgency_score": null,
+   "crisis_level": null,
+   "published_at_epoch": 1793032154122,
+   "updated_at_epoch": 1793032154122,
+   "status": "posted",
+   "content_hash": "860c5eaa7300c2f0e269dee5e5408bf88c85b55b97a87aa4a0948fb9c22257f2"
+  },
+  {
+   "guid": "channel-1179",
+   "app_key": "a-a9c77b448bb8d5924f91",
+   "story_id": "story-a9c77b448bb8d5924f91",
+   "channel_message_id": 1179,
+   "format_type": "GEOPOL",
+   "headline": "کمیسیون سازمان ملل اسرائیل را به نابودی در کرانه باختری متهم کرد",
+   "body": "",
+   "source_name": "عرب‌نیوز",
+   "urgency_score": 56,
+   "crisis_level": null,
+   "published_at_epoch": 1793031299253,
+   "updated_at_epoch": 1793031299253,
+   "status": "posted",
+   "content_hash": "5b54ae3073230b2d16bc33190b9304bef2bcf42badf39d1606149a881de06516"
+  },
   {
    "guid": "channel-1178",
    "app_key": "a-0abc12f0c4a539959849",
@@ -28,12 +60,12 @@
    "headline": "پدافند غیرعامل چیست و چگونه عمل می‌کند؟",
    "body": "",
    "source_name": "خبرگزاری صداوسیما",
-   "urgency_score": null,
+   "urgency_score": 61,
    "crisis_level": null,
    "published_at_epoch": 1793029453112,
    "updated_at_epoch": 1793029453112,
    "status": "posted",
-   "content_hash": "2657f1910c5dd10f0a30adda9ef0a98b63f1b3984d02963288841017f41823db"
+   "content_hash": "a257b8c2bec973b1e9f2ae2663da274bfeb718b00e33b064314887be7b73b1aa"
   },
   {
    "guid": "channel-1172",

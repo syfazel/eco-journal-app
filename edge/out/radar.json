@@ -1,9 +1,49 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T16:01:08.849630+00:00",
+ "generated_at_utc": "2026-10-26T16:31:05.017865+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "47c6edf061c31c61",
+   "story_id": "story-a9c77b448bb8d5924f91",
+   "linked_story_id": "story-a9c77b448bb8d5924f91",
+   "linked_app_key": "a-a9c77b448bb8d5924f91",
+   "title": "کمیسیون سازمان ملل اسرائیل را به نابودی در کرانه باختری متهم کرد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "عرب‌نیوز",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T19:42:17.638394+03:30",
+   "last_seen_tehran": "2026-10-26T19:42:17.638394+03:30",
+   "detected_at_epoch": 1793031137638,
+   "updated_at_epoch": 1793031137638,
+   "status": "active",
+   "content_hash": "de013ad90eaa9dd48e274d60b9179e58163f32e98f197b827205faa7269c831c"
+  },
+  {
+   "signal_id": "76fd2e5a7ba4f6da",
+   "story_id": "story-2b5dc94e948698bade1e",
+   "linked_story_id": "story-2b5dc94e948698bade1e",
+   "linked_app_key": "a-2b5dc94e948698bade1e",
+   "title": "پدافند غیرعامل چیست و چگونه عمل می‌کند؟",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T19:41:51.037329+03:30",
+   "last_seen_tehran": "2026-10-26T19:41:51.037329+03:30",
+   "detected_at_epoch": 1793031111037,
+   "updated_at_epoch": 1793031111037,
+   "status": "active",
+   "content_hash": "9ebd9038ef147ccecb6f4864fa7e165ba344b0532baf517ac29001638ea36524"
+  },
   {
    "signal_id": "f7d4a43044319dc3",
    "story_id": "story-9788e404306b4ef9cb54",
@@ -963,46 +1003,6 @@
    "updated_at_epoch": 1793004100020,
    "status": "active",
    "content_hash": "ed00fed4bee2d404ddcc476043c681c8c75d6a0b240527a594a1d5e2d94ecbaf"
-  },
-  {
-   "signal_id": "6b7080861ff7f03d",
-   "story_id": "story-3cec39fc61353cce58f3",
-   "linked_story_id": "story-3cec39fc61353cce58f3",
-   "linked_app_key": "a-3cec39fc61353cce58f3",
-   "title": "نمایشگاه کشاورزی لرستان با حضور ۱۰ استان گشایش یافت",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "خبرگزاری صداوسیما",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T12:11:39.992070+03:30",
-   "last_seen_tehran": "2026-10-26T12:11:39.992070+03:30",
-   "detected_at_epoch": 1793004099992,
-   "updated_at_epoch": 1793004099992,
-   "status": "active",
-   "content_hash": "e684fffed50c65c45fe734e59dba4a1aa87f269e3e33e7dcb7d7acdb1c4b2be6"
-  },
-  {
-   "signal_id": "5df3f435524c9773",
-   "story_id": "story-b75d4521c059534bfe84",
-   "linked_story_id": "story-b75d4521c059534bfe84",
-   "linked_app_key": "a-b75d4521c059534bfe84",
-   "title": "اجرای آزمایشی پویش همیار پدافند در مدارس قم",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "خبرگزاری صداوسیما",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T12:11:39.970181+03:30",
-   "last_seen_tehran": "2026-10-26T12:11:39.970181+03:30",
-   "detected_at_epoch": 1793004099970,
-   "updated_at_epoch": 1793004099970,
-   "status": "active",
-   "content_hash": "a95245af655b6b5fc9dac8ef4804e514459bad9f026811152ca10e9c0cb364e2"
   }
  ]
 }
