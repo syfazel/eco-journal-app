@@ -1,9 +1,29 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T19:01:08.095450+00:00",
+ "generated_at_utc": "2026-10-26T19:31:08.449152+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "3f524fcf241e61be",
+   "story_id": "story-09622726a622961ca576",
+   "linked_story_id": "story-09622726a622961ca576",
+   "linked_app_key": "a-09622726a622961ca576",
+   "title": "نیروهای اوکراینی دو سرباز مجروح را هوایی تخلیه کردند",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "Kyiv Independent",
+   "matched_topics": [
+    "جبهه_اوکراین"
+   ],
+   "first_seen_tehran": "2026-10-26T22:41:39.598799+03:30",
+   "last_seen_tehran": "2026-10-26T22:41:39.598799+03:30",
+   "detected_at_epoch": 1793041899598,
+   "updated_at_epoch": 1793041899598,
+   "status": "active",
+   "content_hash": "6d05a7c75c1dc2e154d4890c4d77f56d99db7963ee71d92467148bd9998a6d0a"
+  },
   {
    "signal_id": "7419906817468911",
    "story_id": "story-35e005bb55d8d44f65f2",
@@ -23,6 +43,26 @@
    "updated_at_epoch": 1793040099865,
    "status": "active",
    "content_hash": "0de62f282e03217b3ba1b44efc0793b1aa84405372cdb3c84d1b6634f02c028f"
+  },
+  {
+   "signal_id": "e957b1a845d371b2",
+   "story_id": "story-323d610be019c6bb5172",
+   "linked_story_id": "story-323d610be019c6bb5172",
+   "linked_app_key": "a-323d610be019c6bb5172",
+   "title": "یک شناور نزدیک بندر فاو عراق در آتش سوخت",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "دنیای اقتصاد",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T22:11:39.799977+03:30",
+   "last_seen_tehran": "2026-10-26T22:11:39.799977+03:30",
+   "detected_at_epoch": 1793040099799,
+   "updated_at_epoch": 1793040099799,
+   "status": "active",
+   "content_hash": "f481057013a4be7be96835bb9209f459cfbf29030dc0d80716d0084578630e09"
   },
   {
    "signal_id": "7d364862ad13cad2",
@@ -83,6 +123,26 @@
    "updated_at_epoch": 1793038299927,
    "status": "active",
    "content_hash": "f65a2503ab33f2a1b269ac60138af562ba28cef3bdb8812b66f268e404589eb9"
+  },
+  {
+   "signal_id": "90fa603c3dde8ef1",
+   "story_id": "story-121350396ad7e3a0d369",
+   "linked_story_id": "story-121350396ad7e3a0d369",
+   "linked_app_key": "a-121350396ad7e3a0d369",
+   "title": "حمله موشکی روسیه به خارکیف دو کشته بر جا گذاشت",
+   "layer": 1,
+   "severity": "high",
+   "severity_rank": 85,
+   "source_name": "Business Recorder",
+   "matched_topics": [
+    "جبهه_اوکراین"
+   ],
+   "first_seen_tehran": "2026-10-26T21:41:35.691218+03:30",
+   "last_seen_tehran": "2026-10-26T21:41:35.691218+03:30",
+   "detected_at_epoch": 1793038295691,
+   "updated_at_epoch": 1793038295691,
+   "status": "active",
+   "content_hash": "91251a9480949a16b9de9251fa3c3957df067e9d3d6921c0cd92d271a200db76"
   },
   {
    "signal_id": "2ea298da07f9666f",
@@ -943,66 +1003,6 @@
    "updated_at_epoch": 1793009498751,
    "status": "active",
    "content_hash": "8b1a68e26f8c10b9eed10e6fdfeec059e24bfb9d781b857a33e3b69476f63d33"
-  },
-  {
-   "signal_id": "97779b4cc97268cd",
-   "story_id": "story-47ad95e729796f378979",
-   "linked_story_id": "story-47ad95e729796f378979",
-   "linked_app_key": "a-47ad95e729796f378979",
-   "title": "فهرست اهداف آمریکا در ایران؛ هسته‌ای، نفتی و نظامی",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "گلف‌نیوز",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T13:41:38.730723+03:30",
-   "last_seen_tehran": "2026-10-26T13:41:38.730723+03:30",
-   "detected_at_epoch": 1793009498730,
-   "updated_at_epoch": 1793009498730,
-   "status": "active",
-   "content_hash": "508fd8adfc07a92d6d740a8d863a3ffd30ebb4743f0a599d2a4483e2c3ecf83a"
-  },
-  {
-   "signal_id": "237e24cda41e550e",
-   "story_id": "story-afceee16b77fb5bcbc14",
-   "linked_story_id": "story-afceee16b77fb5bcbc14",
-   "linked_app_key": "a-afceee16b77fb5bcbc14",
-   "title": "آیزنکوت از حملات ترامپ به ایران تمجید کرد",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "Iran International",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:38.616144+03:30",
-   "last_seen_tehran": "2026-10-26T13:41:38.704207+03:30",
-   "detected_at_epoch": 1793009498704,
-   "updated_at_epoch": 1793009498704,
-   "status": "active",
-   "content_hash": "9580443f49cc74f6845756af4dc324cee168c13d11ca31fc35ced31bf07b03c8"
-  },
-  {
-   "signal_id": "1ee869c28b47ef11",
-   "story_id": "story-f0e0be3dadb7ad467fb0",
-   "linked_story_id": "story-f0e0be3dadb7ad467fb0",
-   "linked_app_key": "a-f0e0be3dadb7ad467fb0",
-   "title": "زلنسکی: تحویل موشک‌های پاتریوت باید رفع انسداد شود",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "ABC News",
-   "matched_topics": [
-    "جبهه_اوکراین"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:36.960524+03:30",
-   "last_seen_tehran": "2026-10-26T13:41:37.177070+03:30",
-   "detected_at_epoch": 1793009497177,
-   "updated_at_epoch": 1793009497177,
-   "status": "active",
-   "content_hash": "1d085d48aee3f44ad60bd573442b1d4e8a14a8a2ab1578cd56b93cfc0fa6fcae"
   }
  ]
 }
