@@ -1,9 +1,89 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T14:31:04.637017+00:00",
+ "generated_at_utc": "2026-10-26T15:01:09.151644+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "b3920f5c5cb3dd6f",
+   "story_id": "story-ad8e4be50a113ff7d2f4",
+   "linked_story_id": "story-ad8e4be50a113ff7d2f4",
+   "linked_app_key": "a-ad8e4be50a113ff7d2f4",
+   "title": "شرط تهران برای مذاکره هسته‌ای با آمریکا",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "سپاه سایبری پاسداران",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T18:12:05.034611+03:30",
+   "last_seen_tehran": "2026-10-26T18:12:05.034611+03:30",
+   "detected_at_epoch": 1793025725034,
+   "updated_at_epoch": 1793025725034,
+   "status": "active",
+   "content_hash": "42c9dac4840638db795606dd76effc43a3bc138faa8f9ffcf3f9c06005b43e85"
+  },
+  {
+   "signal_id": "ad0289e0556ff2bc",
+   "story_id": "story-b3957d7028c3bc6ef1bb",
+   "linked_story_id": "story-b3957d7028c3bc6ef1bb",
+   "linked_app_key": "a-b3957d7028c3bc6ef1bb",
+   "title": "راه‌اندازی سه شهرک تخصصی در اصفهان تا دهه فجر",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T18:11:39.275161+03:30",
+   "last_seen_tehran": "2026-10-26T18:11:39.275161+03:30",
+   "detected_at_epoch": 1793025699275,
+   "updated_at_epoch": 1793025699275,
+   "status": "active",
+   "content_hash": "fc81364adb1ca811e583a57581a5b41a4fdc065c4c4aeccf32d973b9cbedb6f1"
+  },
+  {
+   "signal_id": "934d4de1770de52e",
+   "story_id": "story-009b63db0ac97cc874ae",
+   "linked_story_id": "story-009b63db0ac97cc874ae",
+   "linked_app_key": "a-009b63db0ac97cc874ae",
+   "title": "پزشکیان: تهران به‌دنبال وحدت و امنیت کشورهای مسلمان است",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "میدل‌ایست‌آی",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T18:11:39.253333+03:30",
+   "last_seen_tehran": "2026-10-26T18:11:39.253333+03:30",
+   "detected_at_epoch": 1793025699253,
+   "updated_at_epoch": 1793025699253,
+   "status": "active",
+   "content_hash": "141923305d5bced4154a9ab1ad6cb613d555dbaff7c3572e4423d24f550f47f6"
+  },
+  {
+   "signal_id": "687b9c1f4141b258",
+   "story_id": "story-500c88dd50154157e833",
+   "linked_story_id": "story-500c88dd50154157e833",
+   "linked_app_key": "a-500c88dd50154157e833",
+   "title": "الجزایر برای نخستین بار از ۱۹۷۳ به نیجر نیرو می‌فرستد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "رویترز (جهان)",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T18:11:37.948163+03:30",
+   "last_seen_tehran": "2026-10-26T18:11:37.948163+03:30",
+   "detected_at_epoch": 1793025697948,
+   "updated_at_epoch": 1793025697948,
+   "status": "active",
+   "content_hash": "cc8afb6673d8f1848beb9a00d7a2bd71110482b0c4d88451405d6239d0908628"
+  },
   {
    "signal_id": "65c7351e67be45a8",
    "story_id": "story-76ac867a13e1f36edac2",
@@ -923,86 +1003,6 @@
    "updated_at_epoch": 1793002300985,
    "status": "active",
    "content_hash": "b7b6b6440054d82800626575c61040725dfa2048938e097055b58dce3f6a9b6f"
-  },
-  {
-   "signal_id": "6e0ab8f9e2df2c11",
-   "story_id": "story-e3e50f7854f5e081aa2d",
-   "linked_story_id": "story-e3e50f7854f5e081aa2d",
-   "linked_app_key": "a-e3e50f7854f5e081aa2d",
-   "title": "زلنسکی سه شرط برای آتش‌بس انرژی مطرح کرد",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "Kyiv Post",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T11:41:36.345561+03:30",
-   "last_seen_tehran": "2026-10-26T11:41:36.345561+03:30",
-   "detected_at_epoch": 1793002296345,
-   "updated_at_epoch": 1793002296345,
-   "status": "active",
-   "content_hash": "13e45df7513b6d710545acdcc98339a682e6284ac328dc1ca3601e6876d2e4df"
-  },
-  {
-   "signal_id": "3961feb2753cd6f6",
-   "story_id": "story-df8d6d92c8edf4af530b",
-   "linked_story_id": "story-df8d6d92c8edf4af530b",
-   "linked_app_key": "a-df8d6d92c8edf4af530b",
-   "title": "سخنگوی شهرداری: دو برابر دوره گذشته اتوبوس وارد کردیم",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "خبرگزاری صداوسیما",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T11:11:42.764092+03:30",
-   "last_seen_tehran": "2026-10-26T11:11:42.764092+03:30",
-   "detected_at_epoch": 1793000502764,
-   "updated_at_epoch": 1793000502764,
-   "status": "active",
-   "content_hash": "9ac6768bb93d4960e227bf6e93a5d71ee3d913daeaf2ead784debd6436b3a349"
-  },
-  {
-   "signal_id": "fd561e09ec90c344",
-   "story_id": "story-db3dc263a17c9e17a0c5",
-   "linked_story_id": "story-db3dc263a17c9e17a0c5",
-   "linked_app_key": "a-db3dc263a17c9e17a0c5",
-   "title": "باقری: مقام‌های ارشد کشورهای پیمان مکه به تهران می‌آیند",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "میدل‌ایست‌آی",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T11:11:42.708741+03:30",
-   "last_seen_tehran": "2026-10-26T11:11:42.708741+03:30",
-   "detected_at_epoch": 1793000502708,
-   "updated_at_epoch": 1793000502708,
-   "status": "active",
-   "content_hash": "f556121e99040acfa218f2b7efb8e26095b9ced008b4b956d3ff05c58fc58bdf"
-  },
-  {
-   "signal_id": "bea7a4bb93a1b6fb",
-   "story_id": "story-67ee3e9aefa6effae0f3",
-   "linked_story_id": "story-67ee3e9aefa6effae0f3",
-   "linked_app_key": "a-67ee3e9aefa6effae0f3",
-   "title": "تهدید ایران به پاسخی «غیرقابل تصور»؛ حمایت ترامپ از نتانیاهو",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "The Times of India",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T10:41:40.171480+03:30",
-   "last_seen_tehran": "2026-10-26T10:41:40.171480+03:30",
-   "detected_at_epoch": 1792998700171,
-   "updated_at_epoch": 1792998700171,
-   "status": "active",
-   "content_hash": "fb278de5ad97f80855084a7aed4dcd17a2c92427e36b1a7568cc6ea80e436b16"
   }
  ]
 }
