@@ -1,8 +1,24 @@
 {
  "format": "eco-journal-channel-typed",
  "version": 1,
- "generated_at_utc": "2026-10-26T03:31:12.479596+00:00",
+ "generated_at_utc": "2026-10-26T04:01:10.349328+00:00",
  "items": [
+  {
+   "guid": "channel-1028",
+   "app_key": "a-32cc1fd835494d685f72",
+   "story_id": "story-32cc1fd835494d685f72",
+   "channel_message_id": 1028,
+   "format_type": "VERIFY",
+   "headline": "حمله موشکی یمن به انبارهای سلاح در عدن و لحج",
+   "body": "",
+   "source_name": "خبرگزاری فارس",
+   "urgency_score": 85,
+   "crisis_level": null,
+   "published_at_epoch": 1792986265219,
+   "updated_at_epoch": 1792986265219,
+   "status": "posted",
+   "content_hash": "9be62ce3c9493db65fc89265209a70a1c72690c0051beb64a7dd8bbfa3017f51"
+  },
   {
    "guid": "channel-1026",
    "app_key": "a-33166ef6cb315a610b95",
@@ -1164,12 +1180,12 @@
    "headline": "استقرار ۷۰ هزار پلیس فرانسه در آستانه تظاهرات",
    "body": "",
    "source_name": "خبرگزاری فارس",
-   "urgency_score": 61,
+   "urgency_score": 85,
    "crisis_level": null,
    "published_at_epoch": 1792816890670,
    "updated_at_epoch": 1792816890670,
    "status": "posted",
-   "content_hash": "4715976b0dcbeeb069365915dcb5b19dace4cf249f8afd87c4b1b5e72b188b3f"
+   "content_hash": "f1ea76f4cd6838dcc07abe83d66eb3b6b9e1e12afcb44d0357ac24bc7558ae14"
   },
   {
    "guid": "channel-919",
