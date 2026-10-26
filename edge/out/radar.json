@@ -1,9 +1,69 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T09:31:07.891113+00:00",
+ "generated_at_utc": "2026-10-26T10:01:05.371547+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "4227defeec502bcf",
+   "story_id": "story-dfcf723ddbb1a7a2df4e",
+   "linked_story_id": "story-dfcf723ddbb1a7a2df4e",
+   "linked_app_key": "a-dfcf723ddbb1a7a2df4e",
+   "title": "خدمات آب و برق در جنگ ۴۰ روزه متوقف نشد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T13:11:38.575828+03:30",
+   "last_seen_tehran": "2026-10-26T13:11:38.575828+03:30",
+   "detected_at_epoch": 1793007698575,
+   "updated_at_epoch": 1793007698575,
+   "status": "active",
+   "content_hash": "07549c438f4db4dc7555fed51df6905e6916220323ba20fb62db1ac4b5b54b2e"
+  },
+  {
+   "signal_id": "675b0cb70110a47e",
+   "story_id": "story-d419361e85b1e64b6916",
+   "linked_story_id": "story-d419361e85b1e64b6916",
+   "linked_app_key": "a-d419361e85b1e64b6916",
+   "title": "روسیه ساخت مراکز داده زیرزمینی را توصیه کرد",
+   "layer": 1,
+   "severity": "high",
+   "severity_rank": 85,
+   "source_name": "The Kyiv Independent",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T13:11:33.402323+03:30",
+   "last_seen_tehran": "2026-10-26T13:11:33.402323+03:30",
+   "detected_at_epoch": 1793007693402,
+   "updated_at_epoch": 1793007693402,
+   "status": "active",
+   "content_hash": "6be267baf356d922f2e1bd044c190049af0138976f26dab875c092203f7a565a"
+  },
+  {
+   "signal_id": "6946ea6943780422",
+   "story_id": "story-666b05ca2b4f583e0521",
+   "linked_story_id": "story-666b05ca2b4f583e0521",
+   "linked_app_key": "a-666b05ca2b4f583e0521",
+   "title": "تاکید بر توسعه دیپلماسی علمی در سلامت",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "ایلنا",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T12:41:43.393002+03:30",
+   "last_seen_tehran": "2026-10-26T12:41:43.393002+03:30",
+   "detected_at_epoch": 1793005903393,
+   "updated_at_epoch": 1793005903393,
+   "status": "active",
+   "content_hash": "5443868f2a063336940b90fcef0d24897244753ceb65d9f52a4291ad0f93a737"
+  },
   {
    "signal_id": "fada777ec65d699f",
    "story_id": "story-8a6027141322a31c7d4c",
@@ -43,6 +103,46 @@
    "updated_at_epoch": 1793005903262,
    "status": "active",
    "content_hash": "31d13bb5288876cd2b9c293781a0b94d5c67cb270b56e06fa61ce012afffba73"
+  },
+  {
+   "signal_id": "5b5f98a6ad5b1f9a",
+   "story_id": "story-077f051066de27270adb",
+   "linked_story_id": "story-077f051066de27270adb",
+   "linked_app_key": "a-077f051066de27270adb",
+   "title": "حضور فولاد مبارکه در سمپوزیوم فولاد ۱۴۰۵",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "ایلنا",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T12:41:43.200439+03:30",
+   "last_seen_tehran": "2026-10-26T12:41:43.200439+03:30",
+   "detected_at_epoch": 1793005903200,
+   "updated_at_epoch": 1793005903200,
+   "status": "active",
+   "content_hash": "8e5254b3de89609e0cf3074da1afdff4e6b86c27a6d9798dbddb0d72de30180c"
+  },
+  {
+   "signal_id": "3366690481e2d6eb",
+   "story_id": "story-c9f74a91c92818fa1b29",
+   "linked_story_id": "story-c9f74a91c92818fa1b29",
+   "linked_app_key": "a-c9f74a91c92818fa1b29",
+   "title": "حمله پهپادی اوکراین به ورونژ دو کشته بر جای گذاشت",
+   "layer": 1,
+   "severity": "high",
+   "severity_rank": 85,
+   "source_name": "Euronews.com",
+   "matched_topics": [
+    "جبهه_اوکراین"
+   ],
+   "first_seen_tehran": "2026-10-26T12:41:38.257518+03:30",
+   "last_seen_tehran": "2026-10-26T12:41:38.257518+03:30",
+   "detected_at_epoch": 1793005898257,
+   "updated_at_epoch": 1793005898257,
+   "status": "active",
+   "content_hash": "921b83bd2f8f2ea52e98ea509fb39e461f2f75829fbb630787509111a210c2e4"
   },
   {
    "signal_id": "43684bf49611e491",
@@ -903,106 +1003,6 @@
    "updated_at_epoch": 1792964502661,
    "status": "active",
    "content_hash": "59491f668fdd0bec01ac09fe8f6521f654a9fc74b67072679df5b983213fcefa"
-  },
-  {
-   "signal_id": "556fca1e979e0c14",
-   "story_id": "story-bede24861bf6a03a96b7",
-   "linked_story_id": "story-bede24861bf6a03a96b7",
-   "linked_app_key": "a-bede24861bf6a03a96b7",
-   "title": "همکاری ایران و چین در بخش کشاورزی گسترش می‌یابد",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "خبرگزاری مهر (بخش اقتصادی)",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:42.638286+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:42.638286+03:30",
-   "detected_at_epoch": 1792964502638,
-   "updated_at_epoch": 1792964502638,
-   "status": "active",
-   "content_hash": "9a637e9278cc725f5557e5d6f431a7b048cec3bf9443fb67f7071511c676e634"
-  },
-  {
-   "signal_id": "668b9f052af699ac",
-   "story_id": "story-f7f988412d28c4ca0764",
-   "linked_story_id": "story-f7f988412d28c4ca0764",
-   "linked_app_key": "a-f7f988412d28c4ca0764",
-   "title": "ایران‌ایر نشانی وب‌سایت رسمی خود را تغییر داد",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "خبرگزاری مهر (بخش اقتصادی)",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:42.615637+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:42.615637+03:30",
-   "detected_at_epoch": 1792964502615,
-   "updated_at_epoch": 1792964502615,
-   "status": "active",
-   "content_hash": "9390b9383a3c41d055139fe4b4ee1df52f27ad4f8cc3186bc797df8a7e46d360"
-  },
-  {
-   "signal_id": "ab7235f2b7ea9d32",
-   "story_id": "story-e617b44bd7770987b9e3",
-   "linked_story_id": "story-e617b44bd7770987b9e3",
-   "linked_app_key": "a-e617b44bd7770987b9e3",
-   "title": "گمنام‌سازی داده‌ها، پیش‌شرط توسعه هوش مصنوعی در سلامت",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "خبرگزاری ایسنا (بخش اقتصادی)",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:42.594122+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:42.594122+03:30",
-   "detected_at_epoch": 1792964502594,
-   "updated_at_epoch": 1792964502594,
-   "status": "active",
-   "content_hash": "cb6d1efa64208bc01103af7155446b94b8cbd68cb322df2c241a6db0cfc22723"
-  },
-  {
-   "signal_id": "eed061881a553316",
-   "story_id": "story-81816fa2c40daf696c64",
-   "linked_story_id": "story-81816fa2c40daf696c64",
-   "linked_app_key": "a-81816fa2c40daf696c64",
-   "title": "عارف: با وجود جنگ اقتصادی دست‌بسته نیستیم",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "خبرگزاری ایسنا (بخش اقتصادی)",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:42.568253+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:42.568253+03:30",
-   "detected_at_epoch": 1792964502568,
-   "updated_at_epoch": 1792964502568,
-   "status": "active",
-   "content_hash": "d496c131ba52f8787fdebb8fb4b28026e87157c4ed4f71b9fa46a3c73740a160"
-  },
-  {
-   "signal_id": "3498a7377000955e",
-   "story_id": "story-c1461d3e9370c0811dd1",
-   "linked_story_id": "story-c1461d3e9370c0811dd1",
-   "linked_app_key": "a-c1461d3e9370c0811dd1",
-   "title": "دنیای اقتصاد از شتاب افت ریال از شهریور نوشت",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "دنیای اقتصاد",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:42.497983+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:42.497983+03:30",
-   "detected_at_epoch": 1792964502497,
-   "updated_at_epoch": 1792964502497,
-   "status": "active",
-   "content_hash": "68a73fbc64b2036fa5f29d5e4cb8bfd29afa8d285d188ccc369f8ae5a246b8c2"
   }
  ]
 }
