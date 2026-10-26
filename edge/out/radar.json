@@ -1,9 +1,29 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T07:01:06.093607+00:00",
+ "generated_at_utc": "2026-10-26T07:31:05.301420+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "bea7a4bb93a1b6fb",
+   "story_id": "story-67ee3e9aefa6effae0f3",
+   "linked_story_id": "story-67ee3e9aefa6effae0f3",
+   "linked_app_key": "a-67ee3e9aefa6effae0f3",
+   "title": "تهدید ایران به پاسخی «غیرقابل تصور»؛ حمایت ترامپ از نتانیاهو",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "The Times of India",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T10:41:40.171480+03:30",
+   "last_seen_tehran": "2026-10-26T10:41:40.171480+03:30",
+   "detected_at_epoch": 1792998700171,
+   "updated_at_epoch": 1792998700171,
+   "status": "active",
+   "content_hash": "fb278de5ad97f80855084a7aed4dcd17a2c92427e36b1a7568cc6ea80e436b16"
+  },
   {
    "signal_id": "c903fd088edcb09b",
    "story_id": "story-cee577d2cf664a47dd2e",
@@ -43,6 +63,26 @@
    "updated_at_epoch": 1792996903091,
    "status": "active",
    "content_hash": "6dfb899997bcdf2fe903a218447732e8a55254969a2208cd688522e3d22305a0"
+  },
+  {
+   "signal_id": "5568e2886193a4cd",
+   "story_id": "story-36faa3f67f15eede0562",
+   "linked_story_id": "story-36faa3f67f15eede0562",
+   "linked_app_key": "a-36faa3f67f15eede0562",
+   "title": "ادعای سی‌ان‌ان: پنتاگون فهرست گسترده اهداف در ایران می‌سازد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "دنیای اقتصاد",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T10:11:43.000571+03:30",
+   "last_seen_tehran": "2026-10-26T10:11:43.000571+03:30",
+   "detected_at_epoch": 1792996903000,
+   "updated_at_epoch": 1792996903000,
+   "status": "active",
+   "content_hash": "716aff0b8beea0f370ba919363b53d656bbe63c90a06312243056fa6f5ec9ec9"
   },
   {
    "signal_id": "20933ba4d604038d",
