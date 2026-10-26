@@ -1,5 +1,5 @@
 {
- "generated_at_utc": "2026-10-26T18:31:04.476904+00:00",
+ "generated_at_utc": "2026-10-26T19:01:03.889366+00:00",
  "sources_read_only": [
   "/home/hatch/workspace/econ-news-blog/data_core/data_core.db",
   "/home/hatch/workspace/yasineco_bot/bot.db"
@@ -42,7 +42,7 @@
   "Shorts carry explicit category 'uncategorised'; channel_message_id is never fabricated (null until the bridge staging path populates it).",
   "Invite/revocation files carry hashes only and are owned by bridge/control.py; this generator never rewrites the canonical copies."
  ],
- "channel_typed": 726,
+ "channel_typed": 731,
  "radar": 50,
  "fullsync": "S1+S3 overlays applied; nightly held (U4); see fullsync-*-report.json"
 }

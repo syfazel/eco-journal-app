@@ -1,9 +1,49 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T18:31:09.545879+00:00",
+ "generated_at_utc": "2026-10-26T19:01:08.095450+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "7419906817468911",
+   "story_id": "story-35e005bb55d8d44f65f2",
+   "linked_story_id": "story-35e005bb55d8d44f65f2",
+   "linked_app_key": "a-35e005bb55d8d44f65f2",
+   "title": "هفتهٔ پدافند غیرعامل در کرمان آغاز شد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T22:11:39.865425+03:30",
+   "last_seen_tehran": "2026-10-26T22:11:39.865425+03:30",
+   "detected_at_epoch": 1793040099865,
+   "updated_at_epoch": 1793040099865,
+   "status": "active",
+   "content_hash": "0de62f282e03217b3ba1b44efc0793b1aa84405372cdb3c84d1b6634f02c028f"
+  },
+  {
+   "signal_id": "7d364862ad13cad2",
+   "story_id": "story-26250c1822d017bb24e2",
+   "linked_story_id": "story-26250c1822d017bb24e2",
+   "linked_app_key": "a-26250c1822d017bb24e2",
+   "title": "ایران، عربستان، پاکستان و ترکیه بر همکاری امنیتی منطقه‌ای توافق کردند",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "میدل‌ایست‌آی",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T21:41:43.273857+03:30",
+   "last_seen_tehran": "2026-10-26T21:41:43.273857+03:30",
+   "detected_at_epoch": 1793038303273,
+   "updated_at_epoch": 1793038303273,
+   "status": "active",
+   "content_hash": "11ec485ce3daf54c3e859964c288f66b66219af573b910746180b2746d3f9e6d"
+  },
   {
    "signal_id": "55f8cd8010f94718",
    "story_id": "story-93f9df47c4b4ba3d1ec5",
@@ -963,46 +1003,6 @@
    "updated_at_epoch": 1793009497177,
    "status": "active",
    "content_hash": "1d085d48aee3f44ad60bd573442b1d4e8a14a8a2ab1578cd56b93cfc0fa6fcae"
-  },
-  {
-   "signal_id": "0b8e439c63ed1090",
-   "story_id": "story-90b2ddc16d632d036b57",
-   "linked_story_id": "story-90b2ddc16d632d036b57",
-   "linked_app_key": "a-90b2ddc16d632d036b57",
-   "title": "پیگیری گزارش حمله موشکی به لیپتسک روسیه",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "Business Upturn",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:35.828643+03:30",
-   "last_seen_tehran": "2026-10-26T13:41:35.907975+03:30",
-   "detected_at_epoch": 1793009495907,
-   "updated_at_epoch": 1793009495907,
-   "status": "active",
-   "content_hash": "c7c3f0ce8b8de46f062b4cd0b532e51863d8b337b0ca651d3e49435c36defdaf"
-  },
-  {
-   "signal_id": "46f19256e11136c6",
-   "story_id": "story-903f794efbf9c0a5bb85",
-   "linked_story_id": "story-903f794efbf9c0a5bb85",
-   "linked_app_key": "a-903f794efbf9c0a5bb85",
-   "title": "پیگیری ادعای اصابت موشک به کشتی در هرمز",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 90,
-   "source_name": "وکالة سبأ",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:35.622903+03:30",
-   "last_seen_tehran": "2026-10-26T13:41:35.805529+03:30",
-   "detected_at_epoch": 1793009495805,
-   "updated_at_epoch": 1793009495805,
-   "status": "active",
-   "content_hash": "40804146302bf22c7607321cf891600b82a08f03cb439dac9c0aeb5801400c5c"
   }
  ]
 }
