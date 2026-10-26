@@ -1,9 +1,49 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T02:31:05.780778+00:00",
+ "generated_at_utc": "2026-10-26T03:01:06.613699+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "00bc9928c55f814b",
+   "story_id": "story-33166ef6cb315a610b95",
+   "linked_story_id": "story-33166ef6cb315a610b95",
+   "linked_app_key": "a-33166ef6cb315a610b95",
+   "title": "انتشار تصویر انفجار هسته‌ای از سوی نتانیاهو",
+   "layer": 1,
+   "severity": "high",
+   "severity_rank": 85,
+   "source_name": "همشهری‌آنلاین",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T06:11:41.050996+03:30",
+   "last_seen_tehran": "2026-10-26T06:11:41.050996+03:30",
+   "detected_at_epoch": 1792982501050,
+   "updated_at_epoch": 1792982501050,
+   "status": "active",
+   "content_hash": "c90bd86c49568e75c8c8dfece049111d71891f74de30b4c70d5bcdffa83569c9"
+  },
+  {
+   "signal_id": "c3dace23735fab79",
+   "story_id": "story-e4195dcb8278aa23a255",
+   "linked_story_id": "story-e4195dcb8278aa23a255",
+   "linked_app_key": "a-e4195dcb8278aa23a255",
+   "title": "اتهام ماسک به اوکراین درباره استفاده از استارلینک",
+   "layer": 1,
+   "severity": "high",
+   "severity_rank": 85,
+   "source_name": "NigerianEye",
+   "matched_topics": [
+    "جبهه_اوکراین"
+   ],
+   "first_seen_tehran": "2026-10-26T06:11:34.358864+03:30",
+   "last_seen_tehran": "2026-10-26T06:11:34.358864+03:30",
+   "detected_at_epoch": 1792982494358,
+   "updated_at_epoch": 1792982494358,
+   "status": "active",
+   "content_hash": "609b57aa3a92cb45b4979e96ee96315c29b54012bf479bf2c4834286281bc1a1"
+  },
   {
    "signal_id": "8df3c4524beabe88",
    "story_id": "story-5db2cd985d9bc46bea4b",

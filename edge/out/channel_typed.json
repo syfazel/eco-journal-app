@@ -1,8 +1,40 @@
 {
  "format": "eco-journal-channel-typed",
  "version": 1,
- "generated_at_utc": "2026-10-26T02:31:05.665892+00:00",
+ "generated_at_utc": "2026-10-26T03:01:06.298793+00:00",
  "items": [
+  {
+   "guid": "channel-1026",
+   "app_key": "a-33166ef6cb315a610b95",
+   "story_id": "story-33166ef6cb315a610b95",
+   "channel_message_id": 1026,
+   "format_type": "VERIFY",
+   "headline": "انتشار تصویر انفجار هسته‌ای از سوی نتانیاهو",
+   "body": "",
+   "source_name": "همشهری‌آنلاین",
+   "urgency_score": 85,
+   "crisis_level": null,
+   "published_at_epoch": 1792982691387,
+   "updated_at_epoch": 1792982691387,
+   "status": "posted",
+   "content_hash": "10da9573bc62db8d56b993b63782a2125a8d4d87ecb0fcffa0942d73bcd8042b"
+  },
+  {
+   "guid": "channel-1027",
+   "app_key": "a-e4195dcb8278aa23a255",
+   "story_id": "story-e4195dcb8278aa23a255",
+   "channel_message_id": 1027,
+   "format_type": "VERIFY",
+   "headline": "اتهام ماسک به اوکراین درباره استفاده از استارلینک",
+   "body": "",
+   "source_name": "NigerianEye",
+   "urgency_score": 85,
+   "crisis_level": null,
+   "published_at_epoch": 1792982691387,
+   "updated_at_epoch": 1792982691387,
+   "status": "posted",
+   "content_hash": "353725ada643ff218a4b8b20926bbd3d07571af372011e8d84823b69e625b671"
+  },
   {
    "guid": "channel-1024",
    "app_key": "a-404c1a4138ca5b18d01b",
