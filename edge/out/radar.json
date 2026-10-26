@@ -1,9 +1,89 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T16:31:05.017865+00:00",
+ "generated_at_utc": "2026-10-26T16:57:45.818790+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "da39a3ee5e6b4b0d",
+   "story_id": "story-06fd84eb928e19c0d039",
+   "linked_story_id": "story-06fd84eb928e19c0d039",
+   "linked_app_key": "a-06fd84eb928e19c0d039",
+   "title": "استقرار ۷۰ هزار پلیس فرانسه در آستانه تظاهرات",
+   "layer": 1,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "خبرگزاری فارس",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T07:12:08.116060+03:30",
+   "last_seen_tehran": "2026-10-26T20:12:08.299904+03:30",
+   "detected_at_epoch": 1793032928299,
+   "updated_at_epoch": 1793032928299,
+   "status": "active",
+   "content_hash": "36ae6917e69b67b7aa0095cdcf3cbd6bd59d5e08a3d912cf586f558532a97cc2"
+  },
+  {
+   "signal_id": "6612be971d5d16a1",
+   "story_id": "story-d2242217827c2b2d2c28",
+   "linked_story_id": "story-d2242217827c2b2d2c28",
+   "linked_app_key": "a-d2242217827c2b2d2c28",
+   "title": "انفجار در ادلب سوریه گزارش شد",
+   "layer": 1,
+   "severity": "high",
+   "severity_rank": 85,
+   "source_name": "خبرگزاری فارس و خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T20:12:07.538934+03:30",
+   "last_seen_tehran": "2026-10-26T20:12:07.538934+03:30",
+   "detected_at_epoch": 1793032927538,
+   "updated_at_epoch": 1793032927538,
+   "status": "active",
+   "content_hash": "a666170f3985373776d8b366e2297cc7a8df5f3ba674cb6e6d10e22592514a27"
+  },
+  {
+   "signal_id": "d1171854335518eb",
+   "story_id": "story-dd6b7b03186d29ad1505",
+   "linked_story_id": "story-dd6b7b03186d29ad1505",
+   "linked_app_key": "a-dd6b7b03186d29ad1505",
+   "title": "میدل‌ایست‌آی: حملهٔ تازهٔ آمریکا و اسرائیل به ایران نزدیک است",
+   "layer": 3,
+   "severity": "medium",
+   "severity_rank": 62,
+   "source_name": "میدل‌ایست‌آی",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T20:11:41.469689+03:30",
+   "last_seen_tehran": "2026-10-26T20:11:41.469689+03:30",
+   "detected_at_epoch": 1793032901469,
+   "updated_at_epoch": 1793032901469,
+   "status": "active",
+   "content_hash": "d5160aef1846654564d814323d5d6441c223bb026243946b7670afcf1d170e79"
+  },
+  {
+   "signal_id": "61b5bae21bf27eca",
+   "story_id": "story-1c12402774a0bed34dfc",
+   "linked_story_id": "story-1c12402774a0bed34dfc",
+   "linked_app_key": "a-1c12402774a0bed34dfc",
+   "title": "هیمارس آمریکا می‌تواند کشتی‌های متحرک را در هزار کیلومتری بزند",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "Army Recognition",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T20:11:34.975757+03:30",
+   "last_seen_tehran": "2026-10-26T20:11:34.975757+03:30",
+   "detected_at_epoch": 1793032894975,
+   "updated_at_epoch": 1793032894975,
+   "status": "active",
+   "content_hash": "4f25b42c50173517443b7f429d3818e2eb13c9877343777ab49fb66d06eb948f"
+  },
   {
    "signal_id": "47c6edf061c31c61",
    "story_id": "story-a9c77b448bb8d5924f91",
@@ -923,86 +1003,6 @@
    "updated_at_epoch": 1793005903200,
    "status": "active",
    "content_hash": "8e5254b3de89609e0cf3074da1afdff4e6b86c27a6d9798dbddb0d72de30180c"
-  },
-  {
-   "signal_id": "3366690481e2d6eb",
-   "story_id": "story-c9f74a91c92818fa1b29",
-   "linked_story_id": "story-c9f74a91c92818fa1b29",
-   "linked_app_key": "a-c9f74a91c92818fa1b29",
-   "title": "حمله پهپادی اوکراین به ورونژ دو کشته بر جای گذاشت",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "Euronews.com",
-   "matched_topics": [
-    "جبهه_اوکراین"
-   ],
-   "first_seen_tehran": "2026-10-26T12:41:38.257518+03:30",
-   "last_seen_tehran": "2026-10-26T12:41:38.257518+03:30",
-   "detected_at_epoch": 1793005898257,
-   "updated_at_epoch": 1793005898257,
-   "status": "active",
-   "content_hash": "921b83bd2f8f2ea52e98ea509fb39e461f2f75829fbb630787509111a210c2e4"
-  },
-  {
-   "signal_id": "43684bf49611e491",
-   "story_id": "story-bc7ca8739ed882f710c3",
-   "linked_story_id": "story-bc7ca8739ed882f710c3",
-   "linked_app_key": "a-bc7ca8739ed882f710c3",
-   "title": "فولاد خوزستان در سمپوزیوم فولاد ۱۴۰۵ حضور می‌یابد",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "ایلنا",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T12:11:40.124804+03:30",
-   "last_seen_tehran": "2026-10-26T12:11:40.124804+03:30",
-   "detected_at_epoch": 1793004100124,
-   "updated_at_epoch": 1793004100124,
-   "status": "active",
-   "content_hash": "99d7589f7deb1e06b1941df08c6333321d5dcb25400fceec56fba20593fd864a"
-  },
-  {
-   "signal_id": "220e5cf012aeafd4",
-   "story_id": "story-5b0b05d9b4409db2748a",
-   "linked_story_id": "story-5b0b05d9b4409db2748a",
-   "linked_app_key": "a-5b0b05d9b4409db2748a",
-   "title": "بقائی: نشست تهران مقدمه امنیت درون‌زای منطقه است",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "دنیای اقتصاد",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T12:11:40.044029+03:30",
-   "last_seen_tehran": "2026-10-26T12:11:40.044029+03:30",
-   "detected_at_epoch": 1793004100044,
-   "updated_at_epoch": 1793004100044,
-   "status": "active",
-   "content_hash": "28af91ae173b2ce2bc0ced081762781f8c934c73d5bd7036e44df0149602faeb"
-  },
-  {
-   "signal_id": "1e90c50a8b8548bd",
-   "story_id": "story-74beba7ac901ea8283be",
-   "linked_story_id": "story-74beba7ac901ea8283be",
-   "linked_app_key": "a-74beba7ac901ea8283be",
-   "title": "امنیت انرژی جهان در گرو احترام به حاکمیت کشورهاست",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "ایلنا",
-   "matched_topics": [
-    "نفت_و_انرژی"
-   ],
-   "first_seen_tehran": "2026-10-26T12:11:40.020151+03:30",
-   "last_seen_tehran": "2026-10-26T12:11:40.020151+03:30",
-   "detected_at_epoch": 1793004100020,
-   "updated_at_epoch": 1793004100020,
-   "status": "active",
-   "content_hash": "ed00fed4bee2d404ddcc476043c681c8c75d6a0b240527a594a1d5e2d94ecbaf"
   }
  ]
 }
