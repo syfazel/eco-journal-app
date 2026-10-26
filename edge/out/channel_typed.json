@@ -1,8 +1,40 @@
 {
  "format": "eco-journal-channel-typed",
  "version": 1,
- "generated_at_utc": "2026-10-26T05:31:06.081624+00:00",
+ "generated_at_utc": "2026-10-26T06:01:06.947841+00:00",
  "items": [
+  {
+   "guid": "channel-1073",
+   "app_key": "a-51bb797f124307a685dd",
+   "story_id": "story-51bb797f124307a685dd",
+   "channel_message_id": 1073,
+   "format_type": "WIRE",
+   "headline": "اتهام قتل زن اوکیناوایی علیه نظامی آمریکایی در ژاپن",
+   "body": "",
+   "source_name": "ایلنا",
+   "urgency_score": 61,
+   "crisis_level": null,
+   "published_at_epoch": 1792993453273,
+   "updated_at_epoch": 1792993453273,
+   "status": "posted",
+   "content_hash": "ac140faef2cff8fcc637a5982c64beb286ed200ad5eb1f3b356ce497a8b233f6"
+  },
+  {
+   "guid": "channel-1074",
+   "app_key": "a-9ab4e43af70c092d1859",
+   "story_id": "story-9ab4e43af70c092d1859",
+   "channel_message_id": 1074,
+   "format_type": "WIRE",
+   "headline": "ترامپ: همه مراکز هسته‌ای ایران را زیر نظر داریم",
+   "body": "",
+   "source_name": "تجارت‌نیوز",
+   "urgency_score": 56,
+   "crisis_level": null,
+   "published_at_epoch": 1792993453273,
+   "updated_at_epoch": 1792993453273,
+   "status": "posted",
+   "content_hash": "2869700db8621b9a4cbd3928cbbc2f4a36864cd9e15b8391b8e8e299cda19e5d"
+  },
   {
    "guid": "channel-1071",
    "app_key": "a-4267f5011ac5a8d8f80a",

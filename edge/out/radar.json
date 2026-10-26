@@ -1,9 +1,49 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T05:31:06.281489+00:00",
+ "generated_at_utc": "2026-10-26T06:01:07.099836+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "6fe280980272d826",
+   "story_id": "story-51bb797f124307a685dd",
+   "linked_story_id": "story-51bb797f124307a685dd",
+   "linked_app_key": "a-51bb797f124307a685dd",
+   "title": "اتهام قتل زن اوکیناوایی علیه نظامی آمریکایی در ژاپن",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "ایلنا",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T09:11:39.960799+03:30",
+   "last_seen_tehran": "2026-10-26T09:11:39.960799+03:30",
+   "detected_at_epoch": 1792993299960,
+   "updated_at_epoch": 1792993299960,
+   "status": "active",
+   "content_hash": "80068c6ce64e4b5f5c08aa83db968e7a6fb98a0c8de2a2e0280f81c4c1a98dc7"
+  },
+  {
+   "signal_id": "56be90b8fa22830e",
+   "story_id": "story-9ab4e43af70c092d1859",
+   "linked_story_id": "story-9ab4e43af70c092d1859",
+   "linked_app_key": "a-9ab4e43af70c092d1859",
+   "title": "ترامپ: همه مراکز هسته‌ای ایران را زیر نظر داریم",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "تجارت‌نیوز",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T08:41:41.399329+03:30",
+   "last_seen_tehran": "2026-10-26T08:41:41.399329+03:30",
+   "detected_at_epoch": 1792991501399,
+   "updated_at_epoch": 1792991501399,
+   "status": "active",
+   "content_hash": "2de64838c419941e82238363faf6a5aa2c983b44653e60555a50bfb196c8a040"
+  },
   {
    "signal_id": "b073037d5580990d",
    "story_id": "story-4e11d2215264eeb63816",
