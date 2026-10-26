@@ -1,9 +1,89 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T08:31:05.094550+00:00",
+ "generated_at_utc": "2026-10-26T09:01:02.824517+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "43684bf49611e491",
+   "story_id": "story-bc7ca8739ed882f710c3",
+   "linked_story_id": "story-bc7ca8739ed882f710c3",
+   "linked_app_key": "a-bc7ca8739ed882f710c3",
+   "title": "فولاد خوزستان در سمپوزیوم فولاد ۱۴۰۵ حضور می‌یابد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "ایلنا",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T12:11:40.124804+03:30",
+   "last_seen_tehran": "2026-10-26T12:11:40.124804+03:30",
+   "detected_at_epoch": 1793004100124,
+   "updated_at_epoch": 1793004100124,
+   "status": "active",
+   "content_hash": "99d7589f7deb1e06b1941df08c6333321d5dcb25400fceec56fba20593fd864a"
+  },
+  {
+   "signal_id": "220e5cf012aeafd4",
+   "story_id": "story-5b0b05d9b4409db2748a",
+   "linked_story_id": "story-5b0b05d9b4409db2748a",
+   "linked_app_key": "a-5b0b05d9b4409db2748a",
+   "title": "بقائی: نشست تهران مقدمه امنیت درون‌زای منطقه است",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "دنیای اقتصاد",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T12:11:40.044029+03:30",
+   "last_seen_tehran": "2026-10-26T12:11:40.044029+03:30",
+   "detected_at_epoch": 1793004100044,
+   "updated_at_epoch": 1793004100044,
+   "status": "active",
+   "content_hash": "28af91ae173b2ce2bc0ced081762781f8c934c73d5bd7036e44df0149602faeb"
+  },
+  {
+   "signal_id": "1e90c50a8b8548bd",
+   "story_id": "story-74beba7ac901ea8283be",
+   "linked_story_id": "story-74beba7ac901ea8283be",
+   "linked_app_key": "a-74beba7ac901ea8283be",
+   "title": "امنیت انرژی جهان در گرو احترام به حاکمیت کشورهاست",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "ایلنا",
+   "matched_topics": [
+    "نفت_و_انرژی"
+   ],
+   "first_seen_tehran": "2026-10-26T12:11:40.020151+03:30",
+   "last_seen_tehran": "2026-10-26T12:11:40.020151+03:30",
+   "detected_at_epoch": 1793004100020,
+   "updated_at_epoch": 1793004100020,
+   "status": "active",
+   "content_hash": "ed00fed4bee2d404ddcc476043c681c8c75d6a0b240527a594a1d5e2d94ecbaf"
+  },
+  {
+   "signal_id": "6b7080861ff7f03d",
+   "story_id": "story-3cec39fc61353cce58f3",
+   "linked_story_id": "story-3cec39fc61353cce58f3",
+   "linked_app_key": "a-3cec39fc61353cce58f3",
+   "title": "نمایشگاه کشاورزی لرستان با حضور ۱۰ استان گشایش یافت",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T12:11:39.992070+03:30",
+   "last_seen_tehran": "2026-10-26T12:11:39.992070+03:30",
+   "detected_at_epoch": 1793004099992,
+   "updated_at_epoch": 1793004099992,
+   "status": "active",
+   "content_hash": "e684fffed50c65c45fe734e59dba4a1aa87f269e3e33e7dcb7d7acdb1c4b2be6"
+  },
   {
    "signal_id": "b5ffc4043279d4fa",
    "story_id": "story-8f79260eaaf2a26bc3f7",
@@ -63,6 +143,26 @@
    "updated_at_epoch": 1793002301298,
    "status": "active",
    "content_hash": "5b1b52a82e269fbd5f1a66df05a6d05c5fc422a3d2f15b49fb8653de4777cb00"
+  },
+  {
+   "signal_id": "15f017f240de455b",
+   "story_id": "story-96ff321ec9f318ededa8",
+   "linked_story_id": "story-96ff321ec9f318ededa8",
+   "linked_app_key": "a-96ff321ec9f318ededa8",
+   "title": "صحا نیاز اعتباری شرکت‌های فناور تهران را بررسی کرد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T11:41:40.985213+03:30",
+   "last_seen_tehran": "2026-10-26T11:41:40.985213+03:30",
+   "detected_at_epoch": 1793002300985,
+   "updated_at_epoch": 1793002300985,
+   "status": "active",
+   "content_hash": "b7b6b6440054d82800626575c61040725dfa2048938e097055b58dce3f6a9b6f"
   },
   {
    "signal_id": "6e0ab8f9e2df2c11",
@@ -903,106 +1003,6 @@
    "updated_at_epoch": 1792964499765,
    "status": "active",
    "content_hash": "c012d80410d683b76c26765f53ae2dc2c56a955c8adb999536c4d3c468c34c45"
-  },
-  {
-   "signal_id": "8ed9ae5aff0fdd64",
-   "story_id": "story-fb2774a431fb4f61b6d8",
-   "linked_story_id": "story-fb2774a431fb4f61b6d8",
-   "linked_app_key": "a-fb2774a431fb4f61b6d8",
-   "title": "سپاه درباره پیامدهای حمله به ایران هشدار داد",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "تایمز آو ایندیا",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:38.718755+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:38.718755+03:30",
-   "detected_at_epoch": 1792964498718,
-   "updated_at_epoch": 1792964498718,
-   "status": "active",
-   "content_hash": "9a523c037c46ede162612aed6c4e3d10a1211b7a1f6a83216fbed641fefaa2a0"
-  },
-  {
-   "signal_id": "24cfae6f5770cd74",
-   "story_id": "story-701c68761944778e75f5",
-   "linked_story_id": "story-701c68761944778e75f5",
-   "linked_app_key": "a-701c68761944778e75f5",
-   "title": "هشدار اوباما درباره جنگ با ایران",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "People Daily",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:38.693776+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:38.693776+03:30",
-   "detected_at_epoch": 1792964498693,
-   "updated_at_epoch": 1792964498693,
-   "status": "active",
-   "content_hash": "b85ca7fb22d4c358edf93feb1eb9813f1a48ed0b7fe57c47724f57670af0c461"
-  },
-  {
-   "signal_id": "cdb36b080e39e0f2",
-   "story_id": "story-1148585c5379749d0b35",
-   "linked_story_id": "story-1148585c5379749d0b35",
-   "linked_app_key": "a-1148585c5379749d0b35",
-   "title": "ترامپ برای ایران اولتیماتوم تعیین کرد",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "The Express Tribune",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:38.646000+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:38.646000+03:30",
-   "detected_at_epoch": 1792964498646,
-   "updated_at_epoch": 1792964498646,
-   "status": "active",
-   "content_hash": "dc2d2469acbc1b9d040dd020f9fdc70ac19d9b1db6a909ff05d84c774760c298"
-  },
-  {
-   "signal_id": "237e24cda41e550e",
-   "story_id": "story-afceee16b77fb5bcbc14",
-   "linked_story_id": "story-afceee16b77fb5bcbc14",
-   "linked_app_key": "a-afceee16b77fb5bcbc14",
-   "title": "آیزنکوت از حملات ترامپ به ایران تمجید کرد",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "Iran International",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:38.616144+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:38.616144+03:30",
-   "detected_at_epoch": 1792964498616,
-   "updated_at_epoch": 1792964498616,
-   "status": "active",
-   "content_hash": "33998856121e9ed3f427d398e7093cfeea961a3ede50e03e418f747434d04426"
-  },
-  {
-   "signal_id": "2af97b071ca0d83b",
-   "story_id": "story-63b99bc2f8c3ddc12d99",
-   "linked_story_id": "story-63b99bc2f8c3ddc12d99",
-   "linked_app_key": "a-63b99bc2f8c3ddc12d99",
-   "title": "حمله پهپادی به خارکیف یک کشته بر جای گذاشت",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "Breakingthenews.net",
-   "matched_topics": [
-    "جبهه_اوکراین"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:37.091355+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:37.091355+03:30",
-   "detected_at_epoch": 1792964497091,
-   "updated_at_epoch": 1792964497091,
-   "status": "active",
-   "content_hash": "c16f8af2c12d21d3f43c402143089424856a8b12b96a3cafef92afa955f4db35"
   }
  ]
 }
