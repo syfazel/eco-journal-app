@@ -1,7 +1,7 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T01:31:08.358954+00:00",
+ "generated_at_utc": "2026-10-26T02:31:05.780778+00:00",
  "window_hours": 24,
  "signals": [
   {
@@ -26,9 +26,9 @@
   },
   {
    "signal_id": "11b920dfc79991be",
-   "story_id": "story-ed51ffec4346f49bd4c2",
-   "linked_story_id": "story-ed51ffec4346f49bd4c2",
-   "linked_app_key": "a-ed51ffec4346f49bd4c2",
+   "story_id": "story-518e5bf63c988a0c4d9c",
+   "linked_story_id": "story-518e5bf63c988a0c4d9c",
+   "linked_app_key": "a-518e5bf63c988a0c4d9c",
    "title": "تعلیق کلاس‌های حضوری دانشگاه اسلامی غزه",
    "layer": 1,
    "severity": "high",
@@ -42,7 +42,7 @@
    "detected_at_epoch": 1792971710878,
    "updated_at_epoch": 1792971710878,
    "status": "active",
-   "content_hash": "411651568a278b96f3ab1fa243bf1905fca6065198f532d09ad4ca1481a95584"
+   "content_hash": "4e1afa44cb738aeed015a8f855418f23c5b2414adc4e616c00f75ebc0f90f595"
   },
   {
    "signal_id": "d7158b19a2c680a8",
