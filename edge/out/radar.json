@@ -1,9 +1,49 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T10:31:09.754221+00:00",
+ "generated_at_utc": "2026-10-26T11:01:14.305039+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "d82d3306d92ba97b",
+   "story_id": "story-aff63b3b3f939bcd0028",
+   "linked_story_id": "story-aff63b3b3f939bcd0028",
+   "linked_app_key": "a-aff63b3b3f939bcd0028",
+   "title": "ادعای اصابت موشک ایران به ناو آبراهام لینکلن",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "اقتصاد آنلاین",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T14:11:44.638254+03:30",
+   "last_seen_tehran": "2026-10-26T14:11:44.638254+03:30",
+   "detected_at_epoch": 1793011304638,
+   "updated_at_epoch": 1793011304638,
+   "status": "active",
+   "content_hash": "28e3d739d7992e6a867dae10c6879085b67a3c90b5ce225586e84482adbf587b"
+  },
+  {
+   "signal_id": "40806e7995b61b5e",
+   "story_id": "story-52b3e312e779dcef5e78",
+   "linked_story_id": "story-52b3e312e779dcef5e78",
+   "linked_app_key": "a-52b3e312e779dcef5e78",
+   "title": "۳۰ میلیون دام عشایری، پشتوانه پدافند غیرعامل",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T13:41:43.919510+03:30",
+   "last_seen_tehran": "2026-10-26T13:41:43.919510+03:30",
+   "detected_at_epoch": 1793009503919,
+   "updated_at_epoch": 1793009503919,
+   "status": "active",
+   "content_hash": "d036e5f2b24408326ac80bc06d542dee2c00c132f78f411d0b588f87762c9f8d"
+  },
   {
    "signal_id": "14891b29f515fd06",
    "story_id": "story-ea90498261d467852154",
@@ -125,6 +165,26 @@
    "content_hash": "9580443f49cc74f6845756af4dc324cee168c13d11ca31fc35ced31bf07b03c8"
   },
   {
+   "signal_id": "1ee869c28b47ef11",
+   "story_id": "story-f0e0be3dadb7ad467fb0",
+   "linked_story_id": "story-f0e0be3dadb7ad467fb0",
+   "linked_app_key": "a-f0e0be3dadb7ad467fb0",
+   "title": "زلنسکی: تحویل موشک‌های پاتریوت باید رفع انسداد شود",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "ABC News",
+   "matched_topics": [
+    "جبهه_اوکراین"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:36.960524+03:30",
+   "last_seen_tehran": "2026-10-26T13:41:37.177070+03:30",
+   "detected_at_epoch": 1793009497177,
+   "updated_at_epoch": 1793009497177,
+   "status": "active",
+   "content_hash": "1d085d48aee3f44ad60bd573442b1d4e8a14a8a2ab1578cd56b93cfc0fa6fcae"
+  },
+  {
    "signal_id": "0b8e439c63ed1090",
    "story_id": "story-90b2ddc16d632d036b57",
    "linked_story_id": "story-90b2ddc16d632d036b57",
@@ -203,6 +263,26 @@
    "updated_at_epoch": 1793009495677,
    "status": "active",
    "content_hash": "90dc4ddcbbc4194dee87dd9144672d7f553ef4926a18dad3a8238baee155e5f3"
+  },
+  {
+   "signal_id": "4e904ff06940f619",
+   "story_id": "story-0413732914b7e2d165d6",
+   "linked_story_id": "story-0413732914b7e2d165d6",
+   "linked_app_key": "a-0413732914b7e2d165d6",
+   "title": "افزایش ۵۰۰ هزار تومانی اعتبار کالابرگ در مرحله نخست",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "خبرگزاری ایسنا (بخش اقتصادی)",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T13:11:38.634023+03:30",
+   "last_seen_tehran": "2026-10-26T13:11:38.634023+03:30",
+   "detected_at_epoch": 1793007698634,
+   "updated_at_epoch": 1793007698634,
+   "status": "active",
+   "content_hash": "436692b4862966fde9ff1eebc9999d98f8b0412e11d04e8b6be64245eebadf06"
   },
   {
    "signal_id": "4227defeec502bcf",
@@ -923,86 +1003,6 @@
    "updated_at_epoch": 1792986127705,
    "status": "active",
    "content_hash": "3065ef64dded5a13d662b4bac5daf51a422cac6faa8ecc4bf7c3dcc4818264c4"
-  },
-  {
-   "signal_id": "00bc9928c55f814b",
-   "story_id": "story-33166ef6cb315a610b95",
-   "linked_story_id": "story-33166ef6cb315a610b95",
-   "linked_app_key": "a-33166ef6cb315a610b95",
-   "title": "انتشار تصویر انفجار هسته‌ای از سوی نتانیاهو",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "همشهری‌آنلاین",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T06:11:41.050996+03:30",
-   "last_seen_tehran": "2026-10-26T06:11:41.050996+03:30",
-   "detected_at_epoch": 1792982501050,
-   "updated_at_epoch": 1792982501050,
-   "status": "active",
-   "content_hash": "c90bd86c49568e75c8c8dfece049111d71891f74de30b4c70d5bcdffa83569c9"
-  },
-  {
-   "signal_id": "c3dace23735fab79",
-   "story_id": "story-e4195dcb8278aa23a255",
-   "linked_story_id": "story-e4195dcb8278aa23a255",
-   "linked_app_key": "a-e4195dcb8278aa23a255",
-   "title": "اتهام ماسک به اوکراین درباره استفاده از استارلینک",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "NigerianEye",
-   "matched_topics": [
-    "جبهه_اوکراین"
-   ],
-   "first_seen_tehran": "2026-10-26T06:11:34.358864+03:30",
-   "last_seen_tehran": "2026-10-26T06:11:34.358864+03:30",
-   "detected_at_epoch": 1792982494358,
-   "updated_at_epoch": 1792982494358,
-   "status": "active",
-   "content_hash": "609b57aa3a92cb45b4979e96ee96315c29b54012bf479bf2c4834286281bc1a1"
-  },
-  {
-   "signal_id": "c984fc55ba9319a6",
-   "story_id": "story-e8e227337e305f9dbdfd",
-   "linked_story_id": "story-e8e227337e305f9dbdfd",
-   "linked_app_key": "a-e8e227337e305f9dbdfd",
-   "title": "شیء مثلثی سیاه در اسناد تازه پنتاگون",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "اقتصاد آنلاین",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T05:41:49.840662+03:30",
-   "last_seen_tehran": "2026-10-26T05:41:49.840662+03:30",
-   "detected_at_epoch": 1792980709840,
-   "updated_at_epoch": 1792980709840,
-   "status": "active",
-   "content_hash": "ffda2298c2f91335468d2a67280b1a1c698e326b9b44d2c270df22157e038e84"
-  },
-  {
-   "signal_id": "e178fb13a02dd2ae",
-   "story_id": "story-d04b36c137b0bcb18630",
-   "linked_story_id": "story-d04b36c137b0bcb18630",
-   "linked_app_key": "a-d04b36c137b0bcb18630",
-   "title": "ترامپ: تاسیسات هسته‌ای ایران را رصد می‌کنیم",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "دنیای اقتصاد",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T05:11:44.571884+03:30",
-   "last_seen_tehran": "2026-10-26T05:11:44.571884+03:30",
-   "detected_at_epoch": 1792978904571,
-   "updated_at_epoch": 1792978904571,
-   "status": "active",
-   "content_hash": "34b941130878f55df826fd9b6e1aa867d0c735841ed8383626a9d5b6387f78b6"
   }
  ]
 }
