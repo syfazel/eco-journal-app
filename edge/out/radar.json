@@ -1,7 +1,7 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T06:01:07.099836+00:00",
+ "generated_at_utc": "2026-10-26T06:31:06.970757+00:00",
  "window_hours": 24,
  "signals": [
   {
@@ -23,6 +23,26 @@
    "updated_at_epoch": 1792993299960,
    "status": "active",
    "content_hash": "80068c6ce64e4b5f5c08aa83db968e7a6fb98a0c8de2a2e0280f81c4c1a98dc7"
+  },
+  {
+   "signal_id": "59b29d44aba7b51b",
+   "story_id": "story-c84c32dfc9952e169a38",
+   "linked_story_id": "story-c84c32dfc9952e169a38",
+   "linked_app_key": "a-c84c32dfc9952e169a38",
+   "title": "روسیه میزبان جهانی وزنه‌برداری ۲۰۳۰ شد",
+   "layer": 1,
+   "severity": "high",
+   "severity_rank": 85,
+   "source_name": "بی‌بی‌سی",
+   "matched_topics": [
+    "جبهه_اوکراین"
+   ],
+   "first_seen_tehran": "2026-10-26T09:11:38.995989+03:30",
+   "last_seen_tehran": "2026-10-26T09:11:38.995989+03:30",
+   "detected_at_epoch": 1792993298995,
+   "updated_at_epoch": 1792993298995,
+   "status": "active",
+   "content_hash": "64801be17a8cc62cae990494661ce8c3a6260d98f57fe93bc96ce1350405351e"
   },
   {
    "signal_id": "56be90b8fa22830e",

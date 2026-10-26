@@ -1,8 +1,40 @@
 {
  "format": "eco-journal-channel-typed",
  "version": 1,
- "generated_at_utc": "2026-10-26T06:01:06.947841+00:00",
+ "generated_at_utc": "2026-10-26T06:31:06.842152+00:00",
  "items": [
+  {
+   "guid": "channel-1078",
+   "app_key": "a-8083b29574396f7cea58",
+   "story_id": "story-8083b29574396f7cea58",
+   "channel_message_id": 1078,
+   "format_type": "MARKET",
+   "headline": "برنت ۱۰۹٫۶۴ دلار؛ نبض بازار جنگ",
+   "body": "",
+   "source_name": "دادهٔ بازار",
+   "urgency_score": null,
+   "crisis_level": null,
+   "published_at_epoch": 1792996153070,
+   "updated_at_epoch": 1792996153070,
+   "status": "posted",
+   "content_hash": "ff4d8efafa75be44ea3e6e9d3ed02d228c05eac785001d72ceabd79c46b7b16b"
+  },
+  {
+   "guid": "channel-1075",
+   "app_key": "a-c84c32dfc9952e169a38",
+   "story_id": "story-c84c32dfc9952e169a38",
+   "channel_message_id": 1075,
+   "format_type": "FLASH",
+   "headline": "روسیه میزبان جهانی وزنه‌برداری ۲۰۳۰ شد",
+   "body": "",
+   "source_name": "بی‌بی‌سی",
+   "urgency_score": 85,
+   "crisis_level": null,
+   "published_at_epoch": 1792995265378,
+   "updated_at_epoch": 1792995265378,
+   "status": "posted",
+   "content_hash": "0f852306a95235e492553c254665838a612eebaa5f16fafdec98e86489cb5e70"
+  },
   {
    "guid": "channel-1073",
    "app_key": "a-51bb797f124307a685dd",

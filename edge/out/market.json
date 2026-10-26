@@ -2872,11 +2872,28 @@
    "vix": 19.45,
    "sp500": 7623.68,
    "brent": null
+  },
+  {
+   "snapshot_id": "cycle-20261026-0600",
+   "ts_tehran": "2026-10-26T09:59:12+03:30",
+   "xau_usd": 4008.18,
+   "dxy": 101.67407757343706,
+   "usdt_usd": 0.999387,
+   "usd_irt_free": 269500.0,
+   "usdt_irt": 268885.0,
+   "gold_18k_gram": 26390880.0,
+   "sekke_emami": 269000000.0,
+   "sekke_bahar": 256000000.0,
+   "nim_sekke": 142000000.0,
+   "rob_sekke": 76000000.0,
+   "vix": 19.45,
+   "sp500": 7623.68,
+   "brent": 109.64
   }
  ],
- "snapshot_count": 169,
+ "snapshot_count": 170,
  "first_ts": "2026-04-15T12:00:00+03:30",
- "last_ts": "2026-10-26T06:16:58+03:30",
+ "last_ts": "2026-10-26T09:59:12+03:30",
  "formulas_active": [
   {
    "name": "bubble_pct",
