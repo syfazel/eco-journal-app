@@ -1,9 +1,69 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T19:31:08.449152+00:00",
+ "generated_at_utc": "2026-10-26T20:01:07.936130+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "2d06dfc8e5cf8f4b",
+   "story_id": "story-a39aef9ab06dad05207a",
+   "linked_story_id": "story-a39aef9ab06dad05207a",
+   "linked_app_key": "a-a39aef9ab06dad05207a",
+   "title": "انستیتو پاستور ایران سه بار در جنگ آسیب دید",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری فارس",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T23:12:05.565865+03:30",
+   "last_seen_tehran": "2026-10-26T23:12:05.565865+03:30",
+   "detected_at_epoch": 1793043725565,
+   "updated_at_epoch": 1793043725565,
+   "status": "active",
+   "content_hash": "41ca8412a62b20f6ac533e9ffd51d7dd9688194259fb6de4a766112429dbd17f"
+  },
+  {
+   "signal_id": "71650743e80cda08",
+   "story_id": "story-464dfcf10370686a1fea",
+   "linked_story_id": "story-464dfcf10370686a1fea",
+   "linked_app_key": "a-464dfcf10370686a1fea",
+   "title": "البرز ۳۲۰۰ سامانه دولتی را ساماندهی می‌کند",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T23:11:43.731289+03:30",
+   "last_seen_tehran": "2026-10-26T23:11:43.731289+03:30",
+   "detected_at_epoch": 1793043703731,
+   "updated_at_epoch": 1793043703731,
+   "status": "active",
+   "content_hash": "3aef813f36c45726b6b3cfbe9c1228336f42a9628fb73f216701b0bd4136b0cb"
+  },
+  {
+   "signal_id": "539826aace587b51",
+   "story_id": "story-b9c5c6f23c9a78ba3a2c",
+   "linked_story_id": "story-b9c5c6f23c9a78ba3a2c",
+   "linked_app_key": "a-b9c5c6f23c9a78ba3a2c",
+   "title": "سندرز پیروزی لولا را به ترامپ کنایه زد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "دنیای اقتصاد",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T23:11:43.686623+03:30",
+   "last_seen_tehran": "2026-10-26T23:11:43.686623+03:30",
+   "detected_at_epoch": 1793043703686,
+   "updated_at_epoch": 1793043703686,
+   "status": "active",
+   "content_hash": "ed83c1611d39ef59da500cc19f27554a3b72c072e27e243f3b108eaa0d2a3800"
+  },
   {
    "signal_id": "3f524fcf241e61be",
    "story_id": "story-09622726a622961ca576",
@@ -943,66 +1003,6 @@
    "updated_at_epoch": 1793009503750,
    "status": "active",
    "content_hash": "28121940852b4d1799751125ab45caa609952ac591e046dc5b5a89162f1b6721"
-  },
-  {
-   "signal_id": "500c8b206e635db1",
-   "story_id": "story-760510eda0052e8e638e",
-   "linked_story_id": "story-760510eda0052e8e638e",
-   "linked_app_key": "a-760510eda0052e8e638e",
-   "title": "بازسازی ۱۴ رام قطار متروی تهران؛ پیشرفت ۷۰ درصدی اورهال",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "خبرگزاری ایسنا",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T13:41:43.723195+03:30",
-   "last_seen_tehran": "2026-10-26T13:41:43.723195+03:30",
-   "detected_at_epoch": 1793009503723,
-   "updated_at_epoch": 1793009503723,
-   "status": "active",
-   "content_hash": "edcb3937e8f799c6fc71e9abf7466da75fe6ae2317ed38cd02a7ac2b877106c7"
-  },
-  {
-   "signal_id": "70cd8f6f5f741fc7",
-   "story_id": "story-2c9d11eab9a4ee9ef62a",
-   "linked_story_id": "story-2c9d11eab9a4ee9ef62a",
-   "linked_app_key": "a-2c9d11eab9a4ee9ef62a",
-   "title": "پتانسیل‌های مجمع صادرکنندگان گاز برای رفع ناترازی ایران",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "خبرگزاری مهر",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T13:41:43.676606+03:30",
-   "last_seen_tehran": "2026-10-26T13:41:43.676606+03:30",
-   "detected_at_epoch": 1793009503676,
-   "updated_at_epoch": 1793009503676,
-   "status": "active",
-   "content_hash": "015a2fd417815ee3f89298905845596a6c8838cc13f4cb2517586e1be25ceaee"
-  },
-  {
-   "signal_id": "cdb36b080e39e0f2",
-   "story_id": "story-1148585c5379749d0b35",
-   "linked_story_id": "story-1148585c5379749d0b35",
-   "linked_app_key": "a-1148585c5379749d0b35",
-   "title": "ترامپ برای ایران اولتیماتوم تعیین کرد",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "The Express Tribune",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:38.646000+03:30",
-   "last_seen_tehran": "2026-10-26T13:41:38.751816+03:30",
-   "detected_at_epoch": 1793009498751,
-   "updated_at_epoch": 1793009498751,
-   "status": "active",
-   "content_hash": "8b1a68e26f8c10b9eed10e6fdfeec059e24bfb9d781b857a33e3b69476f63d33"
   }
  ]
 }
