@@ -1,9 +1,69 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T18:13:53.571115+00:00",
+ "generated_at_utc": "2026-10-26T18:31:09.545879+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "55f8cd8010f94718",
+   "story_id": "story-93f9df47c4b4ba3d1ec5",
+   "linked_story_id": "story-93f9df47c4b4ba3d1ec5",
+   "linked_app_key": "a-93f9df47c4b4ba3d1ec5",
+   "title": "الجزایر نیرو به نیجر همسایه اعزام می‌کند",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "الجزیره",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T21:41:43.143857+03:30",
+   "last_seen_tehran": "2026-10-26T21:41:43.143857+03:30",
+   "detected_at_epoch": 1793038303143,
+   "updated_at_epoch": 1793038303143,
+   "status": "active",
+   "content_hash": "5dccaae0b7ed6cc4b100ee6109f76ec85937fa191239d80ca4b5f820c24681ea"
+  },
+  {
+   "signal_id": "d88a30b987f6b148",
+   "story_id": "story-6c63f39bd868ea515230",
+   "linked_story_id": "story-6c63f39bd868ea515230",
+   "linked_app_key": "a-6c63f39bd868ea515230",
+   "title": "بریتانیا فرماندهان سودانی را به‌دلیل تجاوز به‌عنوان سلاح تحریم کرد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "الجزیره",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T21:41:39.927274+03:30",
+   "last_seen_tehran": "2026-10-26T21:41:39.927274+03:30",
+   "detected_at_epoch": 1793038299927,
+   "updated_at_epoch": 1793038299927,
+   "status": "active",
+   "content_hash": "f65a2503ab33f2a1b269ac60138af562ba28cef3bdb8812b66f268e404589eb9"
+  },
+  {
+   "signal_id": "2ea298da07f9666f",
+   "story_id": "story-7b4ef79c576e884d7fea",
+   "linked_story_id": "story-7b4ef79c576e884d7fea",
+   "linked_app_key": "a-7b4ef79c576e884d7fea",
+   "title": "اصابت دست‌کم هفت ضربه به کارخانه نظامی روسیه",
+   "layer": 1,
+   "severity": "high",
+   "severity_rank": 85,
+   "source_name": "Ukrainska Pravda",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T21:41:34.142205+03:30",
+   "last_seen_tehran": "2026-10-26T21:41:34.142205+03:30",
+   "detected_at_epoch": 1793038294142,
+   "updated_at_epoch": 1793038294142,
+   "status": "active",
+   "content_hash": "80c8236724ad8907765bbf8cd8e3c02105129ed2f64a22e91cc229dbaf3ef945"
+  },
   {
    "signal_id": "24c68e33a4e3cb3b",
    "story_id": "story-b4657e3abd6254283bab",
@@ -943,66 +1003,6 @@
    "updated_at_epoch": 1793009495805,
    "status": "active",
    "content_hash": "40804146302bf22c7607321cf891600b82a08f03cb439dac9c0aeb5801400c5c"
-  },
-  {
-   "signal_id": "6a565537c8964dcc",
-   "story_id": "story-567c42a0fd2246cd7146",
-   "linked_story_id": "story-567c42a0fd2246cd7146",
-   "linked_app_key": "a-567c42a0fd2246cd7146",
-   "title": "آمریکا سه نفتکش ایرانی را هدف قرار داد",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "EnergyNow.com",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:35.239444+03:30",
-   "last_seen_tehran": "2026-10-26T13:41:35.699609+03:30",
-   "detected_at_epoch": 1793009495699,
-   "updated_at_epoch": 1793009495699,
-   "status": "active",
-   "content_hash": "391d388de9cb1e8a18c27c8b9f9c858f6c8532b9bdc642416291abf06dc13777"
-  },
-  {
-   "signal_id": "472e9e40e7fa3562",
-   "story_id": "story-311db93b5d847e4d1430",
-   "linked_story_id": "story-311db93b5d847e4d1430",
-   "linked_app_key": "a-311db93b5d847e4d1430",
-   "title": "اصابت موشک به کارخانه دفاعی انرگیا در لیپتسک روسیه",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "Ukrinform",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:35.521557+03:30",
-   "last_seen_tehran": "2026-10-26T13:41:35.677587+03:30",
-   "detected_at_epoch": 1793009495677,
-   "updated_at_epoch": 1793009495677,
-   "status": "active",
-   "content_hash": "90dc4ddcbbc4194dee87dd9144672d7f553ef4926a18dad3a8238baee155e5f3"
-  },
-  {
-   "signal_id": "480a83ae6fc06097",
-   "story_id": "story-bf730f5d33a32fbdba1c",
-   "linked_story_id": "story-bf730f5d33a32fbdba1c",
-   "linked_app_key": "a-bf730f5d33a32fbdba1c",
-   "title": "آغاز عصر نوین دانشنامه‌نگاری در دائرة‌المعارف بزرگ اسلامی",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "ایلنا",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T13:11:38.698176+03:30",
-   "last_seen_tehran": "2026-10-26T13:11:38.698176+03:30",
-   "detected_at_epoch": 1793007698698,
-   "updated_at_epoch": 1793007698698,
-   "status": "active",
-   "content_hash": "a3bbfb58bfab0e27f60b2c8874fedb9adb15ee00aea77eceb1e253eb502c91bf"
   }
  ]
 }
