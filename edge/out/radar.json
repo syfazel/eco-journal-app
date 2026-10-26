@@ -1,9 +1,29 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T14:01:25.039469+00:00",
+ "generated_at_utc": "2026-10-26T14:31:04.637017+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "65c7351e67be45a8",
+   "story_id": "story-76ac867a13e1f36edac2",
+   "linked_story_id": "story-76ac867a13e1f36edac2",
+   "linked_app_key": "a-76ac867a13e1f36edac2",
+   "title": "کارشناسان سازمان ملل: آتش‌بس غزه نسل‌کشی اسرائیل را متوقف نکرده است",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "عرب‌نیوز",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T17:42:06.724402+03:30",
+   "last_seen_tehran": "2026-10-26T17:42:06.724402+03:30",
+   "detected_at_epoch": 1793023926724,
+   "updated_at_epoch": 1793023926724,
+   "status": "active",
+   "content_hash": "5f0618d1cae8307fd49a10d30d01b694c6fb6063b00fcb6e2523faa7aa67933c"
+  },
   {
    "signal_id": "3b5c5f2d4db278bd",
    "story_id": "story-14d11131942b35756f4b",
@@ -263,6 +283,26 @@
    "updated_at_epoch": 1793009503919,
    "status": "active",
    "content_hash": "d036e5f2b24408326ac80bc06d542dee2c00c132f78f411d0b588f87762c9f8d"
+  },
+  {
+   "signal_id": "33492ebd58c98e45",
+   "story_id": "story-4d511b6f61f33b7fdb53",
+   "linked_story_id": "story-4d511b6f61f33b7fdb53",
+   "linked_app_key": "a-4d511b6f61f33b7fdb53",
+   "title": "پیشنهاد بریکس برای اصلاح ساختار سازمان ملل",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T13:41:43.818998+03:30",
+   "last_seen_tehran": "2026-10-26T13:41:43.818998+03:30",
+   "detected_at_epoch": 1793009503818,
+   "updated_at_epoch": 1793009503818,
+   "status": "active",
+   "content_hash": "13bf2f4466262d1caaa1573989da53e1d6547240b027b117771700ee78bf1358"
   },
   {
    "signal_id": "14891b29f515fd06",
@@ -963,46 +1003,6 @@
    "updated_at_epoch": 1792998700171,
    "status": "active",
    "content_hash": "fb278de5ad97f80855084a7aed4dcd17a2c92427e36b1a7568cc6ea80e436b16"
-  },
-  {
-   "signal_id": "c903fd088edcb09b",
-   "story_id": "story-cee577d2cf664a47dd2e",
-   "linked_story_id": "story-cee577d2cf664a47dd2e",
-   "linked_app_key": "a-cee577d2cf664a47dd2e",
-   "title": "استقرار ۱۵ اتوبوس پناه گرم در میادین تهران",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "همشهری‌آنلاین",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T10:11:43.113907+03:30",
-   "last_seen_tehran": "2026-10-26T10:11:43.113907+03:30",
-   "detected_at_epoch": 1792996903113,
-   "updated_at_epoch": 1792996903113,
-   "status": "active",
-   "content_hash": "11a775a0929714375d7707d2debea1f87d7cfd1fa9600fc44fa82476852acd43"
-  },
-  {
-   "signal_id": "f78d7021ff69c759",
-   "story_id": "story-230531e1d9ceabeaae4c",
-   "linked_story_id": "story-230531e1d9ceabeaae4c",
-   "linked_app_key": "a-230531e1d9ceabeaae4c",
-   "title": "بهشت زهرا شش گام طلایی مدیریت پیکرها در بحران را تشریح کرد",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "همشهری‌آنلاین",
-   "matched_topics": [
-    "جبهه_آسیا_پاسیفیک"
-   ],
-   "first_seen_tehran": "2026-10-26T10:11:43.091228+03:30",
-   "last_seen_tehran": "2026-10-26T10:11:43.091228+03:30",
-   "detected_at_epoch": 1792996903091,
-   "updated_at_epoch": 1792996903091,
-   "status": "active",
-   "content_hash": "6dfb899997bcdf2fe903a218447732e8a55254969a2208cd688522e3d22305a0"
   }
  ]
 }
