@@ -1,9 +1,109 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T16:57:45.818790+00:00",
+ "generated_at_utc": "2026-10-26T17:31:08.732140+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "55240b9016149a12",
+   "story_id": "story-f51900f6da0c1b060c98",
+   "linked_story_id": "story-f51900f6da0c1b060c98",
+   "linked_app_key": "a-f51900f6da0c1b060c98",
+   "title": "جلسه شورای پدافند غیرعامل مهریز برگزار شد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T20:41:39.231073+03:30",
+   "last_seen_tehran": "2026-10-26T20:41:39.231073+03:30",
+   "detected_at_epoch": 1793034699231,
+   "updated_at_epoch": 1793034699231,
+   "status": "active",
+   "content_hash": "4bcfee712168c4e96276e1a3f2d0d7375172102fa009d3ddbf0a91515950e1f4"
+  },
+  {
+   "signal_id": "dabe772f2fa17a20",
+   "story_id": "story-f52046d654ff19e98de1",
+   "linked_story_id": "story-f52046d654ff19e98de1",
+   "linked_app_key": "a-f52046d654ff19e98de1",
+   "title": "۲۴۰ میلیارد تومان برای نوسازی ناوگان برق فارس سرمایه‌گذاری شد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T20:41:39.209004+03:30",
+   "last_seen_tehran": "2026-10-26T20:41:39.209004+03:30",
+   "detected_at_epoch": 1793034699209,
+   "updated_at_epoch": 1793034699209,
+   "status": "active",
+   "content_hash": "64aa7deb40c7fd0f8ac9a2b684ff520055c5aa8c95c6a9bed7962206c11b72c4"
+  },
+  {
+   "signal_id": "35a3240ca25a1da0",
+   "story_id": "story-08e03f71696472d1e9be",
+   "linked_story_id": "story-08e03f71696472d1e9be",
+   "linked_app_key": "a-08e03f71696472d1e9be",
+   "title": "گزارش عبری: پیشنهاد یک میلیارد دلاری ریاض به انصارالله",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "ایلنا",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T20:41:39.089945+03:30",
+   "last_seen_tehran": "2026-10-26T20:41:39.089945+03:30",
+   "detected_at_epoch": 1793034699089,
+   "updated_at_epoch": 1793034699089,
+   "status": "active",
+   "content_hash": "ff3123571bc37010aaf38fcf496f40ddcfb8c34b9ef3f48107e40d9fa886b5c7"
+  },
+  {
+   "signal_id": "93ada3021139610a",
+   "story_id": "story-accbf15674e8bff0c745",
+   "linked_story_id": "story-accbf15674e8bff0c745",
+   "linked_app_key": "a-accbf15674e8bff0c745",
+   "title": "آیزنکوت: تغییر رژیم هدف درستی برای جنگ نیست",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "همشهری‌آنلاین",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T20:41:39.065582+03:30",
+   "last_seen_tehran": "2026-10-26T20:41:39.065582+03:30",
+   "detected_at_epoch": 1793034699065,
+   "updated_at_epoch": 1793034699065,
+   "status": "active",
+   "content_hash": "1c1c55be2296de9b649f8424c1dcd01cf2109613c34fd8a1668464a48b3b4f8f"
+  },
+  {
+   "signal_id": "fa3308249a866122",
+   "story_id": "story-2fe01a139c5aca2da3de",
+   "linked_story_id": "story-2fe01a139c5aca2da3de",
+   "linked_app_key": "a-2fe01a139c5aca2da3de",
+   "title": "رهبر انقلاب: ایران قوی بر اقتدار علمی استوار است",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T20:41:38.711026+03:30",
+   "last_seen_tehran": "2026-10-26T20:41:38.711026+03:30",
+   "detected_at_epoch": 1793034698711,
+   "updated_at_epoch": 1793034698711,
+   "status": "active",
+   "content_hash": "07fc6666f53956991cb81182504583d084b28f16d86905b6522979f5ae4f6ddc"
+  },
   {
    "signal_id": "da39a3ee5e6b4b0d",
    "story_id": "story-06fd84eb928e19c0d039",
@@ -903,106 +1003,6 @@
    "updated_at_epoch": 1793007698575,
    "status": "active",
    "content_hash": "07549c438f4db4dc7555fed51df6905e6916220323ba20fb62db1ac4b5b54b2e"
-  },
-  {
-   "signal_id": "675b0cb70110a47e",
-   "story_id": "story-d419361e85b1e64b6916",
-   "linked_story_id": "story-d419361e85b1e64b6916",
-   "linked_app_key": "a-d419361e85b1e64b6916",
-   "title": "روسیه ساخت مراکز داده زیرزمینی را توصیه کرد",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "The Kyiv Independent",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T13:11:33.402323+03:30",
-   "last_seen_tehran": "2026-10-26T13:11:33.402323+03:30",
-   "detected_at_epoch": 1793007693402,
-   "updated_at_epoch": 1793007693402,
-   "status": "active",
-   "content_hash": "6be267baf356d922f2e1bd044c190049af0138976f26dab875c092203f7a565a"
-  },
-  {
-   "signal_id": "6946ea6943780422",
-   "story_id": "story-666b05ca2b4f583e0521",
-   "linked_story_id": "story-666b05ca2b4f583e0521",
-   "linked_app_key": "a-666b05ca2b4f583e0521",
-   "title": "تاکید بر توسعه دیپلماسی علمی در سلامت",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "ایلنا",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T12:41:43.393002+03:30",
-   "last_seen_tehran": "2026-10-26T12:41:43.393002+03:30",
-   "detected_at_epoch": 1793005903393,
-   "updated_at_epoch": 1793005903393,
-   "status": "active",
-   "content_hash": "5443868f2a063336940b90fcef0d24897244753ceb65d9f52a4291ad0f93a737"
-  },
-  {
-   "signal_id": "fada777ec65d699f",
-   "story_id": "story-8a6027141322a31c7d4c",
-   "linked_story_id": "story-8a6027141322a31c7d4c",
-   "linked_app_key": "a-8a6027141322a31c7d4c",
-   "title": "نشت نفت از نفتکش موردحمله به سواحل امارات رسید",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "BBC World",
-   "matched_topics": [
-    "نفت_و_انرژی"
-   ],
-   "first_seen_tehran": "2026-10-26T12:41:43.348999+03:30",
-   "last_seen_tehran": "2026-10-26T12:41:43.348999+03:30",
-   "detected_at_epoch": 1793005903348,
-   "updated_at_epoch": 1793005903348,
-   "status": "active",
-   "content_hash": "688b7d3b7289d4ff1d51fdc2e5d08c550a118d85cff6198d22ad76a7b680d191"
-  },
-  {
-   "signal_id": "3659f2f2e02ca67a",
-   "story_id": "story-d79e559a1a5dccf0fc20",
-   "linked_story_id": "story-d79e559a1a5dccf0fc20",
-   "linked_app_key": "a-d79e559a1a5dccf0fc20",
-   "title": "تأمین مالی شرکت‌های دانش‌بنیان آسیب‌دیده از جنگ",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "ایلنا",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T12:41:43.262034+03:30",
-   "last_seen_tehran": "2026-10-26T12:41:43.262034+03:30",
-   "detected_at_epoch": 1793005903262,
-   "updated_at_epoch": 1793005903262,
-   "status": "active",
-   "content_hash": "31d13bb5288876cd2b9c293781a0b94d5c67cb270b56e06fa61ce012afffba73"
-  },
-  {
-   "signal_id": "5b5f98a6ad5b1f9a",
-   "story_id": "story-077f051066de27270adb",
-   "linked_story_id": "story-077f051066de27270adb",
-   "linked_app_key": "a-077f051066de27270adb",
-   "title": "حضور فولاد مبارکه در سمپوزیوم فولاد ۱۴۰۵",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "ایلنا",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T12:41:43.200439+03:30",
-   "last_seen_tehran": "2026-10-26T12:41:43.200439+03:30",
-   "detected_at_epoch": 1793005903200,
-   "updated_at_epoch": 1793005903200,
-   "status": "active",
-   "content_hash": "8e5254b3de89609e0cf3074da1afdff4e6b86c27a6d9798dbddb0d72de30180c"
   }
  ]
 }

@@ -1,6 +1,6 @@
 {
  "version": 3,
- "generated_at_utc": "2026-10-26T16:57:45.830995+00:00",
+ "generated_at_utc": "2026-10-26T17:31:08.750445+00:00",
  "generator": "edge/fullsync.py (S1/S2/S3, 2026-10-26)",
  "sections": {
   "articles": {
@@ -2946,7 +2946,7 @@
    "count": 0
   },
   "radar": {
-   "hash": "9abe7024000f1e0cc3c194610e9fa483f92528f2fd1f668aa9eba2428ab63298",
+   "hash": "15adef9eda3c87e7b2f866f09e458f9704d9d616ea93d35f6039a532abebec28",
    "count": 50,
    "status": "published",
    "file": "radar.json",
@@ -2994,11 +2994,11 @@
      "id": "33492ebd58c98e45"
     },
     {
-     "app_key": "3659f2f2e02ca67a",
-     "content_hash": "31d13bb5288876cd2b9c293781a0b94d5c67cb270b56e06fa61ce012afffba73",
-     "updated_at_epoch": 1793005903262,
+     "app_key": "35a3240ca25a1da0",
+     "content_hash": "ff3123571bc37010aaf38fcf496f40ddcfb8c34b9ef3f48107e40d9fa886b5c7",
+     "updated_at_epoch": 1793034699089,
      "status": "active",
-     "id": "3659f2f2e02ca67a"
+     "id": "35a3240ca25a1da0"
     },
     {
      "app_key": "3775c31516bf1d01",
@@ -3085,18 +3085,18 @@
      "id": "500c8b206e635db1"
     },
     {
+     "app_key": "55240b9016149a12",
+     "content_hash": "4bcfee712168c4e96276e1a3f2d0d7375172102fa009d3ddbf0a91515950e1f4",
+     "updated_at_epoch": 1793034699231,
+     "status": "active",
+     "id": "55240b9016149a12"
+    },
+    {
      "app_key": "57b17c91123b4f30",
      "content_hash": "3a10d0c4256dfdfc98f44a294968efdb0438c54d3a732ab27cca87a7a51bfa90",
      "updated_at_epoch": 1793022100433,
      "status": "active",
      "id": "57b17c91123b4f30"
-    },
-    {
-     "app_key": "5b5f98a6ad5b1f9a",
-     "content_hash": "8e5254b3de89609e0cf3074da1afdff4e6b86c27a6d9798dbddb0d72de30180c",
-     "updated_at_epoch": 1793005903200,
-     "status": "active",
-     "id": "5b5f98a6ad5b1f9a"
     },
     {
      "app_key": "5cf6b893c59e93fa",
@@ -3127,25 +3127,11 @@
      "id": "6612be971d5d16a1"
     },
     {
-     "app_key": "675b0cb70110a47e",
-     "content_hash": "6be267baf356d922f2e1bd044c190049af0138976f26dab875c092203f7a565a",
-     "updated_at_epoch": 1793007693402,
-     "status": "active",
-     "id": "675b0cb70110a47e"
-    },
-    {
      "app_key": "687b9c1f4141b258",
      "content_hash": "cc8afb6673d8f1848beb9a00d7a2bd71110482b0c4d88451405d6239d0908628",
      "updated_at_epoch": 1793025697948,
      "status": "active",
      "id": "687b9c1f4141b258"
-    },
-    {
-     "app_key": "6946ea6943780422",
-     "content_hash": "5443868f2a063336940b90fcef0d24897244753ceb65d9f52a4291ad0f93a737",
-     "updated_at_epoch": 1793005903393,
-     "status": "active",
-     "id": "6946ea6943780422"
     },
     {
      "app_key": "6a565537c8964dcc",
@@ -3188,6 +3174,13 @@
      "updated_at_epoch": 1793025699253,
      "status": "active",
      "id": "934d4de1770de52e"
+    },
+    {
+     "app_key": "93ada3021139610a",
+     "content_hash": "1c1c55be2296de9b649f8424c1dcd01cf2109613c34fd8a1668464a48b3b4f8f",
+     "updated_at_epoch": 1793034699065,
+     "status": "active",
+     "id": "93ada3021139610a"
     },
     {
      "app_key": "97779b4cc97268cd",
@@ -3274,6 +3267,13 @@
      "id": "da39a3ee5e6b4b0d"
     },
     {
+     "app_key": "dabe772f2fa17a20",
+     "content_hash": "64aa7deb40c7fd0f8ac9a2b684ff520055c5aa8c95c6a9bed7962206c11b72c4",
+     "updated_at_epoch": 1793034699209,
+     "status": "active",
+     "id": "dabe772f2fa17a20"
+    },
+    {
      "app_key": "f7d4a43044319dc3",
      "content_hash": "94daf49cbf5f0dff51c4f8491dda59129ec905e6f686e6abe8401b5edb012a90",
      "updated_at_epoch": 1793029324768,
@@ -3288,11 +3288,11 @@
      "id": "f83335fc92e9c64f"
     },
     {
-     "app_key": "fada777ec65d699f",
-     "content_hash": "688b7d3b7289d4ff1d51fdc2e5d08c550a118d85cff6198d22ad76a7b680d191",
-     "updated_at_epoch": 1793005903348,
+     "app_key": "fa3308249a866122",
+     "content_hash": "07fc6666f53956991cb81182504583d084b28f16d86905b6522979f5ae4f6ddc",
+     "updated_at_epoch": 1793034698711,
      "status": "active",
-     "id": "fada777ec65d699f"
+     "id": "fa3308249a866122"
     },
     {
      "app_key": "fb1353c94a5374f5",
@@ -3316,8 +3316,8 @@
    "count": 0
   },
   "channel_typed": {
-   "hash": "6b824896bca704f2a828d169c911a4a74d0ca8cdc90b31230fe6731debf285b3",
-   "count": 690,
+   "hash": "f226e3e7d248b536d26f9fd446ad235271c93cb170487b82369974dab7020e60",
+   "count": 697,
    "status": "published",
    "file": "channel_typed.json",
    "items": [
@@ -3563,6 +3563,15 @@
      "id": "channel-515",
      "channel_message_id": 515,
      "story_id": "story-0858944673c9f45f9f59"
+    },
+    {
+     "app_key": "a-08e03f71696472d1e9be",
+     "content_hash": "a5799fca93329adc936778d8e427c5995ac9837898db25683ddcf5ab1e68633e",
+     "updated_at_epoch": 1793035114205,
+     "status": "posted",
+     "id": "channel-1194",
+     "channel_message_id": 1194,
+     "story_id": "story-08e03f71696472d1e9be"
     },
     {
      "app_key": "a-0986066c29621a7c801f",
@@ -4553,6 +4562,15 @@
      "id": "channel-1151",
      "channel_message_id": 1151,
      "story_id": "story-2fce17ca3af604a4ed89"
+    },
+    {
+     "app_key": "a-2fe01a139c5aca2da3de",
+     "content_hash": "84678c0f9f79a66fea02dc0ec6e82c6f4500f964cec2226c6d5338f809b89171",
+     "updated_at_epoch": 1793034778650,
+     "status": "posted",
+     "id": "channel-1191",
+     "channel_message_id": 1191,
+     "story_id": "story-2fe01a139c5aca2da3de"
     },
     {
      "app_key": "a-301363032620c7b66e12",
@@ -5750,6 +5768,15 @@
      "id": "channel-630",
      "channel_message_id": 630,
      "story_id": "story-6b5980bfb51b7659e8bb"
+    },
+    {
+     "app_key": "a-6bb52e83c7b521df9181",
+     "content_hash": "807a23f7828cd86cb18988525cc0a58b447fd0d6ba2314edc2c8a2e8af1d9eb2",
+     "updated_at_epoch": 1793034778650,
+     "status": "posted",
+     "id": "channel-1189",
+     "channel_message_id": 1189,
+     "story_id": "story-6bb52e83c7b521df9181"
     },
     {
      "app_key": "a-6c66edca62594da7e855",
@@ -7199,6 +7226,15 @@
      "id": "channel-670",
      "channel_message_id": 670,
      "story_id": "story-acb42e4f61a91afe8ac8"
+    },
+    {
+     "app_key": "a-accbf15674e8bff0c745",
+     "content_hash": "01408e2d19b289874850876f7eef2a7821b2a8c46445f60a8c077385c5648c0e",
+     "updated_at_epoch": 1793035114205,
+     "status": "posted",
+     "id": "channel-1195",
+     "channel_message_id": 1195,
+     "story_id": "story-accbf15674e8bff0c745"
     },
     {
      "app_key": "a-ad44a9795721bb4f7b23",
@@ -8713,6 +8749,15 @@
      "story_id": "story-e4bb73fb6e8397a66e7d"
     },
     {
+     "app_key": "a-e4cdb21bce0b4ca0bac7",
+     "content_hash": "5814c308812a76f3601dae10a063c98e03978855e45971d24ac439e94145a368",
+     "updated_at_epoch": 1793034778650,
+     "status": "posted",
+     "id": "channel-1190",
+     "channel_message_id": 1190,
+     "story_id": "story-e4cdb21bce0b4ca0bac7"
+    },
+    {
      "app_key": "a-e4eedd3b6f573b0048a8",
      "content_hash": "ea9ec0622b364ba66d53fa2cf20e66c05a7db7bfd9b6772261af24ee974af6e8",
      "updated_at_epoch": 1792746052254,
@@ -9251,6 +9296,24 @@
      "id": "channel-819",
      "channel_message_id": 819,
      "story_id": "story-f510171e6bf0ba22040b"
+    },
+    {
+     "app_key": "a-f51900f6da0c1b060c98",
+     "content_hash": "1bbc7bcfd86f3c01309c7d6b8b1681de5bbbec645c31ff7b1565503bfccb7d64",
+     "updated_at_epoch": 1793034778650,
+     "status": "posted",
+     "id": "channel-1193",
+     "channel_message_id": 1193,
+     "story_id": "story-f51900f6da0c1b060c98"
+    },
+    {
+     "app_key": "a-f52046d654ff19e98de1",
+     "content_hash": "2af743e7d9d8c3ab9466f65badfa862c0cc20d28be2ebe317f2bd9001fec4232",
+     "updated_at_epoch": 1793034778650,
+     "status": "posted",
+     "id": "channel-1192",
+     "channel_message_id": 1192,
+     "story_id": "story-f52046d654ff19e98de1"
     },
     {
      "app_key": "a-f59e14a3b32983c72851",
