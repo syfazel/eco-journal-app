@@ -1,9 +1,49 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T17:31:08.732140+00:00",
+ "generated_at_utc": "2026-10-26T18:01:09.330742+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "24c68e33a4e3cb3b",
+   "story_id": "story-b4657e3abd6254283bab",
+   "linked_story_id": "story-b4657e3abd6254283bab",
+   "linked_app_key": "a-b4657e3abd6254283bab",
+   "title": "ترامپ ایران را به نابودی کامل تهدید کرد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "ایلنا",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T21:11:42.310792+03:30",
+   "last_seen_tehran": "2026-10-26T21:11:42.310792+03:30",
+   "detected_at_epoch": 1793036502310,
+   "updated_at_epoch": 1793036502310,
+   "status": "active",
+   "content_hash": "79fc90fef393c724cbd046fb0f2ae1a6aa8e0a187911b90b5e5dabcf4a397dd8"
+  },
+  {
+   "signal_id": "9db8296e1ce80968",
+   "story_id": "story-2a701c00f90408db99d9",
+   "linked_story_id": "story-2a701c00f90408db99d9",
+   "linked_app_key": "a-2a701c00f90408db99d9",
+   "title": "روبات‌ها پاک‌سازی تشعشعات فوکوشیما را بر عهده می‌گیرند",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "همشهری‌آنلاین",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T21:11:41.886018+03:30",
+   "last_seen_tehran": "2026-10-26T21:11:41.886018+03:30",
+   "detected_at_epoch": 1793036501886,
+   "updated_at_epoch": 1793036501886,
+   "status": "active",
+   "content_hash": "1687c3f7c4b12e8b39e7acd838113d08eb59ed39e528b03594c2f8cc48399a32"
+  },
   {
    "signal_id": "55240b9016149a12",
    "story_id": "story-f51900f6da0c1b060c98",
@@ -963,46 +1003,6 @@
    "updated_at_epoch": 1793007698698,
    "status": "active",
    "content_hash": "a3bbfb58bfab0e27f60b2c8874fedb9adb15ee00aea77eceb1e253eb502c91bf"
-  },
-  {
-   "signal_id": "4e904ff06940f619",
-   "story_id": "story-0413732914b7e2d165d6",
-   "linked_story_id": "story-0413732914b7e2d165d6",
-   "linked_app_key": "a-0413732914b7e2d165d6",
-   "title": "افزایش ۵۰۰ هزار تومانی اعتبار کالابرگ در مرحله نخست",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "خبرگزاری ایسنا (بخش اقتصادی)",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T13:11:38.634023+03:30",
-   "last_seen_tehran": "2026-10-26T13:11:38.634023+03:30",
-   "detected_at_epoch": 1793007698634,
-   "updated_at_epoch": 1793007698634,
-   "status": "active",
-   "content_hash": "436692b4862966fde9ff1eebc9999d98f8b0412e11d04e8b6be64245eebadf06"
-  },
-  {
-   "signal_id": "4227defeec502bcf",
-   "story_id": "story-dfcf723ddbb1a7a2df4e",
-   "linked_story_id": "story-dfcf723ddbb1a7a2df4e",
-   "linked_app_key": "a-dfcf723ddbb1a7a2df4e",
-   "title": "خدمات آب و برق در جنگ ۴۰ روزه متوقف نشد",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "خبرگزاری صداوسیما",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T13:11:38.575828+03:30",
-   "last_seen_tehran": "2026-10-26T13:11:38.575828+03:30",
-   "detected_at_epoch": 1793007698575,
-   "updated_at_epoch": 1793007698575,
-   "status": "active",
-   "content_hash": "07549c438f4db4dc7555fed51df6905e6916220323ba20fb62db1ac4b5b54b2e"
   }
  ]
 }

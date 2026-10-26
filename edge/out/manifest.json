@@ -1,6 +1,6 @@
 {
  "version": 3,
- "generated_at_utc": "2026-10-26T17:31:08.750445+00:00",
+ "generated_at_utc": "2026-10-26T18:01:09.343752+00:00",
  "generator": "edge/fullsync.py (S1/S2/S3, 2026-10-26)",
  "sections": {
   "articles": {
@@ -2946,7 +2946,7 @@
    "count": 0
   },
   "radar": {
-   "hash": "15adef9eda3c87e7b2f866f09e458f9704d9d616ea93d35f6039a532abebec28",
+   "hash": "239c6c891fa64dbdb1892173336000f963a1f948f501dc80633297a6f612a3f9",
    "count": 50,
    "status": "published",
    "file": "radar.json",
@@ -2985,6 +2985,13 @@
      "updated_at_epoch": 1793009498704,
      "status": "active",
      "id": "237e24cda41e550e"
+    },
+    {
+     "app_key": "24c68e33a4e3cb3b",
+     "content_hash": "79fc90fef393c724cbd046fb0f2ae1a6aa8e0a187911b90b5e5dabcf4a397dd8",
+     "updated_at_epoch": 1793036502310,
+     "status": "active",
+     "id": "24c68e33a4e3cb3b"
     },
     {
      "app_key": "33492ebd58c98e45",
@@ -3036,13 +3043,6 @@
      "id": "40806e7995b61b5e"
     },
     {
-     "app_key": "4227defeec502bcf",
-     "content_hash": "07549c438f4db4dc7555fed51df6905e6916220323ba20fb62db1ac4b5b54b2e",
-     "updated_at_epoch": 1793007698575,
-     "status": "active",
-     "id": "4227defeec502bcf"
-    },
-    {
      "app_key": "46f19256e11136c6",
      "content_hash": "40804146302bf22c7607321cf891600b82a08f03cb439dac9c0aeb5801400c5c",
      "updated_at_epoch": 1793009495805,
@@ -3069,13 +3069,6 @@
      "updated_at_epoch": 1793007698698,
      "status": "active",
      "id": "480a83ae6fc06097"
-    },
-    {
-     "app_key": "4e904ff06940f619",
-     "content_hash": "436692b4862966fde9ff1eebc9999d98f8b0412e11d04e8b6be64245eebadf06",
-     "updated_at_epoch": 1793007698634,
-     "status": "active",
-     "id": "4e904ff06940f619"
     },
     {
      "app_key": "500c8b206e635db1",
@@ -3188,6 +3181,13 @@
      "updated_at_epoch": 1793009498730,
      "status": "active",
      "id": "97779b4cc97268cd"
+    },
+    {
+     "app_key": "9db8296e1ce80968",
+     "content_hash": "1687c3f7c4b12e8b39e7acd838113d08eb59ed39e528b03594c2f8cc48399a32",
+     "updated_at_epoch": 1793036501886,
+     "status": "active",
+     "id": "9db8296e1ce80968"
     },
     {
      "app_key": "9f3f30601cd6c9d4",
@@ -3316,8 +3316,8 @@
    "count": 0
   },
   "channel_typed": {
-   "hash": "f226e3e7d248b536d26f9fd446ad235271c93cb170487b82369974dab7020e60",
-   "count": 697,
+   "hash": "808846a48271b9b66070f1e59e0c08ef08d9f5e59ed6165e32ae6d97dd07da46",
+   "count": 700,
    "status": "published",
    "file": "channel_typed.json",
    "items": [
@@ -4373,6 +4373,15 @@
      "id": "channel-556",
      "channel_message_id": 556,
      "story_id": "story-2a5f8e19f442cc1da95e"
+    },
+    {
+     "app_key": "a-2a701c00f90408db99d9",
+     "content_hash": "feac6e32de4f6a9be9fcb3da61e9c686da0624d7fb4116da3bcb24ac1841c76c",
+     "updated_at_epoch": 1793036594164,
+     "status": "posted",
+     "id": "channel-1197",
+     "channel_message_id": 1197,
+     "story_id": "story-2a701c00f90408db99d9"
     },
     {
      "app_key": "a-2ad477787ce637d1d82f",
@@ -5849,6 +5858,15 @@
      "id": "channel-1148",
      "channel_message_id": 1148,
      "story_id": "story-6f98d65f9c06ae472eff"
+    },
+    {
+     "app_key": "a-6fdfbb84ae7ff3fca9f2",
+     "content_hash": "4d4487fcd7948b509701a81a88f850e050f1c385385dd8267ebdab015267bb5c",
+     "updated_at_epoch": 1793036594164,
+     "status": "posted",
+     "id": "channel-1198",
+     "channel_message_id": 1198,
+     "story_id": "story-6fdfbb84ae7ff3fca9f2"
     },
     {
      "app_key": "a-7011e2a9fab875928030",
@@ -7487,6 +7505,15 @@
      "id": "channel-917",
      "channel_message_id": 917,
      "story_id": "story-b42769d7bd58ad1149d6"
+    },
+    {
+     "app_key": "a-b4657e3abd6254283bab",
+     "content_hash": "7498edf880afb4154e3e47f0762387a4405443091849809f324e00cf5efb008b",
+     "updated_at_epoch": 1793036594164,
+     "status": "posted",
+     "id": "channel-1196",
+     "channel_message_id": 1196,
+     "story_id": "story-b4657e3abd6254283bab"
     },
     {
      "app_key": "a-b580e4f12687c123a3cd",
