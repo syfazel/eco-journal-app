@@ -1,0 +1,31 @@
+{
+ "id": "fcafe674d6934c74934979afb3623027",
+ "app_key": "a-a8449474643345a68215",
+ "kind": "article",
+ "title": "ما آماده پایان جنگ هستیم",
+ "summary": "رئیس‌جمهور اوکراین گفت: ما آماده‌ایم تا در کوتاه‌ترین زمان ممکن جنگ با روسیه را متوقف کنیم.",
+ "summary_source": "items.summary",
+ "body_blocks": [
+  "رئیس‌جمهور اوکراین گفت: ما آماده‌ایم تا در کوتاه‌ترین زمان ممکن جنگ با روسیه را متوقف کنیم.",
+  "به گزارش همشهری آنلاین، زلنسکی افزود: در حال حاضر روسیه کنترل ۱۹ درصد از کل خاک اوکراین را در اختیار دارند.",
+  "پاسخ تند آقای رئیس جمهور به توهین رقیبش ؛ اگر من ۹ انگشتی هستم تو...| ببینید"
+ ],
+ "points": [
+  "رئیس‌جمهور اوکراین گفت: ما آماده‌ایم تا در کوتاه‌ترین زمان ممکن جنگ با روسیه را متوقف کنیم.",
+  "به گزارش همشهری آنلاین ، زلنسکی افزود: در حال حاضر روسیه کنترل ۱۹ درصد از کل خاک اوکراین را در اختیار دارند."
+ ],
+ "why_matters": "رادار ژئوپلیتیک: جنگ",
+ "category": "geopolitics",
+ "category_fa": "ژئوپلیتیک",
+ "source": "همشهری‌آنلاین",
+ "source_slug": "hamshahri-online",
+ "original_url": "https://www.hamshahrionline.ir/news/1079430/%D9%85%D8%A7-%D8%A2%D9%85%D8%A7%D8%AF%D9%87-%D9%BE%D8%A7%DB%8C%D8%A7%D9%86-%D8%AC%D9%86%DA%AF-%D9%87%D8%B3%D8%AA%DB%8C%D9%85",
+ "published_at": "Sat, 24 Oct 2026 02:57:24 GMT",
+ "extracted_at": "2026-10-24T03:30:05.521985+00:00",
+ "channel_message_id": null,
+ "publish_status": "posted",
+ "status": "posted",
+ "content_hash": "ec2c0d88f3024d6b1b55eb398e671df28e5ff3bf24245433423c69fa2ada0ec2",
+ "updated_at_epoch": 1792812605521,
+ "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
+}

@@ -1,0 +1,43 @@
+{
+ "id": "draft:https://www.bbc.co.uk/news/articles/c64g1eplpvddo#0",
+ "app_key": "a-156a796051ed14f957c9",
+ "kind": "article",
+ "title": "Argentina drops investigation into President Milei over crypto fraud",
+ "summary": "Javier Milei had denied acting fraudulently when a cryptocurrency nosedived after he deleted a social media post about it.",
+ "summary_source": "items.summary",
+ "body_blocks": [
+  "Javier Milei had denied crypto fraud allegations",
+  "A criminal investigation into Argentine President Javier Milei and his sister's links to a cryptocurrency scandal has been dropped.",
+  "The case against Milei and his sister Karina Milei was dismissed by federal judge Marcelo Martinez de Giorgi at the request of prosecutors, court records show.",
+  "The Argentinian president had denied promoting the newly launched cryptocoin $Libra, which collapsed shortly after he mentioned it in a social media post in February 2025.",
+  "He said he had acted \"in good faith\" when the cryptocurrency rose in value, before crashing and causing huge losses for the majority of its investors. Milei is yet to respond to news of the case being dropped.",
+  "Dismissing the case, the judge said \"the reported events do not fall under a legal category\" and concluded that no \"criminally relevant deception\" had been proven.",
+  "Accusations of fraud arose when Milei posted on X, formerly Twitter, about the $Libra coin, which he said at the time would help fund small businesses and start-ups.",
+  "The cryptocurrency's price subsequently shot up when the Argentine president shared a link to buy it.",
+  "But, within a few hours, he deleted his post and the crypto nosedived in value, losing investors most of their money.",
+  "It led opposition members of Congress to plan impeachment proceedings, while some online accused Milei of a \"rug pull\" - in which promoters of a cryptocurrency draw in buyers only to stop trading activity and make off with the money raised from sales.",
+  "The Argentinian president, though, insisted in an interview with Todo Noticias: \"I didn't promote it, I merely shared it.\"",
+  "The presidential office insisted that Milei was in no way involved in the development of $Libra and announced that the Anti-Corruption Office would determine whether the president had acted improperly.",
+  "Milei himself defended deleting his post, saying that at the time he did not know \"the details of the project and after learning about it, I decided not to continue promoting it\".",
+  "He insisted in a TV interview that those who had invested in $Libra had done so \"voluntarily\" and knew of the risks.",
+  "Argentina's President Milei denies crypto fraud allegations",
+  "Argentina president faces impeachment calls over crypto crash"
+ ],
+ "points": [
+  "خاویر میلیای انکار کرده بود که به‌صورت متقلبانه عمل کرده است؛ این در ماجرای سقوط یک رمزارز بود، پس از آنکه پست خود دربارهٔ آن را از شبکه‌های اجتماعی حذف کرد."
+ ],
+ "why_matters": null,
+ "category": "general",
+ "category_fa": "عمومی",
+ "source": "بی‌بی‌سی (جهان)",
+ "source_slug": null,
+ "original_url": "https://www.bbc.co.uk/news/articles/c64g1eplpvddo?at_medium=RSS&at_campaign=rss",
+ "published_at": "Fri, 23 Oct 2026 20:59:39 GMT",
+ "extracted_at": "2026-10-23T22:57:24.646257+00:00",
+ "channel_message_id": null,
+ "publish_status": "approved",
+ "status": "approved",
+ "content_hash": "3ae866edd8c9eabfec58972be7b8a08fddedaaa53f8a59086bd7175484e1dc37",
+ "updated_at_epoch": 1792796244646,
+ "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
+}

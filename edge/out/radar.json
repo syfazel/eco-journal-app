@@ -1,9 +1,129 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T20:01:07.936130+00:00",
+ "generated_at_utc": "2026-10-26T20:31:19.171325+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "ecb457c17b15976b",
+   "story_id": "story-2ce6a4e13d5d52574e30",
+   "linked_story_id": "story-2ce6a4e13d5d52574e30",
+   "linked_app_key": "a-2ce6a4e13d5d52574e30",
+   "title": "آمریکا نیروها را از خاورمیانه خارج می‌کند و ناو سوم اعزام می‌کند",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 67,
+   "source_name": "وار آن د راکس",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T23:42:20.673610+03:30",
+   "last_seen_tehran": "2026-10-26T23:42:20.673610+03:30",
+   "detected_at_epoch": 1793045540673,
+   "updated_at_epoch": 1793045540673,
+   "status": "active",
+   "content_hash": "47bfea76e10a96d564cdb2d7214bf599fe3b32c9f235d3570acb642668ffd733"
+  },
+  {
+   "signal_id": "64eac00f97c59ce6",
+   "story_id": "story-7a6cbadc02b10437c13d",
+   "linked_story_id": "story-7a6cbadc02b10437c13d",
+   "linked_app_key": "a-7a6cbadc02b10437c13d",
+   "title": "رهبر انقلاب: ایران قوی بر اقتدار علمی استوار است",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T23:41:53.049721+03:30",
+   "last_seen_tehran": "2026-10-26T23:41:53.049721+03:30",
+   "detected_at_epoch": 1793045513049,
+   "updated_at_epoch": 1793045513049,
+   "status": "active",
+   "content_hash": "73dc22b1952cec61b5eb2c0651d8f499516b5c9189ed0d68305a78e4dca5e7e6"
+  },
+  {
+   "signal_id": "0a10badf16ac28bb",
+   "story_id": "story-24d59961aaeaa65b3207",
+   "linked_story_id": "story-24d59961aaeaa65b3207",
+   "linked_app_key": "a-24d59961aaeaa65b3207",
+   "title": "جنگنده‌های اردن جنوب سوریه را بمباران کردند",
+   "layer": 1,
+   "severity": "high",
+   "severity_rank": 90,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T23:41:53.021238+03:30",
+   "last_seen_tehran": "2026-10-26T23:41:53.021238+03:30",
+   "detected_at_epoch": 1793045513021,
+   "updated_at_epoch": 1793045513021,
+   "status": "active",
+   "content_hash": "b50551c13584ad2587292ad32a31677583fd4eb4c98f387aff53abbd1088874a"
+  },
+  {
+   "signal_id": "9c007d1496a170c9",
+   "story_id": "story-fbd1b41e54b0ab7345a6",
+   "linked_story_id": "story-fbd1b41e54b0ab7345a6",
+   "linked_app_key": "a-fbd1b41e54b0ab7345a6",
+   "title": "جنوب غرب خوزستان بر هوشیاری در برابر تهدیدها تأکید کرد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T23:41:52.994127+03:30",
+   "last_seen_tehran": "2026-10-26T23:41:52.994127+03:30",
+   "detected_at_epoch": 1793045512994,
+   "updated_at_epoch": 1793045512994,
+   "status": "active",
+   "content_hash": "6dfff962872083e71d3bab89b2083c29f8f08ed8e41fa23bc138943394adcf80"
+  },
+  {
+   "signal_id": "e7f5a25ff1324946",
+   "story_id": "story-73eccecb23c71157c03e",
+   "linked_story_id": "story-73eccecb23c71157c03e",
+   "linked_app_key": "a-73eccecb23c71157c03e",
+   "title": "نخستین زیردریایی هسته‌ای آمریکا عازم استرالیا می‌شود",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "دنیای اقتصاد",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T23:41:52.948462+03:30",
+   "last_seen_tehran": "2026-10-26T23:41:52.948462+03:30",
+   "detected_at_epoch": 1793045512948,
+   "updated_at_epoch": 1793045512948,
+   "status": "active",
+   "content_hash": "f7f17fdaf345250aa6ff8a9c2c348da186b7ab7a63d0af8f674eb554c0fe9e22"
+  },
+  {
+   "signal_id": "c6fb75ce84905130",
+   "story_id": "story-93c9448be92f000768ac",
+   "linked_story_id": "story-93c9448be92f000768ac",
+   "linked_app_key": "a-93c9448be92f000768ac",
+   "title": "کره شمالی توپخانه در منطقه غیرنظامی مرزی مستقر کرد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "اقتصاد آنلاین",
+   "matched_topics": [
+    "جبهه_آسیا_پاسیفیک"
+   ],
+   "first_seen_tehran": "2026-10-26T23:41:52.902767+03:30",
+   "last_seen_tehran": "2026-10-26T23:41:52.902767+03:30",
+   "detected_at_epoch": 1793045512902,
+   "updated_at_epoch": 1793045512902,
+   "status": "active",
+   "content_hash": "0cf9cf6185460582bf3df294c4b004d7e5ccfd1eae824f2fdcf0e3db14b01e96"
+  },
   {
    "signal_id": "2d06dfc8e5cf8f4b",
    "story_id": "story-a39aef9ab06dad05207a",
@@ -883,126 +1003,6 @@
    "updated_at_epoch": 1793013113078,
    "status": "active",
    "content_hash": "618fe92e9e03553b2da85a770ddaea7501814db12e7777e74a0f1a03067de0a7"
-  },
-  {
-   "signal_id": "a7a560fa3942edb9",
-   "story_id": "story-d5314dc9988be6c980f2",
-   "linked_story_id": "story-d5314dc9988be6c980f2",
-   "linked_app_key": "a-d5314dc9988be6c980f2",
-   "title": "آغاز پتروفن ۱۴۰۵ در پارک علم خراسان",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "صدای بورس",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T14:41:52.628817+03:30",
-   "last_seen_tehran": "2026-10-26T14:41:52.628817+03:30",
-   "detected_at_epoch": 1793013112628,
-   "updated_at_epoch": 1793013112628,
-   "status": "active",
-   "content_hash": "78bc17bb33cb7c01318c8f18ec0606a3b0edb0b614005a10a61ef9fe2f7d5aaa"
-  },
-  {
-   "signal_id": "3775c31516bf1d01",
-   "story_id": "story-003908fbe8dcd68d6829",
-   "linked_story_id": "story-003908fbe8dcd68d6829",
-   "linked_app_key": "a-003908fbe8dcd68d6829",
-   "title": "اجرای ۱۸۶ برنامه پدافند غیرعامل در کرمانشاه",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "خبرگزاری صداوسیما",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T14:11:44.713083+03:30",
-   "last_seen_tehran": "2026-10-26T14:11:44.713083+03:30",
-   "detected_at_epoch": 1793011304713,
-   "updated_at_epoch": 1793011304713,
-   "status": "active",
-   "content_hash": "92a76486f7730ad19efae41351908aa8fa6de9d47186ea552d235e73eabb7be0"
-  },
-  {
-   "signal_id": "d82d3306d92ba97b",
-   "story_id": "story-aff63b3b3f939bcd0028",
-   "linked_story_id": "story-aff63b3b3f939bcd0028",
-   "linked_app_key": "a-aff63b3b3f939bcd0028",
-   "title": "ادعای اصابت موشک ایران به ناو آبراهام لینکلن",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "اقتصاد آنلاین",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T14:11:44.638254+03:30",
-   "last_seen_tehran": "2026-10-26T14:11:44.638254+03:30",
-   "detected_at_epoch": 1793011304638,
-   "updated_at_epoch": 1793011304638,
-   "status": "active",
-   "content_hash": "28e3d739d7992e6a867dae10c6879085b67a3c90b5ce225586e84482adbf587b"
-  },
-  {
-   "signal_id": "40806e7995b61b5e",
-   "story_id": "story-52b3e312e779dcef5e78",
-   "linked_story_id": "story-52b3e312e779dcef5e78",
-   "linked_app_key": "a-52b3e312e779dcef5e78",
-   "title": "۳۰ میلیون دام عشایری، پشتوانه پدافند غیرعامل",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "خبرگزاری صداوسیما",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T13:41:43.919510+03:30",
-   "last_seen_tehran": "2026-10-26T13:41:43.919510+03:30",
-   "detected_at_epoch": 1793009503919,
-   "updated_at_epoch": 1793009503919,
-   "status": "active",
-   "content_hash": "d036e5f2b24408326ac80bc06d542dee2c00c132f78f411d0b588f87762c9f8d"
-  },
-  {
-   "signal_id": "33492ebd58c98e45",
-   "story_id": "story-4d511b6f61f33b7fdb53",
-   "linked_story_id": "story-4d511b6f61f33b7fdb53",
-   "linked_app_key": "a-4d511b6f61f33b7fdb53",
-   "title": "پیشنهاد بریکس برای اصلاح ساختار سازمان ملل",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "خبرگزاری صداوسیما",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T13:41:43.818998+03:30",
-   "last_seen_tehran": "2026-10-26T13:41:43.818998+03:30",
-   "detected_at_epoch": 1793009503818,
-   "updated_at_epoch": 1793009503818,
-   "status": "active",
-   "content_hash": "13bf2f4466262d1caaa1573989da53e1d6547240b027b117771700ee78bf1358"
-  },
-  {
-   "signal_id": "14891b29f515fd06",
-   "story_id": "story-ea90498261d467852154",
-   "linked_story_id": "story-ea90498261d467852154",
-   "linked_app_key": "a-ea90498261d467852154",
-   "title": "اعزام نظامی الجزایر به نیجر پس از ۵۰ سال",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "الجزیره",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T13:41:43.750562+03:30",
-   "last_seen_tehran": "2026-10-26T13:41:43.750562+03:30",
-   "detected_at_epoch": 1793009503750,
-   "updated_at_epoch": 1793009503750,
-   "status": "active",
-   "content_hash": "28121940852b4d1799751125ab45caa609952ac591e046dc5b5a89162f1b6721"
   }
  ]
 }

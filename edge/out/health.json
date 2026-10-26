@@ -2,13 +2,13 @@
  "format": "eco-journal-edge-health",
  "version": 1,
  "manifest_version": 3,
- "manifest_generated_at_utc": "2026-10-26T20:01:07.952251+00:00",
- "generated_at_utc": "2026-10-26T20:01:07.986476+00:00",
+ "manifest_generated_at_utc": "2026-10-26T20:31:19.189695+00:00",
+ "generated_at_utc": "2026-10-26T20:31:19.216276+00:00",
  "generator": "edge/fullsync.py (S1/S2/S3, 2026-10-26)",
  "sections": {
   "articles": {
-   "count": 249,
-   "hash": "911464c59bbdb24eb4165289184a0369d20b72bda543870b35ac61ade1c53e01",
+   "count": 260,
+   "hash": "12ee88eb00298b8c364c1bd39c93061a391ebf17c633ff0352e71ea34c340bbf",
    "file_pattern": "articles/*.json",
    "files_listed_in": "manifest.json"
   },
@@ -49,9 +49,9 @@
   },
   "radar": {
    "count": 50,
-   "hash": "53d8d56fd4f3c35fb703efd5847041c2156e85cf07759bbea11bce9a52be3a35",
+   "hash": "fddf42639f2c54f4ae389c89d884b2ab562e0fd35ae434a91a8f27bd5229f059",
    "file": "radar.json",
-   "file_sha256": "5f89baa7fc660f9f18dbc7b33225109cd2aaf428e5657d1dd62a900d02d22900"
+   "file_sha256": "18645957e2c4022c3e49fdd4a6acbe94c2d789fae5bb8c1713c0874e07532caf"
   },
   "nightly": {
    "status": "not_yet_published",
@@ -69,16 +69,16 @@
    "file": null
   },
   "channel_typed": {
-   "count": 740,
-   "hash": "e50a5a284f0e9dacd4281989701a9e320c7619df7f8351deb513e963d78948eb",
+   "count": 747,
+   "hash": "53576b85820c7ea74e403ad3a2ce8452f7aa61b68b7f6a40bda054f70e5643f6",
    "file": "channel_typed.json",
-   "file_sha256": "08017bb006f66add3aa6b3b5f0bbf5bb38a1f9634e171b15d071e8e7c01ef74b"
+   "file_sha256": "1ac4d870c48f3ebcd901d0a025721ef955f297589da6f3c8957d3ae0603bdc14"
   }
  },
  "files": {
-  "manifest.json": "678c4edc4bda3a4ffefbbaacd4721f32fe1df79ccdfe60efc4819cd4f0787a44",
-  "index.json": "ada1ecaee861ca9d6379bfb2dfc7ce534d8cacbe61ab292b9a2cfe86e437a70a",
-  "join_keys.json": "4f593ae4a11775d8949e9f136d6d9ad4e6a9e29eb6a30fc9413421d15ec6638c"
+  "manifest.json": "c7765c1c37727d6f185280b390e0b76e3c97f27f5b4786efd2bdf51229aecc30",
+  "index.json": "e0d7fae94f367abe7a5e3572679b253f71c550fd78cb5d3feddc5e91ac91bca9",
+  "join_keys.json": "3a202111823ad36aa0f8d34e7df6a10dab16a23db34b713d6fec37e173c48c82"
  },
  "expected_absent_files": [
   "articles.json",
