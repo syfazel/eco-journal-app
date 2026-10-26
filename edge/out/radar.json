@@ -1,9 +1,109 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T08:01:05.429704+00:00",
+ "generated_at_utc": "2026-10-26T08:31:05.094550+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "b5ffc4043279d4fa",
+   "story_id": "story-8f79260eaaf2a26bc3f7",
+   "linked_story_id": "story-8f79260eaaf2a26bc3f7",
+   "linked_app_key": "a-8f79260eaaf2a26bc3f7",
+   "title": "بقایی: رایزنی با پاکستان و عراق برای حل مشکلات مرزی ادامه دارد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T11:42:04.616507+03:30",
+   "last_seen_tehran": "2026-10-26T11:42:04.616507+03:30",
+   "detected_at_epoch": 1793002324616,
+   "updated_at_epoch": 1793002324616,
+   "status": "active",
+   "content_hash": "9110a5abbbd6355bf2feeb7834e5b2730c11a223701f78453db0185354b38b7e"
+  },
+  {
+   "signal_id": "f55afce0a53c7541",
+   "story_id": "story-c6722f0951f3e6c66b96",
+   "linked_story_id": "story-c6722f0951f3e6c66b96",
+   "linked_app_key": "a-c6722f0951f3e6c66b96",
+   "title": "بقایی: اروپا باید واقع‌نگر شود و از حمایت متجاوز دست بردارد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "جبهه_اروپا"
+   ],
+   "first_seen_tehran": "2026-10-26T11:42:04.573799+03:30",
+   "last_seen_tehran": "2026-10-26T11:42:04.573799+03:30",
+   "detected_at_epoch": 1793002324573,
+   "updated_at_epoch": 1793002324573,
+   "status": "active",
+   "content_hash": "65a4634b99ec61b7ac3f77454b6c74007f3bd3d36c8106fa2b36ea7927be69dc"
+  },
+  {
+   "signal_id": "4dde98090e5b7633",
+   "story_id": "story-2ad477787ce637d1d82f",
+   "linked_story_id": "story-2ad477787ce637d1d82f",
+   "linked_app_key": "a-2ad477787ce637d1d82f",
+   "title": "رونمایی از هفت خودروی وارداتی با پلاک عمومی منطقه آزاد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "اقتصاد آنلاین",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T11:41:41.298090+03:30",
+   "last_seen_tehran": "2026-10-26T11:41:41.298090+03:30",
+   "detected_at_epoch": 1793002301298,
+   "updated_at_epoch": 1793002301298,
+   "status": "active",
+   "content_hash": "5b1b52a82e269fbd5f1a66df05a6d05c5fc422a3d2f15b49fb8653de4777cb00"
+  },
+  {
+   "signal_id": "6e0ab8f9e2df2c11",
+   "story_id": "story-e3e50f7854f5e081aa2d",
+   "linked_story_id": "story-e3e50f7854f5e081aa2d",
+   "linked_app_key": "a-e3e50f7854f5e081aa2d",
+   "title": "زلنسکی سه شرط برای آتش‌بس انرژی مطرح کرد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "Kyiv Post",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T11:41:36.345561+03:30",
+   "last_seen_tehran": "2026-10-26T11:41:36.345561+03:30",
+   "detected_at_epoch": 1793002296345,
+   "updated_at_epoch": 1793002296345,
+   "status": "active",
+   "content_hash": "13e45df7513b6d710545acdcc98339a682e6284ac328dc1ca3601e6876d2e4df"
+  },
+  {
+   "signal_id": "3961feb2753cd6f6",
+   "story_id": "story-df8d6d92c8edf4af530b",
+   "linked_story_id": "story-df8d6d92c8edf4af530b",
+   "linked_app_key": "a-df8d6d92c8edf4af530b",
+   "title": "سخنگوی شهرداری: دو برابر دوره گذشته اتوبوس وارد کردیم",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T11:11:42.764092+03:30",
+   "last_seen_tehran": "2026-10-26T11:11:42.764092+03:30",
+   "detected_at_epoch": 1793000502764,
+   "updated_at_epoch": 1793000502764,
+   "status": "active",
+   "content_hash": "9ac6768bb93d4960e227bf6e93a5d71ee3d913daeaf2ead784debd6436b3a349"
+  },
   {
    "signal_id": "fd561e09ec90c344",
    "story_id": "story-db3dc263a17c9e17a0c5",
@@ -903,86 +1003,6 @@
    "updated_at_epoch": 1792964497091,
    "status": "active",
    "content_hash": "c16f8af2c12d21d3f43c402143089424856a8b12b96a3cafef92afa955f4db35"
-  },
-  {
-   "signal_id": "0b8e439c63ed1090",
-   "story_id": "story-90b2ddc16d632d036b57",
-   "linked_story_id": "story-90b2ddc16d632d036b57",
-   "linked_app_key": "a-90b2ddc16d632d036b57",
-   "title": "پیگیری گزارش حمله موشکی به لیپتسک روسیه",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "Business Upturn",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:35.828643+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:35.828643+03:30",
-   "detected_at_epoch": 1792964495828,
-   "updated_at_epoch": 1792964495828,
-   "status": "active",
-   "content_hash": "0ef305e1eb0011c52b43a0f133fe5138ce2e635e6799013b05f719eeec36b79e"
-  },
-  {
-   "signal_id": "46f19256e11136c6",
-   "story_id": "story-903f794efbf9c0a5bb85",
-   "linked_story_id": "story-903f794efbf9c0a5bb85",
-   "linked_app_key": "a-903f794efbf9c0a5bb85",
-   "title": "پیگیری ادعای اصابت موشک به کشتی در هرمز",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 90,
-   "source_name": "وکالة سبأ",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:35.622903+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:35.622903+03:30",
-   "detected_at_epoch": 1792964495622,
-   "updated_at_epoch": 1792964495622,
-   "status": "active",
-   "content_hash": "149f40133e275749984bee555dfd5740854ba8fac1a751cc2b507b11ea163c20"
-  },
-  {
-   "signal_id": "472e9e40e7fa3562",
-   "story_id": "story-311db93b5d847e4d1430",
-   "linked_story_id": "story-311db93b5d847e4d1430",
-   "linked_app_key": "a-311db93b5d847e4d1430",
-   "title": "اصابت موشک به کارخانه دفاعی انرگیا در لیپتسک روسیه",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "Ukrinform",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:35.521557+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:35.521557+03:30",
-   "detected_at_epoch": 1792964495521,
-   "updated_at_epoch": 1792964495521,
-   "status": "active",
-   "content_hash": "540c4fbd5c2693cb68839bc2888cc9ffc6d90badf90d0c6db6a88cdc0be7510b"
-  },
-  {
-   "signal_id": "6a565537c8964dcc",
-   "story_id": "story-567c42a0fd2246cd7146",
-   "linked_story_id": "story-567c42a0fd2246cd7146",
-   "linked_app_key": "a-567c42a0fd2246cd7146",
-   "title": "آمریکا سه نفتکش ایرانی را هدف قرار داد",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "EnergyNow.com",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:35.239444+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:35.239444+03:30",
-   "detected_at_epoch": 1792964495239,
-   "updated_at_epoch": 1792964495239,
-   "status": "active",
-   "content_hash": "8c413359fabe29d1da673bcf7a84ecf4edc1a72a3f74935a061df5e6d56ed674"
   }
  ]
 }
