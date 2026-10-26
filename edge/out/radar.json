@@ -1,9 +1,49 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T11:01:14.305039+00:00",
+ "generated_at_utc": "2026-10-26T11:31:11.426638+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "a7a560fa3942edb9",
+   "story_id": "story-d5314dc9988be6c980f2",
+   "linked_story_id": "story-d5314dc9988be6c980f2",
+   "linked_app_key": "a-d5314dc9988be6c980f2",
+   "title": "آغاز پتروفن ۱۴۰۵ در پارک علم خراسان",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "صدای بورس",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T14:41:52.628817+03:30",
+   "last_seen_tehran": "2026-10-26T14:41:52.628817+03:30",
+   "detected_at_epoch": 1793013112628,
+   "updated_at_epoch": 1793013112628,
+   "status": "active",
+   "content_hash": "78bc17bb33cb7c01318c8f18ec0606a3b0edb0b614005a10a61ef9fe2f7d5aaa"
+  },
+  {
+   "signal_id": "3775c31516bf1d01",
+   "story_id": "story-003908fbe8dcd68d6829",
+   "linked_story_id": "story-003908fbe8dcd68d6829",
+   "linked_app_key": "a-003908fbe8dcd68d6829",
+   "title": "اجرای ۱۸۶ برنامه پدافند غیرعامل در کرمانشاه",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T14:11:44.713083+03:30",
+   "last_seen_tehran": "2026-10-26T14:11:44.713083+03:30",
+   "detected_at_epoch": 1793011304713,
+   "updated_at_epoch": 1793011304713,
+   "status": "active",
+   "content_hash": "92a76486f7730ad19efae41351908aa8fa6de9d47186ea552d235e73eabb7be0"
+  },
   {
    "signal_id": "d82d3306d92ba97b",
    "story_id": "story-aff63b3b3f939bcd0028",
@@ -963,46 +1003,6 @@
    "updated_at_epoch": 1792986128236,
    "status": "active",
    "content_hash": "1616f3c70eacc20d2f4f36b1670de0a309a366d6c4fa442412fde48fcfcaa608"
-  },
-  {
-   "signal_id": "da39a3ee5e6b4b0d",
-   "story_id": "story-06fd84eb928e19c0d039",
-   "linked_story_id": "story-06fd84eb928e19c0d039",
-   "linked_app_key": "a-06fd84eb928e19c0d039",
-   "title": "استقرار ۷۰ هزار پلیس فرانسه در آستانه تظاهرات",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "خبرگزاری فارس",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T07:12:08.116060+03:30",
-   "last_seen_tehran": "2026-10-26T07:12:08.116060+03:30",
-   "detected_at_epoch": 1792986128116,
-   "updated_at_epoch": 1792986128116,
-   "status": "active",
-   "content_hash": "e62a23a22d2998863180c9b13ffbeff1277ff1e89d0ca443478776cf036c7209"
-  },
-  {
-   "signal_id": "6f39dbb8fb4d8348",
-   "story_id": "story-32cc1fd835494d685f72",
-   "linked_story_id": "story-32cc1fd835494d685f72",
-   "linked_app_key": "a-32cc1fd835494d685f72",
-   "title": "حمله موشکی یمن به انبارهای سلاح در عدن و لحج",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "خبرگزاری فارس",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T07:12:07.705403+03:30",
-   "last_seen_tehran": "2026-10-26T07:12:07.705403+03:30",
-   "detected_at_epoch": 1792986127705,
-   "updated_at_epoch": 1792986127705,
-   "status": "active",
-   "content_hash": "3065ef64dded5a13d662b4bac5daf51a422cac6faa8ecc4bf7c3dcc4818264c4"
   }
  ]
 }
