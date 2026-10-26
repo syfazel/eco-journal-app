@@ -1,6 +1,6 @@
 {
  "version": 3,
- "generated_at_utc": "2026-10-26T00:31:05.196273+00:00",
+ "generated_at_utc": "2026-10-26T01:31:08.362540+00:00",
  "generator": "edge/fullsync.py (S1/S2/S3, 2026-10-26)",
  "sections": {
   "articles": {
@@ -2880,8 +2880,8 @@
    "count": 0
   },
   "radar": {
-   "hash": "c2e8ca8b7190fe280a162d68df53c9eb5293ad035cafa9a56f949550766cb5b6",
-   "count": 10,
+   "hash": "c85d1e3393576186650e5803c7903d3534593e5606da893839192bbe85fb7f12",
+   "count": 11,
    "status": "published",
    "file": "radar.json",
    "items": [
@@ -2942,6 +2942,13 @@
      "id": "7e6944e99c57171d"
     },
     {
+     "app_key": "8df3c4524beabe88",
+     "content_hash": "c970945539e539a0be0e41090537b5af086d10230136b8101b6fb6cbd15aee84",
+     "updated_at_epoch": 1792977102941,
+     "status": "active",
+     "id": "8df3c4524beabe88"
+    },
+    {
      "app_key": "d7158b19a2c680a8",
      "content_hash": "e72ccf42dfa9ad5480fc17a53e558f12619289b5a8d663d256737856bcda1831",
      "updated_at_epoch": 1792968132346,
@@ -2970,8 +2977,8 @@
    "count": 0
   },
   "channel_typed": {
-   "hash": "545274c7c5a1e580db757891409ea113bf728ea81204f1c34097027fa3ecd3c0",
-   "count": 565,
+   "hash": "dbd6caeca893f4f9c3231659a59c115878f40007dfb423462993d0d32bb81145",
+   "count": 566,
    "status": "published",
    "file": "channel_typed.json",
    "items": [
@@ -4632,6 +4639,15 @@
      "story_id": "story-5b14f7c3766e4e106e71"
     },
     {
+     "app_key": "a-5bbc1904b561831dd7be",
+     "content_hash": "917bfd191c603f09061c8b3606a37b54d72dc318c3bf2f47c065478b1109968e",
+     "updated_at_epoch": 1792977247384,
+     "status": "posted",
+     "id": "channel-1017",
+     "channel_message_id": 1017,
+     "story_id": "story-5bbc1904b561831dd7be"
+    },
+    {
      "app_key": "a-5bf027c035e301c2d445",
      "content_hash": "20a2003db78589556122c34667b7b216cfb9129ce7d3568b9c69b0d0ea671029",
      "updated_at_epoch": 1792777701652,
@@ -4696,7 +4712,7 @@
     },
     {
      "app_key": "a-5db2cd985d9bc46bea4b",
-     "content_hash": "a6e7d76c09bb4b1d0e2a39c714e2dd18eaf524df96bd718e3d221b69cd516bcb",
+     "content_hash": "2bb2634d3ff3a0db07810d37d9757839e1117166d877c4eac7534d7d390b5b3c",
      "updated_at_epoch": 1792968215133,
      "status": "posted",
      "id": "channel-1001",

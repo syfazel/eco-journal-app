@@ -1,9 +1,29 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T00:31:05.192777+00:00",
+ "generated_at_utc": "2026-10-26T01:31:08.358954+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "8df3c4524beabe88",
+   "story_id": "story-5db2cd985d9bc46bea4b",
+   "linked_story_id": "story-5db2cd985d9bc46bea4b",
+   "linked_app_key": "a-5db2cd985d9bc46bea4b",
+   "title": "تزریق سه همت اعتبار به نهضت ملی مسکن لرستان",
+   "layer": 1,
+   "severity": "high",
+   "severity_rank": 85,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T04:41:42.941217+03:30",
+   "last_seen_tehran": "2026-10-26T04:41:42.941217+03:30",
+   "detected_at_epoch": 1792977102941,
+   "updated_at_epoch": 1792977102941,
+   "status": "active",
+   "content_hash": "c970945539e539a0be0e41090537b5af086d10230136b8101b6fb6cbd15aee84"
+  },
   {
    "signal_id": "11b920dfc79991be",
    "story_id": "story-ed51ffec4346f49bd4c2",

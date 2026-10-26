@@ -1,8 +1,24 @@
 {
  "format": "eco-journal-channel-typed",
  "version": 1,
- "generated_at_utc": "2026-10-26T00:31:05.060637+00:00",
+ "generated_at_utc": "2026-10-26T01:31:08.260208+00:00",
  "items": [
+  {
+   "guid": "channel-1017",
+   "app_key": "a-5bbc1904b561831dd7be",
+   "story_id": "story-5bbc1904b561831dd7be",
+   "channel_message_id": 1017,
+   "format_type": "VERIFY",
+   "headline": "تعلیق کلاس‌های حضوری دانشگاه اسلامی غزه",
+   "body": "",
+   "source_name": "میدل‌ایست‌آی",
+   "urgency_score": null,
+   "crisis_level": null,
+   "published_at_epoch": 1792977247384,
+   "updated_at_epoch": 1792977247384,
+   "status": "posted",
+   "content_hash": "917bfd191c603f09061c8b3606a37b54d72dc318c3bf2f47c065478b1109968e"
+  },
   {
    "guid": "channel-1012",
    "app_key": "a-903f794efbf9c0a5bb85",
@@ -252,12 +268,12 @@
    "headline": "تزریق سه همت اعتبار به نهضت ملی مسکن لرستان",
    "body": "",
    "source_name": "خبرگزاری صداوسیما",
-   "urgency_score": null,
+   "urgency_score": 85,
    "crisis_level": null,
    "published_at_epoch": 1792968215133,
    "updated_at_epoch": 1792968215133,
    "status": "posted",
-   "content_hash": "a6e7d76c09bb4b1d0e2a39c714e2dd18eaf524df96bd718e3d221b69cd516bcb"
+   "content_hash": "2bb2634d3ff3a0db07810d37d9757839e1117166d877c4eac7534d7d390b5b3c"
   },
   {
    "guid": "channel-998",
