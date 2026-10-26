@@ -1,9 +1,209 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T10:01:05.371547+00:00",
+ "generated_at_utc": "2026-10-26T10:31:09.754221+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "14891b29f515fd06",
+   "story_id": "story-ea90498261d467852154",
+   "linked_story_id": "story-ea90498261d467852154",
+   "linked_app_key": "a-ea90498261d467852154",
+   "title": "اعزام نظامی الجزایر به نیجر پس از ۵۰ سال",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "الجزیره",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T13:41:43.750562+03:30",
+   "last_seen_tehran": "2026-10-26T13:41:43.750562+03:30",
+   "detected_at_epoch": 1793009503750,
+   "updated_at_epoch": 1793009503750,
+   "status": "active",
+   "content_hash": "28121940852b4d1799751125ab45caa609952ac591e046dc5b5a89162f1b6721"
+  },
+  {
+   "signal_id": "500c8b206e635db1",
+   "story_id": "story-760510eda0052e8e638e",
+   "linked_story_id": "story-760510eda0052e8e638e",
+   "linked_app_key": "a-760510eda0052e8e638e",
+   "title": "بازسازی ۱۴ رام قطار متروی تهران؛ پیشرفت ۷۰ درصدی اورهال",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری ایسنا",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T13:41:43.723195+03:30",
+   "last_seen_tehran": "2026-10-26T13:41:43.723195+03:30",
+   "detected_at_epoch": 1793009503723,
+   "updated_at_epoch": 1793009503723,
+   "status": "active",
+   "content_hash": "edcb3937e8f799c6fc71e9abf7466da75fe6ae2317ed38cd02a7ac2b877106c7"
+  },
+  {
+   "signal_id": "70cd8f6f5f741fc7",
+   "story_id": "story-2c9d11eab9a4ee9ef62a",
+   "linked_story_id": "story-2c9d11eab9a4ee9ef62a",
+   "linked_app_key": "a-2c9d11eab9a4ee9ef62a",
+   "title": "پتانسیل‌های مجمع صادرکنندگان گاز برای رفع ناترازی ایران",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری مهر",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T13:41:43.676606+03:30",
+   "last_seen_tehran": "2026-10-26T13:41:43.676606+03:30",
+   "detected_at_epoch": 1793009503676,
+   "updated_at_epoch": 1793009503676,
+   "status": "active",
+   "content_hash": "015a2fd417815ee3f89298905845596a6c8838cc13f4cb2517586e1be25ceaee"
+  },
+  {
+   "signal_id": "cdb36b080e39e0f2",
+   "story_id": "story-1148585c5379749d0b35",
+   "linked_story_id": "story-1148585c5379749d0b35",
+   "linked_app_key": "a-1148585c5379749d0b35",
+   "title": "ترامپ برای ایران اولتیماتوم تعیین کرد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "The Express Tribune",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:38.646000+03:30",
+   "last_seen_tehran": "2026-10-26T13:41:38.751816+03:30",
+   "detected_at_epoch": 1793009498751,
+   "updated_at_epoch": 1793009498751,
+   "status": "active",
+   "content_hash": "8b1a68e26f8c10b9eed10e6fdfeec059e24bfb9d781b857a33e3b69476f63d33"
+  },
+  {
+   "signal_id": "97779b4cc97268cd",
+   "story_id": "story-47ad95e729796f378979",
+   "linked_story_id": "story-47ad95e729796f378979",
+   "linked_app_key": "a-47ad95e729796f378979",
+   "title": "فهرست اهداف آمریکا در ایران؛ هسته‌ای، نفتی و نظامی",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "گلف‌نیوز",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T13:41:38.730723+03:30",
+   "last_seen_tehran": "2026-10-26T13:41:38.730723+03:30",
+   "detected_at_epoch": 1793009498730,
+   "updated_at_epoch": 1793009498730,
+   "status": "active",
+   "content_hash": "508fd8adfc07a92d6d740a8d863a3ffd30ebb4743f0a599d2a4483e2c3ecf83a"
+  },
+  {
+   "signal_id": "237e24cda41e550e",
+   "story_id": "story-afceee16b77fb5bcbc14",
+   "linked_story_id": "story-afceee16b77fb5bcbc14",
+   "linked_app_key": "a-afceee16b77fb5bcbc14",
+   "title": "آیزنکوت از حملات ترامپ به ایران تمجید کرد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "Iran International",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:38.616144+03:30",
+   "last_seen_tehran": "2026-10-26T13:41:38.704207+03:30",
+   "detected_at_epoch": 1793009498704,
+   "updated_at_epoch": 1793009498704,
+   "status": "active",
+   "content_hash": "9580443f49cc74f6845756af4dc324cee168c13d11ca31fc35ced31bf07b03c8"
+  },
+  {
+   "signal_id": "0b8e439c63ed1090",
+   "story_id": "story-90b2ddc16d632d036b57",
+   "linked_story_id": "story-90b2ddc16d632d036b57",
+   "linked_app_key": "a-90b2ddc16d632d036b57",
+   "title": "پیگیری گزارش حمله موشکی به لیپتسک روسیه",
+   "layer": 1,
+   "severity": "high",
+   "severity_rank": 85,
+   "source_name": "Business Upturn",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:35.828643+03:30",
+   "last_seen_tehran": "2026-10-26T13:41:35.907975+03:30",
+   "detected_at_epoch": 1793009495907,
+   "updated_at_epoch": 1793009495907,
+   "status": "active",
+   "content_hash": "c7c3f0ce8b8de46f062b4cd0b532e51863d8b337b0ca651d3e49435c36defdaf"
+  },
+  {
+   "signal_id": "46f19256e11136c6",
+   "story_id": "story-903f794efbf9c0a5bb85",
+   "linked_story_id": "story-903f794efbf9c0a5bb85",
+   "linked_app_key": "a-903f794efbf9c0a5bb85",
+   "title": "پیگیری ادعای اصابت موشک به کشتی در هرمز",
+   "layer": 1,
+   "severity": "high",
+   "severity_rank": 90,
+   "source_name": "وکالة سبأ",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:35.622903+03:30",
+   "last_seen_tehran": "2026-10-26T13:41:35.805529+03:30",
+   "detected_at_epoch": 1793009495805,
+   "updated_at_epoch": 1793009495805,
+   "status": "active",
+   "content_hash": "40804146302bf22c7607321cf891600b82a08f03cb439dac9c0aeb5801400c5c"
+  },
+  {
+   "signal_id": "6a565537c8964dcc",
+   "story_id": "story-567c42a0fd2246cd7146",
+   "linked_story_id": "story-567c42a0fd2246cd7146",
+   "linked_app_key": "a-567c42a0fd2246cd7146",
+   "title": "آمریکا سه نفتکش ایرانی را هدف قرار داد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "EnergyNow.com",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:35.239444+03:30",
+   "last_seen_tehran": "2026-10-26T13:41:35.699609+03:30",
+   "detected_at_epoch": 1793009495699,
+   "updated_at_epoch": 1793009495699,
+   "status": "active",
+   "content_hash": "391d388de9cb1e8a18c27c8b9f9c858f6c8532b9bdc642416291abf06dc13777"
+  },
+  {
+   "signal_id": "472e9e40e7fa3562",
+   "story_id": "story-311db93b5d847e4d1430",
+   "linked_story_id": "story-311db93b5d847e4d1430",
+   "linked_app_key": "a-311db93b5d847e4d1430",
+   "title": "اصابت موشک به کارخانه دفاعی انرگیا در لیپتسک روسیه",
+   "layer": 1,
+   "severity": "high",
+   "severity_rank": 85,
+   "source_name": "Ukrinform",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:35.521557+03:30",
+   "last_seen_tehran": "2026-10-26T13:41:35.677587+03:30",
+   "detected_at_epoch": 1793009495677,
+   "updated_at_epoch": 1793009495677,
+   "status": "active",
+   "content_hash": "90dc4ddcbbc4194dee87dd9144672d7f553ef4926a18dad3a8238baee155e5f3"
+  },
   {
    "signal_id": "4227defeec502bcf",
    "story_id": "story-dfcf723ddbb1a7a2df4e",
@@ -803,206 +1003,6 @@
    "updated_at_epoch": 1792978904571,
    "status": "active",
    "content_hash": "34b941130878f55df826fd9b6e1aa867d0c735841ed8383626a9d5b6387f78b6"
-  },
-  {
-   "signal_id": "8df3c4524beabe88",
-   "story_id": "story-5db2cd985d9bc46bea4b",
-   "linked_story_id": "story-5db2cd985d9bc46bea4b",
-   "linked_app_key": "a-5db2cd985d9bc46bea4b",
-   "title": "تزریق سه همت اعتبار به نهضت ملی مسکن لرستان",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "خبرگزاری صداوسیما",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T04:41:42.941217+03:30",
-   "last_seen_tehran": "2026-10-26T04:41:42.941217+03:30",
-   "detected_at_epoch": 1792977102941,
-   "updated_at_epoch": 1792977102941,
-   "status": "active",
-   "content_hash": "c970945539e539a0be0e41090537b5af086d10230136b8101b6fb6cbd15aee84"
-  },
-  {
-   "signal_id": "8797d0365c94fab7",
-   "story_id": "story-ab214817b7ba04b36d32",
-   "linked_story_id": "story-ab214817b7ba04b36d32",
-   "linked_app_key": "a-ab214817b7ba04b36d32",
-   "title": "ترامپ: ایران هرگز به سلاح هسته‌ای نمی‌رسد",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "دنیای اقتصاد",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T04:11:45.030618+03:30",
-   "last_seen_tehran": "2026-10-26T04:11:45.030618+03:30",
-   "detected_at_epoch": 1792975305030,
-   "updated_at_epoch": 1792975305030,
-   "status": "active",
-   "content_hash": "8d77741792dbdec95fa97bfbea2861e5029f6b0f4ce05d79792bf09e4665afd5"
-  },
-  {
-   "signal_id": "11b920dfc79991be",
-   "story_id": "story-518e5bf63c988a0c4d9c",
-   "linked_story_id": "story-518e5bf63c988a0c4d9c",
-   "linked_app_key": "a-518e5bf63c988a0c4d9c",
-   "title": "تعلیق کلاس‌های حضوری دانشگاه اسلامی غزه",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "میدل‌ایست‌آی",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T03:11:50.878667+03:30",
-   "last_seen_tehran": "2026-10-26T03:11:50.878667+03:30",
-   "detected_at_epoch": 1792971710878,
-   "updated_at_epoch": 1792971710878,
-   "status": "active",
-   "content_hash": "4e1afa44cb738aeed015a8f855418f23c5b2414adc4e616c00f75ebc0f90f595"
-  },
-  {
-   "signal_id": "56cfc6e92700105f",
-   "story_id": "story-64aeffef24d9ef661158",
-   "linked_story_id": "story-64aeffef24d9ef661158",
-   "linked_app_key": "a-64aeffef24d9ef661158",
-   "title": "هشدار ترامپ به ایران درباره سلاح هسته‌ای",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "Gulf News",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T02:41:44.745797+03:30",
-   "last_seen_tehran": "2026-10-26T02:41:44.745797+03:30",
-   "detected_at_epoch": 1792969904745,
-   "updated_at_epoch": 1792969904745,
-   "status": "active",
-   "content_hash": "cbd606fd91eecba68e501ef711cb23986284f957d5ea661de1a4cddb5e28d61c"
-  },
-  {
-   "signal_id": "d7158b19a2c680a8",
-   "story_id": "story-c7050dbb527aaa88773e",
-   "linked_story_id": "story-c7050dbb527aaa88773e",
-   "linked_app_key": "a-c7050dbb527aaa88773e",
-   "title": "انفجارهای سنگین در تنگه هرمز پیش از بازگشایی بازار نفت",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "خبرگزاری فارس",
-   "matched_topics": [
-    "نفت_و_انرژی"
-   ],
-   "first_seen_tehran": "2026-10-26T02:12:12.346715+03:30",
-   "last_seen_tehran": "2026-10-26T02:12:12.346715+03:30",
-   "detected_at_epoch": 1792968132346,
-   "updated_at_epoch": 1792968132346,
-   "status": "active",
-   "content_hash": "e72ccf42dfa9ad5480fc17a53e558f12619289b5a8d663d256737856bcda1831"
-  },
-  {
-   "signal_id": "573340a1c2873fd1",
-   "story_id": "story-bd663559ffc8a69fad36",
-   "linked_story_id": "story-bd663559ffc8a69fad36",
-   "linked_app_key": "a-bd663559ffc8a69fad36",
-   "title": "دفاع ترامپ از گرانی بنزین به بهای مهار هسته‌ای ایران",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "اقتصاد آنلاین",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T02:11:46.497219+03:30",
-   "last_seen_tehran": "2026-10-26T02:11:46.497219+03:30",
-   "detected_at_epoch": 1792968106497,
-   "updated_at_epoch": 1792968106497,
-   "status": "active",
-   "content_hash": "eb31ca9926b66db6918edbfa416ee0d2f674eff4a547374ec3f4c784ba05dffe"
-  },
-  {
-   "signal_id": "a493db13f86e94bb",
-   "story_id": "story-45f7610b971030ab121f",
-   "linked_story_id": "story-45f7610b971030ab121f",
-   "linked_app_key": "a-45f7610b971030ab121f",
-   "title": "مدیریت اجساد؛ کلید تعیین هویت و آرامش خانواده‌ها در بحران‌ها",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "خبرگزاری ایسنا (بخش اجتماعی)",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T01:41:43.921906+03:30",
-   "last_seen_tehran": "2026-10-26T01:41:43.921906+03:30",
-   "detected_at_epoch": 1792966303921,
-   "updated_at_epoch": 1792966303921,
-   "status": "active",
-   "content_hash": "8c84dc5afa062cf59e65ace2ed3ebfd064106fda01cf2c5b024b3200193c2c7f"
-  },
-  {
-   "signal_id": "2d59cf6e27d82a2f",
-   "story_id": "story-130ba95cf1378e691eed",
-   "linked_story_id": "story-130ba95cf1378e691eed",
-   "linked_app_key": "a-130ba95cf1378e691eed",
-   "title": "ترامپ: با ایران توافق بزرگی امضا خواهیم کرد",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "همشهری‌آنلاین",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T01:41:43.650169+03:30",
-   "last_seen_tehran": "2026-10-26T01:41:43.650169+03:30",
-   "detected_at_epoch": 1792966303650,
-   "updated_at_epoch": 1792966303650,
-   "status": "active",
-   "content_hash": "6fbd4b590694c809bcbc037c9f24bc16444d0b906f4a5dfec5adab263a287481"
-  },
-  {
-   "signal_id": "7e6944e99c57171d",
-   "story_id": "story-c3ff60b1e9b228f7a373",
-   "linked_story_id": "story-c3ff60b1e9b228f7a373",
-   "linked_app_key": "a-c3ff60b1e9b228f7a373",
-   "title": "پیگیری انفجار مخزن آمونیاک در نیوپورت آمریکا",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "اقتصاد آنلاین",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:42.689254+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:42.689254+03:30",
-   "detected_at_epoch": 1792964502689,
-   "updated_at_epoch": 1792964502689,
-   "status": "active",
-   "content_hash": "3f3507a2950512d2216c1cd8637bcdad96bdd22016cf356d4be0d0e6ad2b9faa"
-  },
-  {
-   "signal_id": "0a3e2a7df32d38c8",
-   "story_id": "story-bcd4a3d348aabf334b0e",
-   "linked_story_id": "story-bcd4a3d348aabf334b0e",
-   "linked_app_key": "a-bcd4a3d348aabf334b0e",
-   "title": "پیگیری ادعای حمله یمن به فرودگاه ریاض",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "اقتصاد آنلاین",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T01:11:42.661700+03:30",
-   "last_seen_tehran": "2026-10-26T01:11:42.661700+03:30",
-   "detected_at_epoch": 1792964502661,
-   "updated_at_epoch": 1792964502661,
-   "status": "active",
-   "content_hash": "59491f668fdd0bec01ac09fe8f6521f654a9fc74b67072679df5b983213fcefa"
   }
  ]
 }
