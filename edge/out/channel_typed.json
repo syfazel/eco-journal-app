@@ -1,8 +1,40 @@
 {
  "format": "eco-journal-channel-typed",
  "version": 1,
- "generated_at_utc": "2026-10-26T05:01:03.813347+00:00",
+ "generated_at_utc": "2026-10-26T05:31:06.081624+00:00",
  "items": [
+  {
+   "guid": "channel-1071",
+   "app_key": "a-4267f5011ac5a8d8f80a",
+   "story_id": "story-4267f5011ac5a8d8f80a",
+   "channel_message_id": 1071,
+   "format_type": "WIRE",
+   "headline": "هشدار درباره مسمومیت دارویی در خانه‌ها",
+   "body": "",
+   "source_name": "خبرگزاری صداوسیما",
+   "urgency_score": 61,
+   "crisis_level": null,
+   "published_at_epoch": 1792991754994,
+   "updated_at_epoch": 1792991754994,
+   "status": "posted",
+   "content_hash": "e1951ea6332910a608265f65cddd1de48eb1be2dab021228e52e74d8e2ac82c1"
+  },
+  {
+   "guid": "channel-1072",
+   "app_key": "a-4e11d2215264eeb63816",
+   "story_id": "story-4e11d2215264eeb63816",
+   "channel_message_id": 1072,
+   "format_type": "WIRE",
+   "headline": "ترامپ بار دیگر از توافق با ایران سخن گفت",
+   "body": "",
+   "source_name": "اقتصاد آنلاین",
+   "urgency_score": 56,
+   "crisis_level": null,
+   "published_at_epoch": 1792991754994,
+   "updated_at_epoch": 1792991754994,
+   "status": "posted",
+   "content_hash": "91776c9718bb1ab8e2aa165f8132d5c0ba846d669f2adb0d67c4295d89c84bc6"
+  },
   {
    "guid": "channel-1064",
    "app_key": "a-7d4e008a92a6bdf885a6",

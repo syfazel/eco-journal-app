@@ -1,9 +1,29 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T05:01:03.955832+00:00",
+ "generated_at_utc": "2026-10-26T05:31:06.281489+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "b073037d5580990d",
+   "story_id": "story-4e11d2215264eeb63816",
+   "linked_story_id": "story-4e11d2215264eeb63816",
+   "linked_app_key": "a-4e11d2215264eeb63816",
+   "title": "ترامپ بار دیگر از توافق با ایران سخن گفت",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "اقتصاد آنلاین",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T08:41:41.116685+03:30",
+   "last_seen_tehran": "2026-10-26T08:41:41.116685+03:30",
+   "detected_at_epoch": 1792991501116,
+   "updated_at_epoch": 1792991501116,
+   "status": "active",
+   "content_hash": "617e04181b531c757a642a459a880a1e8e576f249b00c00aa00ae031304ebf99"
+  },
   {
    "signal_id": "88cd739a5b1fa5a3",
    "story_id": "story-7d4e008a92a6bdf885a6",
