@@ -1,9 +1,89 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T15:01:09.151644+00:00",
+ "generated_at_utc": "2026-10-26T15:31:08.352003+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "0a2716975f9337d0",
+   "story_id": "story-f01bb3407e2ba1fbc41a",
+   "linked_story_id": "story-f01bb3407e2ba1fbc41a",
+   "linked_app_key": "a-f01bb3407e2ba1fbc41a",
+   "title": "روسیه: اوکراین آلیوشکی را پیش از آتش‌بس هدف گرفت",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "رویترز (جهان)",
+   "matched_topics": [
+    "جبهه_اوکراین"
+   ],
+   "first_seen_tehran": "2026-10-26T18:41:40.365383+03:30",
+   "last_seen_tehran": "2026-10-26T18:41:40.365383+03:30",
+   "detected_at_epoch": 1793027500365,
+   "updated_at_epoch": 1793027500365,
+   "status": "active",
+   "content_hash": "81dbb161af3bedb6c105520b96b811fd717c24d00924a7912957ddf8e97af851"
+  },
+  {
+   "signal_id": "5cf6b893c59e93fa",
+   "story_id": "story-844a1ef7e8518d451aef",
+   "linked_story_id": "story-844a1ef7e8518d451aef",
+   "linked_app_key": "a-844a1ef7e8518d451aef",
+   "title": "مانور پدافند غیرعامل در مدارس قزوین برگزار شد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T18:41:40.312764+03:30",
+   "last_seen_tehran": "2026-10-26T18:41:40.312764+03:30",
+   "detected_at_epoch": 1793027500312,
+   "updated_at_epoch": 1793027500312,
+   "status": "active",
+   "content_hash": "11d3d9b5f208bb15a93b1748589f0356dd4ae736d6be498ce0f9577916647f7f"
+  },
+  {
+   "signal_id": "f83335fc92e9c64f",
+   "story_id": "story-69aab18a88d2f5210d20",
+   "linked_story_id": "story-69aab18a88d2f5210d20",
+   "linked_app_key": "a-69aab18a88d2f5210d20",
+   "title": "بررسی حمایت از توسعه علمی و رفع موانع مالیاتی",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T18:41:40.289568+03:30",
+   "last_seen_tehran": "2026-10-26T18:41:40.289568+03:30",
+   "detected_at_epoch": 1793027500289,
+   "updated_at_epoch": 1793027500289,
+   "status": "active",
+   "content_hash": "56050ce4dfe3cc60b08a70b55bbb728bcaee67d3fb038fa458cedd344d8a7de6"
+  },
+  {
+   "signal_id": "6d69317502f19e72",
+   "story_id": "story-37578a718bb6210d2814",
+   "linked_story_id": "story-37578a718bb6210d2814",
+   "linked_app_key": "a-37578a718bb6210d2814",
+   "title": "ترامپ: در سایت‌های هسته‌ای ایران چیز زیادی در جریان نیست",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "The Jerusalem Post",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T06:11:36.250353+03:30",
+   "last_seen_tehran": "2026-10-26T18:41:36.200994+03:30",
+   "detected_at_epoch": 1793027496200,
+   "updated_at_epoch": 1793027496200,
+   "status": "active",
+   "content_hash": "02414161db43ca3aebd770487b68b0c425e5431744e4fa044de18a242a4da836"
+  },
   {
    "signal_id": "b3920f5c5cb3dd6f",
    "story_id": "story-ad8e4be50a113ff7d2f4",
@@ -923,86 +1003,6 @@
    "updated_at_epoch": 1793002324573,
    "status": "active",
    "content_hash": "65a4634b99ec61b7ac3f77454b6c74007f3bd3d36c8106fa2b36ea7927be69dc"
-  },
-  {
-   "signal_id": "b701281f2b692063",
-   "story_id": "story-ad81dfb85e8d45ed79c0",
-   "linked_story_id": "story-ad81dfb85e8d45ed79c0",
-   "linked_app_key": "a-ad81dfb85e8d45ed79c0",
-   "title": "حفاظت از مردم اولویت اصلی پدافند غیرعامل است",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "خبرگزاری صداوسیما",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T11:41:41.370326+03:30",
-   "last_seen_tehran": "2026-10-26T11:41:41.370326+03:30",
-   "detected_at_epoch": 1793002301370,
-   "updated_at_epoch": 1793002301370,
-   "status": "active",
-   "content_hash": "ebfdfc7bec07bc44ef8287a0f12ae4f66750281d174a4e3b53de28c236684a0e"
-  },
-  {
-   "signal_id": "cbd04daeba4a18af",
-   "story_id": "story-b83e0c7f2924efeb5a9e",
-   "linked_story_id": "story-b83e0c7f2924efeb5a9e",
-   "linked_app_key": "a-b83e0c7f2924efeb5a9e",
-   "title": "علم‌آموزی دانش‌آموزان نوعی پدافند غیرعامل است",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "خبرگزاری صداوسیما",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T11:41:41.324833+03:30",
-   "last_seen_tehran": "2026-10-26T11:41:41.324833+03:30",
-   "detected_at_epoch": 1793002301324,
-   "updated_at_epoch": 1793002301324,
-   "status": "active",
-   "content_hash": "fd1682465710204ff8c501cf50979fdc3c0d3c074b6d6b0d26cdb0061f0682c6"
-  },
-  {
-   "signal_id": "4dde98090e5b7633",
-   "story_id": "story-2ad477787ce637d1d82f",
-   "linked_story_id": "story-2ad477787ce637d1d82f",
-   "linked_app_key": "a-2ad477787ce637d1d82f",
-   "title": "رونمایی از هفت خودروی وارداتی با پلاک عمومی منطقه آزاد",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "اقتصاد آنلاین",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T11:41:41.298090+03:30",
-   "last_seen_tehran": "2026-10-26T11:41:41.298090+03:30",
-   "detected_at_epoch": 1793002301298,
-   "updated_at_epoch": 1793002301298,
-   "status": "active",
-   "content_hash": "5b1b52a82e269fbd5f1a66df05a6d05c5fc422a3d2f15b49fb8653de4777cb00"
-  },
-  {
-   "signal_id": "15f017f240de455b",
-   "story_id": "story-96ff321ec9f318ededa8",
-   "linked_story_id": "story-96ff321ec9f318ededa8",
-   "linked_app_key": "a-96ff321ec9f318ededa8",
-   "title": "صحا نیاز اعتباری شرکت‌های فناور تهران را بررسی کرد",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "خبرگزاری صداوسیما",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T11:41:40.985213+03:30",
-   "last_seen_tehran": "2026-10-26T11:41:40.985213+03:30",
-   "detected_at_epoch": 1793002300985,
-   "updated_at_epoch": 1793002300985,
-   "status": "active",
-   "content_hash": "b7b6b6440054d82800626575c61040725dfa2048938e097055b58dce3f6a9b6f"
   }
  ]
 }
