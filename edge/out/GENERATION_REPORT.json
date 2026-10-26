@@ -1,17 +1,17 @@
 {
- "generated_at_utc": "2026-10-26T20:31:14.513916+00:00",
+ "generated_at_utc": "2026-10-26T21:01:06.651954+00:00",
  "sources_read_only": [
   "/home/hatch/workspace/econ-news-blog/data_core/data_core.db",
   "/home/hatch/workspace/yasineco_bot/bot.db"
  ],
  "exported": {
   "full_articles": 260,
-  "short_cards": 38,
-  "index_entries": 298,
+  "short_cards": 40,
+  "index_entries": 300,
   "market_snapshots": 172,
   "market_formulas_active": 4,
   "channel_refs": 23,
-  "join_keys_entries": 298,
+  "join_keys_entries": 300,
   "manifest_version": 3
  },
  "phase1": {
@@ -31,8 +31,8 @@
  "excluded_never_shipped_as_articles": {
   "extracts_pending": 2560,
   "extracts_rejected": 286,
-  "extracts_approved_posted_without_body": 80,
-  "drafts_rejected": 60,
+  "extracts_approved_posted_without_body": 82,
+  "drafts_rejected": 61,
   "channel_posts_without_body_text_in_data_core": 23
  },
  "rules": [

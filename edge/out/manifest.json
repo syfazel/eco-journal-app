@@ -1,6 +1,6 @@
 {
  "version": 3,
- "generated_at_utc": "2026-10-26T20:31:19.189695+00:00",
+ "generated_at_utc": "2026-10-26T21:01:11.965419+00:00",
  "generator": "edge/fullsync.py (S1/S2/S3, 2026-10-26)",
  "sections": {
   "articles": {
@@ -2610,9 +2610,31 @@
    ]
   },
   "shorts": {
-   "hash": "82b8d20c2776db757422fb58fe61163130f29365a0f3041a537122a91e2ecb9c",
-   "count": 38,
+   "hash": "305e6922fd7e80ac6f5aa757559b13dc5b66339d1d930559307e00492800b11b",
+   "count": 40,
    "items": [
+    {
+     "id": "draft-105",
+     "app_key": "a-4838f19c7541e1db3109",
+     "content_hash": "1c41fa2defc7ccc8975db092705a2522f425a8c1b7035ce09c46dedb41cad1be",
+     "updated_at_epoch": 1793048258883,
+     "status": "approved",
+     "category": "uncategorised",
+     "category_fa": "دسته‌بندی‌نشده",
+     "channel_message_id": null,
+     "story_id": "story-4838f19c7541e1db3109"
+    },
+    {
+     "id": "draft-104",
+     "app_key": "a-f1b1e0d51e6e73c03d5c",
+     "content_hash": "a02f66cbd0a3bf167b6167a046cc065b75dd11aea11700f56199900eb6761f29",
+     "updated_at_epoch": 1793048252036,
+     "status": "approved",
+     "category": "uncategorised",
+     "category_fa": "دسته‌بندی‌نشده",
+     "channel_message_id": null,
+     "story_id": "story-f1b1e0d51e6e73c03d5c"
+    },
     {
      "id": "draft-101",
      "app_key": "a-56125b136035086801d4",

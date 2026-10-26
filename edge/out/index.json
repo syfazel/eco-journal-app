@@ -1,12 +1,12 @@
 {
  "version": 2,
- "generated_at_utc": "2026-10-26T20:31:14.513916+00:00",
+ "generated_at_utc": "2026-10-26T21:01:06.651954+00:00",
  "generator": "edge/generate_edge.py (M3, LAB ONLY)",
- "hash_sha256": "e71c02c80d6babcfd43719aa92713a1fc7e948dae3f5f9a4ce7f4ad17531f987",
+ "hash_sha256": "9baf4d4826245d7dfa6be9aa61f5073c22b36f43d581bf1b32fcfe94dd0f5ae4",
  "counts": {
   "full_articles": 260,
-  "short_cards": 38,
-  "index_entries": 298,
+  "short_cards": 40,
+  "index_entries": 300,
   "market_snapshots": 172,
   "market_formulas_active": 4,
   "channel_refs": 23
@@ -4431,6 +4431,40 @@
    "content_hash": "31febd08ec428fc10ddebaa621aa1d93b43734810ee74a9ef138bad8bf0c0a9c",
    "updated_at_epoch": 1792287218000,
    "provenance": "data_core.article_extracts (status approved/posted, Phase 0 audit 2026-10-25)"
+  },
+  {
+   "id": "draft-105",
+   "app_key": "a-4838f19c7541e1db3109",
+   "kind": "short",
+   "title": "اصطکاک در زنجیره تامین روانکارها",
+   "summary": "دنیای اقتصاد - مسیح‌ میر‌جعفری : کمبود روغن موتور و افزایش قیمت آن به یکی دیگر از عوامل فشار بر مصرف‌کنندگان ایرانی تبدیل شده است.\nاین افزایش شدید قیمت، تنها ناشی از تورم عمومی و رشد نرخ ارز در ایران نیست؛ بازار روانکارها در سراسر جهان نیز با افزایش قیمت مواجه شده است.\nبخشی از ای",
+   "category": "uncategorised",
+   "category_fa": "دسته‌بندی‌نشده",
+   "source": "donya-e-eqtesad.com",
+   "published_at": "2026-10-26T20:57:38.883049+00:00",
+   "file": null,
+   "channel_message_id": null,
+   "status": "approved",
+   "content_hash": "1c41fa2defc7ccc8975db092705a2522f425a8c1b7035ce09c46dedb41cad1be",
+   "updated_at_epoch": 1793048258883,
+   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
+  },
+  {
+   "id": "draft-104",
+   "app_key": "a-f1b1e0d51e6e73c03d5c",
+   "kind": "short",
+   "title": "تله ناترازی",
+   "summary": "کشف منابع سنگ‌آهن در کنار در اختیار داشتن دومین منابع گازی جهان باعث شد طرح جامع فولاد کشور برای تولید ۵۵ میلیون تن فولاد خام در سال ۱۴۰۴ در دستور کار قرار بگیرد.\nاز دید طراحان این طرح هر آنچه برای دستیابی به این هدف لازم بود در اختیار هست و در این چشم‌انداز، ایران در کنار تامین ",
+   "category": "uncategorised",
+   "category_fa": "دسته‌بندی‌نشده",
+   "source": "donya-e-eqtesad.com",
+   "published_at": "2026-10-26T20:57:32.036895+00:00",
+   "file": null,
+   "channel_message_id": null,
+   "status": "approved",
+   "content_hash": "a02f66cbd0a3bf167b6167a046cc065b75dd11aea11700f56199900eb6761f29",
+   "updated_at_epoch": 1793048252036,
+   "provenance": "yasineco_bot.drafts (status approved, body_fa verbatim, Phase 0 audit 2026-10-25)"
   },
   {
    "id": "draft-101",
