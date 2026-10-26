@@ -1,9 +1,29 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T07:31:05.301420+00:00",
+ "generated_at_utc": "2026-10-26T08:01:05.429704+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "fd561e09ec90c344",
+   "story_id": "story-db3dc263a17c9e17a0c5",
+   "linked_story_id": "story-db3dc263a17c9e17a0c5",
+   "linked_app_key": "a-db3dc263a17c9e17a0c5",
+   "title": "باقری: مقام‌های ارشد کشورهای پیمان مکه به تهران می‌آیند",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "میدل‌ایست‌آی",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T11:11:42.708741+03:30",
+   "last_seen_tehran": "2026-10-26T11:11:42.708741+03:30",
+   "detected_at_epoch": 1793000502708,
+   "updated_at_epoch": 1793000502708,
+   "status": "active",
+   "content_hash": "f556121e99040acfa218f2b7efb8e26095b9ced008b4b956d3ff05c58fc58bdf"
+  },
   {
    "signal_id": "bea7a4bb93a1b6fb",
    "story_id": "story-67ee3e9aefa6effae0f3",

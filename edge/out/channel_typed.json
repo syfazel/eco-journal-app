@@ -1,8 +1,40 @@
 {
  "format": "eco-journal-channel-typed",
  "version": 1,
- "generated_at_utc": "2026-10-26T07:31:05.181258+00:00",
+ "generated_at_utc": "2026-10-26T08:01:05.292762+00:00",
  "items": [
+  {
+   "guid": "channel-1088",
+   "app_key": "a-6cd5e30bf8d88e864ffa",
+   "story_id": "story-6cd5e30bf8d88e864ffa",
+   "channel_message_id": 1088,
+   "format_type": "GEOPOL",
+   "headline": "ادعای رویترز: ایران با پوشش گازوئیل سوخت جت صادر می‌کند",
+   "body": "",
+   "source_name": "اقتصاد آنلاین (رویترز)",
+   "urgency_score": null,
+   "crisis_level": null,
+   "published_at_epoch": 1793000578955,
+   "updated_at_epoch": 1793000578955,
+   "status": "posted",
+   "content_hash": "ba52863123cfe3c82c197981b1afe3b87937e8021dd6e500ecc9f125cb6f06c1"
+  },
+  {
+   "guid": "channel-1089",
+   "app_key": "a-db3dc263a17c9e17a0c5",
+   "story_id": "story-db3dc263a17c9e17a0c5",
+   "channel_message_id": 1089,
+   "format_type": "GEOPOL",
+   "headline": "باقری: مقام‌های ارشد کشورهای پیمان مکه به تهران می‌آیند",
+   "body": "",
+   "source_name": "میدل‌ایست‌آی",
+   "urgency_score": 56,
+   "crisis_level": null,
+   "published_at_epoch": 1793000578955,
+   "updated_at_epoch": 1793000578955,
+   "status": "posted",
+   "content_hash": "1d40fed44903b07b219f6974b82b9f387b2d8f88304daa0fc7ec83cfac02294a"
+  },
   {
    "guid": "channel-1087",
    "app_key": "a-36faa3f67f15eede0562",

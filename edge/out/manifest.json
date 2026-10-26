@@ -1,6 +1,6 @@
 {
  "version": 3,
- "generated_at_utc": "2026-10-26T07:31:05.306189+00:00",
+ "generated_at_utc": "2026-10-26T08:01:05.450130+00:00",
  "generator": "edge/fullsync.py (S1/S2/S3, 2026-10-26)",
  "sections": {
   "articles": {
@@ -2946,8 +2946,8 @@
    "count": 0
   },
   "radar": {
-   "hash": "975fa2fae0a2a28316f56213c1435db98e9ffa86e3ec25d374465889a6141b63",
-   "count": 48,
+   "hash": "89dbbd02e27a67f23d197dfe710856105875517bb3f5d37bc83d9a78a9183eca",
+   "count": 49,
    "status": "published",
    "file": "radar.json",
    "items": [
@@ -3286,6 +3286,13 @@
      "updated_at_epoch": 1792996902883,
      "status": "active",
      "id": "fc6eccad91c19cd7"
+    },
+    {
+     "app_key": "fd561e09ec90c344",
+     "content_hash": "f556121e99040acfa218f2b7efb8e26095b9ced008b4b956d3ff05c58fc58bdf",
+     "updated_at_epoch": 1793000502708,
+     "status": "active",
+     "id": "fd561e09ec90c344"
     }
    ]
   },
@@ -3302,8 +3309,8 @@
    "count": 0
   },
   "channel_typed": {
-   "hash": "082ea218af5a31cbb3e5ad33400a8e67a18e4861b6ee104ebd2516d1d324fd85",
-   "count": 622,
+   "hash": "0ee5234445e66dd5b6ac4d657f3949583bed09991676d8fb15651c9deee57f8c",
+   "count": 624,
    "status": "published",
    "file": "channel_typed.json",
    "items": [
@@ -5511,6 +5518,15 @@
      "id": "channel-441",
      "channel_message_id": 441,
      "story_id": "story-6c66edca62594da7e855"
+    },
+    {
+     "app_key": "a-6cd5e30bf8d88e864ffa",
+     "content_hash": "ba52863123cfe3c82c197981b1afe3b87937e8021dd6e500ecc9f125cb6f06c1",
+     "updated_at_epoch": 1793000578955,
+     "status": "posted",
+     "id": "channel-1088",
+     "channel_message_id": 1088,
+     "story_id": "story-6cd5e30bf8d88e864ffa"
     },
     {
      "app_key": "a-6d8d71692450225e88ef",
@@ -7851,6 +7867,15 @@
      "id": "channel-639",
      "channel_message_id": 639,
      "story_id": "story-db2502696bc508f99b4a"
+    },
+    {
+     "app_key": "a-db3dc263a17c9e17a0c5",
+     "content_hash": "1d40fed44903b07b219f6974b82b9f387b2d8f88304daa0fc7ec83cfac02294a",
+     "updated_at_epoch": 1793000578955,
+     "status": "posted",
+     "id": "channel-1089",
+     "channel_message_id": 1089,
+     "story_id": "story-db3dc263a17c9e17a0c5"
     },
     {
      "app_key": "a-db8668b8bdc521a0c270",
