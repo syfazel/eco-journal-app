@@ -2,8 +2,8 @@
  "format": "eco-journal-edge-health",
  "version": 1,
  "manifest_version": 3,
- "manifest_generated_at_utc": "2026-10-26T04:01:10.508599+00:00",
- "generated_at_utc": "2026-10-26T04:01:10.541154+00:00",
+ "manifest_generated_at_utc": "2026-10-26T05:01:03.967042+00:00",
+ "generated_at_utc": "2026-10-26T05:01:03.997172+00:00",
  "generator": "edge/fullsync.py (S1/S2/S3, 2026-10-26)",
  "sections": {
   "articles": {
@@ -13,10 +13,10 @@
    "files_listed_in": "manifest.json"
   },
   "shorts": {
-   "count": 32,
-   "hash": "f82217071091be17b6a936a73a1d573de99ce235ae3a62c10c99af7ca95b0966",
+   "count": 38,
+   "hash": "82b8d20c2776db757422fb58fe61163130f29365a0f3041a537122a91e2ecb9c",
    "file": "short_cards.json",
-   "file_sha256": "a002dc4f899f204c86004fce65dbe677eb721f098ae90087982803bb172c1160"
+   "file_sha256": "f0e754442d2dbe00153ed1d488159de820cf39456767dc3d43676ff307013beb"
   },
   "market": {
    "count": 169,
@@ -48,10 +48,10 @@
    "file": null
   },
   "radar": {
-   "count": 15,
-   "hash": "8d7f8e8f19d3cee695dbf8a5c418a2ec279c1a73ee3c1e54e89fc40965113870",
+   "count": 37,
+   "hash": "896f4341758036f92afe5a4edac9396147f3102dc1a4e5ff18b652166cec9b95",
    "file": "radar.json",
-   "file_sha256": "98ba383d7a1168b5864de92f24626842cb66a0977b23a6ad7f9474125d7f9f7b"
+   "file_sha256": "a4ccc399dc4a26ce4c3f8328343eeaeb2121fb0e14a3572ed5652f364d628082"
   },
   "nightly": {
    "status": "not_yet_published",
@@ -69,16 +69,16 @@
    "file": null
   },
   "channel_typed": {
-   "count": 576,
-   "hash": "280764264c840f3ca81605db5c032f177b6dee862b1e2ce412aab00d3288db53",
+   "count": 607,
+   "hash": "2e9655d2f1e156933cfc347382f9c6a7e87c18d71eafa268ac49408fb0d57094",
    "file": "channel_typed.json",
-   "file_sha256": "4f385490a6e43ba731581f3f074fa960e873cdb57f0975f45a015b071ed9ff28"
+   "file_sha256": "bb0ef968e3673d538afeb6945648e79cdc0499b8b5c06c64d77df3b6a6e98484"
   }
  },
  "files": {
-  "manifest.json": "42157cac42d2d1662f9a18b67dd06b17a1e1668db9566a0d3e680bd0faedb417",
-  "index.json": "9f7705e78ff23daeb022c1347ae8a969bc1541aa98c964b5b7d8225ce019a146",
-  "join_keys.json": "b0bdd09b54a9f2ac74b716eac8fb0a49f9687189bb0449679dd45018028e16d1"
+  "manifest.json": "ef304f5ff02a1d66c378555972adbcf33865e01a1e744d68914f41cc78d7ad54",
+  "index.json": "837c667562cdb090b3afc1f62fab3308cdf6f6421962c922981b430e903e723c",
+  "join_keys.json": "4f593ae4a11775d8949e9f136d6d9ad4e6a9e29eb6a30fc9413421d15ec6638c"
  },
  "expected_absent_files": [
   "articles.json",

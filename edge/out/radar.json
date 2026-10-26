@@ -1,9 +1,49 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T04:01:10.495128+00:00",
+ "generated_at_utc": "2026-10-26T05:01:03.955832+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "88cd739a5b1fa5a3",
+   "story_id": "story-7d4e008a92a6bdf885a6",
+   "linked_story_id": "story-7d4e008a92a6bdf885a6",
+   "linked_app_key": "a-7d4e008a92a6bdf885a6",
+   "title": "بررسی صادرات راکتور هسته‌ای مشترک به آسیا",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T08:19:08.579664+03:30",
+   "last_seen_tehran": "2026-10-26T08:19:08.579664+03:30",
+   "detected_at_epoch": 1792990148579,
+   "updated_at_epoch": 1792990148579,
+   "status": "active",
+   "content_hash": "404ecdbbd68b139599ad51d690b960573aa383adbab398e8876bf93bcc6209e4"
+  },
+  {
+   "signal_id": "2f602bb799bab41a",
+   "story_id": "story-7c12b2b155b651dc6c8c",
+   "linked_story_id": "story-7c12b2b155b651dc6c8c",
+   "linked_app_key": "a-7c12b2b155b651dc6c8c",
+   "title": "ائتلاف به رهبری عربستان دو سکوی موشکی در صنعا را منهدم کرد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "عرب‌نیوز",
+   "matched_topics": [
+    "نفت_و_انرژی"
+   ],
+   "first_seen_tehran": "2026-10-26T07:12:08.236567+03:30",
+   "last_seen_tehran": "2026-10-26T07:12:08.236567+03:30",
+   "detected_at_epoch": 1792986128236,
+   "updated_at_epoch": 1792986128236,
+   "status": "active",
+   "content_hash": "1616f3c70eacc20d2f4f36b1670de0a309a366d6c4fa442412fde48fcfcaa608"
+  },
   {
    "signal_id": "da39a3ee5e6b4b0d",
    "story_id": "story-06fd84eb928e19c0d039",
@@ -85,6 +125,46 @@
    "content_hash": "609b57aa3a92cb45b4979e96ee96315c29b54012bf479bf2c4834286281bc1a1"
   },
   {
+   "signal_id": "c984fc55ba9319a6",
+   "story_id": "story-e8e227337e305f9dbdfd",
+   "linked_story_id": "story-e8e227337e305f9dbdfd",
+   "linked_app_key": "a-e8e227337e305f9dbdfd",
+   "title": "شیء مثلثی سیاه در اسناد تازه پنتاگون",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "اقتصاد آنلاین",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T05:41:49.840662+03:30",
+   "last_seen_tehran": "2026-10-26T05:41:49.840662+03:30",
+   "detected_at_epoch": 1792980709840,
+   "updated_at_epoch": 1792980709840,
+   "status": "active",
+   "content_hash": "ffda2298c2f91335468d2a67280b1a1c698e326b9b44d2c270df22157e038e84"
+  },
+  {
+   "signal_id": "e178fb13a02dd2ae",
+   "story_id": "story-d04b36c137b0bcb18630",
+   "linked_story_id": "story-d04b36c137b0bcb18630",
+   "linked_app_key": "a-d04b36c137b0bcb18630",
+   "title": "ترامپ: تاسیسات هسته‌ای ایران را رصد می‌کنیم",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "دنیای اقتصاد",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T05:11:44.571884+03:30",
+   "last_seen_tehran": "2026-10-26T05:11:44.571884+03:30",
+   "detected_at_epoch": 1792978904571,
+   "updated_at_epoch": 1792978904571,
+   "status": "active",
+   "content_hash": "34b941130878f55df826fd9b6e1aa867d0c735841ed8383626a9d5b6387f78b6"
+  },
+  {
    "signal_id": "8df3c4524beabe88",
    "story_id": "story-5db2cd985d9bc46bea4b",
    "linked_story_id": "story-5db2cd985d9bc46bea4b",
@@ -103,6 +183,26 @@
    "updated_at_epoch": 1792977102941,
    "status": "active",
    "content_hash": "c970945539e539a0be0e41090537b5af086d10230136b8101b6fb6cbd15aee84"
+  },
+  {
+   "signal_id": "8797d0365c94fab7",
+   "story_id": "story-ab214817b7ba04b36d32",
+   "linked_story_id": "story-ab214817b7ba04b36d32",
+   "linked_app_key": "a-ab214817b7ba04b36d32",
+   "title": "ترامپ: ایران هرگز به سلاح هسته‌ای نمی‌رسد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "دنیای اقتصاد",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T04:11:45.030618+03:30",
+   "last_seen_tehran": "2026-10-26T04:11:45.030618+03:30",
+   "detected_at_epoch": 1792975305030,
+   "updated_at_epoch": 1792975305030,
+   "status": "active",
+   "content_hash": "8d77741792dbdec95fa97bfbea2861e5029f6b0f4ce05d79792bf09e4665afd5"
   },
   {
    "signal_id": "11b920dfc79991be",
@@ -125,6 +225,26 @@
    "content_hash": "4e1afa44cb738aeed015a8f855418f23c5b2414adc4e616c00f75ebc0f90f595"
   },
   {
+   "signal_id": "56cfc6e92700105f",
+   "story_id": "story-64aeffef24d9ef661158",
+   "linked_story_id": "story-64aeffef24d9ef661158",
+   "linked_app_key": "a-64aeffef24d9ef661158",
+   "title": "هشدار ترامپ به ایران درباره سلاح هسته‌ای",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "Gulf News",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T02:41:44.745797+03:30",
+   "last_seen_tehran": "2026-10-26T02:41:44.745797+03:30",
+   "detected_at_epoch": 1792969904745,
+   "updated_at_epoch": 1792969904745,
+   "status": "active",
+   "content_hash": "cbd606fd91eecba68e501ef711cb23986284f957d5ea661de1a4cddb5e28d61c"
+  },
+  {
    "signal_id": "d7158b19a2c680a8",
    "story_id": "story-c7050dbb527aaa88773e",
    "linked_story_id": "story-c7050dbb527aaa88773e",
@@ -143,6 +263,66 @@
    "updated_at_epoch": 1792968132346,
    "status": "active",
    "content_hash": "e72ccf42dfa9ad5480fc17a53e558f12619289b5a8d663d256737856bcda1831"
+  },
+  {
+   "signal_id": "573340a1c2873fd1",
+   "story_id": "story-bd663559ffc8a69fad36",
+   "linked_story_id": "story-bd663559ffc8a69fad36",
+   "linked_app_key": "a-bd663559ffc8a69fad36",
+   "title": "دفاع ترامپ از گرانی بنزین به بهای مهار هسته‌ای ایران",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "اقتصاد آنلاین",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T02:11:46.497219+03:30",
+   "last_seen_tehran": "2026-10-26T02:11:46.497219+03:30",
+   "detected_at_epoch": 1792968106497,
+   "updated_at_epoch": 1792968106497,
+   "status": "active",
+   "content_hash": "eb31ca9926b66db6918edbfa416ee0d2f674eff4a547374ec3f4c784ba05dffe"
+  },
+  {
+   "signal_id": "a493db13f86e94bb",
+   "story_id": "story-45f7610b971030ab121f",
+   "linked_story_id": "story-45f7610b971030ab121f",
+   "linked_app_key": "a-45f7610b971030ab121f",
+   "title": "مدیریت اجساد؛ کلید تعیین هویت و آرامش خانواده‌ها در بحران‌ها",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری ایسنا (بخش اجتماعی)",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T01:41:43.921906+03:30",
+   "last_seen_tehran": "2026-10-26T01:41:43.921906+03:30",
+   "detected_at_epoch": 1792966303921,
+   "updated_at_epoch": 1792966303921,
+   "status": "active",
+   "content_hash": "8c84dc5afa062cf59e65ace2ed3ebfd064106fda01cf2c5b024b3200193c2c7f"
+  },
+  {
+   "signal_id": "2d59cf6e27d82a2f",
+   "story_id": "story-130ba95cf1378e691eed",
+   "linked_story_id": "story-130ba95cf1378e691eed",
+   "linked_app_key": "a-130ba95cf1378e691eed",
+   "title": "ترامپ: با ایران توافق بزرگی امضا خواهیم کرد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "همشهری‌آنلاین",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T01:41:43.650169+03:30",
+   "last_seen_tehran": "2026-10-26T01:41:43.650169+03:30",
+   "detected_at_epoch": 1792966303650,
+   "updated_at_epoch": 1792966303650,
+   "status": "active",
+   "content_hash": "6fbd4b590694c809bcbc037c9f24bc16444d0b906f4a5dfec5adab263a287481"
   },
   {
    "signal_id": "7e6944e99c57171d",
@@ -185,6 +365,126 @@
    "content_hash": "59491f668fdd0bec01ac09fe8f6521f654a9fc74b67072679df5b983213fcefa"
   },
   {
+   "signal_id": "556fca1e979e0c14",
+   "story_id": "story-bede24861bf6a03a96b7",
+   "linked_story_id": "story-bede24861bf6a03a96b7",
+   "linked_app_key": "a-bede24861bf6a03a96b7",
+   "title": "همکاری ایران و چین در بخش کشاورزی گسترش می‌یابد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری مهر (بخش اقتصادی)",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:42.638286+03:30",
+   "last_seen_tehran": "2026-10-26T01:11:42.638286+03:30",
+   "detected_at_epoch": 1792964502638,
+   "updated_at_epoch": 1792964502638,
+   "status": "active",
+   "content_hash": "9a637e9278cc725f5557e5d6f431a7b048cec3bf9443fb67f7071511c676e634"
+  },
+  {
+   "signal_id": "668b9f052af699ac",
+   "story_id": "story-f7f988412d28c4ca0764",
+   "linked_story_id": "story-f7f988412d28c4ca0764",
+   "linked_app_key": "a-f7f988412d28c4ca0764",
+   "title": "ایران‌ایر نشانی وب‌سایت رسمی خود را تغییر داد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "خبرگزاری مهر (بخش اقتصادی)",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:42.615637+03:30",
+   "last_seen_tehran": "2026-10-26T01:11:42.615637+03:30",
+   "detected_at_epoch": 1792964502615,
+   "updated_at_epoch": 1792964502615,
+   "status": "active",
+   "content_hash": "9390b9383a3c41d055139fe4b4ee1df52f27ad4f8cc3186bc797df8a7e46d360"
+  },
+  {
+   "signal_id": "ab7235f2b7ea9d32",
+   "story_id": "story-e617b44bd7770987b9e3",
+   "linked_story_id": "story-e617b44bd7770987b9e3",
+   "linked_app_key": "a-e617b44bd7770987b9e3",
+   "title": "گمنام‌سازی داده‌ها، پیش‌شرط توسعه هوش مصنوعی در سلامت",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری ایسنا (بخش اقتصادی)",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:42.594122+03:30",
+   "last_seen_tehran": "2026-10-26T01:11:42.594122+03:30",
+   "detected_at_epoch": 1792964502594,
+   "updated_at_epoch": 1792964502594,
+   "status": "active",
+   "content_hash": "cb6d1efa64208bc01103af7155446b94b8cbd68cb322df2c241a6db0cfc22723"
+  },
+  {
+   "signal_id": "eed061881a553316",
+   "story_id": "story-81816fa2c40daf696c64",
+   "linked_story_id": "story-81816fa2c40daf696c64",
+   "linked_app_key": "a-81816fa2c40daf696c64",
+   "title": "عارف: با وجود جنگ اقتصادی دست‌بسته نیستیم",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "خبرگزاری ایسنا (بخش اقتصادی)",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:42.568253+03:30",
+   "last_seen_tehran": "2026-10-26T01:11:42.568253+03:30",
+   "detected_at_epoch": 1792964502568,
+   "updated_at_epoch": 1792964502568,
+   "status": "active",
+   "content_hash": "d496c131ba52f8787fdebb8fb4b28026e87157c4ed4f71b9fa46a3c73740a160"
+  },
+  {
+   "signal_id": "3498a7377000955e",
+   "story_id": "story-c1461d3e9370c0811dd1",
+   "linked_story_id": "story-c1461d3e9370c0811dd1",
+   "linked_app_key": "a-c1461d3e9370c0811dd1",
+   "title": "دنیای اقتصاد از شتاب افت ریال از شهریور نوشت",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "دنیای اقتصاد",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:42.497983+03:30",
+   "last_seen_tehran": "2026-10-26T01:11:42.497983+03:30",
+   "detected_at_epoch": 1792964502497,
+   "updated_at_epoch": 1792964502497,
+   "status": "active",
+   "content_hash": "68a73fbc64b2036fa5f29d5e4cb8bfd29afa8d285d188ccc369f8ae5a246b8c2"
+  },
+  {
+   "signal_id": "f47325ec4e6b205d",
+   "story_id": "story-045a575ab114986a9585",
+   "linked_story_id": "story-045a575ab114986a9585",
+   "linked_app_key": "a-045a575ab114986a9585",
+   "title": "تخلیه پایگاه‌های آمریکا پس از طرح مشکوک ایران",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "وال‌استریت ژورنال",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:42.436604+03:30",
+   "last_seen_tehran": "2026-10-26T01:11:42.436604+03:30",
+   "detected_at_epoch": 1792964502436,
+   "updated_at_epoch": 1792964502436,
+   "status": "active",
+   "content_hash": "c81e6e5cdbc46cb400998aeac41d52f64ae9fa6ec7c85079bced85f3487b33fd"
+  },
+  {
    "signal_id": "f2ea65237a1696d7",
    "story_id": "story-fb830bc16deebcf66b1c",
    "linked_story_id": "story-fb830bc16deebcf66b1c",
@@ -203,6 +503,146 @@
    "updated_at_epoch": 1792964500923,
    "status": "active",
    "content_hash": "7bd0aad1c1ba86904464629b3a3b08eda0601ff6ee3545394657005cf0e24799"
+  },
+  {
+   "signal_id": "5be3a91c38c1ec2a",
+   "story_id": "story-823581aaa4d159b4241d",
+   "linked_story_id": "story-823581aaa4d159b4241d",
+   "linked_app_key": "a-823581aaa4d159b4241d",
+   "title": "پاکستان خواستار دسترسی برابر به فناوری هسته‌ای شد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "دان",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:39.818335+03:30",
+   "last_seen_tehran": "2026-10-26T01:11:39.818335+03:30",
+   "detected_at_epoch": 1792964499818,
+   "updated_at_epoch": 1792964499818,
+   "status": "active",
+   "content_hash": "4c9ee3c6b78b0ca83a06e6102a9366dfc4502d9a424623bb679ddaee3f71e92e"
+  },
+  {
+   "signal_id": "54de6158fec08762",
+   "story_id": "story-478652f1b608f2dc7d44",
+   "linked_story_id": "story-478652f1b608f2dc7d44",
+   "linked_app_key": "a-478652f1b608f2dc7d44",
+   "title": "تخلیه اجباری اسرائیلی‌ها نزدیک جلود پس از آتش‌سوزی",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "جروزالم‌پست",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:39.795941+03:30",
+   "last_seen_tehran": "2026-10-26T01:11:39.795941+03:30",
+   "detected_at_epoch": 1792964499795,
+   "updated_at_epoch": 1792964499795,
+   "status": "active",
+   "content_hash": "84091422cc3972b3546d97fc5a2d37a2b9d29b5086cf72ed8015d5bfa0d3192e"
+  },
+  {
+   "signal_id": "aaf1bc20545b7a80",
+   "story_id": "story-e8e621665db5ff53baf4",
+   "linked_story_id": "story-e8e621665db5ff53baf4",
+   "linked_app_key": "a-e8e621665db5ff53baf4",
+   "title": "بیانیه مشترک: حمله به تأسیسات هسته‌ای ممنوع است",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "پارس‌تودی",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:39.765978+03:30",
+   "last_seen_tehran": "2026-10-26T01:11:39.765978+03:30",
+   "detected_at_epoch": 1792964499765,
+   "updated_at_epoch": 1792964499765,
+   "status": "active",
+   "content_hash": "c012d80410d683b76c26765f53ae2dc2c56a955c8adb999536c4d3c468c34c45"
+  },
+  {
+   "signal_id": "8ed9ae5aff0fdd64",
+   "story_id": "story-fb2774a431fb4f61b6d8",
+   "linked_story_id": "story-fb2774a431fb4f61b6d8",
+   "linked_app_key": "a-fb2774a431fb4f61b6d8",
+   "title": "سپاه درباره پیامدهای حمله به ایران هشدار داد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "تایمز آو ایندیا",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:38.718755+03:30",
+   "last_seen_tehran": "2026-10-26T01:11:38.718755+03:30",
+   "detected_at_epoch": 1792964498718,
+   "updated_at_epoch": 1792964498718,
+   "status": "active",
+   "content_hash": "9a523c037c46ede162612aed6c4e3d10a1211b7a1f6a83216fbed641fefaa2a0"
+  },
+  {
+   "signal_id": "24cfae6f5770cd74",
+   "story_id": "story-701c68761944778e75f5",
+   "linked_story_id": "story-701c68761944778e75f5",
+   "linked_app_key": "a-701c68761944778e75f5",
+   "title": "هشدار اوباما درباره جنگ با ایران",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "People Daily",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:38.693776+03:30",
+   "last_seen_tehran": "2026-10-26T01:11:38.693776+03:30",
+   "detected_at_epoch": 1792964498693,
+   "updated_at_epoch": 1792964498693,
+   "status": "active",
+   "content_hash": "b85ca7fb22d4c358edf93feb1eb9813f1a48ed0b7fe57c47724f57670af0c461"
+  },
+  {
+   "signal_id": "cdb36b080e39e0f2",
+   "story_id": "story-1148585c5379749d0b35",
+   "linked_story_id": "story-1148585c5379749d0b35",
+   "linked_app_key": "a-1148585c5379749d0b35",
+   "title": "ترامپ برای ایران اولتیماتوم تعیین کرد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "The Express Tribune",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:38.646000+03:30",
+   "last_seen_tehran": "2026-10-26T01:11:38.646000+03:30",
+   "detected_at_epoch": 1792964498646,
+   "updated_at_epoch": 1792964498646,
+   "status": "active",
+   "content_hash": "dc2d2469acbc1b9d040dd020f9fdc70ac19d9b1db6a909ff05d84c774760c298"
+  },
+  {
+   "signal_id": "237e24cda41e550e",
+   "story_id": "story-afceee16b77fb5bcbc14",
+   "linked_story_id": "story-afceee16b77fb5bcbc14",
+   "linked_app_key": "a-afceee16b77fb5bcbc14",
+   "title": "آیزنکوت از حملات ترامپ به ایران تمجید کرد",
+   "layer": 3,
+   "severity": "low",
+   "severity_rank": 56,
+   "source_name": "Iran International",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T01:11:38.616144+03:30",
+   "last_seen_tehran": "2026-10-26T01:11:38.616144+03:30",
+   "detected_at_epoch": 1792964498616,
+   "updated_at_epoch": 1792964498616,
+   "status": "active",
+   "content_hash": "33998856121e9ed3f427d398e7093cfeea961a3ede50e03e418f747434d04426"
   },
   {
    "signal_id": "2af97b071ca0d83b",

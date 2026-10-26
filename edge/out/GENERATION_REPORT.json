@@ -1,17 +1,17 @@
 {
- "generated_at_utc": "2026-10-26T04:01:01.919749+00:00",
+ "generated_at_utc": "2026-10-26T05:01:00.776457+00:00",
  "sources_read_only": [
   "/home/hatch/workspace/econ-news-blog/data_core/data_core.db",
   "/home/hatch/workspace/yasineco_bot/bot.db"
  ],
  "exported": {
   "full_articles": 249,
-  "short_cards": 32,
-  "index_entries": 281,
+  "short_cards": 38,
+  "index_entries": 287,
   "market_snapshots": 169,
   "market_formulas_active": 4,
   "channel_refs": 23,
-  "join_keys_entries": 281,
+  "join_keys_entries": 287,
   "manifest_version": 3
  },
  "phase1": {
@@ -29,10 +29,10 @@
   "from_body_excerpt_first_paragraph": 0
  },
  "excluded_never_shipped_as_articles": {
-  "extracts_pending": 2571,
-  "extracts_rejected": 277,
-  "extracts_approved_posted_without_body": 84,
-  "drafts_rejected": 55,
+  "extracts_pending": 2561,
+  "extracts_rejected": 281,
+  "extracts_approved_posted_without_body": 90,
+  "drafts_rejected": 59,
   "channel_posts_without_body_text_in_data_core": 23
  },
  "rules": [
@@ -42,7 +42,7 @@
   "Shorts carry explicit category 'uncategorised'; channel_message_id is never fabricated (null until the bridge staging path populates it).",
   "Invite/revocation files carry hashes only and are owned by bridge/control.py; this generator never rewrites the canonical copies."
  ],
- "channel_typed": 576,
- "radar": 15,
+ "channel_typed": 607,
+ "radar": 37,
  "fullsync": "S1+S3 overlays applied; nightly held (U4); see fullsync-*-report.json"
 }
