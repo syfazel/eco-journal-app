@@ -1,9 +1,109 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T06:31:06.970757+00:00",
+ "generated_at_utc": "2026-10-26T07:01:06.093607+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "c903fd088edcb09b",
+   "story_id": "story-cee577d2cf664a47dd2e",
+   "linked_story_id": "story-cee577d2cf664a47dd2e",
+   "linked_app_key": "a-cee577d2cf664a47dd2e",
+   "title": "استقرار ۱۵ اتوبوس پناه گرم در میادین تهران",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "همشهری‌آنلاین",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T10:11:43.113907+03:30",
+   "last_seen_tehran": "2026-10-26T10:11:43.113907+03:30",
+   "detected_at_epoch": 1792996903113,
+   "updated_at_epoch": 1792996903113,
+   "status": "active",
+   "content_hash": "11a775a0929714375d7707d2debea1f87d7cfd1fa9600fc44fa82476852acd43"
+  },
+  {
+   "signal_id": "f78d7021ff69c759",
+   "story_id": "story-230531e1d9ceabeaae4c",
+   "linked_story_id": "story-230531e1d9ceabeaae4c",
+   "linked_app_key": "a-230531e1d9ceabeaae4c",
+   "title": "بهشت زهرا شش گام طلایی مدیریت پیکرها در بحران را تشریح کرد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "همشهری‌آنلاین",
+   "matched_topics": [
+    "جبهه_آسیا_پاسیفیک"
+   ],
+   "first_seen_tehran": "2026-10-26T10:11:43.091228+03:30",
+   "last_seen_tehran": "2026-10-26T10:11:43.091228+03:30",
+   "detected_at_epoch": 1792996903091,
+   "updated_at_epoch": 1792996903091,
+   "status": "active",
+   "content_hash": "6dfb899997bcdf2fe903a218447732e8a55254969a2208cd688522e3d22305a0"
+  },
+  {
+   "signal_id": "20933ba4d604038d",
+   "story_id": "story-846b5d5a8eeaf8f5aa06",
+   "linked_story_id": "story-846b5d5a8eeaf8f5aa06",
+   "linked_app_key": "a-846b5d5a8eeaf8f5aa06",
+   "title": "مانور پدافند غیر عامل با محوریت ارتقای آمادگی عمومی دراصفهان",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T10:11:42.905208+03:30",
+   "last_seen_tehran": "2026-10-26T10:11:42.905208+03:30",
+   "detected_at_epoch": 1792996902905,
+   "updated_at_epoch": 1792996902905,
+   "status": "active",
+   "content_hash": "d2867f8f6c7a68f0add30179e106bdf00767400ce5dab46a1d90a374fa37ea6f"
+  },
+  {
+   "signal_id": "fc6eccad91c19cd7",
+   "story_id": "story-7886b30f1b454f8d1fa3",
+   "linked_story_id": "story-7886b30f1b454f8d1fa3",
+   "linked_app_key": "a-7886b30f1b454f8d1fa3",
+   "title": "حمایت از توسعه فنی اختراعات با خدمات آزمایشگاهی",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T10:11:42.883554+03:30",
+   "last_seen_tehran": "2026-10-26T10:11:42.883554+03:30",
+   "detected_at_epoch": 1792996902883,
+   "updated_at_epoch": 1792996902883,
+   "status": "active",
+   "content_hash": "947ef07763e1fcfebce0f44628f3af88c0f0e5633641c08867f2f465f8f79e2e"
+  },
+  {
+   "signal_id": "996114ed27c48391",
+   "story_id": "story-dc895a1b3902270ae913",
+   "linked_story_id": "story-dc895a1b3902270ae913",
+   "linked_app_key": "a-dc895a1b3902270ae913",
+   "title": "زیرساخت‌های حیاتی کشور باید در برابر تهدیدات سایبری تاب‌آور باشند",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T10:11:42.860378+03:30",
+   "last_seen_tehran": "2026-10-26T10:11:42.860378+03:30",
+   "detected_at_epoch": 1792996902860,
+   "updated_at_epoch": 1792996902860,
+   "status": "active",
+   "content_hash": "5c9f220418e6c4294ca83f5b75d0df3eb53c4f6604acd0ae4b0e5bfe466ba43e"
+  },
   {
    "signal_id": "6fe280980272d826",
    "story_id": "story-51bb797f124307a685dd",
