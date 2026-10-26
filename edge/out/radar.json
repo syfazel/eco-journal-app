@@ -1,9 +1,69 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T11:31:11.426638+00:00",
+ "generated_at_utc": "2026-10-26T12:01:22.682547+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "90bbeaa2b9aef49a",
+   "story_id": "story-c8de3bbdb329e61b2498",
+   "linked_story_id": "story-c8de3bbdb329e61b2498",
+   "linked_app_key": "a-c8de3bbdb329e61b2498",
+   "title": "رقابت ۲۲۰۰ محصول فناورانه برای نمایشگاه «فر ایران»",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "جبهه_خاورمیانه"
+   ],
+   "first_seen_tehran": "2026-10-26T15:11:46.769093+03:30",
+   "last_seen_tehran": "2026-10-26T15:11:46.769093+03:30",
+   "detected_at_epoch": 1793014906769,
+   "updated_at_epoch": 1793014906769,
+   "status": "active",
+   "content_hash": "d2d85ad70967c012af5e714a8ea7b4ec2aa2b8fa6f4c4836d6fb449699f77319"
+  },
+  {
+   "signal_id": "38044f3fcedadbfa",
+   "story_id": "story-f827a67a0f93f7d60c15",
+   "linked_story_id": "story-f827a67a0f93f7d60c15",
+   "linked_app_key": "a-f827a67a0f93f7d60c15",
+   "title": "هلال‌احمر: پدافند غیرعامل فرهنگ سازمانی شود",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "خبرگزاری صداوسیما",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T14:41:53.148294+03:30",
+   "last_seen_tehran": "2026-10-26T14:41:53.148294+03:30",
+   "detected_at_epoch": 1793013113148,
+   "updated_at_epoch": 1793013113148,
+   "status": "active",
+   "content_hash": "7704b3a812dc3c563c8c2d5dcc4760231859193e7d3b8eb92438b30f4f43590f"
+  },
+  {
+   "signal_id": "9f3f30601cd6c9d4",
+   "story_id": "story-75daf4342ea509179479",
+   "linked_story_id": "story-75daf4342ea509179479",
+   "linked_app_key": "a-75daf4342ea509179479",
+   "title": "زنگ پدافند غیرعامل در دبیرستانی در قزوین نواخته شد",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "ایلنا",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T14:41:53.078888+03:30",
+   "last_seen_tehran": "2026-10-26T14:41:53.078888+03:30",
+   "detected_at_epoch": 1793013113078,
+   "updated_at_epoch": 1793013113078,
+   "status": "active",
+   "content_hash": "618fe92e9e03553b2da85a770ddaea7501814db12e7777e74a0f1a03067de0a7"
+  },
   {
    "signal_id": "a7a560fa3942edb9",
    "story_id": "story-d5314dc9988be6c980f2",
@@ -303,6 +363,26 @@
    "updated_at_epoch": 1793009495677,
    "status": "active",
    "content_hash": "90dc4ddcbbc4194dee87dd9144672d7f553ef4926a18dad3a8238baee155e5f3"
+  },
+  {
+   "signal_id": "480a83ae6fc06097",
+   "story_id": "story-bf730f5d33a32fbdba1c",
+   "linked_story_id": "story-bf730f5d33a32fbdba1c",
+   "linked_app_key": "a-bf730f5d33a32fbdba1c",
+   "title": "آغاز عصر نوین دانشنامه‌نگاری در دائرة‌المعارف بزرگ اسلامی",
+   "layer": 2,
+   "severity": "medium",
+   "severity_rank": 61,
+   "source_name": "ایلنا",
+   "matched_topics": [
+    "بازار_جنگ"
+   ],
+   "first_seen_tehran": "2026-10-26T13:11:38.698176+03:30",
+   "last_seen_tehran": "2026-10-26T13:11:38.698176+03:30",
+   "detected_at_epoch": 1793007698698,
+   "updated_at_epoch": 1793007698698,
+   "status": "active",
+   "content_hash": "a3bbfb58bfab0e27f60b2c8874fedb9adb15ee00aea77eceb1e253eb502c91bf"
   },
   {
    "signal_id": "4e904ff06940f619",
@@ -923,86 +1003,6 @@
    "updated_at_epoch": 1792993298995,
    "status": "active",
    "content_hash": "64801be17a8cc62cae990494661ce8c3a6260d98f57fe93bc96ce1350405351e"
-  },
-  {
-   "signal_id": "56be90b8fa22830e",
-   "story_id": "story-9ab4e43af70c092d1859",
-   "linked_story_id": "story-9ab4e43af70c092d1859",
-   "linked_app_key": "a-9ab4e43af70c092d1859",
-   "title": "ترامپ: همه مراکز هسته‌ای ایران را زیر نظر داریم",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "تجارت‌نیوز",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T08:41:41.399329+03:30",
-   "last_seen_tehran": "2026-10-26T08:41:41.399329+03:30",
-   "detected_at_epoch": 1792991501399,
-   "updated_at_epoch": 1792991501399,
-   "status": "active",
-   "content_hash": "2de64838c419941e82238363faf6a5aa2c983b44653e60555a50bfb196c8a040"
-  },
-  {
-   "signal_id": "b073037d5580990d",
-   "story_id": "story-4e11d2215264eeb63816",
-   "linked_story_id": "story-4e11d2215264eeb63816",
-   "linked_app_key": "a-4e11d2215264eeb63816",
-   "title": "ترامپ بار دیگر از توافق با ایران سخن گفت",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "اقتصاد آنلاین",
-   "matched_topics": [
-    "جبهه_خاورمیانه"
-   ],
-   "first_seen_tehran": "2026-10-26T08:41:41.116685+03:30",
-   "last_seen_tehran": "2026-10-26T08:41:41.116685+03:30",
-   "detected_at_epoch": 1792991501116,
-   "updated_at_epoch": 1792991501116,
-   "status": "active",
-   "content_hash": "617e04181b531c757a642a459a880a1e8e576f249b00c00aa00ae031304ebf99"
-  },
-  {
-   "signal_id": "88cd739a5b1fa5a3",
-   "story_id": "story-7d4e008a92a6bdf885a6",
-   "linked_story_id": "story-7d4e008a92a6bdf885a6",
-   "linked_app_key": "a-7d4e008a92a6bdf885a6",
-   "title": "بررسی صادرات راکتور هسته‌ای مشترک به آسیا",
-   "layer": 3,
-   "severity": "low",
-   "severity_rank": 56,
-   "source_name": "خبرگزاری صداوسیما",
-   "matched_topics": [
-    "بازار_جنگ"
-   ],
-   "first_seen_tehran": "2026-10-26T08:19:08.579664+03:30",
-   "last_seen_tehran": "2026-10-26T08:19:08.579664+03:30",
-   "detected_at_epoch": 1792990148579,
-   "updated_at_epoch": 1792990148579,
-   "status": "active",
-   "content_hash": "404ecdbbd68b139599ad51d690b960573aa383adbab398e8876bf93bcc6209e4"
-  },
-  {
-   "signal_id": "2f602bb799bab41a",
-   "story_id": "story-7c12b2b155b651dc6c8c",
-   "linked_story_id": "story-7c12b2b155b651dc6c8c",
-   "linked_app_key": "a-7c12b2b155b651dc6c8c",
-   "title": "ائتلاف به رهبری عربستان دو سکوی موشکی در صنعا را منهدم کرد",
-   "layer": 2,
-   "severity": "medium",
-   "severity_rank": 61,
-   "source_name": "عرب‌نیوز",
-   "matched_topics": [
-    "نفت_و_انرژی"
-   ],
-   "first_seen_tehran": "2026-10-26T07:12:08.236567+03:30",
-   "last_seen_tehran": "2026-10-26T07:12:08.236567+03:30",
-   "detected_at_epoch": 1792986128236,
-   "updated_at_epoch": 1792986128236,
-   "status": "active",
-   "content_hash": "1616f3c70eacc20d2f4f36b1670de0a309a366d6c4fa442412fde48fcfcaa608"
   }
  ]
 }
