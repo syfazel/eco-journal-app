@@ -2,8 +2,8 @@
  "format": "eco-journal-edge-health",
  "version": 1,
  "manifest_version": 3,
- "manifest_generated_at_utc": "2026-10-26T13:31:04.457333+00:00",
- "generated_at_utc": "2026-10-26T13:31:04.484158+00:00",
+ "manifest_generated_at_utc": "2026-10-26T14:01:25.053936+00:00",
+ "generated_at_utc": "2026-10-26T14:01:25.094265+00:00",
  "generator": "edge/fullsync.py (S1/S2/S3, 2026-10-26)",
  "sections": {
   "articles": {
@@ -49,9 +49,9 @@
   },
   "radar": {
    "count": 50,
-   "hash": "9b5070f67b0ca66f7462c50848c9ec112ae265cac172c9ef442a1b4a40ebb086",
+   "hash": "1a2bcc44e8828a11d0860fe2781226ba486c1711800b557d8b4f2ae2c2ca6161",
    "file": "radar.json",
-   "file_sha256": "a9d65a14c518a75b2c63cc05c5ec8d6ea0da33cdab5bbe1c10a16be1a5d225f6"
+   "file_sha256": "dae4cbce41bea995cd46295ecfa6b53dbf6cfd9770aefc119315077b9b0e4ed6"
   },
   "nightly": {
    "status": "not_yet_published",
@@ -69,15 +69,15 @@
    "file": null
   },
   "channel_typed": {
-   "count": 674,
-   "hash": "e3ecf9d25ff8888fe0b71592022f7070c2c178b0a130396712e150c5cb6f67f5",
+   "count": 679,
+   "hash": "3bc1479ba28aec868f92b79a483c5afea82abc87e3ba8d8768e9beb1074cd2c1",
    "file": "channel_typed.json",
-   "file_sha256": "6030fe6bfe2ed268b8e17b576667e1ad67b16d478475d9aeb1a64e3a5d08da45"
+   "file_sha256": "c019b1b8a23fc162d5f94fea36516ff5c0d1540d00fbb7bbce073e07c21d64fc"
   }
  },
  "files": {
-  "manifest.json": "3e7725ba06945914a183c8df6c51fa214f387bddaf191cb194ce37f343e339c2",
-  "index.json": "c2a5a33ba95570049150b57d19d649acc0a61828e3e8978cab1446244869bde7",
+  "manifest.json": "b7b0990531fdbb9682a9cefcd9515ce1dfea7066de8e2f25cb4dc90bc52eda79",
+  "index.json": "ec5292a6a18957416cf75cf8719ced7bad634c828a742366f37a45494f085623",
   "join_keys.json": "4f593ae4a11775d8949e9f136d6d9ad4e6a9e29eb6a30fc9413421d15ec6638c"
  },
  "expected_absent_files": [
