@@ -1,13 +1,13 @@
 {
  "version": 2,
- "generated_at_utc": "2026-10-26T03:01:02.205704+00:00",
+ "generated_at_utc": "2026-10-26T03:31:03.908039+00:00",
  "generator": "edge/generate_edge.py (M3, LAB ONLY)",
  "hash_sha256": "d02f5ab4d7effced905bb6dbe2ed881d682e63f6a3975a0816e8b9a7ae73ace6",
  "counts": {
   "full_articles": 249,
   "short_cards": 32,
   "index_entries": 281,
-  "market_snapshots": 164,
+  "market_snapshots": 169,
   "market_formulas_active": 4,
   "channel_refs": 23
  },

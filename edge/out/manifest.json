@@ -1,6 +1,6 @@
 {
  "version": 3,
- "generated_at_utc": "2026-10-26T03:01:06.618181+00:00",
+ "generated_at_utc": "2026-10-26T03:31:12.690096+00:00",
  "generator": "edge/fullsync.py (S1/S2/S3, 2026-10-26)",
  "sections": {
   "articles": {
@@ -2858,8 +2858,8 @@
    ]
   },
   "market": {
-   "hash": "01f08b3914adb48cde9956936856dc3de56b7beb5e48a13ed768795e585a2be6",
-   "count": 164,
+   "hash": "0393f6138234733ca7f32af3ce3b7aa9c7cd2942289b9547981732a430258f5f",
+   "count": 169,
    "file": "market.json"
   },
   "channel_refs": {
