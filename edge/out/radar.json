@@ -1,9 +1,29 @@
 {
  "format": "eco-journal-radar",
  "version": 1,
- "generated_at_utc": "2026-10-26T12:01:22.682547+00:00",
+ "generated_at_utc": "2026-10-26T13:31:04.445818+00:00",
  "window_hours": 24,
  "signals": [
+  {
+   "signal_id": "cbca24c1bc4b9623",
+   "story_id": "story-d37a6af7eefedabeac69",
+   "linked_story_id": "story-d37a6af7eefedabeac69",
+   "linked_app_key": "a-d37a6af7eefedabeac69",
+   "title": "مسیر نفتی قطبی روسیه پشت دیوار یخ متوقف شد",
+   "layer": 3,
+   "severity": "medium",
+   "severity_rank": 62,
+   "source_name": "اویل‌پرایس",
+   "matched_topics": [
+    "نفت_و_انرژی"
+   ],
+   "first_seen_tehran": "2026-10-26T16:41:46.223301+03:30",
+   "last_seen_tehran": "2026-10-26T16:41:46.223301+03:30",
+   "detected_at_epoch": 1793020306223,
+   "updated_at_epoch": 1793020306223,
+   "status": "active",
+   "content_hash": "50bfdee8cdd9b3b2138bf661e8af35f02cbe93d8e0710aedd147c654d34c9ec5"
+  },
   {
    "signal_id": "90bbeaa2b9aef49a",
    "story_id": "story-c8de3bbdb329e61b2498",
@@ -983,26 +1003,6 @@
    "updated_at_epoch": 1792993299960,
    "status": "active",
    "content_hash": "80068c6ce64e4b5f5c08aa83db968e7a6fb98a0c8de2a2e0280f81c4c1a98dc7"
-  },
-  {
-   "signal_id": "59b29d44aba7b51b",
-   "story_id": "story-c84c32dfc9952e169a38",
-   "linked_story_id": "story-c84c32dfc9952e169a38",
-   "linked_app_key": "a-c84c32dfc9952e169a38",
-   "title": "روسیه میزبان جهانی وزنه‌برداری ۲۰۳۰ شد",
-   "layer": 1,
-   "severity": "high",
-   "severity_rank": 85,
-   "source_name": "بی‌بی‌سی",
-   "matched_topics": [
-    "جبهه_اوکراین"
-   ],
-   "first_seen_tehran": "2026-10-26T09:11:38.995989+03:30",
-   "last_seen_tehran": "2026-10-26T09:11:38.995989+03:30",
-   "detected_at_epoch": 1792993298995,
-   "updated_at_epoch": 1792993298995,
-   "status": "active",
-   "content_hash": "64801be17a8cc62cae990494661ce8c3a6260d98f57fe93bc96ce1350405351e"
   }
  ]
 }
