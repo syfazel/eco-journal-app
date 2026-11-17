@@ -38,8 +38,7 @@ fun VoicesScreen(
     // Guard, not decoration: if finalisation ever lands, this
     // screen must be replaced by the real section (§3.8), never
     // by adding names to the placeholder.
-    check(!VoicesGate.FINALISED) { "Voices placeholder rendered after finalisation" }
-    Column(
+    check(!VoicesGate.FINALISED) { "Voices placeholder rendered after finalisation" }    Column(
         modifier = modifier
             .fillMaxSize()
             // Phase 7: non-scrolling column could clip the
@@ -86,6 +85,46 @@ fun SpecialIssuesScreen(
         Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = stringResource(R.string.special_issues_placeholder),
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+        )
+    }
+}
+
+// v5.2 Yemen-only mode (audit §4.5 option A, "locked with
+// reason"): every non-Yemen section renders exactly this fixed
+// locked line and nothing else — no content, no sync, no
+// navigation into the old section. The title names the section
+// the user tapped, so the absence is honest rather than hidden.
+@Composable
+fun LockedSectionScreen(
+    titleRes: Int,
+    fontScale: Float = 1f,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+    ) {
+        Text(
+            text = stringResource(titleRes),
+            fontFamily = EcoFontFamily,
+            fontSize = 20.sp * fontScale,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.semantics { heading() },
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = stringResource(R.string.v52_locked_title),
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+            fontWeight = FontWeight.Bold,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(R.string.v52_locked_body),
             fontFamily = EcoFontFamily,
             fontSize = 14.sp * fontScale,
         )

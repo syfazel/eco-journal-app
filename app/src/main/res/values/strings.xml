@@ -506,4 +506,60 @@
     <string name="v51_diagnostics_network_none">هنوز وضعیت شبکه‌ای ثبت نشده است</string>
     <string name="v51_diagnostics_seed_report_title">گزارش بذر (نسخهٔ ۵٫۱)</string>
     <string name="v51_diagnostics_seed_report_none">هنوز گزارش بذری ثبت نشده است</string>
+    <!-- v5.2 Yemen tab (audit §4): sixth bottom-bar tab, six
+         sub-tabs mirroring dashboard v5. All copy is Persian;
+         nothing claim-only is ever labelled confirmed. -->
+    <string name="tab_yemen">یمن</string>
+    <string name="yemen_title">یمن</string>
+    <string name="yemen_sub_status">وضعیت و نقشه</string>
+    <string name="yemen_sub_frontlines">مرزهای درگیری</string>
+    <string name="yemen_sub_aden">محاصرهٔ عدن</string>
+    <string name="yemen_sub_dossiers">پرونده‌ها و تحلیل</string>
+    <string name="yemen_sub_timeline">خط زمانی و منابع</string>
+    <string name="yemen_sub_archive">آرشیو نسخه‌ها</string>
+    <string name="yemen_refresh">به‌روزرسانی</string>
+    <string name="yemen_refreshing">در حال به‌روزرسانی…</string>
+    <string name="yemen_updated">آخرین به‌روزرسانی: %1$s • %2$s ساعت پیش</string>
+    <string name="yemen_stale">داده کهنه است — بیش از ۲۴ ساعت از آخرین به‌روزرسانی گذشته است.</string>
+    <string name="yemen_offline">آفلاین — نمایش دادهٔ ذخیره‌شده</string>
+    <string name="yemen_sync_failed">به‌روزرسانی یمن ناموفق بود (کد: %1$s)؛ دادهٔ ذخیره‌شده نمایش داده می‌شود.</string>
+    <string name="yemen_empty">هنوز دادهٔ یمن در دستگاه نیست؛ بذر آفلاین در حال بارگذاری است.</string>
+    <string name="yemen_events_count">%1$s رویداد</string>
+    <string name="yemen_places_count">%1$s نقطهٔ کنترل</string>
+    <string name="yemen_control_changes">تغییر کنترل از آخرین به‌روزرسانی: %1$s</string>
+    <string name="yemen_aden_valid_to">این حکم تا %1$s معتبر است؛ وضعیت می‌تواند سریع عوض شود.</string>
+    <string name="yemen_filter_all">همه</string>
+    <string name="yemen_filter_confirmed">تأییدشده</string>
+    <string name="yemen_filter_contested">مورد مناقشه</string>
+    <string name="yemen_filter_houthi_only">فقط ادعای حوثی‌ها</string>
+    <string name="yemen_layer_confirmed">تأییدشده</string>
+    <string name="yemen_layer_contested">مورد مناقشه</string>
+    <string name="yemen_layer_houthi_only">فقط ادعای حوثی‌ها</string>
+    <string name="yemen_layer_rumour">شایعه</string>
+    <string name="yemen_layer_official_claim">ادعای رسمی</string>
+    <string name="yemen_corroboration">هم‌تأییدی: %1$s</string>
+    <string name="yemen_human_stats">شاخص‌های انسانی</string>
+    <string name="yemen_sources">منابع</string>
+    <string name="yemen_map_reading">خوانش نقشه</string>
+    <string name="yemen_forces">نیروهای طرف‌ها</string>
+    <string name="yemen_arrows">پیکان‌های پیشروی</string>
+    <string name="yemen_units">مواضع یگان‌ها</string>
+    <string name="yemen_military_features">ویژگی‌های نظامی</string>
+    <string name="yemen_open_questions">پرسش‌های باز</string>
+    <string name="yemen_disagreements">اختلاف‌ها</string>
+    <string name="yemen_contradictions">تناقض‌ها</string>
+    <string name="yemen_channels_method">روش‌شناسی کانال‌ها</string>
+    <string name="yemen_snapshots">اسنپ‌شات‌ها</string>
+    <string name="yemen_snapshot_line">%1$s • %2$s نقطه • %3$s رویداد</string>
+    <string name="yemen_faction_houthi">حوثی / انصارالله</string>
+    <string name="yemen_faction_govt">دولت</string>
+    <string name="yemen_faction_contested">مورد مناقشه</string>
+    <string name="yemen_faction_aqap">القاعده</string>
+    <string name="yemen_faction_stc">شورای انتقالی</string>
+    <string name="yemen_faction_unknown">نامشخص</string>
+    <string name="yemen_frontline_no_line">برای این جبهه خط قابل‌اعتمادی کشیده نشده است؛ فقط نقاط فعالیت گزارش‌شده آمده است.</string>
+    <!-- v5.2 locked sections (audit §4.5 option A): the fixed
+         locked line for every non-Yemen section. -->
+    <string name="v52_locked_title">این بخش فعلاً متوقف است</string>
+    <string name="v52_locked_body">در نسخهٔ ۵٫۲ فقط تب یمن فعال است؛ بقیهٔ بخش‌ها تا اطلاع بعدی خاموش‌اند.</string>
 </resources>

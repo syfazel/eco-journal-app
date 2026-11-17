@@ -191,6 +191,7 @@ class EdgeRepository(context: Context) {
     val channelDao: ChannelDao = db.channelDao()
     val phase4Dao: Phase4Dao = db.phase4Dao()
     val nightlyDao: NightlyDao = db.nightlyDao()
+    val yemenDao: YemenDao = db.yemenDao()
     private val appContext: Context = context.applicationContext
     private val settings = SettingsStore(context)
 
@@ -429,6 +430,22 @@ class EdgeRepository(context: Context) {
         )
     }
 
+    /**
+     * v5.2 Yemen-only sync (audit §4.3). The single entry point
+     * for Yemen content: manifest-gated, one transaction, hash
+     * stored only on complete success. Used by YemenSyncWorker
+     * (24h), the launch one-time and the Yemen tab's manual
+     * refresh. A Yemen failure never touches the global clock
+     * (last_sync_at) and a global failure never touches Yemen
+     * (P4 rule, both directions).
+     */
+    suspend fun syncYemen(forceRefresh: Boolean = false): SyncResult {
+        return syncOnly(SyncSections.YEMEN, forceRefresh)
+    }
+
+    /** Yemen meta for the tab header (staleness, error code). */
+    suspend fun yemenMeta(): YemenMetaEntity? = yemenDao.meta()
+
     // Per-section force-refresh from Diagnostics. Re-reads the
     // manifest and applies only the requested section; every other
     // section's cache and state are untouched. For a
@@ -436,6 +453,12 @@ class EdgeRepository(context: Context) {
     // from the manifest, which is the honest outcome: there is
     // nothing to fetch for it yet.
     suspend fun syncOnly(sectionKey: String, forceRefresh: Boolean = true): SyncResult {
+        // v5.2 Yemen-only mode: every non-Yemen section is locked
+        // (audit §4.5 option A). No sync runs for a locked section,
+        // from any caller — Diagnostics included.
+        if (SyncSections.YEMEN_ONLY_MODE && sectionKey != SyncSections.YEMEN) {
+            return SyncResult.Failed("section_locked")
+        }
         if (sectionKey !in SyncSections.ALL) return SyncResult.Failed("unknown_section")
         return syncMutex.withLock { syncOnlyLocked(sectionKey, forceRefresh) }
     }
@@ -494,6 +517,7 @@ class EdgeRepository(context: Context) {
                 SyncSections.BUNDLES -> channelDao.allBundles().size
                 SyncSections.RADAR -> channelDao.radarCount()
                 SyncSections.NIGHTLY -> nightlyDao.latestEditionCount()
+                SyncSections.YEMEN -> yemenDao.placeCount()
                 else -> dao.metaValue(SyncSections.countKey(key))?.toIntOrNull() ?: 0
             }
             SectionSyncState(
@@ -637,7 +661,17 @@ class EdgeRepository(context: Context) {
         // counting UNKNOWN would break the clock on the live edge.
         var anyRequiredIncomplete = false
 
-        fun wants(section: String): Boolean = onlySection == null || onlySection == section
+        fun wants(section: String): Boolean =
+            if (SyncSections.YEMEN_ONLY_MODE) {
+                // v5.2: only the Yemen section ever runs, whether
+                // this is a full sync (onlySection == null) or a
+                // Yemen-only sync. syncOnly() already rejects any
+                // other section key, so onlySection here is YEMEN
+                // or null.
+                section == SyncSections.YEMEN
+            } else {
+                onlySection == null || onlySection == section
+            }
 
         // Articles section.
         if (wants(SyncSections.ARTICLES)) {
@@ -1333,11 +1367,30 @@ class EdgeRepository(context: Context) {
             })
             if (!nightlyOutcomeIsolated) recordV51FromOutcome(nightlyOutcome)
         }
+        // v5.2 Yemen section (audit §4.3): same Phase 1 rules —
+        // manifest first, per-section hash, one transaction, hash
+        // stored only on complete success, a failed section never
+        // empties its cache. The only section that runs in
+        // Yemen-only mode.
+        if (wants(SyncSections.YEMEN)) {
+            var yemenOutcomeIsolated = false
+            val yemenOutcome = try {
+                syncYemenSection(base, manifest, forceRefresh, now)
+            } catch (_: Exception) {
+                yemenOutcomeIsolated = true
+                failSection(SyncSections.YEMEN, now)
+                SectionOutcome(SyncSections.YEMEN, SectionStates.FAILED, 0)
+            }
+            outcomes.add(yemenOutcome.also {
+                missingTotal += it.missingCount
+            })
+            if (!yemenOutcomeIsolated) recordV51FromOutcome(yemenOutcome)
+        }
         // Computed (overwrite-for-today) Phase 2 anomaly codes:
         // caps, bundle-shape flags. Parse anomalies (above) are
         // accumulated for the day instead.
         persistPhase2Anomalies(now, phase2Anomalies, computePhase2Computed(now))
-        if (onlySection == null) {
+        if (onlySection == null && !SyncSections.YEMEN_ONLY_MODE) {
             dispatchPhase4Notifications(now)
         }
 
@@ -1348,7 +1401,9 @@ class EdgeRepository(context: Context) {
         // not have (spec §5.15). Timing comes ONLY from
         // NotificationPolicy.decide for NIGHTLY — this producer
         // never re-implements night/quiet-hours timing.
-        if (onlySection == null || onlySection == SyncSections.NIGHTLY) {
+        if (!SyncSections.YEMEN_ONLY_MODE &&
+            (onlySection == null || onlySection == SyncSections.NIGHTLY)
+        ) {
             dispatchNightlyNotifications(now)
         }
         // Not-yet-published and gated sections: state comes from the
@@ -1391,10 +1446,17 @@ class EdgeRepository(context: Context) {
         // own state, the P3 digest, and its section screen.
         db.withTransaction {
             dao.upsertMeta(MetaEntity("last_sync_attempt_at", now.toString()))
-            if (!anyRequiredIncomplete && onlySection == null) {
+            // v5.2 Yemen-only mode: the global clock is defined
+            // over the REQUIRED sections, all of which are locked,
+            // so a Yemen-only pass must NEVER advance it (and a
+            // Yemen failure must never block it either — P4, both
+            // directions). The Yemen clock lives in yemen_meta.
+            if (!anyRequiredIncomplete && onlySection == null &&
+                !SyncSections.YEMEN_ONLY_MODE
+            ) {
                 dao.upsertMeta(MetaEntity("last_sync_at", now.toString()))
                 dao.upsertMeta(MetaEntity("last_sync_error_code", ""))
-            } else if (onlySection == null) {
+            } else if (onlySection == null && !SyncSections.YEMEN_ONLY_MODE) {
                 dao.upsertMeta(MetaEntity("last_sync_error_code", "partial"))
             }
         }
@@ -1423,6 +1485,23 @@ class EdgeRepository(context: Context) {
                 else -> SyncResult.Ok(newKeys, total, outcomes)
             }
         }
+        // v5.2 Yemen-only mode: the whole-sync result follows
+        // the Yemen outcome alone (the required sections are
+        // locked and never run). A Yemen failure is a Partial,
+        // never a silent success.
+        if (SyncSections.YEMEN_ONLY_MODE) {
+            val yemenOutcome = outcomes.firstOrNull { it.key == SyncSections.YEMEN }
+            return when (yemenOutcome?.state) {
+                SectionStates.PARTIAL -> SyncResult.Partial(
+                    newKeys, missingTotal, total, outcomes,
+                )
+                SectionStates.FAILED -> SyncResult.Failed(
+                    dao.metaValue(SyncSections.errorKey(SyncSections.YEMEN))
+                        ?: "network",
+                )
+                else -> SyncResult.Ok(newKeys, total, outcomes)
+            }
+        }
         // v5 P4: the whole-sync result follows the same
         // required-only rule as the clock. Optional failures are
         // still visible per section (outcomes list, Diagnostics,
@@ -1432,6 +1511,128 @@ class EdgeRepository(context: Context) {
             SyncResult.Partial(newKeys, missingTotal, total, outcomes)
         } else {
             SyncResult.Ok(newKeys, total, outcomes)
+        }
+    }
+
+    // ---- v5.2 Yemen section sync (audit §4.3) ----
+    //
+    // Manifest-gated single-file section: if sections.yemen.hash
+    // equals the stored hash, zero fetch. Otherwise one fetch of
+    // yemen.json, applied in ONE transaction; the hash is stored
+    // only after that transaction succeeds. Control changes are
+    // detected by comparing each place's faction with the stored
+    // row before the replace. A failure never empties the cache
+    // and records a fixed error code in yemen_meta + the section
+    // meta, so the tab can show an honest staleness line.
+
+    private suspend fun syncYemenSection(
+        base: String,
+        manifest: EdgeManifest,
+        forceRefresh: Boolean,
+        now: Long,
+    ): SectionOutcome {
+        val key = SyncSections.YEMEN
+        val section = manifest.sections[key]
+        if (section == null) {
+            recordSectionMeta(key, SectionStates.UNKNOWN, "no_section", null, 0, now, null, null)
+            trace(key, "no_section", -1, -1, SectionStates.UNKNOWN)
+            recordV51(key, "no_section", -1, -1, -1)
+            return SectionOutcome(key, SectionStates.UNKNOWN, 0)
+        }
+        val storedMeta = yemenDao.meta()
+        val storedHash = storedMeta?.yemenHash
+            ?: dao.metaValue(SyncSections.hashKey(key))
+        val placeCount = yemenDao.placeCount()
+        val hashUpToDate = DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh) &&
+            !(placeCount == 0 && section.count > 0)
+        if (hashUpToDate) {
+            recordSectionMeta(key, SectionStates.UP_TO_DATE, "", placeCount, 0, now, now, null)
+            trace(key, "", 0, 0, SectionStates.UP_TO_DATE)
+            recordV51(key, "", 0, 0, -1)
+            return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
+        }
+        val file = section.file?.takeIf { it.isNotBlank() } ?: "yemen.json"
+        val outcome = httpGetRetried("$base/$file", attempts = 3)
+        val body = when (outcome) {
+            is HttpOutcome.Ok -> outcome.body
+            else -> {
+                val code = outcome.toFailedCode()
+                recordYemenFailure(code, now)
+                recordSectionMeta(key, SectionStates.FAILED, code, null, 0, now, null, null)
+                trace(key, code, -1, -1, SectionStates.FAILED)
+                recordV51(key, code, -1, 0, -1)
+                return SectionOutcome(key, SectionStates.FAILED, 0)
+            }
+        }
+        val doc = YemenParsers.parseDoc(body)
+        if (doc == null || doc.places.isEmpty()) {
+            recordYemenFailure("bad_yemen", now)
+            recordSectionMeta(key, SectionStates.FAILED, "bad_yemen", null, 0, now, null, null)
+            trace(key, "bad_yemen", -1, -1, SectionStates.FAILED)
+            recordV51(key, "bad_yemen", -1, 0, -1)
+            return SectionOutcome(key, SectionStates.FAILED, 0)
+        }
+        // Control-change detection, before the replace.
+        val oldFactions = yemenDao.places().associate { it.appKey to it.faction }
+        var controlChanges = 0
+        for (place in doc.places) {
+            val old = oldFactions[place.appKey]
+            if (old != null && old != place.faction) controlChanges++
+        }
+        db.withTransaction {
+            yemenDao.deleteAllPlaces()
+            yemenDao.deleteAllEvents()
+            yemenDao.deleteAllFrontlines()
+            yemenDao.upsertPlaces(doc.places.map { it.toEntity() })
+            yemenDao.upsertEvents(doc.events.map { it.toEntity() })
+            yemenDao.upsertFrontlines(doc.frontlines.map { it.toEntity() })
+            yemenDao.upsertAden(doc.aden.toEntity())
+            // The full document verbatim, for the supplementary
+            // sections (arrows, units, forces, claims, human
+            // stats, sources, map reading, snapshots) that have
+            // no dedicated table — same pattern as the nightly
+            // edition component JSON. Written in the SAME
+            // transaction, so the doc and the tables can never
+            // disagree about which dashboard state they show.
+            dao.upsertMeta(MetaEntity("yemen_doc_json", body))
+            yemenDao.upsertMeta(
+                YemenMetaEntity(
+                    key = "yemen",
+                    yemenHash = section.hash,
+                    yemenGeneratedAt = doc.generatedAtUtc,
+                    yemenSeedHash = storedMeta?.yemenSeedHash,
+                    lastYemenSyncAt = now,
+                    lastYemenErrorCode = "",
+                    controlChanges = controlChanges,
+                ),
+            )
+        }
+        recordSectionMeta(
+            key, SectionStates.UP_TO_DATE, "", doc.places.size, 0, now, now, section.hash,
+        )
+        trace(key, "", doc.places.size, 0, SectionStates.UP_TO_DATE)
+        recordV51(key, "", doc.places.size, 0, -1)
+        return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
+    }
+
+    /** Record a Yemen failure without touching the stored hash or
+     * the cached rows: the next run retries exactly this section. */
+    private suspend fun recordYemenFailure(code: String, now: Long) {
+        try {
+            val old = yemenDao.meta()
+            yemenDao.upsertMeta(
+                YemenMetaEntity(
+                    key = "yemen",
+                    yemenHash = old?.yemenHash,
+                    yemenGeneratedAt = old?.yemenGeneratedAt,
+                    yemenSeedHash = old?.yemenSeedHash,
+                    lastYemenSyncAt = old?.lastYemenSyncAt,
+                    lastYemenErrorCode = code,
+                    controlChanges = old?.controlChanges ?: 0,
+                ),
+            )
+            dao.upsertMeta(MetaEntity("last_yemen_attempt_at", now.toString()))
+        } catch (_: Exception) {
         }
     }
 

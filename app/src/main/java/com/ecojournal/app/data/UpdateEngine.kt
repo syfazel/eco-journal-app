@@ -45,10 +45,12 @@ object SyncSections {
     const val SPECIAL_ISSUES = "special_issues"
     const val INVITES = "invites"
     const val REVOCATIONS = "revocations"
+    /** v5.2 Yemen tab (audit §4.2): single-file section, 24h cadence. */
+    const val YEMEN = "yemen"
 
     val ALL: List<String> = listOf(
         ARTICLES, SHORTS, MARKET, CHANNEL_REFS, CHANNEL_TYPED, BUNDLES, RADAR,
-        NIGHTLY, VOICES, SPECIAL_ISSUES, INVITES, REVOCATIONS,
+        NIGHTLY, VOICES, SPECIAL_ISSUES, INVITES, REVOCATIONS, YEMEN,
     )
 
     // Sections with real edge files the app fetches and caches.
@@ -58,8 +60,22 @@ object SyncSections {
     // SPECIAL_ISSUES stay gated/not-yet-published.
     val FETCHABLE: Set<String> = setOf(
         ARTICLES, SHORTS, MARKET, CHANNEL_REFS, CHANNEL_TYPED, BUNDLES,
-        RADAR, NIGHTLY, INVITES, REVOCATIONS,
+        RADAR, NIGHTLY, INVITES, REVOCATIONS, YEMEN,
     )
+
+    /**
+     * v5.2 Yemen-only mode (audit §4.5 option A, "locked with
+     * reason"): every non-Yemen section is locked — no sync runs
+     * for it, its screen shows the fixed locked line. The 15-min
+     * SyncWorker is gated off entirely (see SyncWorker.schedule)
+     * and Yemen syncs only through YemenSyncWorker (24h) plus the
+     * launch one-time and the Yemen tab's manual refresh. The
+     * global clock (last_sync_at) is defined over the REQUIRED
+     * sections, all of which are locked, so a Yemen-only pass
+     * must NEVER advance it — and a Yemen failure must never
+     * block it either (P4 rule, both directions).
+     */
+    const val YEMEN_ONLY_MODE = true
 
     // v5 P4: sections whose completion defines the global clock
     // (last_sync_at) and the whole-sync result. Every other
@@ -152,7 +168,12 @@ object ManifestParser {
     fun parse(text: String): EdgeManifest? {
         return try {
             val root = JSONObject(text)
-            if (root.optInt("version", 0) != 3) return null
+            // Manifest v4 is v3 plus the additive sections.yemen
+            // entry (v5.2); old clients ignore the unknown section.
+            // Accept both versions; the parsed version is carried
+            // so callers can tell them apart.
+            val version = root.optInt("version", 0)
+            if (version != 3 && version != 4) return null
             val sectionsObj = root.optJSONObject("sections") ?: return null
             val sections = mutableMapOf<String, ManifestSection>()
             for (key in SyncSections.ALL) {
@@ -199,7 +220,7 @@ object ManifestParser {
                 )
             }
             EdgeManifest(
-                version = 3,
+                version = version,
                 generatedAtUtc = root.optString("generated_at_utc", ""),
                 sections = sections,
                 joinKeysFile = root.optString("join_keys_file")

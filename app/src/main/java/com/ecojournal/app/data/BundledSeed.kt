@@ -33,11 +33,15 @@ import org.json.JSONObject
  */
 object BundledSeed {
 
-    const val BUNDLED_SEED_VERSION = 1
+    // v5.2: 2 — old installs backfill the Yemen seed on next
+    // launch (the version bump is what re-runs the seed for
+    // them; the missing-set logic below does the rest).
+    const val BUNDLED_SEED_VERSION = 2
 
     private const val SEED_INDEX = "seed/index.json"
     private const val SEED_SHORTS = "seed/short_cards.json"
     private const val SEED_MARKET = "seed/market.json"
+    private const val SEED_YEMEN = "seed/yemen.json"
 
     private val seedMutex = Mutex()
 
@@ -47,6 +51,8 @@ object BundledSeed {
         val marketInserted: Int,
         val complete: Boolean,
         val formulasInserted: Int = 0,
+        val yemenInserted: Int = 0,
+        val yemenMissing: Int = 0,
     )
 
     private fun readAsset(context: Context, path: String): String? {
@@ -65,6 +71,7 @@ object BundledSeed {
     private suspend fun ensureSeedLocked(context: Context): SeedReport {
         val db = DatabaseProvider.get(context)
         val dao = db.articleDao()
+        val yemenDao = db.yemenDao()
         val indexText = readAsset(context, SEED_INDEX)
             ?: return SeedReport(0, 0, 0, false)
         val index = try {
@@ -77,6 +84,17 @@ object BundledSeed {
         val storedVersion = dao.metaValue("seed_version")?.toIntOrNull() ?: 0
         val storedHash = dao.indexHash()
 
+        // v5.2 Yemen seed state: the bundled seed file's SHA-256
+        // is the seed hash, stored in yemen_meta only when the
+        // Yemen seed is complete (missing-only, hash-only-when-
+        // complete — the same resumable pattern as the articles).
+        val yemenSeedText = readAsset(context, SEED_YEMEN)
+        val yemenSeedHash = yemenSeedText?.let { sha256Hex(it) }
+        val yemenMeta = yemenDao.meta()
+        val yemenSeedComplete = yemenSeedHash != null &&
+            yemenMeta?.yemenSeedHash == yemenSeedHash &&
+            yemenDao.placeCount() > 0
+
         // Fast path: a complete seed for this exact bundle is already
         // recorded, and the market table and the formulas table are
         // populated. Anything else falls through to the missing-set
@@ -86,7 +104,8 @@ object BundledSeed {
         // never backfill formulas.
         if (storedVersion >= BUNDLED_SEED_VERSION &&
             storedHash != null && storedHash == hash &&
-            dao.marketCount() > 0 && dao.formulaCount() > 0
+            dao.marketCount() > 0 && dao.formulaCount() > 0 &&
+            yemenSeedComplete
         ) {
             // v5.1: the fast path is still a completed seed
             // computation, so it still refreshes the seed report
@@ -236,15 +255,73 @@ object BundledSeed {
             }
         }
 
+        // Yemen (v5.2): seeded from the bundled copy of yemen.json
+        // with the same resumable pattern — only missing places
+        // are inserted; events/frontlines/Aden seed whenever
+        // their tables are empty; the seed hash is written only
+        // when the whole Yemen seed is complete. A missing or
+        // unparsable seed file marks Yemen incomplete (retried
+        // next launch) but never blocks the article seed's own
+        // completeness — the two seeds have separate hashes.
+        var yemenFreshPlaces = emptyList<YemenPlaceEntity>()
+        var yemenFreshEvents = emptyList<YemenEventEntity>()
+        var yemenFreshFrontlines = emptyList<YemenFrontlineEntity>()
+        var yemenFreshAden: YemenAdenEntity? = null
+        var yemenDoc: YemenDoc? = null
+        var yemenMissing = false
+        if (!yemenSeedComplete) {
+            yemenDoc = yemenSeedText?.let { YemenParsers.parseDoc(it) }
+            if (yemenDoc == null || yemenDoc.places.isEmpty()) {
+                yemenMissing = true
+            } else {
+                val existingYemenKeys = yemenDao.allPlaceAppKeys().toSet()
+                yemenFreshPlaces = yemenDoc.places
+                    .filter { it.appKey !in existingYemenKeys }
+                    .map { it.toEntity() }
+                if (yemenDao.eventCount() == 0) {
+                    yemenFreshEvents = yemenDoc.events.map { it.toEntity() }
+                }
+                if (yemenDao.frontlines().isEmpty()) {
+                    yemenFreshFrontlines = yemenDoc.frontlines.map { it.toEntity() }
+                }
+                if (yemenDao.aden() == null) {
+                    yemenFreshAden = yemenDoc.aden.toEntity()
+                }
+            }
+        }
+        val yemenComplete = !yemenMissing && yemenSeedHash != null
+
         val complete = missingIds.isEmpty() && !marketMissing
         db.withTransaction {
             if (fresh.isNotEmpty()) dao.upsertAll(fresh)
             if (marketFresh.isNotEmpty()) dao.upsertMarket(marketFresh)
             if (formulasFresh.isNotEmpty()) dao.upsertFormulas(formulasFresh)
+            if (yemenFreshPlaces.isNotEmpty()) yemenDao.upsertPlaces(yemenFreshPlaces)
+            if (yemenFreshEvents.isNotEmpty()) yemenDao.upsertEvents(yemenFreshEvents)
+            if (yemenFreshFrontlines.isNotEmpty()) yemenDao.upsertFrontlines(yemenFreshFrontlines)
+            if (yemenFreshAden != null) yemenDao.upsertAden(yemenFreshAden)
+            if (yemenDoc != null && yemenSeedText != null) {
+                dao.upsertMeta(MetaEntity("yemen_doc_json", yemenSeedText))
+            }
             dao.upsertMeta(MetaEntity("seed_missing_count", missingIds.size.toString()))
             if (complete) {
                 if (hash.isNotBlank()) dao.upsertMeta(MetaEntity("index_hash", hash))
                 dao.upsertMeta(MetaEntity("seed_version", BUNDLED_SEED_VERSION.toString()))
+            }
+            if (yemenComplete) {
+                val oldMeta = yemenDao.meta()
+                yemenDao.upsertMeta(
+                    YemenMetaEntity(
+                        key = "yemen",
+                        yemenHash = oldMeta?.yemenHash,
+                        yemenGeneratedAt = yemenDoc?.generatedAtUtc
+                            ?: oldMeta?.yemenGeneratedAt,
+                        yemenSeedHash = yemenSeedHash,
+                        lastYemenSyncAt = oldMeta?.lastYemenSyncAt,
+                        lastYemenErrorCode = oldMeta?.lastYemenErrorCode,
+                        controlChanges = oldMeta?.controlChanges ?: 0,
+                    ),
+                )
             }
         }
         // v5.1: seed report AFTER the transaction, never inside
@@ -261,7 +338,15 @@ object BundledSeed {
             marketInserted = marketFresh.size,
             complete = complete,
             formulasInserted = formulasFresh.size,
+            yemenInserted = yemenFreshPlaces.size,
+            yemenMissing = if (yemenMissing) 1 else 0,
         )
+    }
+
+    private fun sha256Hex(text: String): String {
+        val digest = java.security.MessageDigest.getInstance("SHA-256")
+            .digest(text.toByteArray(Charsets.UTF_8))
+        return digest.joinToString("") { "%02x".format(it) }
     }
 
     /**

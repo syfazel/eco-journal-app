@@ -1,0 +1,3415 @@
+{
+ "schema_version": 1,
+ "generated_at_utc": "2026-11-17T07:29:23.236Z",
+ "as_of": "2026-11-17T07:29:23.236Z",
+ "headline_fa": "بر پایهٔ این جمع‌بندی‌ها، تحول تازهٔ معنادار و ثبت‌نشده‌ای در تغییر کنترل سرزمینی دیده نشد و گزارش‌ها همان پیشروی حوثی‌ها در ساحل جنوبی و تا حدود ۷۰ کیلومتری عدن و عقب‌نشینی نیروهای دولتی به‌سوی عدن برای دفاع از این شهر را بازتاب می‌دهند، بدون آن‌که تصرف صریح نقطهٔ مشخصی اعلام شده باشد. درگیری‌ها در محورهای تعز، لحج و الجوف ادامه دارد و حوثی‌ها در لحج برای بازپس‌گیری باب‌المندب تلاش می‌کنند، در حالی که ارتش دولت با اعزام نیرو از عدن این جبهه را تقویت می‌کند؛ نیروهای دولتی در ۳۰ اکتبر از بازپس‌گیری مواضعی در حیفان و پیشروی در الجوف خبر دادند و هم‌زمان حملات موشکی به فرودگاه عدن و کاخ معاشیق و پیش از آن در ۱۳ اکتبر حملهٔ هوایی به یک مرکز فرماندهی حوثی–سپاه در تعز گزارش شد. حوثی‌ها روز یکشنبه ۱۵ نوامبر ۲۰۲۶ مدعی شدند فرودگاه بین‌المللی ملک خالد و یک مرکز مالی در ریاض را با دو موشک بالستیک هدف قرار داده‌اند و این عملیات به هدف رسیده است. از نگاه منابع بشردوستانهٔ سازمان ملل، پس از ۲۰ روز محاصره و درگیری در تعز دسترسی صدها هزار نفر به غذا، آب سالم و کمک‌های ضروری تهدید شده است، درگیری‌ها در ۱۵ نوامبر به اردوگاه پناهندگان خرز در لحج رسیده و هزاران پناهنده را به خطر انداخته است، و داده‌های سازمان بین‌المللی مهاجرت از آوارگی حدود ۳۰۰ هزار نفر در پی گسترش درگیری‌ها در ساحل غربی و جنوب تعز حکایت دارد.",
+ "last_refresh": {
+  "status": "done",
+  "started_at": "2026-11-17T07:28:27.505Z",
+  "finished_at": "2026-11-17T07:29:23.261Z",
+  "radars_hit": 9,
+  "claims_found": 5,
+  "new_events": 5,
+  "control_changes": 0
+ },
+ "counts": {
+  "places": 90,
+  "events": 24,
+  "frontlines": 8,
+  "arrows": 9,
+  "unit_positions": 12,
+  "forces": 7,
+  "sources": 25
+ },
+ "faction_counts": {
+  "houthi": 39,
+  "contested": 16,
+  "govt": 30,
+  "aqap": 3,
+  "stc": 1,
+  "unknown": 1
+ },
+ "places": [
+  {
+   "external_id": 1,
+   "app_key": "y-17ced2cad7ab24f17778",
+   "name_fa": "صنعا (پایتخت)",
+   "name_en": "Sanaa (capital)",
+   "governorate_fa": "صنعا",
+   "lat": 15.37,
+   "lon": 44.19,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "در دست حوثی‌ها از سپتامبر ۲۰۱۴.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow Sep 2026; Saree statements Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 2,
+   "app_key": "y-f2a864c46c3057b9f1e6",
+   "name_fa": "فرودگاه بین‌المللی صنعا",
+   "name_en": "Sanaa Intl Airport",
+   "governorate_fa": "صنعا",
+   "lat": 15.48,
+   "lon": 44.22,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "حوثی؛ ۱۳ ژوئیه ۲۰۲۶ و دوباره در نوامبر ۲۰۲۶ هدف حمله قرار گرفت.",
+   "provenance": "baseline",
+   "source_note": "Al-Masirah via ISW, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 3,
+   "app_key": "y-cb62dc6747b7f29d79f6",
+   "name_fa": "شهر صعده",
+   "name_en": "Saada city",
+   "governorate_fa": "صعده",
+   "lat": 16.94,
+   "lon": 43.77,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "قلب سرزمین حوثی‌ها؛ یحیی سریع از حملات ۱۵ نوامبر به صعده خبر داد.",
+   "provenance": "baseline",
+   "source_note": "Saree statement, 15 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 4,
+   "app_key": "y-cf15d22b77f5958db93e",
+   "name_fa": "شهر عمران",
+   "name_en": "Amran city",
+   "governorate_fa": "عمران",
+   "lat": 15.66,
+   "lon": 43.94,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "ارتفاعات شمال‌غرب در دست حوثی‌ها.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow / Silent Dossier, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 5,
+   "app_key": "y-9d3fb0a19b230fa09196",
+   "name_fa": "شهر حجه",
+   "name_en": "Hajjah city",
+   "governorate_fa": "حجه",
+   "lat": 15.69,
+   "lon": 43.6,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "حوثی.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow",
+   "updated_at": null
+  },
+  {
+   "external_id": 6,
+   "app_key": "y-1a8f6a9f0725b22650c4",
+   "name_fa": "حرض (مرز عربستان)",
+   "name_en": "Haradh (Saudi border)",
+   "governorate_fa": "حجه",
+   "lat": 16.48,
+   "lon": 43.08,
+   "faction": "contested",
+   "control_label": "حوثی / مرز مورد مناقشه",
+   "confidence": "reported",
+   "note": "شهر مرزی در دست حوثی‌ها با حملات مکرر عربستان؛ در نوامبر تغییری گزارش نشد.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 7,
+   "app_key": "y-4b77b2cd5178fb3590dc",
+   "name_fa": "میدی (ساحل دریای سرخ)",
+   "name_en": "Midi (Red Sea coast)",
+   "governorate_fa": "حجه",
+   "lat": 16.32,
+   "lon": 42.82,
+   "faction": "govt",
+   "control_label": "دولت / مقاومت ملی (محصور)",
+   "confidence": "reported",
+   "note": "تنها بخش ساحل غربی که در تهاجم سپتامبر سقوط نکرد.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow, Sep 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 8,
+   "app_key": "y-62c9b23ff70f13d32611",
+   "name_fa": "عبس",
+   "name_en": "Abs",
+   "governorate_fa": "حجه",
+   "lat": 16.01,
+   "lon": 43.2,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "reported",
+   "note": "حوثی؛ در نوامبر تغییری گزارش نشد.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 9,
+   "app_key": "y-074ec2169d0b85c1788e",
+   "name_fa": "شهر ذمار",
+   "name_en": "Dhamar city",
+   "governorate_fa": "ذمار",
+   "lat": 14.55,
+   "lon": 44.4,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "حوثی.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow",
+   "updated_at": null
+  },
+  {
+   "external_id": 10,
+   "app_key": "y-97ca1914d128d7477b24",
+   "name_fa": "شهر اب",
+   "name_en": "Ibb city",
+   "governorate_fa": "اب",
+   "lat": 13.97,
+   "lon": 44.18,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "حوثی.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow",
+   "updated_at": null
+  },
+  {
+   "external_id": 11,
+   "app_key": "y-aae116c8e45e9340229f",
+   "name_fa": "الجبین (مرکز ریمه)",
+   "name_en": "Al-Jabin (Raymah capital)",
+   "governorate_fa": "ریمه",
+   "lat": 14.7,
+   "lon": 43.6,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "حوثی.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow",
+   "updated_at": null
+  },
+  {
+   "external_id": 12,
+   "app_key": "y-aaa8de60a5c93df61d8a",
+   "name_fa": "شهر المحویت",
+   "name_en": "Al-Mahwit city",
+   "governorate_fa": "المحویت",
+   "lat": 15.47,
+   "lon": 43.55,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "حوثی.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow / Silent Dossier",
+   "updated_at": null
+  },
+  {
+   "external_id": 13,
+   "app_key": "y-ea69871d43c56eb3967a",
+   "name_fa": "شهر حدیده",
+   "name_en": "Hodeidah city",
+   "governorate_fa": "حدیده",
+   "lat": 14.8,
+   "lon": 42.95,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "بندر حوثی؛ طبق UNVIM از ژانویه تا سپتامبر ۲۰۲۶ تعداد ۲۷۲ کشتی به حدیده/صلیف/رأس عیسی رسید.",
+   "provenance": "baseline",
+   "source_note": "US Embassy / Al Jazeera, 11 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 14,
+   "app_key": "y-092776a092f4e091f040",
+   "name_fa": "بندر حدیده",
+   "name_en": "Hodeidah Port",
+   "governorate_fa": "حدیده",
+   "lat": 14.82,
+   "lon": 42.94,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "حوثی.",
+   "provenance": "baseline",
+   "source_note": "UNVIM data via report",
+   "updated_at": null
+  },
+  {
+   "external_id": 15,
+   "app_key": "y-f368658f25eb998a3cb8",
+   "name_fa": "فرودگاه بین‌المللی حدیده",
+   "name_en": "Hodeidah Intl Airport",
+   "governorate_fa": "حدیده",
+   "lat": 14.75,
+   "lon": 42.98,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "reported",
+   "note": "رسانه‌های حوثی از حمله عربستان در ۹ نوامبر و حملات هوایی ۱۶ نوامبر خبر دادند.",
+   "provenance": "baseline",
+   "source_note": "Houthi media via ISW, 9 Nov; Dawn/Al Jazeera, 16 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 16,
+   "app_key": "y-989f3b6144ba1c6607ce",
+   "name_fa": "بندر صلیف",
+   "name_en": "As-Salif Port",
+   "governorate_fa": "حدیده",
+   "lat": 15.28,
+   "lon": 42.68,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "حوثی.",
+   "provenance": "baseline",
+   "source_note": "UNVIM data via report",
+   "updated_at": null
+  },
+  {
+   "external_id": 17,
+   "app_key": "y-8f56e48fdee0a5aec5b0",
+   "name_fa": "ترمینال نفتی رأس عیسی",
+   "name_en": "Ras Isa oil terminal",
+   "governorate_fa": "حدیده",
+   "lat": 15.19,
+   "lon": 42.61,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "حوثی.",
+   "provenance": "baseline",
+   "source_note": "UNVIM data via report",
+   "updated_at": null
+  },
+  {
+   "external_id": 18,
+   "app_key": "y-a0d6d7b89070e7793210",
+   "name_fa": "الخوخه",
+   "name_en": "Al-Khawkhah",
+   "governorate_fa": "حدیده",
+   "lat": 13.81,
+   "lon": 43.25,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "reported",
+   "note": "در تهاجم سپتامبر ۲۰۲۶ گرفته شد؛ پیش‌تر در دست مقاومت ملی/دولت بود.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow / ACLED summaries",
+   "updated_at": null
+  },
+  {
+   "external_id": 19,
+   "app_key": "y-fd66c753a1bb17a4d1c9",
+   "name_fa": "حیس",
+   "name_en": "Hays",
+   "governorate_fa": "حدیده",
+   "lat": 13.94,
+   "lon": 43.48,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "reported",
+   "note": "۸–۹ سپتامبر ۲۰۲۶ سقوط کرد.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow",
+   "updated_at": null
+  },
+  {
+   "external_id": 20,
+   "app_key": "y-12099237d1a11b2048e4",
+   "name_fa": "زبید",
+   "name_en": "Zabid",
+   "governorate_fa": "حدیده",
+   "lat": 14.2,
+   "lon": 43.32,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "تهامه در دست حوثی‌ها؛ در نوامبر تغییری گزارش نشد.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 21,
+   "app_key": "y-bd98df7588be2b3d5659",
+   "name_fa": "بیت‌الفقیه",
+   "name_en": "Bayt al-Faqih",
+   "governorate_fa": "حدیده",
+   "lat": 14.52,
+   "lon": 43.33,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "تهامه در دست حوثی‌ها.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 22,
+   "app_key": "y-fbf7021579b566578154",
+   "name_fa": "جزیره کامران",
+   "name_en": "Kamaran Island",
+   "governorate_fa": "حدیده",
+   "lat": 15.35,
+   "lon": 42.6,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "reported",
+   "note": "جزیره دریای سرخ در دست حوثی‌ها؛ در نوامبر تغییری گزارش نشد.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 23,
+   "app_key": "y-68b944f58b36d0fb4cd1",
+   "name_fa": "شهر البیضا",
+   "name_en": "Al-Bayda city",
+   "governorate_fa": "البیضا",
+   "lat": 13.98,
+   "lon": 45.57,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "حوثی‌ها بیشتر البیضا را در دست دارند؛ ۴ نوامبر اردوگاه امنیت مرکزی هدف حمله هوایی قرار گرفت.",
+   "provenance": "baseline",
+   "source_note": "Anadolu via Tribune, 4 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 24,
+   "app_key": "y-89b4b4425bd74c79d5d0",
+   "name_fa": "رداع",
+   "name_en": "Radaa",
+   "governorate_fa": "البیضا",
+   "lat": 14.42,
+   "lon": 44.85,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "حوثی؛ در نوامبر تغییری گزارش نشد.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 25,
+   "app_key": "y-58705f7703e4251d715b",
+   "name_fa": "شهر مأرب",
+   "name_en": "Marib city",
+   "governorate_fa": "مأرب",
+   "lat": 15.42,
+   "lon": 45.32,
+   "faction": "govt",
+   "control_label": "دولت / ارتش یمن (نفوذ اصلاح)",
+   "confidence": "confirmed",
+   "note": "هرگز سقوط نکرده؛ مرکز نفت و گاز دولت.",
+   "provenance": "baseline",
+   "source_note": "Silent Dossier, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 26,
+   "app_key": "y-d3ec28842dc26dc30e00",
+   "name_fa": "میدان‌های نفت و گاز صافر",
+   "name_en": "Safer oil/gas fields",
+   "governorate_fa": "مأرب",
+   "lat": 15.55,
+   "lon": 45.15,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "confirmed",
+   "note": "منطقه انرژی مأرب در دست دولت.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 27,
+   "app_key": "y-0c187dfe55edd805d2fb",
+   "name_fa": "صرواح (غرب مأرب)",
+   "name_en": "Sirwah (W Marib)",
+   "governorate_fa": "مأرب",
+   "lat": 15.45,
+   "lon": 44.85,
+   "faction": "contested",
+   "control_label": "مورد مناقشه (حاشیه حوثی / دولت)",
+   "confidence": "contested",
+   "note": "جبهه دیرینه غرب شهر مأرب؛ در نوامبر گزارش قاطعی منتشر نشد.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 28,
+   "app_key": "y-b04a7e317a1c7e940751",
+   "name_fa": "اردوگاه نظامی ماس",
+   "name_en": "Mas Military Camp",
+   "governorate_fa": "مأرب",
+   "lat": 15.55,
+   "lon": 44.85,
+   "faction": "contested",
+   "control_label": "دولت در حال پیشروی / مورد مناقشه",
+   "confidence": "reported",
+   "note": "نیروهای دولتی ۹ نوامبر نزدیک ماس (حدود ۵۰ کیلومتری جنوب الحزم) با حوثی‌ها درگیر شدند؛ پیشروی‌ها ۱۲ نوامبر ادامه یافت.",
+   "provenance": "baseline",
+   "source_note": "ISW, 9 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 29,
+   "app_key": "y-393a432be7ce1ef0ee2f",
+   "name_fa": "وادی حلحلان",
+   "name_en": "Wadi Halhalan",
+   "governorate_fa": "مأرب",
+   "lat": 15.6,
+   "lon": 44.95,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "reported",
+   "note": "پیشروی دولت ۶ نوامبر؛ ضدحمله حوثی‌ها ۷ نوامبر دفع شد.",
+   "provenance": "baseline",
+   "source_note": "ISW, 7 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 30,
+   "app_key": "y-572a9ee28b54a94a625b",
+   "name_fa": "جبل حویشیان",
+   "name_en": "Jabal Huwayshiyan",
+   "governorate_fa": "مرز مأرب/جوف",
+   "lat": 15.85,
+   "lon": 44.9,
+   "faction": "contested",
+   "control_label": "مورد مناقشه",
+   "confidence": "reported",
+   "note": "درگیری شدید ۱ نوامبر؛ دولت پیشروی حوثی‌ها را دفع کرد.",
+   "provenance": "baseline",
+   "source_note": "ISW map, 1 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 31,
+   "app_key": "y-86c4a43cd258d77289b3",
+   "name_fa": "جبل دهیده",
+   "name_en": "Jabal Dahida",
+   "governorate_fa": "مرز جوف/مأرب",
+   "lat": 16.1,
+   "lon": 44.85,
+   "faction": "govt",
+   "control_label": "دولت (گزارش تصرف)",
+   "confidence": "reported",
+   "note": "ادعای دولت ۴ نوامبر (الجزیره)؛ تصاویر مکان‌یابی‌شده ۷ نوامبر (ISW)؛ ادعای پیشروی بیشتر ۱۶ نوامبر — فقط ادعای دولت، با پشتیبانی تصاویر.",
+   "provenance": "baseline",
+   "source_note": "Al Jazeera 4 & 16 Nov; ISW 7 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 32,
+   "app_key": "y-ece8800296d85f9ca86b",
+   "name_fa": "الحزم (مرکز جوف)",
+   "name_en": "Al-Hazm (Jawf capital)",
+   "governorate_fa": "الجوف",
+   "lat": 16.16,
+   "lon": 44.78,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "تا ۱۶ نوامبر همچنان حوثی؛ عملیات شکل‌دهی دولت برای بازپس‌گیری آن را نگرفته است.",
+   "provenance": "baseline",
+   "source_note": "Research report, 16 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 33,
+   "app_key": "y-22d2aafc7f6cd3f89f02",
+   "name_fa": "الیتمه / اردوگاه لبنات",
+   "name_en": "Al-Yatma / Labanat Camp",
+   "governorate_fa": "الجوف",
+   "lat": 16.48,
+   "lon": 44.62,
+   "faction": "contested",
+   "control_label": "ادعای دولت / مورد مناقشه",
+   "confidence": "reported",
+   "note": "شورای رهبری در اکتبر ادعای تصرف کرد؛ به‌طور مستقل تأیید نشده است.",
+   "provenance": "baseline",
+   "source_note": "2026 Yemen offensives summary",
+   "updated_at": null
+  },
+  {
+   "external_id": 34,
+   "app_key": "y-3983fb049499ee1dd249",
+   "name_fa": "حریب",
+   "name_en": "Harib",
+   "governorate_fa": "مأرب",
+   "lat": 15.07,
+   "lon": 45.2,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "reported",
+   "note": "دولت ۱۳ اکتبر ادعای مواضعی در شمال حریب کرد — فقط ادعای دولت.",
+   "provenance": "baseline",
+   "source_note": "Al Jazeera recap, 7 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 35,
+   "app_key": "y-a0e2f71d1c34f74f41ba",
+   "name_fa": "سمده / وادی عبیده",
+   "name_en": "Samdah / Wadi Abidah",
+   "governorate_fa": "مأرب",
+   "lat": 15.5,
+   "lon": 45.5,
+   "faction": "aqap",
+   "control_label": "حضور القاعده / دولت اسمی",
+   "confidence": "reported",
+   "note": "«حضور عمده القاعده» در سمده و امتداد شمال‌شرقی وادی عبیده؛ منطقه مختلط/نامشخص نشان داده شده.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow, Sep 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 36,
+   "app_key": "y-ae2f62d846528d003f50",
+   "name_fa": "شهر تعز",
+   "name_en": "Taiz city",
+   "governorate_fa": "تعز",
+   "lat": 13.58,
+   "lon": 44.02,
+   "faction": "govt",
+   "control_label": "دولت — در محاصره",
+   "confidence": "confirmed",
+   "note": "دژ دولتی، از اوایل اکتبر محاصره‌شده؛ بیش از ۳۲۳ هزار آواره از اوت و حدود ۸۰۰ هزار نفر قطع‌شده دور تعز (OCHA).",
+   "provenance": "baseline",
+   "source_note": "Reuters 26 Oct; OCHA via Al Jazeera, 7 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 37,
+   "app_key": "y-54dc59616dbfa58af45f",
+   "name_fa": "فرودگاه تعز",
+   "name_en": "Taiz Airport",
+   "governorate_fa": "تعز",
+   "lat": 13.68,
+   "lon": 44.1,
+   "faction": "contested",
+   "control_label": "دولت / حاشیه مورد مناقشه",
+   "confidence": "contested",
+   "note": "جبهه شرقی تعز؛ در نوامبر تغییر تأییدشده‌ای گزارش نشد.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 38,
+   "app_key": "y-37e5b00635d71d938264",
+   "name_fa": "التربه (مرکز شمایتین)",
+   "name_en": "Al-Turbah (Shamayatayn centre)",
+   "governorate_fa": "تعز",
+   "lat": 13.22,
+   "lon": 44.12,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "reported",
+   "note": "سپتامبر/اکتبر گرفته شد؛ ISW در ۶ نوامبر از انتقال تجهیزات حوثی‌ها به آن برای تهاجم جنوب‌شرقی خبر داد.",
+   "provenance": "baseline",
+   "source_note": "ISW, 6 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 39,
+   "app_key": "y-7b95beaeebcc05049fa6",
+   "name_fa": "حیجه العبد",
+   "name_en": "Hayjat al-Abd / Hajjat al-Abd",
+   "governorate_fa": "تعز/لحج",
+   "lat": 13.3,
+   "lon": 44.05,
+   "faction": "contested",
+   "control_label": "حوثی / مورد مناقشه",
+   "confidence": "reported",
+   "note": "مسیر پیشروی حوثی‌ها به‌سوی مقاطره؛ ۱۶ نوامبر حملات هوایی گزارش شد.",
+   "provenance": "baseline",
+   "source_note": "ISW 2 Nov; reports 16 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 40,
+   "app_key": "y-2611d7bd5fcbdd118bc6",
+   "name_fa": "الاقرود (جنوب تعز)",
+   "name_en": "Al-Aqroud (S Taiz)",
+   "governorate_fa": "تعز",
+   "lat": 13.45,
+   "lon": 44.05,
+   "faction": "contested",
+   "control_label": "مورد مناقشه",
+   "confidence": "reported",
+   "note": "حضور حوثی‌ها؛ دولت ۴ نوامبر ادعای کمین کرد.",
+   "provenance": "baseline",
+   "source_note": "Tribune / Al-Jumhuriya, 4 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 41,
+   "app_key": "y-bdc09ba8c661dbb71b15",
+   "name_fa": "حیفان",
+   "name_en": "Haifan",
+   "governorate_fa": "تعز",
+   "lat": 13.3,
+   "lon": 44.15,
+   "faction": "contested",
+   "control_label": "حوثی / مورد مناقشه",
+   "confidence": "reported",
+   "note": "درگیری برای رسیدن به کوه عن‌عن در جبهه حیفان، ۳۰ اکتبر.",
+   "provenance": "baseline",
+   "source_note": "JPost / Al-Ain, Oct 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 42,
+   "app_key": "y-8797d796f88e20dc47fe",
+   "name_fa": "جبل حبشی",
+   "name_en": "Jabal Habashi",
+   "governorate_fa": "تعز",
+   "lat": 13.55,
+   "lon": 43.95,
+   "faction": "houthi",
+   "control_label": "حوثی (ادعاشده)",
+   "confidence": "reported",
+   "note": "حوثی‌ها ۹ اکتبر پس از عقب‌نشینی شورای رهبری ادعای تصرف کردند — فقط ادعای حوثی‌ها.",
+   "provenance": "baseline",
+   "source_note": "2026 offensives reports, Oct 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 43,
+   "app_key": "y-7f0eb13153b835c14d70",
+   "name_fa": "الوازعیه",
+   "name_en": "Al-Waziyah",
+   "governorate_fa": "تعز",
+   "lat": 13.15,
+   "lon": 43.85,
+   "faction": "govt",
+   "control_label": "دولت (ادعاشده)",
+   "confidence": "reported",
+   "note": "دولت در اکتبر ادعای مواضع کوهستانی کرد — فقط ادعای دولت.",
+   "provenance": "baseline",
+   "source_note": "Al Jazeera maps, 13 Oct 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 44,
+   "app_key": "y-4f398c6a99593e8fae55",
+   "name_fa": "مخا / بندر المخا",
+   "name_en": "Mokha / Al-Mukha port",
+   "governorate_fa": "تعز",
+   "lat": 13.32,
+   "lon": 43.24,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "۱۰ سپتامبر از مقاومت ملی گرفته شد؛ ادعای بازپس‌گیری اکتبر رد شد؛ رویترز ۱۶ نوامبر: بازپس گرفته نشده است.",
+   "provenance": "baseline",
+   "source_note": "Reuters 16 Nov; PolGeoNow",
+   "updated_at": null
+  },
+  {
+   "external_id": 45,
+   "app_key": "y-afcd18f2e8176af4dd85",
+   "name_fa": "شهر ذباب",
+   "name_en": "Dhubab town",
+   "governorate_fa": "تعز",
+   "lat": 12.68,
+   "lon": 43.42,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "عقب‌نشینی دولت ۱۵ نوامبر تأیید شده؛ تصرف توسط خبرنگار مستقل یمنی از طریق ISW گزارش شد.",
+   "provenance": "baseline",
+   "source_note": "ISW, 15 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 46,
+   "app_key": "y-1353db59aa3ff8d44a7b",
+   "name_fa": "فرودگاه ذباب (ذوقر)",
+   "name_en": "Dhubab Airport (Zuqar)",
+   "governorate_fa": "تعز",
+   "lat": 12.65,
+   "lon": 43.45,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "confirmed",
+   "note": "دولت از ۵ اکتبر تا ۱۵ نوامبر در دست داشت؛ ۱۵ نوامبر طبق بیانیه نیروهای مسلح جنوب عقب‌نشینی کرد.",
+   "provenance": "baseline",
+   "source_note": "Southern Armed Forces statement via South24 / ISW, 15 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 47,
+   "app_key": "y-ec28a89f6519cab616ed",
+   "name_fa": "تنگه باب‌المندب (ساحل یمن)",
+   "name_en": "Bab el-Mandeb Strait (Yemeni shore)",
+   "governorate_fa": "تعز/لحج",
+   "lat": 12.58,
+   "lon": 43.33,
+   "faction": "houthi",
+   "control_label": "حوثی (مسلط بر تنگه)",
+   "confidence": "confirmed",
+   "note": "عقب‌نشینی دولت ۱۵ نوامبر، زمین‌های مشرف به تنگه را در دست حوثی‌ها گذاشت.",
+   "provenance": "baseline",
+   "source_note": "Reuters, 15–16 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 48,
+   "app_key": "y-3517ee981226ca97a547",
+   "name_fa": "جزیره میون / پریم",
+   "name_en": "Mayyun / Perim Island",
+   "governorate_fa": "تعز (تنگه)",
+   "lat": 12.66,
+   "lon": 43.4,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "reported",
+   "note": "حوثی از ۱۱ سپتامبر؛ ادعای بازپس‌گیری دولت در ۹ اکتبر، ۱۰ اکتبر از سوی رسانه حوثی رد شد و هرگز تأیید نشد.",
+   "provenance": "baseline",
+   "source_note": "Strategic Energy Map; South24, 7 Oct 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 49,
+   "app_key": "y-0c5ae29321b37e767d45",
+   "name_fa": "جزیره حنیش بزرگ",
+   "name_en": "Greater Hanish Island",
+   "governorate_fa": "حدیده (دریای سرخ)",
+   "lat": 13.73,
+   "lon": 42.73,
+   "faction": "houthi",
+   "control_label": "حوثی (ادعاشده)",
+   "confidence": "reported",
+   "note": "ادعای ۱۱ سپتامبر بر پایه یک مقام مورد استناد AFP؛ به‌طور مستقل تأیید نشده.",
+   "provenance": "baseline",
+   "source_note": "AFP-cited official, 11 Sep 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 50,
+   "app_key": "y-f4aab945421f3ecd93ce",
+   "name_fa": "جزیره حنیش کوچک",
+   "name_en": "Lesser Hanish Island",
+   "governorate_fa": "حدیده (دریای سرخ)",
+   "lat": 13.55,
+   "lon": 42.95,
+   "faction": "houthi",
+   "control_label": "حوثی (ادعاشده)",
+   "confidence": "reported",
+   "note": "مانند حنیش بزرگ: ادعای تک‌منبعی، تأییدنشده.",
+   "provenance": "baseline",
+   "source_note": "AFP-cited official, 11 Sep 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 51,
+   "app_key": "y-2ebbafec16a6aaeea310",
+   "name_fa": "پایگاه العمری (منطقه ذباب)",
+   "name_en": "Al-Omari Base (Dhubab area)",
+   "governorate_fa": "تعز",
+   "lat": 12.7,
+   "lon": 43.5,
+   "faction": "houthi",
+   "control_label": "حوثی (ادعاشده)",
+   "confidence": "reported",
+   "note": "OSINT613 در ۱۵ نوامبر العمری را میان نقاط بازپس‌گرفته‌شده حوثی‌ها آورد — OSINT کم‌اطمینان، در رویترز/ISW نیست.",
+   "provenance": "baseline",
+   "source_note": "OSINT613, 15 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 52,
+   "app_key": "y-f24f0f1ea1f8711c040d",
+   "name_fa": "جبل کهبوب",
+   "name_en": "Jabal Kahbub",
+   "governorate_fa": "تعز/لحج",
+   "lat": 12.72,
+   "lon": 43.55,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "reported",
+   "note": "۱۵ نوامبر طبق خبرنگار مستقل از طریق ISW گرفته شد؛ جبهه کهبوب سپتامبر–اکتبر فعال بود.",
+   "provenance": "baseline",
+   "source_note": "ISW, 15 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 53,
+   "app_key": "y-6122f1316d6ca48a4d48",
+   "name_fa": "جبل الکاب (نزدیک کهبوب)",
+   "name_en": "Jabal al-Kab (near Kahbub)",
+   "governorate_fa": "لحج",
+   "lat": 12.85,
+   "lon": 43.65,
+   "faction": "contested",
+   "control_label": "مورد مناقشه",
+   "confidence": "reported",
+   "note": "دولت ۹ نوامبر بازپس گرفت (ISW)؛ پیشروی حوثی‌ها ۱۵ نوامبر در همان منطقه — وضعیت ۱۶ نوامبر نامشخص.",
+   "provenance": "baseline",
+   "source_note": "ISW, 9 & 15 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 54,
+   "app_key": "y-a204d41dec515f7ecad5",
+   "name_fa": "شهر عدن",
+   "name_en": "Aden city",
+   "governorate_fa": "عدن",
+   "lat": 12.8,
+   "lon": 45.03,
+   "faction": "govt",
+   "control_label": "دولت / نیروهای مسلح جنوب",
+   "confidence": "confirmed",
+   "note": "پایتخت موقت؛ ایست‌های بازرسی و استحکامات کیسه‌شنی ۱۳ تا ۱۶ نوامبر — سقوط نکرده است.",
+   "provenance": "baseline",
+   "source_note": "Reuters / AFP, 13–16 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 55,
+   "app_key": "y-2f16ca409a1d030e1e95",
+   "name_fa": "فرودگاه بین‌المللی عدن",
+   "name_en": "Aden Intl Airport",
+   "governorate_fa": "عدن",
+   "lat": 12.83,
+   "lon": 45.03,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "confirmed",
+   "note": "دولتی؛ حملات موشکی حوثی‌ها در اکتبر/نوامبر ادعا شد، تصرفی رخ نداد.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 56,
+   "app_key": "y-4a216ca4cf38bc8eaf1a",
+   "name_fa": "اردوگاه رأس عباس (غرب عدن)",
+   "name_en": "Ras Abbas Camp (W Aden)",
+   "governorate_fa": "عدن",
+   "lat": 12.78,
+   "lon": 44.9,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "reported",
+   "note": "حوثی‌ها ۱۳ نوامبر ادعای حمله موشکی/پهپادی کردند؛ اردوگاه همچنان دولتی است.",
+   "provenance": "baseline",
+   "source_note": "South24, 13 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 57,
+   "app_key": "y-6680898fed883e6d29e9",
+   "name_fa": "الحوطه (مرکز لحج)",
+   "name_en": "Al-Houta (Lahj capital)",
+   "governorate_fa": "لحج",
+   "lat": 13.05,
+   "lon": 44.88,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "confirmed",
+   "note": "مرکز دولتی لحج؛ تا ۱۶ نوامبر تصرفی از سوی حوثی‌ها گزارش نشد.",
+   "provenance": "baseline",
+   "source_note": "Research report, 16 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 58,
+   "app_key": "y-236843e049ecf2eda12b",
+   "name_fa": "پایگاه هوایی العند",
+   "name_en": "Al-Anad Air Base",
+   "governorate_fa": "لحج",
+   "lat": 13.18,
+   "lon": 44.76,
+   "faction": "govt",
+   "control_label": "دولت / نیروهای جنوب",
+   "confidence": "confirmed",
+   "note": "پایگاه دولت/جنوب؛ در نوامبر گزارش تصرفی منتشر نشد.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 59,
+   "app_key": "y-ba373fedc8a885c7181b",
+   "name_fa": "طور الباحه",
+   "name_en": "Tor al-Bahah",
+   "governorate_fa": "لحج",
+   "lat": 13.09,
+   "lon": 44.37,
+   "faction": "govt",
+   "control_label": "دولت / حاشیه مورد مناقشه",
+   "confidence": "reported",
+   "note": "درگیری در ورودی اردوگاه ۲ نوامبر (رویترز)؛ دولت نگه داشته، فشار حوثی‌ها ادامه دارد؛ نقشه‌های ISW آن را همسو با دولت نشان می‌دهند.",
+   "provenance": "baseline",
+   "source_note": "Reuters 2 Nov; ISW maps",
+   "updated_at": null
+  },
+  {
+   "external_id": 60,
+   "app_key": "y-44affa63069aad71f4be",
+   "name_fa": "اردوگاه خرز / جبل خرز",
+   "name_en": "Kharaz Camp / Jabal Kharaz",
+   "governorate_fa": "لحج",
+   "lat": 12.92,
+   "lon": 44.32,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "reported",
+   "note": "اوایل ۱۵ نوامبر گرفته شد (شینهوا ۲ منبع؛ AFP شش منبع)؛ حمله موشکی به خرز ۱۲ نوامبر (South24). مختصات تقریبی است — خرز مجموعه اردوگاه/کوهستان است، نه شهر.",
+   "provenance": "baseline",
+   "source_note": "Xinhua; AFP, 15 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 61,
+   "app_key": "y-42f729b41323a751aa96",
+   "name_fa": "خور عمیره",
+   "name_en": "Khor Omairh / Khour al-Umairah",
+   "governorate_fa": "لحج",
+   "lat": 12.85,
+   "lon": 44.18,
+   "faction": "houthi",
+   "control_label": "حوثی (پیشروی ۱۶ نوامبر)",
+   "confidence": "reported",
+   "note": "رویترز ۱۶ نوامبر (۵ منبع نظامی): حوثی‌ها به آن رسیدند، ۲۵ کیلومتر با خطوط دولت در قوعه فاصله دارند؛ حمله موشکی به ایست بازرسی ۱۵ نوامبر.",
+   "provenance": "baseline",
+   "source_note": "Reuters, 16 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 62,
+   "app_key": "y-276e435ff161f03e46ea",
+   "name_fa": "رأس العاره",
+   "name_en": "Ras al-Arah",
+   "governorate_fa": "لحج",
+   "lat": 12.73,
+   "lon": 44.02,
+   "faction": "contested",
+   "control_label": "حوثی گزارش‌شده / تا ۱۲ نوامبر دولتی",
+   "confidence": "contested",
+   "note": "شبا ۱۲ نوامبر: هنوز در کنترل ارتش یمن؛ منابع AFP/حوثی ۱۵ نوامبر: استقرار حوثی‌ها از ذباب تا خور عمیره (بیش از ۱۵۰ کیلومتر، شامل محدوده رأس العاره).",
+   "provenance": "baseline",
+   "source_note": "Sheba 12 Nov; AFP 15 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 63,
+   "app_key": "y-6b91d25bbd43c32c163c",
+   "name_fa": "السقیه",
+   "name_en": "Al-Suqqayah / Al-Suqya",
+   "governorate_fa": "لحج",
+   "lat": 12.8,
+   "lon": 43.95,
+   "faction": "govt",
+   "control_label": "دولت (موضع دفاعی)",
+   "confidence": "reported",
+   "note": "تیپ‌های غول‌پیکر/نیروهای جنوب ۱۵ نوامبر به اینجا عقب نشستند (ISW؛ منبع South24) — در شهرستان المضاربه و رأس العاره.",
+   "provenance": "baseline",
+   "source_note": "ISW; South24, 15 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 64,
+   "app_key": "y-f1300ab9e0b30aab8c07",
+   "name_fa": "قوعه",
+   "name_en": "Qawah",
+   "governorate_fa": "لحج",
+   "lat": 12.9,
+   "lon": 44.55,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "reported",
+   "note": "خطوط دولت ۲۵ کیلومتر شرق خور عمیره (رویترز ۱۶ نوامبر)؛ گزارش‌های شبکه‌های اجتماعی از حفر خندق غول‌پیکرها در قوعه/ام جهر (۱۶ نوامبر، اطمینان پایین).",
+   "provenance": "baseline",
+   "source_note": "Reuters, 16 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 65,
+   "app_key": "y-08f702a30c56f64aad7c",
+   "name_fa": "ام جهر",
+   "name_en": "Am Juhar",
+   "governorate_fa": "لحج",
+   "lat": 12.88,
+   "lon": 44.45,
+   "faction": "govt",
+   "control_label": "دولت (گزارش‌شده)",
+   "confidence": "reported",
+   "note": "خط خندق گزارش‌شده غول‌پیکرها، حدود ۶۰ کیلومتری عدن (خلاصه‌های OSINT/اینستاگرام ۱۶ نوامبر) — تأییدنشده، فقط گزارش‌شده.",
+   "provenance": "baseline",
+   "source_note": "OSINT summaries, 16 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 66,
+   "app_key": "y-b418b80717304d684b9c",
+   "name_fa": "الشط",
+   "name_en": "Al-Shatt",
+   "governorate_fa": "لحج",
+   "lat": 12.95,
+   "lon": 44.15,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "reported",
+   "note": "۱۲ نوامبر گرفته شد (ISW)؛ ۱۵ نوامبر دوباره گرفته‌شده/تأیید شد (ISW).",
+   "provenance": "baseline",
+   "source_note": "ISW, 12 & 15 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 67,
+   "app_key": "y-d40d847dafd78bd0216d",
+   "name_fa": "تقاطع الصریح",
+   "name_en": "Al-Sarih junction",
+   "governorate_fa": "لحج",
+   "lat": 13.02,
+   "lon": 44.25,
+   "faction": "houthi",
+   "control_label": "حوثی / انصارالله",
+   "confidence": "reported",
+   "note": "۱۲ نوامبر گرفته شد (ISW)؛ درگیری در الصریح/الشط، المحاوله و الاغبیره (South24).",
+   "provenance": "baseline",
+   "source_note": "ISW; South24, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 68,
+   "app_key": "y-647cbfa238bc21f30dc6",
+   "name_fa": "المجزه / المزجا",
+   "name_en": "Al-Majza / Al-Mazja",
+   "governorate_fa": "لحج",
+   "lat": 13.05,
+   "lon": 44.3,
+   "faction": "contested",
+   "control_label": "مورد مناقشه",
+   "confidence": "reported",
+   "note": "ادعای بازپس‌گیری دولت ۹ نوامبر (ISW)؛ درگیری قابل‌توجه ۱۴ نوامبر (نقشه ISW).",
+   "provenance": "baseline",
+   "source_note": "ISW, 9 & 14 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 69,
+   "app_key": "y-6cf54c5a568d1ddacce0",
+   "name_fa": "شهر/مرکز شهرستان المضاربه",
+   "name_en": "Al-Mudaribah town/district centre",
+   "governorate_fa": "لحج",
+   "lat": 13,
+   "lon": 44.2,
+   "faction": "houthi",
+   "control_label": "حوثی (گزارش‌شده)",
+   "confidence": "reported",
+   "note": "طبق AFP/شینهوا ۱۵ نوامبر شهرستان گرفته شد؛ پیش‌تر در دست دولت بود.",
+   "provenance": "baseline",
+   "source_note": "AFP / Xinhua, 15 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 70,
+   "app_key": "y-6a53125f41f70dd39002",
+   "name_fa": "المقاطره / سوق الرباح",
+   "name_en": "Al-Maqatirah / Souq al-Roubah",
+   "governorate_fa": "لحج",
+   "lat": 13.28,
+   "lon": 44.1,
+   "faction": "contested",
+   "control_label": "مورد مناقشه — متمایل به حوثی در ۱۵ نوامبر",
+   "confidence": "contested",
+   "note": "حوثی ۱–۲ نوامبر، ادعای بازپس‌گیری دولت ۳–۵ نوامبر، گزارش دوباره تصرف حوثی ۱۵ نوامبر (AFP/شینهوا) — بدون راستی‌آزمایی مستقل.",
+   "provenance": "baseline",
+   "source_note": "ISW; AFP/Xinhua, 15 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 71,
+   "app_key": "y-26bbcade23b709563cd6",
+   "name_fa": "جبل عرف (مقاطره)",
+   "name_en": "Jabal Irf (Maqatirah)",
+   "governorate_fa": "لحج",
+   "lat": 13.25,
+   "lon": 44.08,
+   "faction": "contested",
+   "control_label": "مورد مناقشه",
+   "confidence": "contested",
+   "note": "حوثی‌ها ۲ نوامبر گرفتند (ISW، مکان‌یابی‌شده)؛ دولت ۵ نوامبر ادعای بازپس‌گیری کرد (ISW).",
+   "provenance": "baseline",
+   "source_note": "ISW, 2 & 5 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 72,
+   "app_key": "y-82865cc45a0a2877bde1",
+   "name_fa": "غریب (مقاطره، مسیر تعز–عدن)",
+   "name_en": "Gharib (Maqatirah, Taiz–Aden GLOC)",
+   "governorate_fa": "لحج",
+   "lat": 13.2,
+   "lon": 44.2,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "reported",
+   "note": "دولت ۹ نوامبر پیشروی حوثی‌ها را دفع کرد (ISW).",
+   "provenance": "baseline",
+   "source_note": "ISW, 9 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 73,
+   "app_key": "y-bff6bc4137c4cee0c80e",
+   "name_fa": "الحیمه / الافج (محورهای پیشروی)",
+   "name_en": "Al-Haymah / Al-Afaj (advance axes)",
+   "governorate_fa": "لحج",
+   "lat": 13.05,
+   "lon": 44.35,
+   "faction": "contested",
+   "control_label": "محور پیشروی حوثی / مورد مناقشه",
+   "confidence": "reported",
+   "note": "محورهای حوثی‌ها در ۱۲ نوامبر از المضاربه به الحیمه و الصریح.",
+   "provenance": "baseline",
+   "source_note": "Sheba Intelligence, 12 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 74,
+   "app_key": "y-7c789053ec67fff55354",
+   "name_fa": "شهر الضالع",
+   "name_en": "Dhale city",
+   "governorate_fa": "الضالع",
+   "lat": 13.7,
+   "lon": 44.73,
+   "faction": "govt",
+   "control_label": "دولت (منطقه بقایای شورای انتقالی)",
+   "confidence": "confirmed",
+   "note": "نفوذ نظامی مستقیم شورای انتقالی تا سپتامبر ۲۰۲۶ به محدوده ضالع محدود شده بود؛ نیروهای وفادار به شورای رهبری هم حضور دارند.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow; Sanaa Center via PolGeoNow",
+   "updated_at": null
+  },
+  {
+   "external_id": 75,
+   "app_key": "y-0f975353e243f45a86e4",
+   "name_fa": "قعطبه",
+   "name_en": "Qatabah",
+   "governorate_fa": "الضالع",
+   "lat": 13.88,
+   "lon": 44.65,
+   "faction": "contested",
+   "control_label": "دولت / حاشیه شمالی مورد مناقشه",
+   "confidence": "reported",
+   "note": "گلوله‌باران حوثی‌ها نزدیک اردوگاه العلاله در قعطبه، ۴ نوامبر.",
+   "provenance": "baseline",
+   "source_note": "Tribune, 4 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 76,
+   "app_key": "y-9aa93e3a73dbf21270b6",
+   "name_fa": "اردوگاه الجمیمه (شمال ضالع)",
+   "name_en": "Al-Jumaima Camp (N Dhale)",
+   "governorate_fa": "الضالع",
+   "lat": 13.85,
+   "lon": 44.7,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "reported",
+   "note": "موشک حوثی‌ها ۱۶ نوامبر: ۸ کشته و بیش از ۱۵ زخمی (منبع نظامی به الجزیره).",
+   "provenance": "baseline",
+   "source_note": "Al Jazeera, 16 Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 77,
+   "app_key": "y-b9ee67f02d7488f626e9",
+   "name_fa": "زنجبار (مرکز ابین)",
+   "name_en": "Zinjibar (Abyan capital)",
+   "governorate_fa": "ابین",
+   "lat": 13.13,
+   "lon": 45.38,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "confirmed",
+   "note": "دولتی؛ در نوامبر تغییری گزارش نشد.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 78,
+   "app_key": "y-f1210e5eef992e91ba35",
+   "name_fa": "جعار",
+   "name_en": "Jaar",
+   "governorate_fa": "ابین",
+   "lat": 13.22,
+   "lon": 45.3,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "confirmed",
+   "note": "دولتی؛ در نوامبر تغییری گزارش نشد.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 79,
+   "app_key": "y-e5cdff41989273d0201a",
+   "name_fa": "لودر",
+   "name_en": "Lawdar",
+   "governorate_fa": "ابین",
+   "lat": 13.88,
+   "lon": 45.87,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "reported",
+   "note": "دولتی؛ فعالیت القاعده در ابین گسترده‌تر است، نه تصرف شهر.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 80,
+   "app_key": "y-0f7f6fba94101b2c4269",
+   "name_fa": "المحفد",
+   "name_en": "Mahfad",
+   "governorate_fa": "ابین",
+   "lat": 14.1,
+   "lon": 46.85,
+   "faction": "aqap",
+   "control_label": "دولت اسمی / حاشیه القاعده",
+   "confidence": "reported",
+   "note": "القاعده ۱۳ مارس از کوه‌های شمال محفد به نیروهای شورای رهبری حمله کرد.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow / ACLED",
+   "updated_at": null
+  },
+  {
+   "external_id": 81,
+   "app_key": "y-765392b489f30f4756c0",
+   "name_fa": "امبقیره / البقیره، وادی عمران",
+   "name_en": "Imbaqirah / al-Buqayra, Wadi Omran",
+   "governorate_fa": "ابین",
+   "lat": 13.95,
+   "lon": 45.95,
+   "faction": "aqap",
+   "control_label": "القاعده (AQAP)",
+   "confidence": "reported",
+   "note": "القاعده فوریه ۲۰۲۶ مواضع ضدتروریسم شورای رهبری را گرفت و ۲۷ مه همچنان آشکارا فعال بود.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow / ACLED",
+   "updated_at": null
+  },
+  {
+   "external_id": 82,
+   "app_key": "y-ddb9a7f690c8f0ee089d",
+   "name_fa": "عتق (مرکز شبوه)",
+   "name_en": "Ataq (Shabwah capital)",
+   "governorate_fa": "شبوه",
+   "lat": 14.54,
+   "lon": 46.83,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "confirmed",
+   "note": "دولتی؛ نیروهای همسو با عربستان فوریه ۲۰۲۶ در پایگاه سابق امارات در غرب عتق مستقر شدند.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow, Feb 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 83,
+   "app_key": "y-977905b6e022d8f83ac3",
+   "name_fa": "بلحاف (بندر LNG)",
+   "name_en": "Balhaf (LNG port)",
+   "governorate_fa": "شبوه",
+   "lat": 13.99,
+   "lon": 48.18,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "reported",
+   "note": "ساحل شبوه در دست دولت؛ در نوامبر تغییری گزارش نشد.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 84,
+   "app_key": "y-8571fa37b8988f00c663",
+   "name_fa": "المکلا",
+   "name_en": "Mukalla",
+   "governorate_fa": "حضرموت",
+   "lat": 14.54,
+   "lon": 49.12,
+   "faction": "govt",
+   "control_label": "دولت (نخبگان حضرمی جذب‌شده)",
+   "confidence": "confirmed",
+   "note": "ژانویه ۲۰۲۶ از شورای انتقالی بازپس گرفته شد؛ نیروهای نخبه حضرمی مارس–آوریل ۲۰۲۶ در فرماندهی شورای رهبری جذب شدند.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow",
+   "updated_at": null
+  },
+  {
+   "external_id": 85,
+   "app_key": "y-ca4d8a89282d0a6ee53e",
+   "name_fa": "سیئون",
+   "name_en": "Seiyun",
+   "governorate_fa": "حضرموت",
+   "lat": 15.94,
+   "lon": 48.79,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "confirmed",
+   "note": "ژانویه ۲۰۲۶ از شورای انتقالی بازپس گرفته شد؛ در نوامبر تغییری گزارش نشد.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow",
+   "updated_at": null
+  },
+  {
+   "external_id": 86,
+   "app_key": "y-e6ea47c99e0343d04a44",
+   "name_fa": "تریم",
+   "name_en": "Tarim",
+   "governorate_fa": "حضرموت",
+   "lat": 16.05,
+   "lon": 49,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "confirmed",
+   "note": "دولتی؛ شورای انتقالی دسامبر ۲۰۲۵ گرفت، ژانویه ۲۰۲۶ بازپس گرفته شد.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow",
+   "updated_at": null
+  },
+  {
+   "external_id": 87,
+   "app_key": "y-f596a3201780f3a81a8a",
+   "name_fa": "الغیضه (مرکز مهره)",
+   "name_en": "Al-Ghaydah (Mahra capital)",
+   "governorate_fa": "المهره",
+   "lat": 16.21,
+   "lon": 52.18,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "confirmed",
+   "note": "دولتی؛ ژانویه ۲۰۲۶ از شورای انتقالی بازپس گرفته شد.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow",
+   "updated_at": null
+  },
+  {
+   "external_id": 88,
+   "app_key": "y-d0d3be03a1689ee979f1",
+   "name_fa": "بندر نشطون",
+   "name_en": "Nishtun Port",
+   "governorate_fa": "المهره",
+   "lat": 15.82,
+   "lon": 52.6,
+   "faction": "govt",
+   "control_label": "دولت / شورای رهبری",
+   "confidence": "reported",
+   "note": "ساحل مهره در دست دولت؛ در نوامبر تغییری گزارش نشد.",
+   "provenance": "baseline",
+   "source_note": "Research report, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 89,
+   "app_key": "y-d41d1bf104ee68c9c571",
+   "name_fa": "حدیبو (مرکز سقطرا)",
+   "name_en": "Hadibu (Socotra capital)",
+   "governorate_fa": "سقطرا",
+   "lat": 12.65,
+   "lon": 54.02,
+   "faction": "stc",
+   "control_label": "شورای انتقالی (کم‌حاشیه) / دولت اسمی",
+   "confidence": "contested",
+   "note": "احتمالاً شورای انتقالی همچنان نیروی امنیتی اصلی است و فرماندار با شورای رهبری/عربستان همکاری می‌کند؛ تا نوامبر ۲۰۲۶ تغییر عمده‌ای گزارش نشد.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow, Nov 2026",
+   "updated_at": null
+  },
+  {
+   "external_id": 90,
+   "app_key": "y-028f00e023d854ce1836",
+   "name_fa": "جزیره عبدالکوری",
+   "name_en": "Abd al-Kuri Island",
+   "governorate_fa": "سقطرا",
+   "lat": 12.18,
+   "lon": 52.24,
+   "faction": "unknown",
+   "control_label": "نامشخص / محلی",
+   "confidence": "unknown",
+   "note": "پایگاه امارات طبق گزارش مارس ۲۰۲۶ تخلیه شد؛ مقامات محلی طبق رسانه شورای رهبری با فرماندار همکاری می‌کنند.",
+   "provenance": "baseline",
+   "source_note": "PolGeoNow, Mar 2026",
+   "updated_at": null
+  }
+ ],
+ "frontlines": [
+  {
+   "id": "lahj-bbm",
+   "name_fa": "جبههٔ ساحلی لحج / باب‌المندب (ذباب – خرز – خور عمیره – قاوه)",
+   "name_en": "Lahj / Bab el-Mandeb coastal front",
+   "status_kind": "active",
+   "status_fa": "فعال — فعال‌ترین جبههٔ یمن در این بازه",
+   "trace_kind": "line",
+   "waypoints": [
+    {
+     "lat": 13.32,
+     "lon": 43.25,
+     "name_fa": "مخا (بندر مخا)",
+     "in_line": true
+    },
+    {
+     "lat": 12.7,
+     "lon": 43.4,
+     "name_fa": "شهر ذباب / فرودگاه ذباب",
+     "in_line": true
+    },
+    {
+     "lat": 12.6,
+     "lon": 43.35,
+     "name_fa": "تنگهٔ باب‌المندب / جزیرهٔ پریم (میون)",
+     "in_line": true
+    },
+    {
+     "lat": 12.73,
+     "lon": 43.52,
+     "name_fa": "جبل کهبوب",
+     "in_line": true
+    },
+    {
+     "lat": 12.88,
+     "lon": 43.7,
+     "name_fa": "الشط",
+     "in_line": true
+    },
+    {
+     "lat": 12.98,
+     "lon": 43.82,
+     "name_fa": "المجزه",
+     "in_line": true
+    },
+    {
+     "lat": 13.02,
+     "lon": 44.02,
+     "name_fa": "جبل خرز / اردوگاه خرز",
+     "in_line": true
+    },
+    {
+     "lat": 12.88,
+     "lon": 44.3,
+     "name_fa": "خور عمیره (محدودهٔ السقیه)",
+     "in_line": true
+    },
+    {
+     "lat": 12.78,
+     "lon": 44.55,
+     "name_fa": "قاوه",
+     "in_line": true
+    },
+    {
+     "lat": 12.85,
+     "lon": 44.65,
+     "name_fa": "ام جهر",
+     "in_line": true
+    }
+   ],
+   "side_a_fa": "انصارالله / حوثی‌ها (از جمله یگان‌های مکانیزه و موشکی بالستیک)",
+   "side_b_fa": "نیروهای مسلح جنوب، تیپ‌های غول‌پیکر (عمالقه)، نیروهای سپر میهن و تیپ‌های پشتیبانی و تقویت (همسو با شورای انتقالی) با پشتیبانی هوایی نزدیک عربستان",
+   "confidence_fa": "تأییدشده برای عقب‌نشینی ۱۵ نوامبر و تصرف فرودگاه ذباب؛ گزارش‌شده برای خط دقیق تازه در خور عمیره/قاوه",
+   "summary_fa": "تهاجم ترکیبی حوثی‌ها در جنوب‌شرق لحج از ۱۱ نوامبر با هدف قطع خط ارتباطی زمینی مخا–عدن در جبل خرز آغاز شد. ۱۲ نوامبر حوثی‌ها حدود ۱۲ کیلومتر از المجزه به جنوب‌غرب پیش رفتند و الشط و تقاطع الصریح را گرفتند؛ ۱۳ نوامبر ضدحملهٔ دولت با پشتیبانی هوایی عربستان هر دو را پس گرفت. ۱۵ نوامبر نیروهای مسلح جنوب بازآرایی از فرودگاه ذباب و منطقهٔ باب‌المندب برای دفاع از عدن را اعلام کردند و تیپ‌های غول‌پیکر به السقیه و خور عمیره عقب نشستند؛ حوثی‌ها فرودگاه ذباب، جبل کهبوب و الشط را گرفتند. ۱۶ نوامبر رویترز (از مسیر South24) به نقل از پنج منبع نظامی یمنی: حوثی‌ها وارد خور عمیرهٔ ساحلی شدند و حدود ۲۵ کیلومتر با مواضع دولت در قاوه فاصله دارند — South24 خود نتوانست خطوط تازه را مستقل راستی‌آزمایی کند و این به معنای رسیدن نبرد به عدن نیست. AFP: حوثی‌ها شهرستان‌های المقاطره و المضاربه را گرفتند و در اردوگاه خرز، حدود ۶۰ کیلومتری عدن، مستقر شدند. انصارالله ۱۵ نوامبر باب‌المندب را «کاملاً امن» اعلام کرد، از پیشروی ۳٬۰۰۰ کیلومتر مربعی گفت و مدعی شد برنامه‌ای برای پیشروی به عدن ندارد — ادعایی که گزارش‌های چندمنبعیِ ادامهٔ پیشروی آن را نقض می‌کند (بخش اختلاف ادعاها).",
+   "governorates_fa": "لحج و تعز (ذباب و باب‌المندب اداری در غرب تعزند؛ نبرد و خط تازه در لحج است)",
+   "movement_fa": "پیشروی حوثی‌ها به سمت جنوب‌شرق و شرق در امتداد ساحل و داخل خاک به‌سوی عدن؛ پس از ضدحملهٔ ۱۳ نوامبر دولت که موقتاً آن را برگرداند.",
+   "trace_note_fa": "این رد به یک جادهٔ ساحلی واحد با توالی نقاط نام‌دار و یک عقب‌نشینی تاریخ‌دار تکیه دارد و نزدیک‌ترین رد به خط قابل‌ترسیم است؛ با این حال بخش السقیه/خور عمیره مبهم است: رویترز السقیه را «کمی جنوب ذباب، ۱۵۰ کیلومتر غرب عدن» توصیف می‌کند و South24 آن را در شهرستان المضاربه/رأس العاره در غرب لحج می‌داند — دو توصیف کاملاً سازگار نیستند و رد بالا جغرافیای South24/ISW را دنبال می‌کند. این بخش از کنترل نقطه‌ای استنباط شده، نه خط ترسیم‌شده.",
+   "sources": [
+    {
+     "label": "ISW-CTP Iran Update, 12 Nov 2026",
+     "url": "https://understandingwar.org/research/middle-east/iran-update-november-12-2026/"
+    },
+    {
+     "label": "ISW-CTP Iran Update, 13 Nov 2026",
+     "url": "https://www.criticalthreats.org/analysis/iran-update-november-13-2026"
+    },
+    {
+     "label": "ISW-CTP Iran Update, 15 Nov 2026",
+     "url": "https://understandingwar.org/research/middle-east/iran-update-november-15-2026/"
+    },
+    {
+     "label": "Reuters, 15 Nov 2026 (syndicated)",
+     "url": "https://1027wbow.com/2026/11/15/yemen-government-forces-withdraw-from-area-near-bab-el-mandeb-strait-houthis-in-control/"
+    },
+    {
+     "label": "South24, 16 Nov 2026",
+     "url": "https://south24.org/news/newse.php?nid=5877"
+    },
+    {
+     "label": "AFP, 15–16 Nov 2026 (via Korea Herald)",
+     "url": "https://www.koreaherald.com/article/10938546"
+    },
+    {
+     "label": "Al Jazeera, 16 Nov 2026",
+     "url": "https://www.aljazeera.com/news/2026/11/16/houthis-edge-closer-to-aden-as-yemeni-forces-pull-out-of-bab-al-mandeb?traffic_source=rss"
+    },
+    {
+     "label": "Ansarallah Bab al-Mandab declaration, 15 Nov 2026 (Palestine Chronicle, search-index summary)",
+     "url": "https://www.palestinechronicle.com/ansarallah-declares-bab-al-mandab-secure-reports-3000-square-kilometer-advance/"
+    },
+    {
+     "label": "Ansarallah claim — Aden encirclement, 13 Nov 2026 (PressTV via GlobalSecurity)",
+     "url": "https://www.globalsecurity.org/military/library/news/2026/11/mil-261113-presstv04.htm"
+    }
+   ]
+  },
+  {
+   "id": "taiz",
+   "name_fa": "جبههٔ محاصرهٔ شهر تعز و المقاطره / التربه",
+   "name_en": "Taiz city siege front and al-Maqatirah / al-Turbah",
+   "status_kind": "besieged",
+   "status_fa": "فعال / در محاصره — تعز از اوایل اکتبر محاصره است و محاصره تا ۱۷ نوامبر ادامه داشت",
+   "trace_kind": "ring",
+   "waypoints": [
+    {
+     "lat": 13.6,
+     "lon": 43.95,
+     "name_fa": "جبل حان (غرب تعز)",
+     "in_line": true
+    },
+    {
+     "lat": 13.58,
+     "lon": 44.02,
+     "name_fa": "مرکز شهر تعز (جیب دولتی)",
+     "in_line": false
+    },
+    {
+     "lat": 13.45,
+     "lon": 44.05,
+     "name_fa": "الاقرود (جنوب تعز)",
+     "in_line": true
+    },
+    {
+     "lat": 13.42,
+     "lon": 44.15,
+     "name_fa": "الشقب / سنمات / السریری",
+     "in_line": true
+    },
+    {
+     "lat": 13.52,
+     "lon": 44.1,
+     "name_fa": "صبر الموادم",
+     "in_line": true
+    },
+    {
+     "lat": 13.22,
+     "lon": 44.12,
+     "name_fa": "التربه (الشمایتین)",
+     "in_line": true
+    },
+    {
+     "lat": 13.18,
+     "lon": 44.05,
+     "name_fa": "المقاطره (لحج)",
+     "in_line": true
+    },
+    {
+     "lat": 13.05,
+     "lon": 44.38,
+     "name_fa": "طور الباحه",
+     "in_line": true
+    }
+   ],
+   "side_a_fa": "انصارالله / حوثی‌ها",
+   "side_b_fa": "ارتش یمن (محور تعز) و مقاومت مردمی، با پشتیبانی هوایی عربستان/ائتلاف",
+   "confidence_fa": "تأییدشده برای خود محاصره و ادامهٔ درگیری؛ گزارش‌شده/مورد مناقشه برای هر تغییر سرزمینی داخل حلقه",
+   "summary_fa": "شهر تعز از اوایل اکتبر، وقتی حوثی‌ها جادهٔ اصلی تعز–عدن را قطع کردند، در محاصره است. ۱۱ نوامبر در جبهه‌های الشقب و الاقرود (سنمات، السریری) درگیری بود و دولت حملهٔ چندساعتهٔ حوثی‌ها به الاقرود را دفع کرد. ۱۲–۱۴ نوامبر هواپیماهای عربستان تقویت‌های حوثی‌ها را که از التربه (حدود ۳۰ کیلومتری شمال المجزه و منطقهٔ تجمع کلیدی تهاجم لحج) به جنوب می‌رفتند هدف گرفتند. ۱۶ نوامبر دولت مدعی شد موضعی از حوثی‌ها در صبر الموادم را گرفته است — راستی‌آزمایی‌نشده. شهرستان المقاطره محل ادعاهای مستقیماً متناقض است: حوثی‌ها طبق Reuters تا ۲ نوامبر و طبق AFP دوباره ۱۵–۱۶ نوامبر آن را گرفته‌اند، در حالی که دولت ۴ و ۶ نوامبر مدعی توقف پیشروی و بازپس‌گیری مواضع شد — این شهرستان باید «مورد مناقشه» نقشه شود، نه در دست هیچ‌یک از دو طرف. انسانی: حدود ۸۰۰ هزار نفر از اوایل اکتبر دور تعز از کمک قطع شده‌اند (الجزیره/OCHA) و تعز میزبان ۱۴۱٬۰۹۶ آواره از مجموع ۳۳۳٬۱۲۵ آوارهٔ ۱ اوت تا ۱۰ نوامبر است (IOM DTM).",
+   "governorates_fa": "تعز و لحج (شهرستان المقاطره در لحج است؛ التربه در شهرستان الشمایتین تعز)",
+   "movement_fa": "هیچ جابه‌جایی خالص راستی‌آزمایی‌شده‌ای نیست؛ هر دو طرف مدعی موفقیت‌های تاکتیکی‌اند اما خط محاصره به‌طور قابل‌اثبات تکان نخورد.",
+   "trace_note_fa": "این حلقه از یک حلقهٔ محاصره استنباط شده است؛ خود حلقه در هیچ منبعی منتشر نشده. مرکز شهر تعز جیب در دست دولت است و روی حلقه نیست. المقاطره میان ادعاهای مستقیماً متناقض دو طرف، مورد مناقشه است.",
+   "sources": [
+    {
+     "label": "ISW-CTP Iran Update, 13 Nov 2026",
+     "url": "https://www.criticalthreats.org/analysis/iran-update-november-13-2026"
+    },
+    {
+     "label": "ISW-CTP Iran Update, 14 Nov 2026",
+     "url": "https://understandingwar.org/research/middle-east/iran-update-november-14-2026/"
+    },
+    {
+     "label": "Al Jazeera, 7 Nov 2026",
+     "url": "https://www.aljazeera.com/news/2026/11/7/dozens-killed-as-humanitarian-crisis-mounts-in-yemen-what-next-for-war?traffic_source=rss"
+    },
+    {
+     "label": "IOM DTM Displacement Update #18, 11 Nov 2026 (ReliefWeb)",
+     "url": "https://reliefweb.int/report/yemen/yemen-displacement-caused-escalation-western-yemen-update-18-11-november-2026"
+    },
+    {
+     "label": "Sawti, 11 Nov 2026",
+     "url": "https://sawti.eu/en/news/feed-ce1715ee-0c20-4ad6-b6c7-5103501ef3ea"
+    },
+    {
+     "label": "Shafaq News, 14 Nov 2026",
+     "url": "https://www.shafaq.com/en/World/Saudi-Arabia-intercepts-Houthi-drones-amid-Yemen-strikes"
+    }
+   ]
+  },
+  {
+   "id": "marib-jawf",
+   "name_fa": "جبههٔ غرب مأرب (صرواح، جبل دهیده، اردوگاه ماس) و الجوف (الحزم)",
+   "name_en": "Marib west front and al-Jawf (al-Hazm)",
+   "status_kind": "active",
+   "status_fa": "فعال",
+   "trace_kind": "line",
+   "waypoints": [
+    {
+     "lat": 16.15,
+     "lon": 44.78,
+     "name_fa": "الحزم (مرکز الجوف، در دست حوثی‌ها)",
+     "in_line": true
+    },
+    {
+     "lat": 16.05,
+     "lon": 44.85,
+     "name_fa": "رشته‌کوه جبل دهیده",
+     "in_line": true
+    },
+    {
+     "lat": 16.25,
+     "lon": 45.05,
+     "name_fa": "بیر المرازیق",
+     "in_line": true
+    },
+    {
+     "lat": 15.85,
+     "lon": 44.95,
+     "name_fa": "تقاطع الجوف (الجدعان)",
+     "in_line": true
+    },
+    {
+     "lat": 15.62,
+     "lon": 45.12,
+     "name_fa": "اردوگاه نظامی ماس (مجزر)",
+     "in_line": true
+    },
+    {
+     "lat": 15.55,
+     "lon": 45.05,
+     "name_fa": "رغوان / حلحلان",
+     "in_line": true
+    },
+    {
+     "lat": 15.45,
+     "lon": 45.05,
+     "name_fa": "صرواح",
+     "in_line": true
+    },
+    {
+     "lat": 15.42,
+     "lon": 45.32,
+     "name_fa": "شهر مأرب (در دست دولت)",
+     "in_line": true
+    }
+   ],
+   "side_a_fa": "ارتش یمن (مناطق نظامی ۳، ۶ و ۷، سپر ملت/سپر میهن و نیروهای اضطراری)",
+   "side_b_fa": "انصارالله / حوثی‌ها، تقویت‌شده از خولان (صنعا)",
+   "confidence_fa": "گزارش‌شده — پیشروی‌های دولت از منابع دولتی و ISW به نقل از خبرنگاران یمنی آمده، اما موقعیت‌های دقیق تأییدنشده‌اند (شبا صریحاً: «موقعیت‌های دقیق همچنان تأییدنشده‌اند»)",
+   "summary_fa": "۹ نوامبر دولت حوثی‌ها را از مواضع باقی‌مانده در رشته‌کوه جبل دهیده بیرون راند و نزدیک اردوگاه ماس (حدود ۵۰ کیلومتری جنوب الحزم) درگیر شد؛ شبا همان روز از پیشروی حدود ۱۵ کیلومتری دولت به‌سوی بیر المرازیق در شرق الجوف و تقویت حوثی‌ها از خولان از مسیر خولان–صرواح به المخدره خبر داد. ۱۲ نوامبر ISW این پیشروی‌ها را عملیات شکل‌دهی برای بازپس‌گیری الحزم خواند و حوثی‌ها مدعی دو موشک بالستیک به مناطق تجمع دولت در الجوف و شمال‌غرب مأرب شدند. ادعای دولت در ۱۷ نوامبر مبنی بر کنترل ارتفاعات الدهیده به نظر بازنشر ادعای ۹ نوامبر است، نه پیشروی تازه. گزارش گاردین (۱۶ نوامبر) از عقب‌نشینی دولت «از بخش‌هایی از مأرب» تک‌منبع و بی‌پشتوانه است — نقشه نشود.",
+   "governorates_fa": "مأرب و الجوف",
+   "movement_fa": "پیشروی گزارش‌شدهٔ دولت به سمت شمال‌غرب/شمال به‌سوی الحزم در اوایل نوامبر تا ۱۲ نوامبر؛ ضدحمله‌ها و حملات موشکی حوثی‌ها به مناطق تجمع دولت؛ هیچ تغییر راستی‌آزمایی‌شده‌ای در ۱۳–۱۷ نوامبر نیست.",
+   "trace_note_fa": "این رد از نام کوه‌ها و اردوگاه‌ها استنباط شده است؛ شبا صریحاً می‌گوید موقعیت‌های دقیق در دست دولت تأییدنشده‌اند.",
+   "sources": [
+    {
+     "label": "ISW-CTP Iran Update, 9 Nov 2026",
+     "url": "https://understandingwar.org/research/middle-east/iran-update-november-9-2026/"
+    },
+    {
+     "label": "ISW-CTP Iran Update, 12 Nov 2026",
+     "url": "https://understandingwar.org/research/middle-east/iran-update-november-12-2026/"
+    },
+    {
+     "label": "Sheba Intelligence, 9 Nov 2026",
+     "url": "https://shebaintelligence.uk/yemeni-government-forces-advance-in-al-jawf-as-houthis-reinforce-marib-and-adjust-battlefield-tactics"
+    },
+    {
+     "label": "Yemen Monitor (Marib/al-Jawf)",
+     "url": "https://www.yemenmonitor.com/en/Details/ArtMID/908/ArticleID/187544"
+    },
+    {
+     "label": "The Guardian, 16 Nov 2026 — Marib pullback claim (contested, single-source)",
+     "url": "https://worldrightnowlive.com/story/saudi-arabia-strategy-challenged-by-anti-houthi-forces-in-yemen"
+    }
+   ]
+  },
+  {
+   "id": "hodeidah",
+   "name_fa": "ساحل حدیده / تهامه",
+   "name_en": "Hodeidah / Tihama coast",
+   "status_kind": "static",
+   "status_fa": "ایستا (در دست حوثی‌ها) در ۱۲–۱۷ نوامبر؛ فقط حملات هوایی، بدون حرکت زمینی گزارش‌شده",
+   "trace_kind": "points",
+   "waypoints": [
+    {
+     "lat": 14.8,
+     "lon": 42.95,
+     "name_fa": "شهر حدیده",
+     "in_line": false
+    },
+    {
+     "lat": 14.4,
+     "lon": 43.05,
+     "name_fa": "الفازه",
+     "in_line": false
+    },
+    {
+     "lat": 14.2,
+     "lon": 43.3,
+     "name_fa": "زبید",
+     "in_line": false
+    },
+    {
+     "lat": 13.95,
+     "lon": 43.45,
+     "name_fa": "حیس",
+     "in_line": false
+    },
+    {
+     "lat": 13.45,
+     "lon": 43.25,
+     "name_fa": "الخوخه",
+     "in_line": false
+    },
+    {
+     "lat": 13.32,
+     "lon": 43.25,
+     "name_fa": "مخا",
+     "in_line": false
+    }
+   ],
+   "side_a_fa": "انصارالله / حوثی‌ها (شهر و بندر حدیده، الخوخه، حیس و مخا را در دست دارند)",
+   "side_b_fa": "نیروهای همسو با دولت (مقاومت ملی / عناصر تیپ‌های غول‌پیکر، نیروهای استان حدیده)",
+   "confidence_fa": "گزارش‌شده برای کنترل حوثی‌ها بر ساحل؛ برای این بازه هیچ رد قابل‌اعتمادی از خط جبهه وجود ندارد",
+   "summary_fa": "۴ نوامبر استاندار حدیده از «درگیری شدید» در ساحل غربی و هدف دولت برای بازپس‌گیری شهرستان‌های باقی‌مانده در عملیات «طلوع یمن» گفت و بیشتر آوارگان از الخوخه، حیس و مخا گریخته بودند. ۱۶ نوامبر المسیره (از مسیر مهر) از حملهٔ هوایی به فرودگاه بین‌المللی حدیده خبر داد؛ جزئیات تلفات یا خسارت فرودگاه منتشر نشد. سریع ۱۷ نوامبر مدعی بیش از ۱۰۰ حملهٔ عربستان در ۲۴ ساعت از جمله در حدیده شد — راستی‌آزمایی‌نشده.",
+   "governorates_fa": "الحدیده و تعز (مخا در انتهای جنوبی — جبههٔ ۱)",
+   "movement_fa": "هیچ حرکتی نیست.",
+   "trace_note_fa": "از این نقاط خط زمینی کشیده نمی‌شود؛ این‌ها فقط شهرهای ساحلی در دست حوثی‌ها را نشان می‌دهند، نه یک خط جبهه.",
+   "sources": [
+    {
+     "label": "Arab News, 4 Nov 2026 (Hodeidah)",
+     "url": "https://www.arabnews.com/middle-east/hodeidah-governor-fierce-fighting-on-yemens-western-coast-as-forces-press-ahead-to-restore-state-control-3009789"
+    },
+    {
+     "label": "Mehr News, 16 Nov 2026 (Al-Masirah: Hodeidah airport strike)",
+     "url": "https://en.mehrnews.com/news/249436/Fresh-Saudi-air-raids-across-Yemen-kill-2-wound-8"
+    }
+   ]
+  },
+  {
+   "id": "dhale",
+   "name_fa": "الضالع / قعطبه",
+   "name_en": "Dhale / Qatabah",
+   "status_kind": "static",
+   "status_fa": "ایستا / مورد مناقشه، همراه با یک حملهٔ موشکی — تغییر خط زمینی در ۱۲–۱۷ نوامبر گزارش نشد",
+   "trace_kind": "points",
+   "waypoints": [
+    {
+     "lat": 13.7,
+     "lon": 44.73,
+     "name_fa": "شهر الضالع",
+     "in_line": false
+    },
+    {
+     "lat": 13.85,
+     "lon": 44.65,
+     "name_fa": "قعطبه",
+     "in_line": false
+    },
+    {
+     "lat": 13.9,
+     "lon": 44.6,
+     "name_fa": "اردوگاه الجمیمه / محدودهٔ مریس",
+     "in_line": false
+    }
+   ],
+   "side_a_fa": "انصارالله / حوثی‌ها",
+   "side_b_fa": "نیروهای جنوب همسو با دولت (کمربند امنیتی / نیروهای مسلح جنوب)",
+   "confidence_fa": "گزارش‌شده برای حملهٔ موشکی؛ هیچ رد قابل‌اعتمادی وجود ندارد",
+   "summary_fa": "۴ نوامبر موشک بالستیک حوثی‌ها به اردوگاه العلاله در شهرستان قعطبه (شمال الضالع) خورد: آمار اولیهٔ South24 هفت کشته و ۵۰ زخمی از نیروهای تازه‌نفس بود؛ آمارهای بعدی متناقض‌اند (۱۴ کشته و بیش از ۳۰ زخمی در یک گزارش، ۱۱ کشته و حدود ۶۰ زخمی در گزارشی دیگر) — بازه به کار ببرید، نه عدد واحد. ۱۷ نوامبر موشک حوثی‌ها به تجمع نیروهای تازه‌نفس در اردوگاه الجمیمه در شمال الضالع خورد: ۸ کشته به گفتهٔ یک منبع نظامی و ارقام بالاتر در رسانه‌های دیگر یمنی؛ آمار رسمی‌ای منتشر نشد.",
+   "governorates_fa": "الضالع و مرز لحج",
+   "movement_fa": "هیچ حرکتی نیست.",
+   "trace_note_fa": "فقط نقاط رویداد ثبت شده است؛ اردوگاه العلاله نزدیک قعطبه است و مختصات جداگانه‌ای ندارد — مختصاتی برای آن ساخته نشده است.",
+   "sources": [
+    {
+     "label": "South24, 4 Nov 2026 (Qatabah)",
+     "url": "https://south24.org/news/newse.php?nid=5846"
+    },
+    {
+     "label": "Al Jazeera liveblog, 16–17 Nov 2026 (search-index summary)",
+     "url": "https://1-e8259.azureedge.net/amp/news/liveblog/2026/11/16/live-houthis-advance-in-yemen-as-tankers-hit-sea-mines-in-strait-of-hormuz"
+    }
+   ]
+  },
+  {
+   "id": "bayda",
+   "name_fa": "مرز البیضا",
+   "name_en": "Al-Bayda border",
+   "status_kind": "static",
+   "status_fa": "ایستا / گلوله‌باران و حملات هوایی فعال، بدون تغییر خط در ۱۲–۱۷ نوامبر",
+   "trace_kind": "points",
+   "waypoints": [
+    {
+     "lat": 13.98,
+     "lon": 45.57,
+     "name_fa": "شهر البیضا",
+     "in_line": false
+    },
+    {
+     "lat": 14.42,
+     "lon": 44.85,
+     "name_fa": "رداع",
+     "in_line": false
+    }
+   ],
+   "side_a_fa": "انصارالله / حوثی‌ها (بیشتر البیضا را در دست دارند)",
+   "side_b_fa": "نیروهای دفاع شبوه، یگان‌های منطقهٔ سبأ و دیگر تشکل‌های همسو با دولت",
+   "confidence_fa": "گزارش‌شده برای کنترل حوثی‌ها بر بیشتر استان؛ هیچ رد قابل‌اعتمادی وجود ندارد",
+   "summary_fa": "۲ نوامبر شورای رهبری استانداران تازه‌ای برای البیضا و الجوف گماشت؛ حوثی‌ها بیشتر البیضا را در دست دارند و الجوف تقسیم‌شده است. ۴ نوامبر چهار حملهٔ هوایی انبارهای سلاح و خودروها را در اردوگاه امنیت مرکزی شهر البیضا هدف گرفت. ۱۰–۱۲ نوامبر نیروهای دفاع شبوه و یگان‌های منطقهٔ سبأ «عملیات علیه تحرکات و منابع آتش حوثی‌ها» در البیضا را ادامه دادند؛ مجموع حملات دولت در آن روزها (۸۷۷ حمله در ۱۱ نوامبر و ۷۰۳ حمله در ۱۲ نوامبر) الجوف، مأرب، البیضا و تعز را پوشش می‌داد، بدون نام مکان یا ادعای سرزمینی مشخص در البیضا.",
+   "governorates_fa": "البیضا (هم‌مرز با شبوه، مأرب، الضالع، لحج، ابین، اب، ذمار و صنعا)",
+   "movement_fa": "هیچ حرکتی نیست.",
+   "trace_note_fa": "هیچ رد خط جبهه‌ای از این نقاط قابل ترسیم نیست؛ فقط نقاط مرجع آمده‌اند.",
+   "sources": [
+    {
+     "label": "Arab News, 11 Nov 2026",
+     "url": "https://www.arabnews.pk/middle-east/yemen-army-claims-877-strikes-on-houthi-targets-138-fighters-killed-or-wounded-3006764"
+    },
+    {
+     "label": "Arab News, 12 Nov 2026",
+     "url": "https://www.arabnews.pk/middle-east/yemen-army-claims-703-strikes-on-houthi-targets-about-200-fighters-killed-or-wounded-3006849"
+    }
+   ]
+  },
+  {
+   "id": "saada",
+   "name_fa": "صعده / مرز عربستان",
+   "name_en": "Saada / Saudi border",
+   "status_kind": "static",
+   "status_fa": "ایستا — گلوله‌باران و حملات هوایی، بدون نفوذ زمینی گزارش‌شده در ۱۲–۱۷ نوامبر",
+   "trace_kind": "points",
+   "waypoints": [
+    {
+     "lat": 16.94,
+     "lon": 43.77,
+     "name_fa": "شهر صعده",
+     "in_line": false
+    },
+    {
+     "lat": 17.05,
+     "lon": 43.55,
+     "name_fa": "شدا",
+     "in_line": false
+    },
+    {
+     "lat": 17.05,
+     "lon": 43.45,
+     "name_fa": "رازح",
+     "in_line": false
+    },
+    {
+     "lat": 17.15,
+     "lon": 43.45,
+     "name_fa": "قطابر",
+     "in_line": false
+    },
+    {
+     "lat": 17.35,
+     "lon": 44.05,
+     "name_fa": "باقم",
+     "in_line": false
+    },
+    {
+     "lat": 16.85,
+     "lon": 43.85,
+     "name_fa": "مجز",
+     "in_line": false
+    },
+    {
+     "lat": 17.49,
+     "lon": 44.13,
+     "name_fa": "نجران (سمت عربستان)",
+     "in_line": false
+    },
+    {
+     "lat": 16.89,
+     "lon": 42.55,
+     "name_fa": "جیزان (سمت عربستان)",
+     "in_line": false
+    }
+   ],
+   "side_a_fa": "انصارالله / حوثی‌ها",
+   "side_b_fa": "نیروهای مسلح عربستان / ائتلاف به رهبری عربستان (توپخانه و هوایی)",
+   "confidence_fa": "گزارش‌شده (وزارت بهداشت صنعا از مسیر سبأ؛ المسیره از مسیر منابع دیگر)",
+   "summary_fa": "۷ نوامبر سبأ (صنعا): ۱۸ زخمی بر اثر حملات توپخانه و پهپادی عربستان در شهرستان‌های باقم، شدا و رازح. ۱۱ نوامبر: ۴ کشته و زخمی بر اثر گلوله‌باران در قطابر، شدا و رازح و تیراندازی در المضلاح رازح. ۱۴ نوامبر المسیره: ۴ حملهٔ عربستان در صعده از جمله دو حمله به شبکهٔ مخابرات در شهرستان مجز و گلوله‌باران روستاهای رازح. ۱۶ نوامبر رسانه‌های وابسته به حوثی‌ها از حملات در صعده در میان آمار ۳۷ کشته و زخمی در ۲۴ ساعت در صنعا، تعز، لحج، عمران و صعده خبر دادند — راستی‌آزمایی‌نشده.",
+   "governorates_fa": "صعده (یمن)؛ نجران، جیزان و عسیر (عربستان)",
+   "movement_fa": "هیچ حرکتی نیست؛ «جبهه» اینجا آتش فرامرزی است، نه خط متحرک. حملات دوربرد حوثی‌ها به داخل عربستان (ریاض و زیرساخت نفتی) کارزار حملهٔ جداگانه‌ای است، نه جبههٔ زمینی.",
+   "trace_note_fa": "این‌ها شهرستان‌های مرزی‌اند، نه یک خط؛ خطی از آن‌ها کشیده نمی‌شود.",
+   "sources": [
+    {
+     "label": "Saba News Agency (Sanaa), 7 Nov 2026",
+     "url": "https://saba.ye/en/news3829220.htm?cid=14"
+    },
+    {
+     "label": "Saba News Agency (Sanaa), 11 Nov 2026",
+     "url": "https://saba.ye/en/news3832335.htm?cid=14"
+    },
+    {
+     "label": "Shafaq News, 14 Nov 2026",
+     "url": "https://www.shafaq.com/en/World/Saudi-Arabia-intercepts-Houthi-drones-amid-Yemen-strikes"
+    }
+   ]
+  },
+  {
+   "id": "abyan",
+   "name_fa": "ابین (محدودهٔ القاعده)",
+   "name_en": "Abyan (AQAP area)",
+   "status_kind": "none",
+   "status_fa": "بدون خط جبهه — حضور شورشی، بدون خط ترسیم‌شده و بدون رویداد تاریخ‌دار در ۱۲–۱۷ نوامبر. این جبههٔ حوثی–دولت نیست",
+   "trace_kind": "points",
+   "waypoints": [
+    {
+     "lat": 13.13,
+     "lon": 45.38,
+     "name_fa": "زنجبار (مرکز استان، در دست دولت)",
+     "in_line": false
+    },
+    {
+     "lat": 13.88,
+     "lon": 45.87,
+     "name_fa": "لودر",
+     "in_line": false
+    },
+    {
+     "lat": 13.9,
+     "lon": 46,
+     "name_fa": "مودیه",
+     "in_line": false
+    },
+    {
+     "lat": 13.85,
+     "lon": 46.2,
+     "name_fa": "المحفد",
+     "in_line": false
+    }
+   ],
+   "side_a_fa": "القاعده در شبه‌جزیرهٔ عربستان (AQAP / انصارالشریعه) — حدود ۲٬۰۰۰ جنگجو (سازمان ملل، اوت ۲۰۲۶) به رهبری سعد بن عاطف العولقی",
+   "side_b_fa": "نیروهای جنوب / نیروهای کمربند امنیتی و نیروهای همسو با دولت",
+   "confidence_fa": "پایین / برای این بازه قابل راستی‌آزمایی نیست",
+   "summary_fa": "گزارش اکتبر ۲۰۲۶: القاعده تلفات رهبری را پشت سر گذاشته، پیوندهای قبیله‌ای در ابین و شبوه را بازسازی کرده و پس از فروپاشی معماری ضدتروریسم جنوب (توقف عملیات شورای انتقالی با حملات عربستان، خروج امارات و اعلام انحلال شورای انتقالی در ۹ ژانویهٔ ۲۰۲۶) آشکارتر عمل می‌کند؛ تیم نظارتی سازمان ملل (اوت ۲۰۲۶) تصرف سلاح‌های قابل‌توجه از جمله تجهیزات پارازیت، موشک‌های فروسرخ‌هدایت، سکوهای پدافند هوایی، خمپاره و تیربارهای سنگین را تأیید می‌کند. برای ۱۲–۱۷ نوامبر هیچ حمله، عملیات یا تغییر سرزمینی تاریخ‌داری از القاعده در ابین در منابع بررسی‌شده پیدا نشد. گزارش عملیات شورای انتقالی در مودیه/خبر المراکشه در نمایهٔ جست‌وجو بی‌تاریخ است و به نظر گزارش قدیمی‌تری می‌رسد — به نوامبر ۲۰۲۶ تاریخ نزنید. تنها پیوند حوثی در این بازه، ادعای ضعیف شبکه‌های اجتماعی (۳ نوامبر) دربارهٔ درگیری نیروهای سپر ملی و نیروهای صنعا در الحلال ابین است — تک‌منبع و راستی‌آزمایی‌نشده و برای خطی به کار نرفته است. آوارگی ابین از ۱ اوت: ۱۶٬۲۱۸ نفر (IOM DTM) — شاخص آوارگی است، نه شاخص خط جبهه.",
+   "governorates_fa": "ابین و شبوه (محدودهٔ القاعده هر دو را دربر می‌گیرد)",
+   "movement_fa": "حرکتی احراز نشده است.",
+   "trace_note_fa": "از این نقاط هیچ خط جبهه‌ای کشیده نمی‌شود؛ محدوده‌های مرتبط با القاعده فقط از گزارش‌های پس‌زمینه آمده‌اند.",
+   "sources": [
+    {
+     "label": "Terrorism Portal — AQAP resilience report, 5 Oct 2026",
+     "url": "https://terrorismportal.com/downloads/pdf/analysis-aqap-resilience-full-en.pdf"
+    },
+    {
+     "label": "IOM DTM Displacement Update #18, 11 Nov 2026 (ReliefWeb)",
+     "url": "https://reliefweb.int/report/yemen/yemen-displacement-caused-escalation-western-yemen-update-18-11-november-2026"
+    }
+   ]
+  }
+ ],
+ "advance_arrows": [
+  {
+   "id": "arr-majza-shatt",
+   "label_fa": "پیشروی حوثی‌ها: المجزه ← الشط و تقاطع الصریح (~۱۲ کیلومتر)",
+   "side": "houthi",
+   "kind_fa": "پیشروی",
+   "from_lat": 12.98,
+   "from_lon": 43.82,
+   "to_lat": 12.88,
+   "to_lon": 43.7,
+   "date_fa": "۱۲ نوامبر",
+   "confidence_fa": "تأییدشده (ISW-CTP)",
+   "note_fa": "حوثی‌ها حدود ۱۲ کیلومتر از المجزه به جنوب‌غرب پیش رفتند و الشط و تقاطع الصریح (شهرستان المضاربه و العاره) را گرفتند.",
+   "source_fa": "ISW-CTP، ۱۲–۱۳ نوامبر ۲۰۲۶"
+  },
+  {
+   "id": "arr-counterattack",
+   "label_fa": "ضدحملهٔ دولت: بازپس‌گیری الشط و الصریح",
+   "side": "govt",
+   "kind_fa": "ضدحمله",
+   "from_lat": 12.8,
+   "from_lon": 43.85,
+   "to_lat": 12.88,
+   "to_lon": 43.7,
+   "date_fa": "۱۳ نوامبر",
+   "confidence_fa": "تأییدشده (ISW-CTP)",
+   "note_fa": "ضدحملهٔ دولت با پشتیبانی هوایی نزدیک عربستان و استقرار تازهٔ تیپ‌های پشتیبانی و تقویت (همسو با شورای انتقالی) الشط و الصریح را پس گرفت؛ درگیری نزدیک المجزه ادامه یافت. نقطهٔ شروع پیکان تقریبی است — مسیر دقیق ضدحمله در منابع منتشر نشده است.",
+   "source_fa": "ISW-CTP، ۱۳ نوامبر ۲۰۲۶"
+  },
+  {
+   "id": "arr-dhubab-khor",
+   "label_fa": "پیشروی ساحلی حوثی‌ها: ذباب ← خور عمیره",
+   "side": "houthi",
+   "kind_fa": "پیشروی",
+   "from_lat": 12.7,
+   "from_lon": 43.4,
+   "to_lat": 12.88,
+   "to_lon": 44.3,
+   "date_fa": "۱۵–۱۶ نوامبر",
+   "confidence_fa": "تأییدشده برای عقب‌نشینی ۱۵ نوامبر؛ گزارش‌شده برای رسیدن به خور عمیره",
+   "note_fa": "پس از اعلام بازآرایی نیروهای جنوب از فرودگاه ذباب و باب‌المندب (۱۵ نوامبر)، حوثی‌ها فرودگاه ذباب، جبل کهبوب و الشط را گرفتند و در امتداد ساحل به‌سوی شرق پیش رفتند؛ ۱۶ نوامبر ورود آن‌ها به خور عمیرهٔ ساحلی گزارش شد.",
+   "source_fa": "ISW-CTP و Reuters، ۱۵ نوامبر؛ Reuters از مسیر South24، ۱۶ نوامبر ۲۰۲۶"
+  },
+  {
+   "id": "arr-khor-qawah",
+   "label_fa": "جهت ادامهٔ پیشروی حوثی‌ها: خور عمیره ← به‌سوی قاوه (نرسیده)",
+   "side": "houthi",
+   "kind_fa": "جهت پیشروی گزارش‌شده",
+   "from_lat": 12.88,
+   "from_lon": 44.3,
+   "to_lat": 12.78,
+   "to_lon": 44.55,
+   "date_fa": "۱۶ نوامبر",
+   "confidence_fa": "گزارش‌شده — South24 نتوانست خطوط تازه را مستقل راستی‌آزمایی کند",
+   "note_fa": "حوثی‌ها در خور عمیره حدود ۲۵ کیلومتر با مواضع دولت در قاوه فاصله داشتند؛ این پیکان جهت فشار است، نه رسیدن به قاوه — و به معنای رسیدن نبرد به عدن نیست.",
+   "source_fa": "Reuters از مسیر South24 (پنج منبع نظامی یمنی)، ۱۶ نوامبر ۲۰۲۶"
+  },
+  {
+   "id": "arr-kharaz",
+   "label_fa": "استقرار حوثی‌ها در اردوگاه خرز (~۶۰ کیلومتری عدن)",
+   "side": "houthi",
+   "kind_fa": "پیشروی / استقرار",
+   "from_lat": 12.98,
+   "from_lon": 43.82,
+   "to_lat": 13.02,
+   "to_lon": 44.02,
+   "date_fa": "۱۵–۱۶ نوامبر",
+   "confidence_fa": "گزارش‌شده (AFP، ۱۵–۱۶ نوامبر)",
+   "note_fa": "AFP: حوثی‌ها شهرستان‌های المقاطره و المضاربه را گرفتند و در اردوگاه خرز، حدود ۶۰ کیلومتری عدن، مستقر شدند؛ جبل خرز هدف اصلی تهاجم برای قطع خط ارتباطی مخا–عدن بود.",
+   "source_fa": "AFP، ۱۵–۱۶ نوامبر ۲۰۲۶؛ ISW-CTP، ۱۲ نوامبر ۲۰۲۶"
+  },
+  {
+   "id": "arr-turbah-majza",
+   "label_fa": "حرکت تقویت‌های حوثی‌ها: التربه ← جنوب (به‌سوی المجزه و المضاربه)",
+   "side": "houthi",
+   "kind_fa": "حرکت تقویت (نه تغییر خط)",
+   "from_lat": 13.22,
+   "from_lon": 44.12,
+   "to_lat": 12.98,
+   "to_lon": 43.82,
+   "date_fa": "۱۲–۱۴ نوامبر",
+   "confidence_fa": "گزارش‌شده (ISW-CTP)",
+   "note_fa": "هواپیماهای عربستان تقویت‌های حوثی‌ها را که از التربه (منطقهٔ تجمع، حدود ۳۰ کیلومتری شمال المجزه) به جنوب می‌رفتند هدف گرفتند؛ تقویت‌هایی هم از شهرستان الشمایتین به‌سوی المضاربه و العاره گزارش شد.",
+   "source_fa": "ISW-CTP، ۱۳–۱۴ نوامبر ۲۰۲۶"
+  },
+  {
+   "id": "arr-govt-hazm",
+   "label_fa": "پیشروی دولت به‌سوی الحزم: جبل دهیده و اردوگاه ماس",
+   "side": "govt",
+   "kind_fa": "پیشروی (عملیات شکل‌دهی)",
+   "from_lat": 15.62,
+   "from_lon": 45.12,
+   "to_lat": 16.05,
+   "to_lon": 44.85,
+   "date_fa": "۹–۱۲ نوامبر",
+   "confidence_fa": "گزارش‌شده — موقعیت‌های دقیق تأییدنشده‌اند (شبا)",
+   "note_fa": "دولت حوثی‌ها را از مواضع باقی‌مانده در جبل دهیده بیرون راند و نزدیک اردوگاه ماس (حدود ۵۰ کیلومتری جنوب الحزم) درگیر شد؛ ISW این‌ها را عملیات شکل‌دهی برای بازپس‌گیری الحزم می‌داند. الحزم گرفته نشد.",
+   "source_fa": "ISW-CTP، ۹ و ۱۲ نوامبر؛ شبا اینتلیجنس، ۹ نوامبر ۲۰۲۶"
+  },
+  {
+   "id": "arr-govt-maraziq",
+   "label_fa": "پیشروی دولت به‌سوی بیر المرازیق (~۱۵ کیلومتر، شرق الجوف)",
+   "side": "govt",
+   "kind_fa": "پیشروی",
+   "from_lat": 16.05,
+   "from_lon": 44.85,
+   "to_lat": 16.25,
+   "to_lon": 45.05,
+   "date_fa": "۹ نوامبر",
+   "confidence_fa": "گزارش‌شده (شبا اینتلیجنس)",
+   "note_fa": "شبا: دولت حدود ۱۵ کیلومتر به‌سوی بیر المرازیق پیش رفت؛ حوثی‌ها از الغیل تقویت فرستادند.",
+   "source_fa": "شبا اینتلیجنس، ۹ نوامبر ۲۰۲۶"
+  },
+  {
+   "id": "arr-khawlan-sirwah",
+   "label_fa": "مسیر تقویت حوثی‌ها: خولان ← صرواح ← المخدره (تقاطع الجوف)",
+   "side": "houthi",
+   "kind_fa": "حرکت تقویت (نه تغییر خط)",
+   "from_lat": 15.45,
+   "from_lon": 45.05,
+   "to_lat": 15.85,
+   "to_lon": 44.95,
+   "date_fa": "۹ نوامبر",
+   "confidence_fa": "گزارش‌شده (شبا) — فرماندهی منسوب به «ابو طاها الشرافی» راستی‌آزمایی‌نشده",
+   "note_fa": "تقویت‌های حوثی‌ها از خولان از مسیر خولان–صرواح به المخدره، برای جبهه‌های مأرب و الجدعان (نزدیک تقاطع الجوف، شمال‌غرب مأرب) رسیدند؛ شبا فرماندهی را به «ابو طاها الشرافی» نسبت می‌دهد — موقعیت/فرماندهی راستی‌آزمایی‌نشده.",
+   "source_fa": "شبا اینتلیجنس، ۹ نوامبر ۲۰۲۶"
+  }
+ ],
+ "unit_positions": [
+  {
+   "name_fa": "نیروهای مسلح جنوب",
+   "side": "govt",
+   "location_fa": "فرودگاه ذباب و باب‌المندب ← بازآرایی برای دفاع از عدن",
+   "lat": 12.7,
+   "lon": 43.4,
+   "confidence_fa": "تأییدشده — بیانیهٔ خود نیروها",
+   "note_fa": "۱۵ نوامبر بازآرایی از فرودگاه ذباب و منطقهٔ باب‌المندب برای دفاع از عدن را خودشان اعلام کردند؛ نقطهٔ روی نقشه موضع پیشین (ذباب) است و موضع دقیق تازه در منابع مشخص نشده است.",
+   "source_fa": "بیانیهٔ نیروهای مسلح جنوب؛ ISW-CTP و Reuters، ۱۵ نوامبر ۲۰۲۶",
+   "uncertain": false
+  },
+  {
+   "name_fa": "تیپ‌های غول‌پیکر (عمالقه)",
+   "side": "govt",
+   "location_fa": "السقیه و خور عمیره (مواضع دفاعی تازه)",
+   "lat": 12.88,
+   "lon": 44.3,
+   "confidence_fa": "تأییدشده برای عقب‌نشینی؛ مکان تقریبی",
+   "note_fa": "۱۵ نوامبر به السقیه و خور (خور عمیره) عقب نشستند؛ همان محدوده‌ای که ۱۶ نوامبر پیشروی حوثی‌ها به آن گزارش شد — مواضع دقیق دو طرف در منابع تفکیک نشده است.",
+   "source_fa": "ISW-CTP، ۱۵ نوامبر ۲۰۲۶",
+   "uncertain": true
+  },
+  {
+   "name_fa": "تیپ‌های پشتیبانی و تقویت (همسو با شورای انتقالی)",
+   "side": "govt",
+   "location_fa": "جنوب‌شرق لحج (ضدحملهٔ ۱۳ نوامبر)",
+   "lat": 12.88,
+   "lon": 43.7,
+   "confidence_fa": "گزارش‌شده (ISW-CTP)",
+   "note_fa": "استقرار تازهٔ این تیپ‌ها بخشی از ضدحملهٔ ۱۳ نوامبر بود که الشط و الصریح را پس گرفت؛ موضع دقیق یگان در منابع نام برده نشده و نقطه، محدودهٔ عملیات است.",
+   "source_fa": "ISW-CTP، ۱۳ نوامبر ۲۰۲۶",
+   "uncertain": true
+  },
+  {
+   "name_fa": "نیروهای سپر میهن (سپر ملی)",
+   "side": "govt",
+   "location_fa": "جبههٔ المحاوله، غرب لحج",
+   "lat": 13,
+   "lon": 44.1,
+   "confidence_fa": "فقط ادعای دولت — راستی‌آزمایی‌نشده",
+   "note_fa": "۱۷ نوامبر دولت مدعی شد نیروهای سپر میهن مواضعی در جبههٔ المحاوله در غرب لحج گرفته‌اند؛ از نظر جغرافیایی جدا از خط ساحلی است و عقب‌نشینی ساحلی را برنمی‌گرداند. مختصات این نقطه تقریب پژوهش از محدودهٔ غرب لحج است؛ مکان دقیق جبهه در منبع نیامده است.",
+   "source_fa": "الجزیره، ۱۷ نوامبر ۲۰۲۶ (خلاصهٔ نمایهٔ جست‌وجو)",
+   "uncertain": true
+  },
+  {
+   "name_fa": "یگان‌های مکانیزه و موشکی بالستیک انصارالله",
+   "side": "houthi",
+   "location_fa": "محور تهاجم جنوب‌شرق لحج (المجزه ← ساحل)",
+   "lat": 12.98,
+   "lon": 43.82,
+   "confidence_fa": "گزارش‌شده (ISW-CTP)",
+   "note_fa": "تهاجم ترکیبی ۱۱ نوامبر در جنوب‌شرق لحج با یگان‌های مکانیزه و موشکی بالستیک؛ موشک‌ها ۱۳–۱۴ نوامبر مناطق تجمع دولت در جبل خرز و خور عمیره و شهر عدن (انبارهای تسلیحات ادعاشده) را هدف گرفتند.",
+   "source_fa": "ISW-CTP، ۱۲–۱۴ نوامبر ۲۰۲۶",
+   "uncertain": true
+  },
+  {
+   "name_fa": "منطقهٔ تجمع انصارالله — التربه / الشمایتین",
+   "side": "houthi",
+   "location_fa": "التربه و شهرستان الشمایتین (تعز)",
+   "lat": 13.22,
+   "lon": 44.12,
+   "confidence_fa": "گزارش‌شده (ISW-CTP)",
+   "note_fa": "التربه منطقهٔ تجمع کلیدی حوثی‌ها برای تهاجم لحج بود؛ تقویت‌ها از الشمایتین به‌سوی جنوب (المضاربه و العاره) حرکت کردند و ۱۲–۱۴ نوامبر هدف حملات هوایی عربستان شدند.",
+   "source_fa": "ISW-CTP، ۱۳–۱۴ نوامبر ۲۰۲۶",
+   "uncertain": false
+  },
+  {
+   "name_fa": "ارتش یمن — محور تعز و مقاومت مردمی",
+   "side": "govt",
+   "location_fa": "جیب شهر تعز و جبهه‌های الاقرود/الشقب",
+   "lat": 13.58,
+   "lon": 44.02,
+   "confidence_fa": "تأییدشده برای حضور و محاصره",
+   "note_fa": "نیروهای محور تعز و مقاومت مردمی جیب شهر را نگه داشته‌اند؛ ۱۱ نوامبر حملهٔ چندساعتهٔ حوثی‌ها به الاقرود دفع شد.",
+   "source_fa": "Sawti، ۱۱ نوامبر؛ ISW-CTP، نوامبر ۲۰۲۶",
+   "uncertain": false
+  },
+  {
+   "name_fa": "ارتش یمن — مناطق نظامی ۳، ۶ و ۷، سپر ملت/میهن و نیروهای اضطراری",
+   "side": "govt",
+   "location_fa": "محور غرب مأرب و جنوب الجوف (دهیده، ماس، حلحلان)",
+   "lat": 15.62,
+   "lon": 45.12,
+   "confidence_fa": "گزارش‌شده — موقعیت‌های دقیق تأییدنشده‌اند",
+   "note_fa": "تشکل‌های دولت در عملیات شکل‌دهی به‌سوی الحزم؛ نقطهٔ روی نقشه محدودهٔ اردوگاه ماس است و آرایش دقیق هر منطقهٔ نظامی در منابع علنی تفکیک نشده است — جز این، نامشخص.",
+   "source_fa": "ISW-CTP، ۹–۱۲ نوامبر؛ شبا، ۹ نوامبر ۲۰۲۶",
+   "uncertain": true
+  },
+  {
+   "name_fa": "تقویت‌های انصارالله از خولان",
+   "side": "houthi",
+   "location_fa": "المخدره و جبهه‌های مأرب و الجدعان",
+   "lat": 15.85,
+   "lon": 44.95,
+   "confidence_fa": "گزارش‌شده (شبا) — فرماندهی راستی‌آزمایی‌نشده",
+   "note_fa": "تقویت‌ها از مسیر خولان–صرواح به المخدره رسیدند؛ شبا فرماندهی را به «ابو طاها الشرافی» نسبت می‌دهد (راستی‌آزمایی‌نشده). تنها فرماندهٔ میدانی نام‌برده در کل پژوهش همین مورد است؛ برای بقیهٔ جبهه‌ها نام فرماندهٔ محلی در منابع علنی بررسی‌شده نیامده و نامشخص است.",
+   "source_fa": "شبا اینتلیجنس، ۹ نوامبر ۲۰۲۶",
+   "uncertain": true
+  },
+  {
+   "name_fa": "کمربند امنیتی / نیروهای مسلح جنوب",
+   "side": "govt",
+   "location_fa": "الضالع و قعطبه",
+   "lat": 13.85,
+   "lon": 44.65,
+   "confidence_fa": "گزارش‌شده",
+   "note_fa": "نیروهای جنوب در الضالع/قعطبه در برابر حوثی‌ها؛ اردوگاه‌های العلاله (۴ نوامبر) و الجمیمه (۱۷ نوامبر) هدف موشک قرار گرفتند.",
+   "source_fa": "South24، ۴ نوامبر؛ الجزیره، ۱۷ نوامبر ۲۰۲۶",
+   "uncertain": false
+  },
+  {
+   "name_fa": "نیروهای دفاع شبوه و یگان‌های منطقهٔ سبأ",
+   "side": "govt",
+   "location_fa": "محدودهٔ عملیاتی البیضا",
+   "lat": 13.98,
+   "lon": 45.57,
+   "confidence_fa": "گزارش‌شده (Arab News)",
+   "note_fa": "۱۰–۱۲ نوامبر «عملیات علیه تحرکات و منابع آتش حوثی‌ها» در البیضا؛ موضع دقیق یگان‌ها در منابع نیامده و نقطه، شهر البیضاست.",
+   "source_fa": "Arab News، ۱۱–۱۲ نوامبر ۲۰۲۶",
+   "uncertain": true
+  },
+  {
+   "name_fa": "القاعده (AQAP / انصارالشریعه) — حدود ۲٬۰۰۰ جنگجو",
+   "side": "aqap",
+   "location_fa": "ابین و شبوه (لودر، مودیه، المحفد)",
+   "lat": 13.9,
+   "lon": 46,
+   "confidence_fa": "پایین برای این بازه — بدون رویداد تاریخ‌دار ۱۲–۱۷ نوامبر",
+   "note_fa": "به رهبری سعد بن عاطف العولقی (سازمان ملل، اوت ۲۰۲۶)؛ حضور شورشی پراکنده است، نه موضع ثابت — نقطهٔ روی نقشه فقط محدودهٔ کلی مودیه است.",
+   "source_fa": "تیم نظارتی سازمان ملل، اوت ۲۰۲۶؛ گزارش Terrorism Portal، ۵ اکتبر ۲۰۲۶",
+   "uncertain": true
+  }
+ ],
+ "forces": [
+  {
+   "name": "حوثی / انصارالله",
+   "faction_key": "houthi",
+   "status": "در حال پیشروی در جنوب‌غرب",
+   "body": "شمال‌غرب کامل (صنعا، صعده، عمران، حجه جز میدی، محویت، ریمه، ذمار، اب، حدیده تقریباً کامل)، بیشتر البیضاء، و از سپتامبر–نوامبر: ساحل مخا–ذباب–باب‌المندب–میون و برجستگی تازهٔ لحج (خرز، الشط، خور عمیره). حدود یک‌سوم خاک، اما پرجمعیت‌ترین بخش کشور (Silent Dossier، ۱۴ نوامبر)."
+  },
+  {
+   "name": "دولت / شورای رهبری (PLC)",
+   "faction_key": "govt",
+   "status": "دفاع از عدن و شرق",
+   "body": "عدن، شهر مأرب و شرق مأرب، حضرموت، شبوه، مهره، ابین (ساحل و شهرها)، لحج (الحوطه، طور الباحه، خط قوعه)، ضالع (شهر و جنوب)، شهر تعز (محاصره‌شده). پشتیبانی هوایی ائتلاف سعودی؛ فرمانده نیروهای مشترک سعودی ۱۶ نوامبر با فرمان سلطنتی عوض شد (ژنرال فیاض الرویلی جای سپهبد فهد بن حمد السلمان)."
+  },
+  {
+   "name": "نیروهای مسلح جنوب / تیپ‌های غول‌پیکر",
+   "faction_key": "govt",
+   "status": "هم‌پیمان شورای رهبری — نه ارتش مستقل شورای انتقالی",
+   "body": "واحدهای جنوبی همسو با شورای رهبری. باب‌المندب/ذباب را از اکتبر تا ۱۵ نوامبر نگه داشتند؛ حالا در السقیه، خور و قوعه و در دفاع از عدن مستقرند. عقب‌نشینی ۱۵ نوامبر را خودشان رسماً اعلام کردند."
+  },
+  {
+   "name": "مقاومت ملی (طارق صالح)",
+   "faction_key": "unknown",
+   "status": "عملاً پایان‌یافته",
+   "body": "ساحل غربی را تا ۱۰ سپتامبر نگه داشته بود. PolGeoNow: به نظر می‌رسد پیروزی حوثی‌ها پایان مقاومت ملی بوده؛ صالح به عدن و سپس عربستان گریخت و پس از سپتامبر فعالیتی از آن گزارش نشده است. یک منبع مقاومت ملی به شبا (۱۲ نوامبر) کاهش استقرار را «بازتوزیع دستورگرفته از بالا» خواند، نه رها کردن مواضع — اختلاف حل‌نشده است."
+  },
+  {
+   "name": "شورای انتقالی جنوب (STC)",
+   "faction_key": "stc",
+   "status": "فروپاشیده به‌عنوان قدرت سرزمینی",
+   "body": "قدرت سرزمینی‌اش در ژانویهٔ ۲۰۲۶ فروپاشید (پس‌گرفتن سیئون و مکلا، سقوط عدن ۷ ژانویه). بقایا: نفوذ نظامی در ناحیهٔ ضالع و حضور کم‌رنگ در سقطری. عدن و حضرموت در نوامبر ۲۰۲۶ در دست شورای انتقالی نیستند."
+  },
+  {
+   "name": "القاعده در شبه‌جزیرهٔ عربستان (AQAP)",
+   "faction_key": "aqap",
+   "status": "حضور کوهستانی، بدون شهر",
+   "body": "کوهستان شمال ابین (وادی عمران/امبقیره)، حاشیهٔ محفد و حضور گزارش‌شده نزدیک مأرب (سمده/وادی عبیده)؛ حدود ۲٬۰۰۰ جنگجو (گزارش مأمور سازمان ملل). در نوامبر هیچ شهر یا شهرکی در دست القاعده گزارش نشده است."
+  },
+  {
+   "name": "ائتلاف سعودی",
+   "faction_key": "unknown",
+   "status": "قدرت هوایی و مشاور — کنترل سرزمینی ندارد",
+   "body": "پشتیبانی هوایی نزدیک و مشاوره برای نیروهای دولت/شورای رهبری؛ برای ائتلاف کنترل سرزمینی ترسیم نمی‌شود. شمار حملات هوایی فقط از سوی سخنگوی حوثی‌ها اعلام می‌شود و مستقل راستی‌آزمایی نشده است."
+  }
+ ],
+ "events": [
+  {
+   "external_id": 19,
+   "app_key": "y-event-9400f1b21cb527d7fa3d",
+   "event_date": "2026-11-16",
+   "title_fa": "موشک حوثی‌ها به اردوگاه الجمیمه در ضالع",
+   "detail_fa": "موشک حوثی‌ها به اردوگاه آموزشی الجمیمه در شمال ضالع: ۸ کشته و بیش از ۱۵ زخمی (منبع نظامی به الجزیره). رسانه‌های حوثی از حملات هوایی به فرودگاه حدیده و حیجه العبد در شمایتین (تعز) خبر دادند. الجزیره: دولت ادعای پیشروی بیشتر در جبل دهیده (جوف) کرد.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "Al Jazeera liveblog, 16 Nov",
+   "source_url": "https://www.aljazeera.com/amp/news/liveblog/2026/11/16/iran-war-live-tehran-warns-it-may-strike-first-before-another-us-attack"
+  },
+  {
+   "external_id": 18,
+   "app_key": "y-event-4ec9599fc203d176a301",
+   "event_date": "2026-11-16",
+   "title_fa": "تغییر فرمانده نیروهای مشترک عربستان",
+   "detail_fa": "فرمان سلطنتی: ملک سلمان سپهبد فهد بن حمد السلمان را از فرماندهی نیروهای مشترک برکنار (مشاور وزیر دفاع) و ژنرال فیاض الرویلی، رئیس ستاد کل، را با حفظ سمت به فرماندهی نیروهای مشترک منصوب کرد — به‌طور گسترده واکنش به شکست اخیر خوانده شد.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "Saudi state media via Reuters / South24",
+   "source_url": "https://south24.org/news/newse.php?nid=5877"
+  },
+  {
+   "external_id": 17,
+   "app_key": "y-event-4523540f1504cd17100c",
+   "event_date": "2026-11-16",
+   "title_fa": "رسیدن حوثی‌ها به خور عمیره، ۱۰۰ کیلومتری غرب عدن",
+   "detail_fa": "رویترز با ۵ منبع نظامی: حوثی‌ها به خور عمیره رسیدند — حدود ۱۰۰ کیلومتری غرب عدن و ۲۵ کیلومتر مانده به خطوط دولت در قوعه. تمرکز دولت: تأمین عدن و لحج و سازماندهی دوباره برای بازپس‌گیری. فاصله‌های ۶۰ کیلومتری AFP/شینهوا (محور داخلی خرز) و ۱۰۰ کیلومتری رویترز (محور ساحلی خور عمیره) دو محور متفاوت‌اند، نه تناقض.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "Reuters, 16 Nov",
+   "source_url": "https://www.reuters.com/world/middle-east/houthis-seize-ground-yemens-southern-coast-edge-closer-aden-2026-11-16/"
+  },
+  {
+   "external_id": 23,
+   "app_key": "y-event-535fa30d7e25dd8a49f1",
+   "event_date": "2026-11-15",
+   "title_fa": "ادعای حمله موشکی حوثی‌ها به فرودگاه بین‌المللی ملک خالد و یک مرکز مالی در ریاض",
+   "detail_fa": "سخنگوی نظامی حوثی‌ها، یحیی سریع، روز یکشنبه ۱۵ نوامبر ۲۰۲۶ در بیانیه‌ای اعلام کرد نیروهای مسلح حوثی فرودگاه بین‌المللی ملک خالد و یک مرکز مالی در ریاض، پایتخت عربستان سعودی، را با دو موشک بالستیک هدف قرار داده‌اند و به گفته او این عملیات به هدف خود رسیده است.",
+   "origin": "live",
+   "corroboration": 1,
+   "families": "بیانیه‌های یحیی سریع (سخنگوی نظامی حوثی‌ها)",
+   "source_name": "pakistanarchive.com",
+   "source_url": "https://pakistanarchive.com/houthis-say-missiles-targeted-riyadh-airport-financial-centre/"
+  },
+  {
+   "external_id": 20,
+   "app_key": "y-event-f5ca38f748a1d6eaf726",
+   "event_date": "2026-11-15",
+   "title_fa": "پیشروی حوثی‌ها تا حدود ۷۰ کیلومتری عدن",
+   "detail_fa": "به گفته یک منبع نظامی دولت یمن که به شرط ناشناس ماندن با شین‌هوا صحبت کرد، حوثی‌ها به مواضعی در حدود ۷۰ کیلومتری شهر بندری عدن در جنوب یمن، مقر دولت به رسمیت شناخته‌شده بین‌المللی، پیشروی کرده‌اند. این منبع همچنین گفت نیروهای دولتی مناطق محدود خود را ترک کرده‌اند.",
+   "origin": "live",
+   "corroboration": 1,
+   "families": "شین‌هوا و آسوشیتدپرس",
+   "source_name": "www.bizzbuzz.news",
+   "source_url": "https://www.bizzbuzz.news/international/houthis-advance-to-positions-70-km-from-yemens-aden-1415746"
+  },
+  {
+   "external_id": 16,
+   "app_key": "y-event-b17ef6d19c7a5b1ee83b",
+   "event_date": "2026-11-15",
+   "title_fa": "ادعاهای متقابل دو طرف در روز چرخش",
+   "detail_fa": "یحیی سریع (سخنگوی حوثی‌ها): ۷۵ حمله هوایی/موشکی عربستان در ۲۴ ساعت به صعده، تعز، لحج، جوف و مأرب — فقط ادعای حوثی‌ها. دفتر سیاسی انصارالله: باب‌المندب «کاملاً امن» است و برنامه‌ای برای پیشروی به عدن نیست؛ ادعای تصرف بیش از ۳٬۰۰۰ کیلومتر مربع — فقط ادعای حوثی‌ها و در عمل با گزارش‌های پیشروی رویترز/AFP روز بعد در تناقض. سخنگوی دولت: ۹۰۶ عملیات و ۲۰۱ حوثی «خنثی‌شده» — فقط ادعای دولت. ICRC: حوثی‌ها ۶۰۰ زندانی دولتی را آزاد کردند.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "Shafaq / Al-Masirah; Al Mayadeen; ICRC via AFP",
+   "source_url": "https://www.palestinechronicle.com/ansarallah-declares-bab-al-mandab-secure-reports-3000-square-kilometer-advance/"
+  },
+  {
+   "external_id": 15,
+   "app_key": "y-event-e629fa6598d732768f7c",
+   "event_date": "2026-11-15",
+   "title_fa": "حمله به ایست بازرسی خور عمیره — تلفات مورد اختلاف",
+   "detail_fa": "موشک حوثی‌ها به ایست بازرسی خور عمیره اصابت کرد. آمارها متفاوت است: AFP ابتدا ۵ کشته/۸ زخمی، بعد ۸ کشته/۱۲ زخمی؛ South24 در ۱۶ نوامبر: ۱۶ مسافر غیرنظامی و ۲ سرباز کشته و ۱۸ نیروی امنیت ملی زخمی.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "AFP via Times of Israel; South24, 16 Nov",
+   "source_url": "https://www.timesofisrael.com/houthis-advance-toward-aden-closing-to-within-60-km-as-government-bolsters-defenses/amp/"
+  },
+  {
+   "external_id": 14,
+   "app_key": "y-event-8527a891e224136950ff",
+   "event_date": "2026-11-15",
+   "title_fa": "تصرف پایگاه خرز؛ عقب‌نشینی جنوب از ذباب و باب‌المندب",
+   "detail_fa": "صبح یکشنبه حوثی‌ها پایگاه نظامی خرز و کوه‌های اطراف در المضاربه و رأس العاره را پس از درگیری شدید گرفتند و در اردوگاه الخراز، حدود ۶۰ کیلومتری عدن، مستقر شدند (AFP با ۶ منبع؛ شینهوا با ۲ منبع). نیروهای مسلح جنوب همان روز بازاستقرار از فرودگاه ذباب و باب‌المندب برای دفاع از عدن را اعلام کردند؛ تیپ‌های غول‌پیکر نیز به السقیه و خور عقب نشستند. حوثی‌ها فرودگاه ذباب، جبل کهبوب و الشط را گرفتند (خبرنگار مستقل یمنی از طریق ISW).",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "AFP; Xinhua; South24; ISW, 15 Nov",
+   "source_url": "https://understandingwar.org/research/middle-east/iran-update-november-15-2026/"
+  },
+  {
+   "external_id": 13,
+   "app_key": "y-event-3fdba35f04dc8c462986",
+   "event_date": "2026-11-14",
+   "title_fa": "دو موشک بالستیک بر عدن؛ درگیری در المزجا",
+   "detail_fa": "سخنگوی دولت از اصابت دو موشک بالستیک به عدن خبر داد؛ نقشه ISW (۱۴ نوامبر): دولت با وجود حملات موشکی، در جنوب‌شرق لحج به بازپس‌گیری ادامه داد و در المزجا درگیری شدیدی بود. IOM: بیش از ۳۴۸ هزار آواره از ۱ اوت.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "ISW map 14 Nov; Al Jazeera liveblog",
+   "source_url": "https://www.threads.com/@thestudyofwar/post/DfvG0p9ibgW"
+  },
+  {
+   "external_id": 12,
+   "app_key": "y-event-6b51d431df5d7f141cbe",
+   "event_date": "2026-11-13",
+   "title_fa": "موشک‌باران اردوگاه‌های عدن؛ آغاز استحکامات دور شهر",
+   "detail_fa": "حوثی‌ها ادعای حمله موشکی بالستیک و پهپادی به اردوگاه رأس عباس در غرب عدن کردند؛ دولت از همان روز دور عدن کیسه‌شنی چید و تونل حفر کرد (AFP).",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "South24 15 Nov; AFP",
+   "source_url": "https://south24.org/news/newse.php?nid=5873"
+  },
+  {
+   "external_id": 11,
+   "app_key": "y-event-4fc82b26aecb47d2868c",
+   "event_date": "2026-11-12",
+   "title_fa": "تهاجم ترکیبی حوثی‌ها در جنوب‌شرق لحج",
+   "detail_fa": "حوثی‌ها بنا بر گزارش‌ها تقاطع الصریح و الشط را گرفتند؛ هدف ارزیابی‌شده ISW: تصرف جبل خرز برای کنترل آتش بر مسیر مخا–عدن. حمله موشکی به منطقه خرز در المضاربه و رأس العاره با تلفات نزدیک یک اردوگاه پناهندگان (South24).",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "ISW / South24, 12 Nov",
+   "source_url": "https://www.criticalthreats.org/analysis/iran-update-november-12-2026"
+  },
+  {
+   "external_id": 10,
+   "app_key": "y-event-4a44dc15364204a80fe8",
+   "event_date": "2026-11-11",
+   "title_fa": "موشک‌های حوثی به مواضع دولت در لحج و عدن",
+   "detail_fa": "موشک‌های بالستیک حوثی‌ها به مناطق تجمع دولت در لحج و مقر فرماندهی در شهر عدن؛ پیشروی حوثی‌ها به‌سوی الشط/الصریح همان روز دفع شد.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "ISW, 12 Nov",
+   "source_url": "https://www.criticalthreats.org/analysis/iran-update-november-12-2026"
+  },
+  {
+   "external_id": 9,
+   "app_key": "y-event-19581e27de7ced00ff1c",
+   "event_date": "2026-11-09",
+   "title_fa": "درگیری‌های هم‌زمان در چند جبهه",
+   "detail_fa": "دولت حوثی‌ها را از مواضع باقی‌مانده جبل دهیده بیرون راند و نزدیک اردوگاه ماس درگیر شد؛ جبل الکاب نزدیک کهبوب بازپس گرفته شد؛ پیشروی حوثی‌ها در غریب (مقاطره) دفع شد. رسانه حوثی از حمله عربستان به فرودگاه حدیده خبر داد.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "ISW, 9 Nov",
+   "source_url": "https://understandingwar.org/research/middle-east/iran-update-november-9-2026/"
+  },
+  {
+   "external_id": 8,
+   "app_key": "y-event-2c624232cdd221771294",
+   "event_date": "2026-11-07",
+   "title_fa": "پیشروی دولت در جبل دهیده (جوف/مأرب)",
+   "detail_fa": "تصاویر مکان‌یابی‌شده حضور نیروهای دولتی در جبل دهیده را نشان داد؛ پیشروی به وادی حلحلان (مأرب) در ۶ نوامبر و دفع ضدحمله حوثی‌ها در ۷ نوامبر — عملیاتی شکل‌دهنده به‌سوی الحزم که همچنان حوثی است.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "ISW, 7 & 9 Nov",
+   "source_url": "https://understandingwar.org/research/middle-east/iran-update-november-7-2026/"
+  },
+  {
+   "external_id": 7,
+   "app_key": "y-event-7902699be42c8a8e46fb",
+   "event_date": "2026-11-01",
+   "title_fa": "تصرف سوق‌الرباح؛ حوثی‌ها در ۸۰ کیلومتری عدن",
+   "detail_fa": "حوثی‌ها سوق‌الرباح (مقاطره) را گرفتند (فیلم مکان‌یابی‌شده، ISW) و ۲ نوامبر جبل عرف را تصرف کردند؛ رویترز با ۴ منبع نظامی: حوثی‌ها در ۸۰ کیلومتری عدن، نزدیک‌ترین موضع از ۲۰۱۵؛ کل شهرستان المقاطره گرفته شد و دولت به‌سوی طور الباحه عقب نشست.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "ISW 2 Nov; Reuters via JPost 2 Nov",
+   "source_url": "https://www.jpost.com/middle-east/article-913601"
+  },
+  {
+   "external_id": 22,
+   "app_key": "y-event-785f3ec7eb32f30b90cd",
+   "event_date": "2026-10-30",
+   "title_fa": "نبردهای شدید در سراسر یمن و حمله هوایی به خودروهای نظامی حوثی‌ها در جاده تعز–عدن",
+   "detail_fa": "درگیری‌های شدیدی در چند جبهه گزارش شد و حملات هوایی خودروهای نظامی حوثی‌ها در جاده تعز–عدن را هدف قرار داد. نیروهای دولتی اعلام کردند مواضعی را در حیفان بازپس گرفته‌اند، در الجوف پیشروی کرده‌اند و حملات حوثی‌ها در لحج را دفع کرده‌اند؛ هم‌زمان درگیری‌ها در غرب تعز شدت گرفت و موشک‌های بالستیک فرودگاه عدن و کاخ معاشیق را هدف قرار دادند.",
+   "origin": "live",
+   "corroboration": 1,
+   "families": "شبا اینتلیجنس (Sheba Intelligence)",
+   "source_name": "Sheba Intelligence",
+   "source_url": "https://shebaintelligence.uk/fierce-battles-across-yemen-as-airstrikes-target-houthi-military-vehicles-on-taiz-aden-road"
+  },
+  {
+   "external_id": 24,
+   "app_key": "y-event-c2356069e9d1e79ca924",
+   "event_date": "2026-10-23",
+   "title_fa": "تشدید بحران انسانی در تعز پس از ۲۰ روز محاصره و مسدود شدن کمک‌های بشردوستانه",
+   "detail_fa": "به گزارش نهادهای سازمان ملل، شهر تعز پس از ۲۰ روز انزوا در میان درگیری‌های نیروهای حوثی و نیروهای دولتی با وضعیت اضطراری انسانی روبه‌وخامت مواجه شده است؛ اختلال در مسیرهای تأمین، دسترسی صدها هزار نفر به غذا، آب آشامیدنی سالم و کمک‌های ضروری را تهدید می‌کند.",
+   "origin": "live",
+   "corroboration": 1,
+   "families": "منابع سازمان ملل و بشردوستانه (OCHA / UNHCR / IOM)",
+   "source_name": "thevaultznews.com",
+   "source_url": "https://thevaultznews.com/2026/10/23/yemens-taiz-crisis-worsens-as-humanitarian-aid-is-blocked/"
+  },
+  {
+   "external_id": 21,
+   "app_key": "y-event-6f4b6612125fb3a0daec",
+   "event_date": "2026-10-13",
+   "title_fa": "کشته‌شدن گزارش‌شده فرمانده ایرانی و دستیارش در حمله هوایی به مرکز عملیات حوثی–سپاه در تعز",
+   "detail_fa": "منابع شبا اینتلیجنس گفتند که در این حمله هوایی به یک مرکز فرماندهی پیشروی در تعز، یک فرمانده ایرانی و دستیارش کشته شده‌اند. به گفته این منابع، مرکز هدف قرارگرفته عملیات حوثی‌ها در جنوب تعز و بخش‌هایی از لحج را هماهنگ می‌کرد و نزدیک ارتفاعات راهبردی مرتبط با نبرد باب‌المندب قرار داشت.",
+   "origin": "live",
+   "corroboration": 1,
+   "families": "شبا اینتلیجنس (Sheba Intelligence)",
+   "source_name": "Sheba Intelligence",
+   "source_url": "https://shebaintelligence.uk/iranian-commander-and-aide-reportedly-killed-in-airstrike-on-houthi-irgc-operations-center-in-taiz"
+  },
+  {
+   "external_id": 6,
+   "app_key": "y-event-e7f6c011776e8db7cd33",
+   "event_date": "2026-10-10",
+   "title_fa": "حمله موشکی مرگبار به فرودگاه ریاض",
+   "detail_fa": "موشک حوثی‌ها به فرودگاه ملک خالد ریاض: دست‌کم ۱۳ کشته و بیش از ۳۰۰ زخمی — مرگبارترین حمله به خاک عربستان در یک دهه. همان روز رسانه حوثی ادعای دولت درباره بازپس‌گیری میون را رد کرد؛ تناقض مستقیم، بدون تأیید مستقل.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "Al Jazeera, 31 Oct; Strategic Energy Map",
+   "source_url": "https://strategicenergymap.org/chokepoints/bab-el-mandeb/"
+  },
+  {
+   "external_id": 5,
+   "app_key": "y-event-ef2d127de37b942baad0",
+   "event_date": "2026-10-05",
+   "title_fa": "عملیات «طلوع یمن» دولت و ادعای بازپس‌گیری باب‌المندب",
+   "detail_fa": "شورای رهبری عملیات «طلوع یمن» را با تیپ‌های غول‌پیکر، سپر میهن و مقاومت تهامه و حدود ۱۰۰ جنگنده سعودی آغاز کرد و مدعی کنترل کامل باب‌المندب، ذباب و جاده مخا شد؛ South24 در ۷ اکتبر نوشت حوثی‌ها هنوز بخش‌هایی از شهرستان ذباب و جزیره میون را در دست دارند — بازپس‌گیری کامل هرگز کامل نشد.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "Reuters / South24",
+   "source_url": "https://www.reuters.com/world/yemeni-government-forces-seize-district-by-bab-el-mandeb-military-sources-say-2026-10-05/"
+  },
+  {
+   "external_id": 4,
+   "app_key": "y-event-4b227777d4dd1fc61c6f",
+   "event_date": "2026-09-11",
+   "title_fa": "تصرف ذباب، حنیش و جزیره میون",
+   "detail_fa": "حوثی‌ها ذباب، جزایر حنیش بزرگ و کوچک و جزیره میون/پریم را (با قایق، پس از عقب‌نشینی دولت) گرفتند. ادعای حنیش بر یک مقام مورد استناد AFP تکیه دارد و مستقل تأیید نشده است.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "House of Saud / Al Jazeera, 12 Sep",
+   "source_url": null
+  },
+  {
+   "external_id": 3,
+   "app_key": "y-event-4e07408562bedb8b60ce",
+   "event_date": "2026-09-10",
+   "title_fa": "سقوط مخا به دست حوثی‌ها",
+   "detail_fa": "مخا از نیروهای مقاومت ملی طارق صالح گرفته شد؛ صالح تلفات سنگین و عقب‌نشینی تاکتیکی را پذیرفت.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "Reuters via Daily Sabah / PolGeoNow",
+   "source_url": "https://www.dailysabah.com/politics/diplomacy/fidan-to-meet-yemeni-fm-as-fighting-threatens-key-shipping-routes/amp"
+  },
+  {
+   "external_id": 2,
+   "app_key": "y-event-d4735e3a265e16eee03f",
+   "event_date": "2026-09-03",
+   "title_fa": "آغاز تهاجم حوثی‌ها در ساحل دریای سرخ",
+   "detail_fa": "تهاجم حوثی‌ها در ساحل دریای سرخ و داخل تعز/جوف و مرز ابین–بیضا آغاز شد.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "PolGeoNow / ISW",
+   "source_url": "https://www.polgeonow.com/2026/11/yemen-map-houthi-control-2026-war-red-sea-chokepoint.html"
+  },
+  {
+   "external_id": 1,
+   "app_key": "y-event-6b86b273ff34fce19d6b",
+   "event_date": "2026-07-13",
+   "title_fa": "ازسرگیری جنگ حوثی–عربستان",
+   "detail_fa": "حمله عربستان/شورای رهبری به فرودگاه صنعا برای متوقف‌کردن یک هواپیمای ایرانی؛ جنگ فرامرزی حوثی–عربستان از سر گرفته شد و حوثی‌ها ۲۰ ژوئیه «محاصره دریایی» عربستان را اعلام کردند.",
+   "origin": "baseline",
+   "corroboration": 1,
+   "families": null,
+   "source_name": "PolGeoNow",
+   "source_url": "https://www.polgeonow.com/2026/11/yemen-map-houthi-control-2026-war-red-sea-chokepoint.html"
+  }
+ ],
+ "claims": {
+  "confirmed": [
+   {
+    "title": "عقب‌نشینی نیروهای جنوب از فرودگاه ذباب و باب‌المندب در ۱۵ نوامبر",
+    "body": "برای دفاع از عدن — خود نیروهای جنوب اعلام کردند؛ رویترز، South24، الجزیره، نشنال و عرب‌نیوز عیناً نقل کردند. این عقب‌نشینی ضدحملهٔ شش‌هفته‌ای اکتبر را پایان می‌دهد یا محدود می‌کند."
+   },
+   {
+    "title": "استقرار مجدد نیروهای دولت در السقیه (حدود ۱۵۰ کیلومتری غرب عدن)",
+    "body": "منبع جنوب به South24 و منابع نظامی یمنی به رویترز."
+   },
+   {
+    "title": "پیشروی حوثی‌ها در لحج به سمت عدن در ۱۲–۱۵ نوامبر",
+    "body": "منابع طرف دولت در AFP تصرف شهرستان‌های المقاطره و المضاربه و حضور حوثی‌ها در خرز (۶۰ کیلومتری عدن) را پذیرفته‌اند و ISW هم همین ارزیابی را دارد. جهت و مقیاس کلی پذیرفته شده؛ مواضع دقیق نه."
+   },
+   {
+    "title": "حملهٔ موشکی به ایست بازرسی خور عمیره در ۱۵ نوامبر — ۸ کشته و ۱۲ زخمی (آمار به‌روزشده)",
+    "body": "AFP به نقل از سه منبع نظامی و یک منبع دولتی، با تأیید شین‌هوا و شبکهٔ یمنی حقوق و آزادی‌ها دربارهٔ خودروی غیرنظامی. اصل حمله محکم است؛ این‌که هدف نیروها بوده یا غیرنظامیان محل مناقشه است."
+   },
+   {
+    "title": "رسیدن درگیری به محدودهٔ اردوگاه پناهندگان خرز و به خطر افتادن حدود ۹٬۶۰۰ پناهنده",
+    "body": "بیانیهٔ UNHCR در ۱۵ نوامبر (منبع بشردوستانهٔ مستقل). انتساب گلوله‌باران مشخص ۱۲ نوامبر به حوثی‌ها از سوی سازمان ملل راستی‌آزمایی نشده است."
+   },
+   {
+    "title": "ادامهٔ شلیک موشک و پهپاد حوثی‌ها به سمت عربستان و عدن در ۱۳–۱۵ نوامبر",
+    "body": "هر دو طرف از شلیک/رهگیری خبر می‌دهند (سریع مدعی شلیک است؛ سخنگوی ائتلاف سعودی مدعی رهگیری دو موشک بالستیک به سوی ریاض و پهپادها در استان شرقی و نزدیک مکه و مدینه). شلیک‌ها در کلیت دوطرفه گواهی شده‌اند؛ اصابت و خسارت نه."
+   }
+  ],
+  "contested": [
+   {
+    "title": "قاب‌بندی عقب‌نشینی: «بازآرایی» یا «فرار»؟",
+    "body": "نیروهای جنوب و سخنگوی دولت آن را «بازآرایی/جابه‌جایی حساب‌شده» برای حفاظت از عدن می‌خوانند — «نه شکست است، نه عقب‌نشینی» (سرهنگ وضاح الدبیش). رسانه‌های حوثی آن را پوششی برای وحشت و فرار پس از محاصره می‌دانند. حرکت مورد توافق است؛ انگیزه و علت محل مناقشه. ارزیابی ISW به توضیح فشار حوثی‌ها متمایل است (عقب‌نشینی «به‌احتمال زیاد برای گریز از محاصره نزدیک جبل خرز»)، اما این تحلیل است، نه اثبات."
+   },
+   {
+    "title": "کنترل الشط در ۱۱–۱۳ نوامبر",
+    "body": "حساب‌های طرف دولت در ۱۱ نوامبر ادعای تصرف الشط از سوی حوثی‌ها را صریحاً رد کردند؛ ISW بعدتر هم تصرف حوثی‌ها (۱۲ نوامبر) و هم بازپس‌گیری دولت (۱۳ نوامبر) را گزارش کرد. کنترل الشط در گزارش‌ها دست‌کم دو بار چرخیده — هشداری در برابر قطعی دانستن ادعای یک روز."
+   },
+   {
+    "title": "طارق صالح و مقاومت ملی",
+    "body": "ویدیوهایی مقاومت ملی را به رها کردن مواضع متهم کردند؛ یک منبع مقاومت ملی به شبا (۱۲ نوامبر) گفت کاهش استقرار بازتوزیع دستورگرفته از بالا بوده (کاهش نیرو از حدود ۷۰٬۰۰۰ به حدود ۹٬۰۰۰) نه رها کردن. در منابع بررسی‌شده برای ۱۴–۱۶ نوامبر هیچ بیانیهٔ مستقیمی از خود طارق صالح پیدا نشد. اختلاف حل‌نشده است و ارقام نیرو برآورد تأییدنشدهٔ همان منبع است."
+   },
+   {
+    "title": "اردوگاه خرز در ۱۲ نوامبر",
+    "body": "گزارش میدانی طرف دولت می‌گوید نفوذ حوثی‌ها همان روز دفع و کنترل برگشت؛ گزارش‌های ۱۵ نوامبر می‌گویند پایگاه سقوط کرد. هر دو می‌توانند در روزهای متفاوت درست باشند؛ هیچ‌کدام مستقل راستی‌آزمایی نشده است."
+   },
+   {
+    "title": "پهپادهای مکه و مدینه",
+    "body": "ائتلاف سعودی گفت ۱۵ نوامبر پهپادهایی را نزدیک مکه و مدینه رهگیری کرده؛ سریع آن را «دروغ» خواند و گفت عملیات حوثی‌ها فقط تأسیسات نفتی و پایگاه‌های نظامی را هدف می‌گیرد. مستقیماً متناقض و از هیچ سو راستی‌آزمایی‌نشده."
+   },
+   {
+    "title": "ادعای تلفات دولت: ۹۰۶ عملیات و «خنثی‌سازی» ۲۰۱ حوثی در ۲۴ ساعت",
+    "body": "ادعای صرف دولت (۱۵ نوامبر) و تأییدنشده است و کنار پذیرش خود دولت به عقب‌نشینی نشسته — دلیلی بر نگه‌داشتن زمین نیست."
+   }
+  ],
+  "houthi_only": [
+   {
+    "title": "«عملیات دور زدن بیش از ۶۰ کیلومتر» از کهبوب/المقاطره تا خور عمیره",
+    "body": "منبع نظامی المسیره، ۱۵ نوامبر. خود عقب‌نشینی واقعی است؛ این‌که دقیقاً همین مانور علتش بوده و رقم ۶۰ کیلومتر، فقط ادعای حوثی‌هاست."
+   },
+   {
+    "title": "باب‌المندب «کاملاً امن» و کنترل «همهٔ مناطق عمق راهبردی از کهبوب تا خور عمیره»",
+    "body": "المسیره/المیادین، ۱۵ نوامبر. تأیید مستقلی پیدا نشد."
+   },
+   {
+    "title": "تصرف بیش از ۳٬۰۰۰ کیلومتر مربع، اسارت صدها جنگجو، رانده‌شدن ده‌ها هزار نیرو",
+    "body": "منبع ارشد نظامی به المیادین، از مسیر Palestine Chronicle. هیچ عدد، نام یا فیلم اسیری مستقل راستی‌آزمایی نشد. (آزادی ۶۰۰ جنگجوی دولتی در صنعا در ۱۵ نوامبر با پشتیبانی صلیب سرخ رویدادی جداگانه و مستند است؛ با ادعای اسارت قاطی نشود.)"
+   },
+   {
+    "title": "تصرف فرودگاه ذباب، جبل کهبوب و الشط در ۱۵ نوامبر",
+    "body": "ISW به نقل از «یک خبرنگار مستقل یمنی» گزارش کرده، نه با راستی‌آزمایی خودش؛ تأیید عکس/فیلم مکان‌یابی‌شده‌ای پیدا نشد. «گزارش‌شده» بدانید، نه «مستقل تأییدشده». تصرف پایگاه خرز از این دسته قوی‌تر است چون طرف مقابل هم آن را قبول دارد، اما همچنان بر منابع ناشناس طرفین تکیه دارد."
+   },
+   {
+    "title": "ادعاهای اصابت به عربستان و عدن",
+    "body": "فرودگاه و مرکز مالی ریاض، ایستگاه‌های پمپاژ ۳، ۵ و ۶، اردوگاه قوعه (شش موشک، ده‌ها کشته و زخمی)، انبارهای تسلیحات رأس عباس و آتش‌سوزی، سرنگونی پهپاد CH-4، «۷۵ حمله در ۲۴ ساعت / مجموع ۵٬۰۹۵». همه فقط از حوثی‌ها؛ طرف سعودی از رهگیری می‌گوید، نه اصابت."
+   },
+   {
+    "title": "«برنامه‌ای برای پیشروی به سوی عدن نداریم» (الشامی به المیادین)",
+    "body": "بیانیهٔ سیاسی حوثی‌هاست که گزارش رویترز در ۱۶ نوامبر از ادامهٔ پیشروی تا خور عمیره عملاً آن را نقض می‌کند؛ گفته‌ای تبلیغی بدانید، نه تعهد قابل راستی‌آزمایی."
+   }
+  ]
+ },
+ "aden": {
+  "verdict": {
+   "title_fa": "حکم پژوهش: عدن محاصره نشده است — فقط از غرب و شمال‌غرب تهدید می‌شود",
+   "body_fa": "تا ۱۷ نوامبر ۲۰۲۶ هیچ منبع مستقلی حلقهٔ بسته‌ای دور عدن، حضور حوثی‌ها در شرق عدن یا محاصرهٔ زمینی خود شهر را تأیید نمی‌کند. حوثی‌ها در ۱۱ تا ۱۶ نوامبر در لحج پیشروی بزرگی کردند و به حدود ۶۰ تا ۱۰۰ کیلومتری عدن رسیدند، جادهٔ ساحلی غربی شهر را قطع/تهدید کردند و نیروهای دولتی به کمربند دفاعی تازه (السقیه، خور عمیره، جبل خرز، ام جهر، قاوه) عقب نشستند؛ اما جادهٔ شرقی ابین و بندر عدن باز است و شهر کار می‌کند — به گفتهٔ رویترز در ۱۶ نوامبر غذا و سوخت در عدن در دسترس بود. شهری که مستقل تأیید شده در محاصره است، تعز است، نه عدن.",
+   "confidence_fa": "اطمینان به حکم «محاصره‌نشده» بالا است (چند منبع مستقل، فاصله‌های ۶۰ تا ۱۰۰ کیلومتری، خطوط دفاعی دولت هنوز میان حوثی‌ها و شهر، شهر در حال کار). اطمینان به موقعیت دقیق خطوط مقدم متوسط است، چون فاصله‌ها میان منابع فرق می‌کند (۶۰ در برابر ۷۰ در برابر ۸۰ کیلومتر) و خطوط در ۱۳ تا ۱۶ نوامبر روزانه جابه‌جا می‌شدند. وضعیت می‌تواند سریع عوض شود: ISW در ۱۶ نوامبر ارزیابی کرد پیشروی حوثی‌ها به‌سوی شهر عدن شتاب گرفته و خطوط دولت نزدیک ام جهر «همچنان آسیب‌پذیر» می‌مانند — تهدید را باید زیر نظر داشت، نه دست‌کم گرفت."
+  },
+  "ring_segments": [
+   {
+    "slot": "west",
+    "status_kind": "threat",
+    "direction_fa": "غرب — ساحل خلیج عدن و جادهٔ مخا–عدن",
+    "status_fa": "حوثی‌ها تا خور عمیره؛ جاده قطع/تهدیدشده",
+    "body_fa": "حوثی‌ها ۱۶ نوامبر به خور عمیره در ساحل خلیج عدن، حدود ۱۰۰ کیلومتری غرب عدن رسیدند (Reuters، پنج منبع نظامی) و ۲۵ کیلومتر با خطوط دولت در قاوه فاصله دارند. خط ارتباطی زمینی مخا–عدن در این بخش از دست دولت رفته است: ISW می‌گوید دولت با عقب‌نشینی تا جبل خرز بیش از ۸۰ کیلومتر از این خط را واگذار کرد و الجزیره از قطع یک مسیر تدارکاتی کلیدی دولت در امتداد ساحل دریای سرخ خبر داد."
+   },
+   {
+    "slot": "northwest",
+    "status_kind": "contested",
+    "direction_fa": "شمال‌غرب — اردوگاه و جبل خرز",
+    "status_fa": "حوثی‌ها رسیدند/حمله کردند؛ کنترل دقیق محل اختلاف",
+    "body_fa": "AFP (۱۵ نوامبر، شش منبع نظامی و دولتی): حوثی‌ها در اردوگاه خرز، حدود ۶۰ کیلومتری عدن موضع گرفتند؛ شین‌هوا از تصرف پایگاه خرز در بامداد ۱۵ نوامبر گفت. اما ISW در ۱۶ نوامبر نوشت دولت در ۱۵–۱۶ نوامبر نزدیک جبل خرز مواضع دفاعی تازه ساخت و حوثی‌ها ۱۶ نوامبر همچنان به‌سوی شرق و خرز پیشروی می‌کردند — یعنی نبرد بر سر خرز ادامه داشت، نه اینکه منطقه‌ای تثبیت‌شده پشت جبهه باشد. توجه: «اردوگاه خرز» AFP (۶۰ کیلومتری عدن) و «جبل خرز» ISW (۱۰۰ کیلومتری غرب عدن و ۸۰ کیلومتری شرق باب‌المندب) ممکن است دو نقطهٔ متفاوت در یک محدوده باشند؛ منابع آن‌ها را با هم تطبیق نمی‌دهند."
+   },
+   {
+    "slot": "north",
+    "status_kind": "contested",
+    "direction_fa": "شمال — طور الباحه و جادهٔ تعز–عدن",
+    "status_fa": "مورد مناقشه؛ حوثی‌ها نزدیک شده‌اند، تصرف شهر تأیید نشده",
+    "body_fa": "Reuters (به نقل از چهار منبع نظامی): حوثی‌ها «درست بیرون» طور الباحه، حدود ۸۰ کیلومتری عدن‌اند. حسن جونی، تحلیل‌گر الجزیره (۱۶ نوامبر): «نیروهای حوثی به این خط رسیده‌اند… آن‌ها در محدودهٔ خط دفاعی شهر عدن هستند. نمی‌گوییم به عدن نزدیک شده‌اند، اما دفاع از شهر عدن از همین محدوده آغاز می‌شود.» هیچ منبع ۱۷ نوامبری تصرف خود شهر طور الباحه را تأیید نمی‌کند؛ جادهٔ تعز–عدن تهدیدشده و در جاهایی زیر کنترل آتش است، اما قطع کامل آن تأیید نشده است."
+   },
+   {
+    "slot": "east",
+    "status_kind": "open",
+    "direction_fa": "شرق — جادهٔ ابین",
+    "status_fa": "باز — هیچ حضور حوثی گزارش نشده",
+    "body_fa": "حلقهٔ محاصره به کمان شرقی نیاز دارد و هیچ‌کدام وجود ندارد: در کل این پژوهش — مستقل، انصارالله یا شایعه — هیچ گزارشی از حضور حوثی‌ها در جادهٔ ابین، در استان ابین یا در شرق عدن نیست. مسیر زمینی شرقی عدن گزارش نشده که قطع، مورد مناقشه یا حتی تهدید شده باشد. این خلأ، تعیین‌کننده‌ترین نقطهٔ ضعف ادعای محاصره است."
+   },
+   {
+    "slot": "south",
+    "status_kind": "open",
+    "direction_fa": "جنوب — دریا و بندر عدن",
+    "status_fa": "باز — محاصرهٔ دریایی یا بسته‌شدن بندر گزارش نشده",
+    "body_fa": "هیچ مدرکی از محاصرهٔ دریایی عدن یا بسته‌شدن بندر آن نیست. حوثی‌ها اکنون بخش بزرگی از ساحل غرب عدن (از باب‌المندب تا خور عمیره) را دارند که به آن‌ها مواضع راداری و تسلیحات کوتاه‌برد مشرف بر کشتیرانی باب‌المندب و خلیج عدن می‌دهد (ISW، ۱۶ نوامبر) — تهدیدی برای کشتیرانی است، نه محاصرهٔ بندر عدن. فرودگاه عدن در اکتبر و ۱۱ و ۱۳ نوامبر هدف موشک قرار گرفت، اما حملهٔ موشکی با بسته‌شدن یا محاصره فرق دارد و گزارشی از توقف کار بندر یا فرودگاه نیست."
+   }
+  ],
+  "timeline": [
+   {
+    "date": "2026-11-11",
+    "title_fa": "آغاز پیشروی بزرگ در لحج و حمله به غرب عدن",
+    "body_fa": "پیشروی ۱۱ تا ۱۶ نوامبر حوثی‌ها در استان لحج آغاز شد. پایش South24 از ۱ تا ۱۲ نوامبر: موشک‌های حوثی به‌سوی خور عمیره (۱۰ نوامبر) و البریقه در غرب عدن (۱۱ نوامبر) شلیک شد؛ نتیجهٔ حملهٔ البریقه مستقل تأیید نشد.",
+    "layer": "fact",
+    "source_fa": "South24، پایش ۱–۱۲ نوامبر ۲۰۲۶"
+   },
+   {
+    "date": "2026-11-12",
+    "title_fa": "ادعاهای حملهٔ یحیی سریع به خرز؛ ساحل هنوز در دست دولت بود",
+    "body_fa": "یحیی سریع مدعی ۶ حمله به تجمع نیروهای سعودی در اردوگاه خرز و مواضع دیگر در رأس العاره و خرز در لحج شد (به نقل از PressTV). همان روز شبا اینتلیجنس نوشت خور عمیره، رأس العاره و ساحل تا باب‌المندب «همچنان در کنترل ارتش یمن» است و نبرد به مناطق ساحلی نرسیده — یعنی تیتر «تکمیل محاصره» در ۱۳ نوامبر حتی با خط زمانی خودش هم زودهنگام بود.",
+    "layer": "claim",
+    "source_fa": "PressTV، ۱۳ نوامبر؛ Sheba Intelligence، ۱۲ نوامبر ۲۰۲۶"
+   },
+   {
+    "date": "2026-11-13",
+    "title_fa": "PressTV: «تکمیل رسمی محاصرهٔ استان عدن» — منشأ عبارت",
+    "body_fa": "پرس‌تی‌وی ساعت ۱۱:۰۳ به وقت گرینویچ تیتر زد «نیروهای یمنی پیشروی بزرگی کردند و محاصرهٔ عدن را کامل کردند» و نوشت محاصرهٔ استان عدن «رسمیاً کامل» شده است. اما شاهد خود مقاله باریک‌تر است: رسیدن به «نوار ساحلی میان عدن و لحج» و اولتیماتوم به نیروهای السقیه و رأس العاره (تسلیم و اسارت، یا عقب‌نشینی بدون سلاح). همان روز تهران‌تایمز گزارش را عیناً بازنشر کرد و The Cradle تیتر «محاصرهٔ کامل عدن» زد. رسانه‌های حوثی همان روز مدعی حملهٔ موشک بالستیک به تجمع افسران در اردوگاه جبل حدید عدن شدند (الجزیرهٔ عربی؛ سبأ صنعا نیز گزارش داد). از ۱۳ نوامبر ساخت سنگر و تونل دور عدن آغاز شد (AFP).",
+    "layer": "claim",
+    "source_fa": "PressTV، ۱۳ نوامبر ۲۰۲۶، ۱۱:۰۳ GMT؛ AFP"
+   },
+   {
+    "date": "2026-11-14",
+    "title_fa": "نقشهٔ «جنوب‌غرب یمن» و گرافیک‌های محاصره در شبکه‌های اجتماعی",
+    "body_fa": "نقشهٔ مورخ ۱۴ نوامبر بنزربری در X (به نقل از Drop Site News) منتشر شد: سبز=انصارالله، قرمز/نارنجی=نیروهای دولت در ساحل جنوبی لحج، با پیکان‌های سبز بزرگ به‌سوی ساحل و نمای ماهواره‌ای «اردوگاه خرز — ۹۰۰ متر». همان روز TC Media در اینستاگرام گرافیک «تکمیل محاصرهٔ عدن» را با متن پرس‌تی‌وی منتشر کرد. آنچه نقشه نشان می‌دهد محاصرهٔ نیروهای دولتی در ساحل باب‌المندب است، نه حلقه‌ای دور شهر عدن.",
+    "layer": "rumour",
+    "source_fa": "@bonzerbarry در X؛ @tcmedianews، اینستاگرام — فقط نمایه"
+   },
+   {
+    "date": "2026-11-15",
+    "title_fa": "عقب‌نشینی دولت از باب‌المندب؛ تصرف ذباب، کهبوب و الشط",
+    "body_fa": "نیروهای مسلح جنوب عقب‌نشینی از فرودگاه ذباب و باب‌المندب را اعلام کردند (South24، الجزیره، Reuters) و ISW نوشت حوثی‌ها فرودگاه ذباب، جبل کهبوب و الشط را گرفتند. AFP (شش منبع نظامی و دولتی): حوثی‌ها شهرستان‌های المقطره و المضاربه را گرفتند و در اردوگاه خرز، ۶۰ کیلومتری عدن، موضع گرفتند؛ شین‌هوا از تصرف پایگاه خرز در بامداد ۱۵ نوامبر گفت. ISW: دولت عقب نشست تا «از محاصرهٔ حوثی‌ها نزدیک جبل خرز بگریزد» و توان دفاع از شهر عدن را حفظ کند — یعنی محاصره خطری بود که از آن گریختند، نه واقعیتی کامل‌شده.",
+    "layer": "fact",
+    "source_fa": "AFP؛ Xinhua؛ ISW-CTP، ۱۵ نوامبر ۲۰۲۶"
+   },
+   {
+    "date": "2026-11-15",
+    "title_fa": "المسیره: مانور پهلوگیری ۶۰ کیلومتری؛ الشامی: «قصد پیشروی به سوی عدن نداریم»",
+    "body_fa": "المسیره به نقل از یک منبع نظامی: مانور پهلوگیری بیش از ۶۰ کیلومتر در زمین کوهستانی که نیروهای تحت رهبری عربستان را وادار به عقب‌نشینی از فرودگاه ذباب، حومهٔ کهبوب، باب‌المندب و السقیه کرد و ادعای کنترل «از کهبوب تا خور عمیره در لحج». همان روز ضیف‌الله الشامی، عضو دفتر سیاسی انصارالله، به المیادین گفت باب‌المندب «کاملاً امن» است، هدف تأمین تنگه بوده، انصارالله «قصد پیشروی به سوی عدن ندارد» و ساکنان جنوب هدف نیستند — هرچند حق هدف‌گیری هر اردوگاه نظامی‌ای را که برای حمله استفاده شود، هر جا که باشد، محفوظ دانست. المیادین همچنین از یک منبع ارشد نظامی یمنی نقل کرد: بیش از ۳٬۰۰۰ کیلومتر مربع گرفته و صدها نیرو اسیر شده‌اند (ادعای تک‌منبع همسو با انصارالله، راستی‌آزمایی‌نشده).",
+    "layer": "claim",
+    "source_fa": "Al-Masirah به نقل از Shafaq؛ Al Mayadeen، ۱۵ نوامبر ۲۰۲۶ — نمایه"
+   },
+   {
+    "date": "2026-11-16",
+    "title_fa": "Reuters: حوثی‌ها در خور عمیره، ۱۰۰ کیلومتری غرب عدن؛ شهر کار می‌کند",
+    "body_fa": "رویترز (پنج منبع نظامی): حوثی‌ها به خور عمیره در ساحل جنوبی، حدود ۱۰۰ کیلومتری غرب عدن رسیدند و ۲۵ کیلومتر با خطوط دولت در قاوه فاصله دارند. در عدن ایست‌های بازرسی و کنترل هویت بیشتر شد و یک ساکن شهر به رویترز گفت غذا و سوخت در دسترس است؛ تمرکز دولت «تأمین عدن و استان لحج» اعلام شد. ISW همان روز ارزیابی کرد کشیدگی بیش از حد دولت «احتمالاً به حوثی‌ها امکان داده پیشروی به‌سوی شهر عدن را شتاب دهند و شرایط تکمیل تصرف یمن را فراهم کنند» — ارزیابی مسیر حرکت است، نه گزارش محاصره. ریل Middle East Eye در اینستاگرام هم از «حدود ۶۰ کیلومتری عدن» گفت.",
+    "layer": "fact",
+    "source_fa": "Reuters، ۱۶ نوامبر ۲۰۲۶؛ ISW-CTP، ۱۶ نوامبر ۲۰۲۶"
+   },
+   {
+    "date": "2026-11-17",
+    "title_fa": "ادعای دولت: ۶۶۱ حمله در یک روز؛ هنوز به‌روزرسانی ISW برای ۱۷ نوامبر نیامده",
+    "body_fa": "الجزیره (۱۷ نوامبر، ۰۱:۳۸ UTC) گزارش داد ارتش یمن مدعی ۶۶۱ حمله به حوثی‌ها در ۱۶ نوامبر و ۱۷۳ کشته و زخمی از آن‌هاست — ادعای دولت، راستی‌آزمایی‌نشده. ISW نقشه‌های ۱۰ و ۱۶ نوامبر خود را در اینستاگرام منتشر کرد (خطوط دفاعی تازهٔ دولت نزدیک ام جهر که «همچنان آسیب‌پذیر» می‌مانند). تا زمان این پژوهش، به‌روزرسانی ISW برای خود ۱۷ نوامبر منتشر نشده بود (تازه‌ترین نسخهٔ راستی‌آزمایی‌شده ۱۶ نوامبر است، با برش دادهٔ ساعت ۲ بعدازظهر به وقت شرق آمریکا)؛ مواضع صبح ۱۷ نوامبر، به‌ویژه دور جبل خرز و قاوه، ممکن است جابه‌جا شده باشد.",
+    "layer": "claim",
+    "source_fa": "Al Jazeera، ۱۷ نوامبر ۲۰۲۶ — نمایه؛ ISW-CTP"
+   }
+  ],
+  "key_points": [
+   "Reuters (به نقل از چهار منبع نظامی): حوثی‌ها «درست بیرون» طور الباحه‌اند. حسن جونی (الجزیره، ۱۶ نوامبر): حوثی‌ها به خط دفاعی عدن رسیده‌اند، هرچند «نمی‌گوییم به عدن نزدیک شده‌اند». ISW در ۲–۳ نوامبر: حوثی‌ها بلندی‌های المقطره مشرف بر طور الباحه را گرفتند و دولت ۳ نوامبر جبل عرف را پس گرفت. هیچ منبع ۱۷ نوامبری تصرف خود شهر را تأیید نمی‌کند.",
+   "ISW، ۳ نوامبر: ضدحمله‌های دولت در ۲–۳ نوامبر و بازپس‌گیری جبل عرف به روایت یک خبرنگار مستقل؛ جبهه رفت‌وبرگشتی توصیف شد. تحلیل الاستقلال: تا اواسط نوامبر شهرستان «میدان نبردی با نتیجهٔ هنوز نامشخص» بود. جادهٔ تعز–عدن تهدیدشده و در جاهایی زیر کنترل آتش است، اما قطع کامل آن تأیید نشده است.",
+   "AFP (۱۵ نوامبر): حوثی‌ها پس از تصرف المقطره و المضاربه «در اردوگاه خرز موضع گرفتند». شین‌هوا (۱۵ نوامبر): «پایگاه نظامی راهبردی خرز» بامداد ۱۵ نوامبر تصرف شد. ISW (۱۵ نوامبر): دولت عقب نشست تا از محاصره نزدیک جبل خرز بگریزد؛ (۱۶ نوامبر): دولت ۱۵–۱۶ نوامبر نزدیک جبل خرز مواضع دفاعی ساخت و حوثی‌ها ۱۶ نوامبر به‌سوی شرق و خرز پیشروی می‌کردند — نبرد ادامه داشت. نقشهٔ بنزربری (۱۴ نوامبر) حوثی‌ها را ۹۰۰ متری اردوگاه نشان می‌داد. «اردوگاه خرز» AFP و «جبل خرز» ISW (۱۰۰ کیلومتری غرب عدن) ممکن است دو نقطهٔ متفاوت باشند.",
+   "Reuters (۱۶ نوامبر، پنج منبع نظامی): حوثی‌ها «به محدودهٔ ساحلی جنوبی خور عمیره، حدود ۱۰۰ کیلومتری غرب عدن» پیشروی کردند. المسیره (به نقل از شفق، ۱۵ نوامبر) مدعی کنترل «از کهبوب تا خور عمیره» شد. ISW (۱۵ نوامبر): دولت پس از عقب‌نشینی در خور عمیره مواضع دفاعی تازه ساخت و حملهٔ موشک بالستیک حوثی‌ها به خور عمیره در همان روز «نشانهٔ حضور نیروهای همسو با دولت در آن محدوده» بود. شبا (۱۲ نوامبر، اکنون منسوخ): خور عمیره آن زمان در کنترل ارتش یمن بود.",
+   "Reuters (۱۶ نوامبر): حوثی‌ها «۲۵ کیلومتر با خطوط دولت در قاوه، آن هم در ساحل» فاصله داشتند — یعنی خود قاوه هنوز خط دولت بود و حوثی‌ها ۲۵ کیلومتر با آن فاصله داشتند. نقشهٔ ISW در ۱۶ نوامبر خطوط دفاعی تازهٔ دولت نزدیک ام جهر (درون خشکی، نزدیک جادهٔ ساحلی) را نشان می‌دهد که «همچنان آسیب‌پذیر» می‌مانند.",
+   "خلاصهٔ اینستاگرامی ISW از نقشهٔ ۱۶ نوامبر: «خطوط دفاعی تازهٔ دولت یمن نزدیک ام جهر که همچنان آسیب‌پذیر می‌مانند.» هیچ منبعی از تصرف ام جهر به دست حوثی‌ها خبر نمی‌دهد.",
+   "PressTV (۱۳ نوامبر): اولتیماتوم به نیروهای آنجا — ادعا، راستی‌آزمایی‌نشده. South24 (۱۵ نوامبر، راستی‌آزمایی زنده): نیروهای جنوب پس از ترک ذباب به السقیه منتقل شدند — یعنی نیروهای دولت ۱۵ نوامبر هنوز از السقیه به‌عنوان موضع استفاده می‌کردند. ISW (۱۵ نوامبر): مواضع دفاعی دولت در السقیه. منبع ریاست‌جمهوری به عرب‌نیوز (۱۵ نوامبر): السقیه «حدود شش تا هشت کیلومتری باب‌المندب» است و نیروهای دولت آن را «در محدودهٔ عملیاتی» نگه داشته‌اند. تصرف آن به دست حوثی‌ها تأیید نشده است.",
+   "نیروهای مسلح جنوب ۱۵ نوامبر استقرار دوباره از فرودگاه ذباب و باب‌المندب را اعلام کردند (South24، الجزیره، Reuters). ISW (۱۵ نوامبر): حوثی‌ها فرودگاه ذباب، جبل کهبوب و الشط را گرفتند (به نقل از یک خبرنگار مستقل یمنی). المیادین/انصارالله: بیش از ۳٬۰۰۰ کیلومتر مربع گرفته شد، شامل ساحل و یک فرودگاه. این همان تغییر سرزمینی تأییدشده است — در غرب/جنوب‌غرب عدن و بیش از ۱۵۰ کیلومتر از راه جاده‌ای، نه حلقه‌ای دور عدن.",
+   "هیچ مدرکی از حضور حوثی‌ها در شرق عدن نیست: هیچ منبعی در این پژوهش — مستقل، انصارالله یا شایعه — از نیروهای حوثی در جادهٔ ابین، در استان ابین یا در شرق عدن خبر نمی‌دهد. مسیر زمینی شرقی عدن و بندرش (دریا در جنوب/شرق) گزارش نشده که قطع، مورد مناقشه یا حتی تهدید شده باشند. این خلأ تعیین‌کنندهٔ ادعای محاصره است: حلقه به کمان شرقی نیاز دارد و هیچ‌کدام مستند نیست.",
+   "هیچ مدرکی از محاصرهٔ دریایی عدن یا بسته‌شدن بندر آن نیست. حوثی‌ها اکنون بخش بزرگی از ساحل غرب عدن (از باب‌المندب تا خور عمیره) را دارند که به آن‌ها مواضع راداری و تسلیحات کوتاه‌برد مشرف بر کشتیرانی باب‌المندب و خلیج عدن می‌دهد (ISW، ۱۶ نوامبر) — تهدیدی برای کشتیرانی است، نه محاصرهٔ بندر عدن. Reuters (۱۶ نوامبر): غذا و سوخت در عدن موجود بود و هیچ گزارشی از توقف کار بندر یا فرودگاه نیست. فرودگاه عدن در اکتبر و ۱۱ و ۱۳ نوامبر هدف موشک حوثی‌ها قرار گرفته بود، اما آن حملهٔ موشکی است، نه بسته‌شدن یا محاصره."
+  ],
+  "sources": [
+   {
+    "label": "1. PressTV — «نیروهای یمنی پیشروی بزرگی کردند و محاصرهٔ عدن را کامل کردند»، ۱۳ نوامبر ۲۰۲۶، ۱۱:۰۳ GMT — راستی‌آزمایی زنده",
+    "url": "https://www.presstv.co.uk/Detail/2026/11/13/780631/yemeni-forces-make-major-advances-complete-aden-encirclement"
+   },
+   {
+    "label": "2. ISW-CTP — به‌روزرسانی ایران، ۱۵ نوامبر ۲۰۲۶ — راستی‌آزمایی زنده",
+    "url": "https://understandingwar.org/research/middle-east/iran-update-november-15-2026/"
+   },
+   {
+    "label": "3. ISW-CTP — به‌روزرسانی ایران، ۱۶ نوامبر ۲۰۲۶ — راستی‌آزمایی زنده",
+    "url": "https://www.criticalthreats.org/analysis/iran-update-november-16-2026-6afb96125161a"
+   },
+   {
+    "label": "4. Reuters — «حوثی‌ها زمین‌هایی در ساحل جنوبی یمن گرفتند و به عدن نزدیک‌تر شدند»، ۱۶ نوامبر ۲۰۲۶ — راستی‌آزمایی زنده",
+    "url": "https://www.reuters.com/world/middle-east/houthis-seize-ground-yemens-southern-coast-edge-closer-aden-2026-11-16/"
+   },
+   {
+    "label": "5. South24 — «نیروهای جنوب از باب‌المندب برای تقویت جبهه‌های نزدیک عدن جابه‌جا شدند»، ۱۵ نوامبر ۲۰۲۶ — راستی‌آزمایی زنده",
+    "url": "https://south24.org/news/newse.php?nid=5873"
+   },
+   {
+    "label": "6. South24 — پایش: غیرنظامیان بار اصلی تلفات یمن در نیمهٔ اول نوامبر، داده‌های ۱–۱۲ نوامبر — راستی‌آزمایی زنده",
+    "url": "https://south24.net/news/newse.php?nid=5869"
+   },
+   {
+    "label": "7. Sheba Intelligence — «تهاجم حوثی‌ها در لحج با هدف بازپس‌گیری کنترل باب‌المندب»، ۱۲ نوامبر ۲۰۲۶، ۲۳:۴۲ UTC — راستی‌آزمایی زنده",
+    "url": "https://shebaintelligence.uk/houthi-offensive-in-lahj-aims-to-retake-control-of-bab-al-mandab"
+   },
+   {
+    "label": "8. Tehran Times — «نیروهای یمنی محاصرهٔ عدن را کامل کردند»، ۱۳ نوامبر ۲۰۲۶، ۱۶:۰۳ UTC — نمایه (بازنشر پرس‌تی‌وی)",
+    "url": "https://www.tehrantimes.com/news/532098/Yemeni-forces-complete-Aden-encirclement"
+   },
+   {
+    "label": "9. Al Jazeera — «حوثی‌ها با خروج نیروهای یمنی از باب‌المندب به عدن نزدیک‌تر شدند»، ۱۶ نوامبر ۲۰۲۶ — نمایه؛ بازکردن مستقیم مسدود بود",
+    "url": "https://www.aljazeera.com/amp/news/2026/11/16/houthis-edge-closer-to-aden-as-yemeni-forces-pull-out-of-bab-al-mandeb"
+   },
+   {
+    "label": "10. Al Jazeera، لایو بلاگ، ۱۶–۱۷ نوامبر ۲۰۲۶ — نمایه؛ بازکردن مستقیم مسدود بود",
+    "url": "https://www.aljazeera.com/amp/news/liveblog/2026/11/16/live-houthis-advance-in-yemen-as-tankers-hit-sea-mines-in-strait-of-hormuz"
+   },
+   {
+    "label": "11. Al Jazeera — «ارتش یمن از ۶۶۱ حمله به حوثی‌ها در میانهٔ رانش به‌سوی عدن خبر داد»، ۱۷ نوامبر ۲۰۲۶، ۰۱:۳۸ UTC — نمایه",
+    "url": "https://www.aljazeera.com/news/2026/11/17/yemen-army-reports-661-attacks-on-houthis-amid-houthi-push-towards-aden"
+   },
+   {
+    "label": "12. Al Mayadeen (انگلیسی) — «تنگهٔ باب‌المندب کاملاً به دست انصارالله تأمین شد»، ۱۵ نوامبر ۲۰۲۶ — نمایه؛ بازکردن مستقیم مسدود بود",
+    "url": "https://english.almayadeen.net/news/politics/bab-al-mandab-strait-fully-secured-by-ansar-allah-excl"
+   },
+   {
+    "label": "13. Palestine Chronicle — «انصارالله باب‌المندب را امن اعلام کرد و از پیشروی ۳٬۰۰۰ کیلومتر مربعی خبر داد»، ۱۵–۱۶ نوامبر ۲۰۲۶ — نمایه؛ بازکردن مستقیم مسدود بود",
+    "url": "https://www.palestinechronicle.com/ansarallah-declares-bab-al-mandab-secure-reports-3000-square-kilometer-advance/"
+   },
+   {
+    "label": "14. AFP از مسیر New Indian Express — «حوثی‌ها قلمرو جنوب یمن را گرفتند و تا ۶۰ کیلومتری عدن، مقر دولت، پیش رفتند»، ۱۵ نوامبر ۲۰۲۶ — نمایه",
+    "url": "https://www.newindianexpress.com/world/2026/Nov/15/houthis-seize-territory-in-southern-yemen-advance-to-within-60-km-of-government-seat-aden"
+   },
+   {
+    "label": "15. Dawn — «حوثی‌های یمن در ۶۰ کیلومتری شهر عدن: منابع نظامی و دولتی به AFP»، ۱۶ نوامبر ۲۰۲۶ — نمایه",
+    "url": "https://www.dawn.com/news/2044739"
+   },
+   {
+    "label": "16. Xinhua از مسیر Siasat — «حوثی‌ها تا ۷۰ کیلومتری عدن یمن پیش رفتند»، ۱۶ نوامبر ۲۰۲۶ — نمایه",
+    "url": "https://www.siasat.com/houthis-advance-to-within-70-km-of-yemens-aden-3578393/"
+   },
+   {
+    "label": "17. Shafaq — «دولت یمن: ۲۰۱ حوثی خنثی شدند» (شامل ادعای پهلوگیری المسیره، کهبوب تا خور عمیره)، ۱۵ نوامبر ۲۰۲۶ — نمایه",
+    "url": "https://www.shafaq.com/en/World/Yemen-government-201-Houthis-neutralized"
+   },
+   {
+    "label": "18. ISW-CTP — به‌روزرسانی ایران، ۱۲ نوامبر ۲۰۲۶ (ارجاع‌های تلگرام سریع، پست‌های 4062 تا 4071) — نمایه",
+    "url": "https://understandingwar.org/research/middle-east/iran-update-november-12-2026/"
+   },
+   {
+    "label": "19. اینستاگرام @timanderson2037، ۱۳ نوامبر ۲۰۲۶ — فقط نمایه، مستقیم باز نشد",
+    "url": "https://www.instagram.com/p/DfsiAAYzilt/"
+   },
+   {
+    "label": "20. اینستاگرام @tcmedianews، ۱۴ نوامبر ۲۰۲۶ — فقط نمایه",
+    "url": "https://www.instagram.com/p/DfuPSv7M1QX/"
+   },
+   {
+    "label": "21. ریل اینستاگرام @gabrielgeopoeta، ۱۵ نوامبر ۲۰۲۶ — فقط نمایه",
+    "url": "https://www.instagram.com/reel/DfwtE6txU-3/"
+   },
+   {
+    "label": "22. اینستاگرام @radio.arizona (نقشهٔ بنزربری)، ۱۵ نوامبر ۲۰۲۶ — فقط نمایه",
+    "url": "https://www.instagram.com/p/DfxLQTSOS_8/"
+   },
+   {
+    "label": "23. ریل اینستاگرام @_basedment، ۱۵ نوامبر ۲۰۲۶ — فقط نمایه",
+    "url": "https://www.instagram.com/reel/DfwVr6kNSAr/"
+   },
+   {
+    "label": "24. ریل اینستاگرام @middleeasteye، ۱۶ نوامبر ۲۰۲۶ — فقط نمایه",
+    "url": "https://www.instagram.com/reel/DfzkwObD1L-/"
+   },
+   {
+    "label": "25. اینستاگرام @drriyadd (نقشهٔ France 24/Liveuamap)، ۱۶ نوامبر ۲۰۲۶ — فقط نمایه",
+    "url": "https://www.instagram.com/p/Df0G5XrjU-8/"
+   },
+   {
+    "label": "26. اینستاگرام @thestudyofwar (ISW)، ۱۷ نوامبر ۲۰۲۶ — فقط نمایه",
+    "url": "https://www.instagram.com/p/Df0wTuil0-B/"
+   },
+   {
+    "label": "27. Ozzy (@ozzeren)، یادداشت Substack، ۱۵ نوامبر ۲۰۲۶ — نمایه",
+    "url": "https://substack.com/@ozzeren/note/c-388282948"
+   },
+   {
+    "label": "28. Al-Estiklal — «المقطره در خط آتش: پیشروی حوثی‌ها مسیرهای عدن را چگونه تهدید می‌کند؟» — نمایه",
+    "url": "https://www.alestiklal.net/en/article/al-maqatirah-in-the-line-of-fire-how-does-the-houthi-advance-threaten-the-routes-to-aden"
+   }
+  ],
+  "layers": {
+   "confirmed": [
+    {
+     "title": "پیشروی حوثی‌ها در لحج، ۱۱ تا ۱۶ نوامبر",
+     "body": "تصرف المقطره، المضاربه و محدودهٔ خرز، فرودگاه ذباب، جبل کهبوب و الشط و رسیدن به ساحل خلیج عدن در خور عمیره تا ۱۶ نوامبر. (AFP، Reuters، ISW، الجزیره، South24 — همگرا.)"
+    },
+    {
+     "title": "عقب‌نشینی و استقرار دوبارهٔ دولت برای دفاع از عدن",
+     "body": "نیروهای دولتی/جنوبی ۱۵ نوامبر از ذباب و باب‌المندب عقب نشستند تا از عدن و لحج دفاع کنند و خطوط تازه در السقیه، خور عمیره، جبل خرز و ام جهر ساختند. (بیانیهٔ نیروهای جنوب به نقل از South24/الجزیره/Reuters؛ ISW.)"
+    },
+    {
+     "title": "عدن زیر حملهٔ موشکی است، اما در دست دولت و در حال کار است",
+     "body": "حمله‌های ۱۱، ۱۳ و ۱۴ نوامبر به اردوگاه‌ها، فرودگاه و البریقه؛ سنگربندی و تونل از ۱۳ نوامبر و ایست‌های بازرسی در شهر؛ غذا و سوخت در دسترس (۱۶ نوامبر). (Reuters، South24، AFP.)"
+    },
+    {
+     "title": "شهری که واقعاً محاصره شده تعز است، نه عدن",
+     "body": "نیروهای دولت «همچنان از شهر تعز که در محاصرهٔ حوثی‌هاست دفاع می‌کنند» (ISW، ۲ و ۳ و ۱۵ نوامبر) و الجزیره از محاصرهٔ بیش از یک‌ماههٔ تعز با بیش از ۶۰۰٬۰۰۰ ساکن در کمبود شدید آب، غذا و سوخت گفت. زبان محاصره‌ای که مستقل تأیید شده، مال تعز است."
+    }
+   ],
+   "official_claims": [
+    {
+     "title": "PressTV، ۱۳ نوامبر: «تکمیل رسمی محاصرهٔ استان عدن»",
+     "body": "تأیید نشده و با خط زمانی نقض می‌شود: شبا می‌گوید ساحل ۱۲ نوامبر هنوز در دست دولت بود؛ ISW می‌گوید خطوط دولت در السقیه و خور عمیره ۱۵ نوامبر هنوز برقرار بود؛ رویترز می‌گوید خط دولت در قاوه ۱۶ نوامبر ۲۵ کیلومتر شرق موضع ساحلی حوثی‌ها بود. توجه: پرس‌تی‌وی رسانهٔ دولتی ایران است، نه رسانهٔ انصارالله؛ تنها عبارت «محاصره» در سطح رسمیِ همسو، از همین‌جا آمده و بازنشر شده است."
+    },
+    {
+     "title": "المسیره، ۱۵ نوامبر: کنترل «از کهبوب تا خور عمیره»",
+     "body": "با Reuters و ISW دربارهٔ پیشروی ساحلی تا حدی همگراست، اما «کنترل» کل این نوار مستقل تأیید نشده است؛ ISW می‌گوید نیروهای دولت ۱۵ نوامبر هنوز در خور عمیره حضور داشتند (حملهٔ موشک بالستیک حوثی‌ها به خور عمیره در همان روز، نشانهٔ حضور نیروهای همسو با دولت در آن محدوده بود)."
+    },
+    {
+     "title": "المیادین/انصارالله، ۱۵ نوامبر: بیش از ۳٬۰۰۰ کیلومتر مربع و صدها اسیر",
+     "body": "راستی‌آزمایی‌نشده (تک‌منبع، همسو با انصارالله)؛ مقیاس با توجه به عقب‌نشینی ممکن است، اما رقم، ادعاست."
+    },
+    {
+     "title": "ادعاهای حملهٔ یحیی سریع (خرز، ریاض، خط لوله)",
+     "body": "از نظر اثر راستی‌آزمایی‌نشده‌اند؛ ISW صریحاً می‌گوید ادعاهای حوثی‌ها دربارهٔ حمله‌های عربستان را «نمی‌تواند راستی‌آزمایی کند». در پست‌های مستند سریع در این بازه، ادعاها دربارهٔ حمله‌هاست، نه محاصرهٔ عدن."
+    },
+    {
+     "title": "تناقض درون اردوگاه انصارالله: الشامی، ۱۵ نوامبر",
+     "body": "عضو دفتر سیاسی انصارالله به المیادین گفت باب‌المندب «کاملاً امن» است، هدف تأمین تنگه بوده و «قصد پیشروی به سوی عدن ندارند» و ساکنان جنوب هدف نیستند. اگر ظاهری گرفته شود، با نقشهٔ محاصرهٔ عدن ناسازگار است؛ با ژست تبلیغاتی/مذاکره‌ای هم سازگار است و ثابت نمی‌کند حوثی‌ها متوقف می‌شوند."
+    }
+   ],
+   "rumours": [
+    {
+     "title": "شایعه: «انصارالله همین حالا کل عدن را محاصره کرده است»",
+     "body": "ریل اینستاگرامی @the_louraxx/@gabrielgeopoeta، ۱۵ نوامبر؛ هیچ مدرکی جز یک نقشهٔ کلی و نمایش مقالهٔ پرس‌تی‌وی ارائه نشده است. ادعای «محاصره» صدای راوی است، نه چیزی که خود نقشه نشان دهد."
+    },
+    {
+     "title": "شایعه: «تنها راه تدارک نیروهای دولتی حالا بندر عدن است / همهٔ سعودی‌ها محاصره شده‌اند»",
+     "body": "یادداشت Ozzy در Substack، ۱۵ نوامبر. نیمهٔ اول برای یگان‌های ساحلی تقریباً درست است (خط زمینی‌شان قطع شد)، اما چنان ارائه شده که گویی خود عدن محاصره است؛ ویدیوی کاروان‌های «در حال فرار» در خلاصهٔ نمایه بدون تاریخ و مکان‌یابی است."
+    },
+    {
+     "title": "شایعه: عربستان «طبق دستور هانیبال» نیروهای خودی را بمباران می‌کند",
+     "body": "@gabrielgeopoeta؛ هیچ مدرکی ارائه نشده است. تیتر جداگانه‌ای دربارهٔ «حملهٔ جنگنده‌های سعودی به کاروان‌های متحد در حال فرار از پیشروی حوثی‌ها» در نتایج جست‌وجو دیده شد اما باز و راستی‌آزمایی نشد — شایعهٔ تأییدنشده."
+    },
+    {
+     "title": "شرطی که در بازنشرها گم شد",
+     "body": "بنزربری/Drop Site: «اگر انصارالله اردوگاه خرز را نگه دارد، نیروهای دولت محاصره می‌شوند» — قید شرطی در بازنشرها حذف شد و «محاصرهٔ ممکن یگان‌های ساحلی دولت» به «محاصرهٔ کامل‌شدهٔ عدن» تبدیل شد."
+    },
+    {
+     "title": "حساب سطح پایین مخالف: @_basedment، ۱۵ نوامبر",
+     "body": "«در حالی که هیچ محاصرهٔ کاملی رخ نداد» تا ۱۳ نوامبر؛ تقویت‌های دولت از ام جهر و مواضع «سپر میهن» به شمال فشار آوردند و تا ۱۳ نوامبر مسیر ساحلی بازگشایی شد. این روایت مستقیم با تیتر ۱۳ نوامبر پرس‌تی‌وی در تضاد است و نشان می‌دهد جبهه سیال بود، نه حلقه‌ای تثبیت‌شده."
+    }
+   ]
+  },
+  "contradictions": [
+   {
+    "title": "۱. «محاصره در ۱۳ نوامبر کامل شد» (پرس‌تی‌وی) در برابر «برنامه‌ای برای پیشروی به سوی عدن نیست» (الشامی/المیادین، ۱۵ نوامبر)",
+    "body": "هر دو نمی‌توانند یک قصد را توصیف کنند: یا تیتر ۱۳ نوامبر زودهنگام/تبلیغاتی بود، یا گفتهٔ ۱۵ نوامبر علامت اطمینان‌بخشی/مذاکره است در حالی که نیروها تثبیت می‌شوند. شواهد زمینی (پیشروی ادامه‌دار حوثی‌ها به‌سوی شرق و خرز/قاوه در ۱۶ نوامبر، به گفتهٔ ISW و رویترز) با هیچ‌کدام نمی‌خواند — نه با محاصرهٔ کامل‌شده و نه با توقف؛ با پیشروی ادامه‌دار در غرب عدن می‌خواند که عدن هدف ممکن آینده‌اش است."
+   },
+   {
+    "title": "۲. فاصله‌ها: ۶۰ کیلومتر (AFP، اردوگاه خرز) در برابر ۷۰ (شین‌هوا) در برابر ۸۰ (رویترز، طور الباحه) در برابر ۱۰۰ (رویترز، خور عمیره؛ ISW، جبل خرز)",
+    "body": "این‌ها مکان‌ها و تاریخ‌های متفاوت‌اند، نه لزوماً خطا — اردوگاه خرز (درون لحج) به عدن نزدیک‌تر از موضع ساحلی خور عمیره است — اما در پست‌های اجتماعی مدام به‌صورت یک رقم واحد «حوثی‌ها در X کیلومتری عدن» با هم قاطی می‌شوند. نزدیک‌ترین موضع مستقل گزارش‌شده خرز است، حدود ۶۰ کیلومتر (AFP، ۱۵ نوامبر)؛ نزدیک‌ترین موضع ساحلی خور عمیره است، حدود ۱۰۰ کیلومتری غرب (Reuters، ۱۶ نوامبر)، با خط دولت ۲۵ کیلومتر شرق‌تر در قاوه."
+   },
+   {
+    "title": "۳. «محاصره»ٔ چه چیزی؟",
+    "body": "ISW و نقشهٔ بنزربری «محاصره» را برای نیروهای دولت در ساحل باب‌المندب نزدیک جبل خرز به کار می‌برند — محاصره‌ای تاکتیکی که دولت با عقب‌نشینی از آن گریخت. پرس‌تی‌وی، Cradle و بازنشرهای اجتماعی همان واژه را به استان/شهر عدن منتقل می‌کنند. همین انتقال، هستهٔ برداشت نادرست است."
+   },
+   {
+    "title": "۴. ارقام عملیات و تلفات دولت",
+    "body": "ادعاهای دولت (شورای رهبری: حدود ۲۰٬۰۰۰ حوثی از اوایل اکتبر «خنثی» شده‌اند؛ ارتش: ۶۶۱ حمله و ۱۷۳ کشته و زخمی در ۱۶ نوامبر؛ شبا: مجموع حدود ۴۸٬۵۷۶ عملیات هدف‌گیری) ادعای دولت‌اند و مستقل راستی‌آزمایی نشده‌اند (South24 و شبا هر دو همین را پرچم زده‌اند) و در جهت مخالف هم برش دارند: با نیروی دولتی‌ای که همین حالا محاصره شده باشد، ناسازگارند."
+   }
+  ],
+  "channels_method_fa": "قید روش‌شناسی — فقط نمایه: در این پژوهش هیچ کانال تلگرام و هیچ پست اینستاگرامی مستقیم باز نشد. یافته‌های تلگرام و اینستاگرام از خلاصه‌های نمایهٔ جست‌وجوست، به‌علاوهٔ ارجاع کانال‌ها در پانویس‌های ISW و گزارش‌های ثانویه؛ پس همه «فقط نمایه» برچسب می‌خورند — عبارت‌بندی، همان خلاصهٔ نمایه است، نه متن خوانده‌شده روی خود پلتفرم. شناسهٔ کانال‌های رسمی با پانویس‌های ISW تطبیق داده شده است، اما عبارت‌بندی تک‌تک پست‌ها دربارهٔ «محاصره» مستقیم راستی‌آزمایی نشد. جمع‌بندی این بخش: تنها عبارت «محاصره» در سطح رسمیِ همسو، از پرس‌تی‌وی (رسانهٔ دولتی ایران، نه رسانهٔ انصارالله) و بازنشرهایش آمده است؛ پست‌های مستند خود سریع در این بازه ادعای حمله‌اند، نه محاصره؛ و خط رسمی دفتر سیاسی انصارالله در ۱۵ نوامبر برعکس است. لایهٔ شبکه‌های اجتماعی عمدتاً پرس‌تی‌وی/Cradle یا یک نقشهٔ OSINT را کپی می‌کند و یک حساب بزرگ OSINT (@_basedment) صریحاً می‌گوید تا ۱۳ نوامبر هیچ محاصرهٔ کاملی رخ نداده بود.",
+  "cross_check_summary_fa": "هیچ منبع مستقلی در این پژوهش تأیید نمی‌کند: حلقهٔ بسته دور عدن؛ حوثی‌ها در شرق/شمال‌شرق عدن (ابین)؛ حوثی‌ها در جنوب عدن از راه دریا؛ بسته‌شدن بندر یا فرودگاه عدن؛ یا نبرد زمینی داخل شهر عدن. همهٔ منابع مستقل از پیشروی به‌سوی عدن از غرب/شمال‌غرب، در فاصلهٔ ۶۰ تا ۱۰۰ کیلومتری، با خطوط دولت در میان، می‌گویند.",
+  "seen_note_fa": "تصاویری که در ۱۶ نوامبر دیده بودید: محتمل‌ترین نامزدها نقشهٔ ۱۴ نوامبر بنزربری (بازنشر گستردهٔ ۱۵–۱۶ نوامبر در اینستاگرام، فیس‌بوک و Threads با زیرنویس «محاصره شد») و گرافیک‌های تیتر پرس‌تی‌وی/Cradle (@tcmedianews، ۱۴ نوامبر) است. هر دو پست واقعی ۱۴–۱۵ نوامبرند، اما هیچ‌کدام حلقه‌ای دور شهر عدن را ثابت نمی‌کنند: نقشه مال نیروهای دولت در ساحل لحج و باب‌المندب است و گرافیک‌ها تیتری را تصویر می‌کنند که متن خودش فقط رسیدن به نوار ساحلی عدن–لحج را ثابت می‌کند.",
+  "taiz_note_fa": "برای مقایسه: تعز شهری است که واقعاً محاصره شده است. ISW (۲، ۳ و ۱۵ نوامبر): نیروهای دولت «همچنان از شهر تعز که در محاصرهٔ حوثی‌هاست دفاع می‌کنند»؛ الجزیره: تعز بیش از یک ماه در محاصرهٔ حوثی‌هاست و بیش از ۶۰۰٬۰۰۰ ساکن آن با کمبود شدید آب، غذا و سوخت روبه‌رویند. زبان محاصره‌ای که مستقل تأیید می‌شود در گزارش‌ها اغلب با عدن قاطی می‌شود، اما مال تعز است.",
+  "open_questions": [
+   "دسترسی مستقیم به تلگرام/اینستاگرام: هیچ پست تلگرامی (t.me/army21ye و t.me/MilitaryMediaY) و هیچ پست یا ریل اینستاگرامی در این نوبت مستقیم باز نشد؛ همهٔ عبارت‌بندی‌های شبکه‌های اجتماعی از خلاصه‌های نمایهٔ جست‌وجوست و زمان دقیق، شمار بازدید/پسند و نظرها بررسی نشد. بررسی مستقیم تلگرام سریع برای ۱۳ تا ۱۷ نوامبر هنوز می‌تواند روشن کند که آیا او هرگز واژهٔ «محاصره» را به کار برده است — در شواهد یافته‌شده چیزی نمی‌گوید که برده باشد.",
+   "بازکردن مستقیم الجزیره، Palestine Chronicle و المیادین در این نوبت ناموفق بود؛ محتوایشان فقط از متن نمایهٔ جست‌وجو استفاده شده و در سراسر این تب «نمایه» پرچم خورده است.",
+   "خط مقدم دقیق در ۱۷ نوامبر: تا زمان پژوهش به‌روزرسانی ISW برای خود ۱۷ نوامبر پیدا نشد (تازه‌ترین راستی‌آزمایی‌شده ۱۶ نوامبر است، با برش دادهٔ ساعت ۲ بعدازظهر به وقت شرق آمریکا)؛ مواضع صبح ۱۷ نوامبر ممکن است جابه‌جا شده باشد، به‌ویژه دور جبل خرز و قاوه.",
+   "نام و فاصلهٔ خرز: «اردوگاه خرز» AFP (۶۰ کیلومتری عدن) در برابر «جبل خرز» ISW (۱۰۰ کیلومتری غرب عدن) ممکن است دو مکان متفاوت باشند؛ منابع آن‌ها را با هم تطبیق نمی‌دهند.",
+   "وضعیت بندر و فرودگاه عدن در ۱۷ نوامبر: هیچ گزارش ۱۷ نوامبری دربارهٔ باز یا بسته‌بودنشان پیدا نشد؛ آخرین شاهد مستقیم رویترز ۱۶ نوامبر است (غذا و سوخت در شهر موجود بود).",
+   "حمله‌های هوایی عربستان به کاروان‌های متحد در حال فرار: تیتری به این مضمون در نتایج جست‌وجو آمد اما باز و راستی‌آزمایی نشد؛ شایعه محسوب شود.",
+   "وب‌سایت‌های سبأ و المسیره: هیچ مقالهٔ مستقیمی از almasirah.net یا saba.ye دربارهٔ محاصره به دست نیامد (جست‌وجوی سایت المسیره نتیجه‌ای نداد)؛ ادعاهایشان فقط از گزارش ثانویه شناخته می‌شود (شفق، الجزیره، پانویس‌های ISW)."
+  ]
+ },
+ "human_stats": [
+  {
+   "label": "آواره از ۱ اوت تا ۱۶ نوامبر ۲۰۲۶",
+   "value": "۳۴۸٬۰۰۰+",
+   "source": "IOM از طریق الجزیره"
+  },
+  {
+   "label": "نفر قطع‌شده پیرامون تعزِ محاصره‌شده",
+   "value": "۸۰۰٬۰۰۰",
+   "source": "OCHA / رویترز، ۲۶ اکتبر"
+  },
+  {
+   "label": "در دست حوثی‌ها — اما پرجمعیت‌ترین بخش کشور",
+   "value": "~⅓ خاک",
+   "source": "Silent Dossier، ۱۴ نوامبر"
+  },
+  {
+   "label": "پناهنده در اردوگاه خرز که درگیری به محدوده‌اش رسید",
+   "value": "۹٬۶۰۰",
+   "source": "UNHCR، ۱۵ نوامبر"
+  }
+ ],
+ "sources": [
+  {
+   "label": "ISW-CTP — Iran Update, 15 Nov 2026",
+   "url": "https://understandingwar.org/research/middle-east/iran-update-november-15-2026/"
+  },
+  {
+   "label": "ISW-CTP — Iran Update, 12 Nov 2026",
+   "url": "https://www.criticalthreats.org/analysis/iran-update-november-12-2026"
+  },
+  {
+   "label": "ISW-CTP — Iran Update, 9 Nov 2026",
+   "url": "https://understandingwar.org/research/middle-east/iran-update-november-9-2026/"
+  },
+  {
+   "label": "ISW-CTP — Iran Update, 7 Nov 2026",
+   "url": "https://understandingwar.org/research/middle-east/iran-update-november-7-2026/"
+  },
+  {
+   "label": "ISW-CTP — Iran Update, 2 Nov 2026",
+   "url": "https://understandingwar.org/research/middle-east/iran-update-november-2-2026"
+  },
+  {
+   "label": "ISW — نقشه تعز/لحج، ۱۴ نوامبر (Threads)",
+   "url": "https://www.threads.com/@thestudyofwar/post/DfvG0p9ibgW"
+  },
+  {
+   "label": "Reuters — Houthis seize ground on Yemen's southern coast, 16 Nov 2026",
+   "url": "https://www.reuters.com/world/middle-east/houthis-seize-ground-yemens-southern-coast-edge-closer-aden-2026-11-16/"
+  },
+  {
+   "label": "Reuters — Yemeni government forces seize district by Bab el-Mandeb, 5 Oct 2026",
+   "url": "https://www.reuters.com/world/yemeni-government-forces-seize-district-by-bab-el-mandeb-military-sources-say-2026-10-05/"
+  },
+  {
+   "label": "AFP via Times of Israel — Houthis advance toward Aden, 15–16 Nov 2026",
+   "url": "https://www.timesofisrael.com/houthis-advance-toward-aden-closing-to-within-60-km-as-government-bolsters-defenses/amp/"
+  },
+  {
+   "label": "Xinhua via Morung Express — Houthis advance toward Aden, 15 Nov 2026",
+   "url": "https://www.morungexpress.com/houthis-advance-toward-yemens-aden-as-govt-forces-suffer-fresh-setbacks"
+  },
+  {
+   "label": "South24 — Southern Forces Shift from Bab Al-Mandeb, 15 Nov 2026",
+   "url": "https://south24.org/news/newse.php?nid=5873"
+  },
+  {
+   "label": "South24 — Saudi Arabia Changes Joint Forces Command, 16 Nov 2026",
+   "url": "https://south24.org/news/newse.php?nid=5877"
+  },
+  {
+   "label": "Sheba Intelligence — Houthi Offensive in Lahj, 12 Nov 2026",
+   "url": "https://shebaintelligence.uk/houthi-offensive-in-lahj-aims-to-retake-control-of-bab-al-mandab"
+  },
+  {
+   "label": "PolGeoNow — Sept. 2026 Yemen Control Map & Timeline",
+   "url": "https://www.polgeonow.com/2026/11/yemen-map-houthi-control-2026-war-red-sea-chokepoint.html"
+  },
+  {
+   "label": "Al Jazeera — liveblog, 16 Nov 2026",
+   "url": "https://www.aljazeera.com/amp/news/liveblog/2026/11/16/iran-war-live-tehran-warns-it-may-strike-first-before-another-us-attack"
+  },
+  {
+   "label": "Al Jazeera — Dozens killed as humanitarian crisis mounts, 7 Nov 2026",
+   "url": "https://www.aljazeera.com/news/2026/11/7/dozens-killed-as-humanitarian-crisis-mounts-in-yemen-what-next-for-war"
+  },
+  {
+   "label": "Al Jazeera — Government claims al-Jawf mountain range, 4 Nov 2026",
+   "url": "https://www.aljazeera.com/news/2026/11/4/yemeni-government-forces-claim-control-of-strategic-al-jawf-mountain-range"
+  },
+  {
+   "label": "Strategic Energy Map — Bab el-Mandeb status, updated 15 Nov 2026",
+   "url": "https://strategicenergymap.org/chokepoints/bab-el-mandeb/"
+  },
+  {
+   "label": "Shafaq — Yemen government: 201 Houthis neutralized, 15 Nov 2026",
+   "url": "https://www.shafaq.com/en/World/Yemen-government-201-Houthis-neutralized"
+  },
+  {
+   "label": "Palestine Chronicle / Al Mayadeen — Ansarallah declares Bab al-Mandab secure, 15 Nov 2026",
+   "url": "https://www.palestinechronicle.com/ansarallah-declares-bab-al-mandab-secure-reports-3000-square-kilometer-advance/"
+  },
+  {
+   "label": "The Hindu (Reuters) — Saudi Arabia replaces military commander, 16 Nov 2026",
+   "url": "https://www.thehindu.com/news/international/after-yemen-setback-saudi-arabia-replaces-military-commander/article71709122.ece"
+  },
+  {
+   "label": "Reuters — Taiz hospitals/fuel, 26 Oct 2026",
+   "url": "https://www.reuters.com/world/middle-east/no-fuel-keep-babies-warm-shortages-push-hospitals-yemens-taiz-brink-2026-10-26/"
+  },
+  {
+   "label": "Jerusalem Post / Reuters — Houthis closest to Aden since 2015, 2 Nov 2026",
+   "url": "https://www.jpost.com/middle-east/article-913601"
+  },
+  {
+   "label": "Silent Dossier — How Much of Yemen Do the Houthis Control?, 14 Nov 2026",
+   "url": "https://silentdossier.com/articles/how-much-of-yemen-do-the-houthis-control-map"
+  },
+  {
+   "label": "Daily Sabah — Fighting threatens key shipping routes, 24 Oct 2026",
+   "url": "https://www.dailysabah.com/politics/diplomacy/fidan-to-meet-yemeni-fm-as-fighting-threatens-key-shipping-routes/amp"
+  }
+ ],
+ "map_reading": [
+  {
+   "title": "خاستگاه نقشه — گرافیک شبکه‌های اجتماعی، نه سند رسمی",
+   "body": "این تصویر، برچسب‌به‌برچسب، با یک گرافیک OSINT بازنشرشده در اینستاگرام در ۱۵ و ۱۶ نوامبر ۲۰۲۶ مطابقت دارد (پست‌های @2026bukvar در ۱۵ نوامبر و @saman_iran153 در ۱۶ نوامبر، با متن سیریلیک «LAHDJ TAIZ»). در نسخه‌های یافت‌شده هیچ راهنما (لجند)، نام سازنده، مهر تاریخ، مقیاس یا انتساب منبعی دیده نمی‌شود و هیچ منبع متنی نمادهای آن را توضیح نداده است. پس هر خوانشی از رنگ‌ها و نمادها استنباط است، نه واقعیت راستی‌آزمایی‌شده؛ نقشه را باید تصویری از نحوهٔ نمایش جبهه در حدود ۱۴–۱۵ نوامبر توسط یک بازنشرکننده دانست، نه به‌تنهایی سند اثبات کنترل."
+  },
+  {
+   "title": "«4 BO» و «5 BO» یعنی چه؟ — تأییدنشده",
+   "body": "دو برچسب در ناحیهٔ قرمز مرکزی/شمالی نقشه، کنار خطوط نقطه‌چین زرد، با پیکان‌های قرمز به سمت جنوب و ساحل. محتمل‌ترین خوانش (صرفاً استنباط): دو محور یا بخش عملیاتی شماره‌گذاری‌شده — «محور ۴» و «محور ۵» — از نیرویی که به سمت جنوب پیشروی می‌کند؛ این با ادعای حوثی‌ها دربارهٔ عملیات دور زدن چندمحوره و گزارش شبا از تهاجم دومحوره (الحجاج/الافج؛ و المضاربه از مسیر الحیمه به سمت تقاطع الصریح) جور درمی‌آید. آنچه ثابت نشده: هیچ منبعی «BO» را باز نکرده و هیچ تیپ یا گردانی به این نام‌ها نام نبرده است. نباید آن را به «تیپ» یا «گردان» بسط داد؛ بیان صادقانه: دو محور/بخش شماره‌دار، با هویت نامشخص."
+  },
+  {
+   "title": "رنگ‌ها و پنج‌ضلعی زرد — استنباط، نه قطعیت",
+   "body": "چون نقشه راهنما ندارد، هیچ خوانش رنگی راستی‌آزمایی‌شده نیست؛ حتی در همین هفته قراردادهای دیگر جهت مخالف می‌دهند (نقشه‌های ISW قرمز/صورتی را حوثی و سبز خط‌چین را دولت می‌گیرند). بهترین استنباط برای همین نقشه: پیکان‌های قرمز به سمت جنوب‌اند، یعنی در جهت پیشروی مستند حوثی‌ها؛ پس ناحیهٔ قرمز مرکزی/شمالی به‌احتمال زیاد زمین در دست یا در حال پیشروی حوثی‌ها (بلندی‌های کهبوب–المقاطره–المضاربه) و نوار سبز ساحل جنوبی به‌احتمال زیاد نوار ساحلی در دست دولت/نیروهای جنوب است، آن‌طور که پیش از عقب‌نشینی ۱۵ نوامبر بود. خط نقطه‌چین زرد در شرح‌ها «مرزهای اضافی» خوانده شده؛ به‌احتمال زیاد خط جبهه، مرز بخش بین دو محور ۴ و ۵، یا خط ادعایی پیشروی است — هیچ منبعی مشخص نکرده کدام. پنج‌ضلعی زرد دور البهیه با چهار نماد انفجار قرمز درونش، به‌احتمال زیاد یک کانون درگیری/ضربه‌خورده را نشان می‌دهد، نه کنترل را؛ هیچ منبع متنی دربارهٔ کنترل خود روستای البهیه اظهارنظر نکرده است."
+  },
+  {
+   "title": "هشدار نام‌گذاری — «فرودگاه زقر»",
+   "body": "چند خبر ۱۵–۱۶ نوامبر عقب‌نشینی را از «فرودگاه زقر» نوشته‌اند. زقر جای دیگری است: جزیره‌ای حدود ۹۰ کیلومتر جنوب‌شرق حدیده که باند جداگانه‌ای آنجا ساخته شده. فرودگاه نظامی ذباب باندی در خشکی اصلی، در بنی‌الحکمِ شهرستان ذباب است. صورت «زقر» ظاهراً خطای ترجمه/قاطی‌شدن در نسخه‌های بازنشرشده است؛ بیانیهٔ خود نیروهای جنوب، به نقل رویترز و South24، «فرودگاه ذباب» می‌گوید. این دو مکان را یکی نگیرید."
+  },
+  {
+   "title": "دربارهٔ رفت‌وآمد کشتی‌ها در تنگه",
+   "body": "تا ۱۶ نوامبر هیچ طرفی بستن تنگه را اعلام نکرده و آبراه همچنان گذرگاه بین‌المللی کشتیرانی است؛ تغییر روی خشکی است. مرکز اطلاعات دریایی مشترک (JMIC) در به‌روزرسانی ۱۱۴ مورخ ۱۵ نوامبر — به نقل از گزارش ثانویهٔ ShipUniverse — تهدید جنوب دریای سرخ/باب‌المندب را «قابل‌توجه» طبقه‌بندی کرد، از حدود ۲۲ تردد تجاری در روز در ۱۲–۱۴ نوامبر (در برابر میانگین ۶۱ در ۲۰۲۳) خبر داد و در بازهٔ ۱۲–۱۵ نوامبر هیچ حمله یا اختلال تأییدشده‌ای به کشتی تجاری ثبت نکرد. این ارقام گزارش ثانویه از JMIC است، نه منبعی که مستقیم خوانده شده باشد."
+  }
+ ],
+ "military_features": [
+  {
+   "title_fa": "خط ارتباطی زمینی مخا–عدن — هدف اصلی تهاجم",
+   "kind_fa": "خط تدارکاتی / عقبه (GLOC)",
+   "body_fa": "تهاجم ۱۱ نوامبر حوثی‌ها در جنوب‌شرق لحج صریحاً با هدف قطع خط ارتباطی زمینی مخا–عدن در جبل خرز طراحی شده بود. خط روی نقشه مسیر تقریبی همین جادهٔ ساحلی از مخا از مسیر ذباب و خرز و خور عمیره به‌سوی عدن است — مسیر دقیق جاده در منابع پژوهش نیامده و ترسیم، شماتیک و استنباطی است.",
+   "confidence_fa": "تأییدشده برای هدف و وجود خط (ISW-CTP)؛ مسیر ترسیمی تقریبی",
+   "source_fa": "ISW-CTP، ۱۲ نوامبر ۲۰۲۶"
+  },
+  {
+   "title_fa": "جادهٔ اصلی تعز–عدن از مسیر المقاطره",
+   "kind_fa": "خط تدارکاتی / عقبه",
+   "body_fa": "جادهٔ اصلی تعز–عدن از شهرستان المقاطره می‌گذرد؛ حوثی‌ها از اوایل اکتبر آن را قطع کرده‌اند و شهر تعز از آن زمان در محاصره است. خود المقاطره میان ادعاهای متناقض دو طرف مورد مناقشه است. مسیر ترسیمی روی نقشه تقریبی است.",
+   "confidence_fa": "تأییدشده برای قطع جاده و محاصره (الجزیره/OCHA)؛ مسیر ترسیمی تقریبی",
+   "source_fa": "الجزیره/OCHA، ۷ نوامبر؛ ISW-CTP، نوامبر ۲۰۲۶"
+  },
+  {
+   "title_fa": "مسیر تدارکات صنعا–مأرب/الجوف از تقاطع الجوف (الجدعان)",
+   "kind_fa": "خط تدارکاتی / عقبه",
+   "body_fa": "تقاطع الجوف (الجدعان) مسیر کلیدی تدارکات حوثی‌ها میان صنعا و مأرب/الجوف است و مسیر خولان–صرواح–المخدره تقویت‌های آن‌ها را به جبهه‌های مأرب و الجدعان می‌رساند. دولت در هفتهٔ اول نوامبر بر بخش‌هایی از مسیرهای تدارکاتی العلم/اللبنات کنترل آتش گرفت (Yemen Monitor). مسیر دقیق روی نقشه ترسیم نشده است — نامشخص.",
+   "confidence_fa": "گزارش‌شده (شبا؛ Yemen Monitor)",
+   "source_fa": "شبا اینتلیجنس، ۹ نوامبر؛ Yemen Monitor، نوامبر ۲۰۲۶"
+  },
+  {
+   "title_fa": "محور ساحلی حوثی‌ها: ذباب ← کهبوب ← خرز ← خور عمیره ← قاوه",
+   "kind_fa": "محور پیشروی",
+   "body_fa": "محور اصلی پیشروی ۱۵–۱۶ نوامبر در امتداد دشت ساحلی دریای سرخ به‌سوی شرق و عدن؛ نقشه‌های ISW تصرف دشت ساحلی را نشان می‌دهند. دولت در عدن از ۱۳–۱۴ نوامبر استحکامات (کیسهٔ شن و تونل) ساخت و خط تازه‌اش نزدیک ام جهر «آسیب‌پذیر» ارزیابی شد.",
+   "confidence_fa": "تأییدشده برای جهت کلی؛ گزارش‌شده برای انتهای محور",
+   "source_fa": "ISW-CTP، ۱۵–۱۶ نوامبر؛ Reuters/AFP، ۱۵–۱۶ نوامبر ۲۰۲۶"
+  },
+  {
+   "title_fa": "محور دولت به‌سوی الحزم (شمال‌غرب مأرب / جنوب الجوف)",
+   "kind_fa": "محور پیشروی",
+   "body_fa": "پیشروی‌های دولت در جبل دهیده (۷۵ کیلومتری الحزم) و نزدیک اردوگاه ماس (۵۰ کیلومتری الحزم) بخشی از عملیات شکل‌دهی برای بازپس‌گیری الحزم است؛ دولت در هفتهٔ اول نوامبر رشته‌کوه‌های حویشیان و دهیده در شرق الحزم را پس گرفت و بر بخش‌هایی از مسیرهای تدارکاتی العلم/اللبنات کنترل آتش گرفت.",
+   "confidence_fa": "گزارش‌شده (ISW-CTP؛ Yemen Monitor)",
+   "source_fa": "ISW-CTP، ۹ و ۱۲ نوامبر؛ Yemen Monitor، نوامبر ۲۰۲۶"
+  },
+  {
+   "title_fa": "جبل خرز — بلندی مشرف بر خط ارتباطی مخا–عدن",
+   "kind_fa": "نقطهٔ کلیدی زمین",
+   "body_fa": "جبل خرز بلندی‌ای است که بر خط ارتباطی زمینی مخا–عدن اشراف دارد و هدف نام‌بردهٔ تهاجم حوثی‌ها بود؛ اردوگاه خرز در حدود ۶۰ کیلومتری عدن قرار دارد و ۱۲–۱۴ نوامبر هدف موشک‌های حوثی‌ها به مناطق تجمع دولت بود.",
+   "confidence_fa": "گزارش‌شده (ISW-CTP؛ AFP) — مکان دقیق نامشخص",
+   "source_fa": "ISW-CTP، ۱۲ نوامبر؛ AFP، ۱۵–۱۶ نوامبر ۲۰۲۶"
+  },
+  {
+   "title_fa": "تقاطع الصریح و جبل کهبوب",
+   "kind_fa": "نقطهٔ کلیدی زمین",
+   "body_fa": "تقاطع الصریح (شهرستان المضاربه و العاره) گره جاده‌ای جنوب‌شرق لحج است: ۱۲ نوامبر به دست حوثی‌ها افتاد، ۱۳ نوامبر دولت پس گرفت و دولت ۱۴ نوامبر آن را تثبیت کرد. جبل کهبوب از بلندی‌های ساحلی محور ذباب است که ۱۵ نوامبر به دست حوثی‌ها افتاد.",
+   "confidence_fa": "تأییدشده (ISW-CTP)",
+   "source_fa": "ISW-CTP، ۱۲–۱۵ نوامبر ۲۰۲۶"
+  },
+  {
+   "title_fa": "رشته‌کوه جبل دهیده و ارتفاعات الدهیده",
+   "kind_fa": "نقطهٔ کلیدی زمین",
+   "body_fa": "ارتفاعات دهیده در شرق الحزم: دولت ۹ نوامبر مدعی بیرون راندن حوثی‌ها از مواضع باقی‌مانده در رشته‌کوه شد و ۱۷ نوامبر دوباره مدعی «کنترل ارتفاعات الدهیده» شد — ادعای دوم به نظر بازنشر ادعای ۹ نوامبر است. کنترل آتش بر مسیرهای تدارکاتی از این ارتفاعات گزارش شده است (Yemen Monitor).",
+   "confidence_fa": "گزارش‌شده — موقعیت دقیق تأییدنشده",
+   "source_fa": "ISW-CTP، ۹ نوامبر؛ الجزیره، ۱۷ نوامبر ۲۰۲۶"
+  },
+  {
+   "title_fa": "کشیدگی بیش از حد دولت و آسیب‌پذیری خط ام جهر",
+   "kind_fa": "جناح و آسیب‌پذیری",
+   "body_fa": "ارزیابی ISW در ۱۶ نوامبر (از مسیر خلاصه‌های شبکه‌های اجتماعی): نیروهای دولت بیش از حد کشیده شده‌اند و خطوط دفاعی تازه نزدیک ام جهر همچنان آسیب‌پذیر می‌مانند. دربارهٔ آرایش جناح‌های دیگر جبهه‌ها (تعز، مأرب، صعده و…) در منابع علنی بررسی‌شده دادهٔ مشخصی منتشر نشده است — نامشخص.",
+   "confidence_fa": "گزارش‌شده — فقط بر پایهٔ خلاصه‌های ISW؛ متن کامل ۱۶ نوامبر به دست نیامد",
+   "source_fa": "ISW-CTP، ۱۶ نوامبر ۲۰۲۶ (خلاصه‌های Threads/Instagram)"
+  },
+  {
+   "title_fa": "ادعای محاصرهٔ عدن از سوی انصارالله — ردشده",
+   "kind_fa": "جناح و آسیب‌پذیری",
+   "body_fa": "PressTV همسو با انصارالله ۱۳ نوامبر از «تکمیل محاصرهٔ عدن» گفت؛ اگر درست بود، به معنای بسته‌شدن جناح ساحلی و زمینی عدن بود. اما Reuters، AFP، ISW و South24 در ۱۵–۱۶ نوامبر دولت را در عدن و راه‌هایش (قاوه، ام جهر، السقیه/خور عمیره) نگه‌داشته و نبرد را ادامه‌دار نشان می‌دهند — محاصره‌ای شکل نگرفته است و این مورد روی نقشه به‌عنوان خط یا جناح ترسیم نمی‌شود.",
+   "confidence_fa": "ادعای تک‌طرفه — متناقض با گزارش چندمنبعی",
+   "source_fa": "PressTV، ۱۳ نوامبر؛ Reuters/South24/ISW، ۱۵–۱۶ نوامبر ۲۰۲۶"
+  }
+ ],
+ "key_points": [
+  {
+   "name": "شهر ذباب",
+   "status": "گزارش‌شده: دست حوثی‌ها",
+   "status_kind": "reported",
+   "confidence": "متوسط رو به بالا برای «دیگر دست دولت نیست» (عقب‌نشینی تأییدشده)؛ متوسط برای اشغال فیزیکی توسط حوثی‌ها (بدون تأیید مکان‌یابی‌شده).",
+   "basis": "نیروهای دولت ۱۵ نوامبر از منطقهٔ ذباب/باب‌المندب عقب نشستند؛ منابع حوثی به AFP گفتند نیروهایشان در مناطق تخلیه‌شده «از ذباب تا نزدیک خور عمیره، در بیش از ۱۵۰ کیلومتر» مستقر شده‌اند و ISW (۱۵ نوامبر) از تصرف مواضع ساحلی تخلیه‌شده خبر داد. برای خود شهر در ۱۵–۱۶ نوامبر گزارش نبردی نیست — ظاهراً با عقب‌نشینی دست‌به‌دست شده، نه با جنگ."
+  },
+  {
+   "name": "فرودگاه ذباب",
+   "status": "گزارش‌شده: دست حوثی‌ها",
+   "status_kind": "reported",
+   "confidence": "متوسط — گزارش‌های همگرای طرفین و یک خبرنگار، بدون راستی‌آزمایی مستقل.",
+   "basis": "نیروهای جنوب بازآرایی از فرودگاه را ۱۵ نوامبر اعلام کردند؛ ISW همان روز به نقل از یک خبرنگار مستقل یمنی از تصرف مواضع فرودگاه ذباب توسط حوثی‌ها خبر داد و منبع حوثی هم همین ادعا را دارد. باند نظامی ۲٫۴۹ کیلومتری در بنی‌الحکمِ شهرستان ذباب است (تکمیل آوریل ۲۰۲۵ با ساخت‌وساز تحت حمایت امارات) — با باند جزیرهٔ زقر اشتباه نشود."
+  },
+  {
+   "name": "تنگهٔ باب‌المندب (زمین مشرف)",
+   "status": "تأییدشده: دولت دیگر زمین مشرف را ندارد",
+   "status_kind": "confirmed",
+   "confidence": "بالا برای از دست رفتن زمین مشرف از دست دولت؛ پایین برای «کاملاً امن» به‌مثابه واقعیت نظامی.",
+   "basis": "به بیان رویترز (۱۵ نوامبر)، بر پایهٔ عقب‌نشینی دولت، حوثی‌ها بر منطقهٔ مشرف به تنگه مسلط‌اند. حوثی‌ها تنگه را «کاملاً امن» اعلام کرده‌اند — این صورت‌بندی فقط از خودشان است. خود آبراه بسته نشده و هیچ طرفی تا ۱۶ نوامبر از بستن آن خبر نداده است؛ کنترل اینجا یعنی کنترل ساحل و بلندی‌های یمنی، نه کنترل حقوقی تنگه."
+  },
+  {
+   "name": "جزیرهٔ میون (پریم)",
+   "status": "به‌احتمال زیاد دست حوثی‌ها — برای ۱۵–۱۶ نوامبر تأییدنشده",
+   "status_kind": "contested",
+   "confidence": "پایین تا متوسط — تداوم تصرف از سپتامبر بهترین خوانش پشتیبانی‌شده است؛ «در ۱۵ نوامبر تصرف شد» را واقعیت ندانید.",
+   "basis": "حوثی‌ها ۱۱ سپتامبر ۲۰۲۶ جزیره را گرفتند (آن زمان مقامات دولتی و حوثی هر دو به AP تأیید کردند). دولت ۹ اکتبر مدعی بازپس‌گیری شد، حوثی‌ها ۱۰ اکتبر انکار کردند و South24 (۷ اکتبر) گفت جزیره هنوز دست حوثی‌هاست. هیچ منبعی در بازهٔ ۱۴–۱۶ نوامبر از پیاده‌شدن تازه، نبرد یا اشغال راستی‌آزمایی‌شدهٔ جزیره خبر نداده و عقب‌نشینی خشکی به‌خودی‌خود ثابت نمی‌کند وضعیت جزیره ۱۵ نوامبر عوض شده باشد."
+  },
+  {
+   "name": "البهیه",
+   "status": "نامشخص — اظهارنظری دربارهٔ کنترل پیدا نشد",
+   "status_kind": "unknown",
+   "confidence": "تأییدنشده — کنترلی به آن نسبت ندهید.",
+   "basis": "روستای ساحلی کوچکی در لحج نزدیک رأس‌العره، روی نوار ساحلی میان تنگه و خور عمیره و در مسیر پیشروی گزارش‌شدهٔ حوثی‌ها؛ نقشهٔ ارسالی شما آن را با پنج‌ضلعی زرد و چهار نماد انفجار برجسته کرده است. اما هیچ منبع متنی در این بازه نگفته خود روستا دست کیست. اگر پیشروی تا خور عمیره درست باشد، البهیه پشت خط حوثی‌ها می‌افتد — ولی این استنباط از خط پیشروی است، نه گزارش دربارهٔ روستا."
+  },
+  {
+   "name": "پایگاه نظامی خرز",
+   "status": "گزارش‌شده: از بامداد ۱۵ نوامبر دست حوثی‌ها",
+   "status_kind": "reported",
+   "confidence": "متوسط — طرف مقابل هم آن را پذیرفته، اما منابع ناشناس طرفین‌اند و تأیید مستقل نیست.",
+   "basis": "شین‌هوا (دو منبع نظامی ناشناس) و AFP (منابع طرف دولت): پایگاه بامداد یکشنبه ۱۵ نوامبر پس از درگیری شدید و عقب‌نشینی نیروهای دولت تصرف شد؛ حوثی‌ها آنجا مستقرند، در ۶۰ کیلومتری عدن. پایگاه در داخل خشکی (شمال‌شرق ساحل) بر خط ارتباطی زمینی مخا–عدن است و طبق یک گزارش میدانی ۱۲ نوامبر، مقر تیپ ۱۳ مقاومت ملی بوده است. با «اردوگاه پناهندگان خرز» فرق دارد."
+  },
+  {
+   "name": "اردوگاه پناهندگان خرز",
+   "status": "تأییدشده: درگیری به محدودهٔ اردوگاه رسید",
+   "status_kind": "confirmed",
+   "confidence": "بالا برای رسیدن درگیری به محدودهٔ اردوگاه (UNHCR)؛ تأییدنشده برای انتساب گلوله‌باران ۱۲ نوامبر.",
+   "basis": "این سؤال کنترل نظامی نیست؛ اردوگاهی غیرنظامیِ کمیساریای عالی پناهندگان با حدود ۹٬۶۰۰ پناهنده (عمدتاً سومالیایی و اتیوپیایی) است. UNHCR در ۱۵ نوامبر گفت درگیری‌ها به اردوگاه رسیده، صدها خانواده گریخته‌اند و رساندن کمک محدود شده است. گلوله‌باران عصر ۱۲ نوامبر که یک زن سومالیایی را کشت، در گزارش‌های SAM و یک خبرنگار به حوثی‌ها نسبت داده شده، اما سازمان ملل آن را راستی‌آزمایی نکرده است."
+  },
+  {
+   "name": "خور عمیره",
+   "status": "گزارش‌شده: جنگجویان حوثی آنجا هستند",
+   "status_kind": "reported",
+   "confidence": "متوسط — منابع نظامی ناشناس رویترز، ۱۶ نوامبر.",
+   "basis": "رویترز (۱۶ نوامبر، پنج منبع نظامی): حوثی‌ها به این منطقهٔ ساحلی در حدود ۱۰۰ کیلومتری غرب عدن پیشروی کرده‌اند و ۲۵ کیلومتر با خطوط دولت در قوعه فاصله دارند. منابع شبا در ۱۲ نوامبر هنوز خور عمیره را دست ارتش یمن می‌دانستند؛ تا ۱۵ نوامبر منابع حوثی گفتند عقب‌نشینی «فراتر از خور عمیره» کشیده شده است. حملهٔ موشکی ۱۵ نوامبر به ایست بازرسی همین‌جا بود."
+  },
+  {
+   "name": "شهر عدن",
+   "status": "تأییدشده: دست دولت، ورود حوثی‌ها گزارش نشده",
+   "status_kind": "confirmed",
+   "confidence": "بالا برای «هنوز دست دولت است».",
+   "basis": "تا ۱۶ نوامبر هیچ منبعی از ورود حوثی‌ها به عدن خبر نداده است. دولت در حال استحکام‌بخشی است: ایست‌های بازرسی و کنترل هویت بیشتر در شهر (ساکنان به رویترز) و از ۱۳ نوامبر کیسه‌شنی و تونل‌سازی دور شهر (مقامات نظامی به AFP). دفتر سیاسی حوثی‌ها می‌گوید برنامه‌ای برای پیشروی به سوی عدن ندارند، در حالی که نیروهایشان طبق رویترز و AFP همچنان به سمت آن پیش می‌روند."
+  }
+ ],
+ "open_questions": [
+  "رد دقیق خط جبهه در لحج (الشط–خرز–خور عمیره–قوعه) — South24 در ۱۶ نوامبر: «نتوانستیم خطوط جدید کنترل سرزمینی را مستقل راستی‌آزمایی کنیم.»",
+  "این‌که حوثی‌ها در میون/حنیش پادگان فیزیکی دارند یا کنترل با آتش/حضور است — هیچ گزارش فرود/راستی‌آزمایی مستقلی نیست.",
+  "وضعیت پایگاه العمری، خط خندق ام جهر و مواضع دقیق السقیه — فقط تک‌منبع/OSINT.",
+  "صفحات اصلی المسیره و سبأ (صنعا) مستقیم باز نشدند؛ ادعاهای حوثی‌ها از نقل‌قول‌های المسیره در شفق/فلسطین کرونیکل و بیانیه‌های سریع از طریق ISW/الجزیره آمده است.",
+  "به‌روزرسانی ۱۶ نوامبر ISW-CTP هنگام پژوهش هنوز منتشر نشده بود.",
+  "مختصات دقیق اردوگاه خرز، خور عمیره، قوعه، الشط، الصریح، جبل دهیده و اردوگاه ماس — این‌ها عوارض شهرستانی/کوهستانی‌اند و مختصاتشان مرکز تقریبی با عدم‌قطعیت ±۱۰ تا ۱۵ کیلومتر است."
+ ],
+ "disagreements": [
+  {
+   "title": "مخا در اکتبر بازپس گرفته شد؟",
+   "body": "دولت ۵ اکتبر ادعا کرد؛ حوثی‌ها رد کردند؛ رویترز ۱۶ نوامبر می‌گوید بازپس گرفته نشده است. نتیجه: حوثی."
+  },
+  {
+   "title": "میون/پریم در ۹ اکتبر بازپس گرفته شد؟",
+   "body": "دولت/ائتلاف ادعا کردند؛ رسانه حوثی ۱۰ اکتبر رد کرد؛ South24 در ۷ اکتبر هم گفته بود حوثی‌ها هنوز آن را دارند. تأیید مستقل ندارد. نتیجه: حوثی، با اختلاف اکتبر علامت‌خورده."
+  },
+  {
+   "title": "شهرستان المقاطره",
+   "body": "حوثی ۱–۲ نوامبر ← ادعای بازپس‌گیری دولت ۳–۵ نوامبر ← گزارش تصرف حوثی ۱۵ نوامبر. نقشه‌های ISW رفت‌وبرگشت را نشان می‌دهند. نتیجه: مورد مناقشه؛ رنگ یکدست نزنید."
+  },
+  {
+   "title": "تلفات موشک خور عمیره (۱۵ نوامبر)",
+   "body": "AFP: ‏۵ کشته/۸ زخمی ← به‌روزرسانی AFP: ‏۸/۱۲ ← South24 در ۱۶ نوامبر: ۱۶ غیرنظامی + ۲ سرباز کشته و ۱۸ زخمی. آمار با شمارش دیرتر بالا می‌رود؛ صورت درست: «دست‌کم ۸ کشته (AFP)؛ South24 از ۱۸ کشته می‌گوید» با تاریخ."
+  },
+  {
+   "title": "فاصله تا عدن",
+   "body": "AFP/شینهوا: ۶۰ کیلومتر (خرز، محور داخلی) در برابر رویترز: ۱۰۰ کیلومتر (خور عمیره، محور ساحلی) در برابر شبکه‌های اجتماعی: «۶۰ کیلومتر تا عدن، ۸۵ کیلومتر تا مرکز شهر» (خط خندق غول‌پیکرها). محورها/سنجه‌های متفاوت؛ همه گزارش‌شده‌اند و هیچ‌کدام برای خط دقیق جبهه مستقل راستی‌آزمایی نشده‌اند."
+  },
+  {
+   "title": "مساحت گرفته‌شده در ۱۵ نوامبر",
+   "body": "ادعای حوثی‌ها/المیادین: بیش از ۳٬۰۰۰ کیلومتر مربع؛ خلاصه‌های OSINT: بیش از ۲٬۰۰۰ کیلومتر مربع در یک روز، حدود یک‌سوم لحج. سنجش مستقلی وجود ندارد. نتیجه: فقط ادعای حوثی‌ها، تأییدنشده."
+  },
+  {
+   "title": "«برنامه‌ای برای پیشروی به عدن نیست»",
+   "body": "بیانیه دفتر سیاسی انصارالله (۱۵ نوامبر) در برابر گزارش‌های پیشروی رویترز/AFP به خور عمیره/خرز در ۱۵–۱۶ نوامبر. بیانیه پیام سیاسی است، نه واقعیت میدان."
+  },
+  {
+   "title": "جزایر حنیش",
+   "body": "ادعای تک‌منبعی (۱۱ سپتامبر)، بدون تأیید مستقل. نتیجه: فقط گزارش‌شده."
+  },
+  {
+   "title": "حملات عربستان",
+   "body": "سریع: ۷۵ حمله در ۲۴ ساعت (۱۵ نوامبر، از شفق) در برابر ۸۸ حمله در ۲۴ ساعت (۱۶ نوامبر، لایوبلاگ الجزیره) — بیانیه‌ها/بازه‌های متفاوت، فقط از سوی حوثی‌ها؛ طرف سعودی از رهگیری‌ها می‌گوید، نه شمار حملات."
+  },
+  {
+   "title": "نقشه نوامبر PolGeoNow",
+   "body": "نقشه اکتبر–نوامبر PolGeoNow فقط برای مشترکان بود و در دسترس قرار نگرفت؛ نقشه سپتامبر ۲۰۲۶ مبنای پیش از اکتبر است. به‌روزرسانی ۱۶ نوامبر ISW هنگام پژوهش هنوز منتشر نشده بود (آخرین ISW خوانده‌شده: ۱۵ نوامبر)."
+  }
+ ],
+ "snapshots": [
+  {
+   "id": 1,
+   "label": "نسخهٔ ۵ — ارتقای رابط کاربری و آرشیو نسخه‌ها (۱۷ نوامبر ۲۰۲۶)",
+   "created_at": "2026-11-17T17:56:47.699Z",
+   "places_count": 90,
+   "events_count": 24,
+   "headline_fa": "بر پایهٔ این جمع‌بندی‌ها، تحول تازهٔ معنادار و ثبت‌نشده‌ای در تغییر کنترل سرزمینی دیده نشد و گزارش‌ها همان پیشروی حوثی‌ها در ساحل جنوبی و تا حدود ۷۰ کیلومتری عدن و عقب‌نشینی نیروهای دولتی به‌سوی عدن برای دفاع از این شهر را بازتاب می‌دهند، بدون آن‌که تصرف صریح نقطهٔ مشخصی اعلام شده باشد. درگیری‌ها در محورهای تعز، لحج و الجوف ادامه دارد و حوثی‌ها در لحج برای بازپس‌گیری باب‌المندب تلاش می‌کنند، در حالی که ارتش دولت با اعزام نیرو از عدن این جبهه را تقویت می‌کند؛ نیروهای دولتی در ۳۰ اکتبر از بازپس‌گیری مواضعی در حیفان و پیشروی در الجوف خبر دادند و هم‌زمان حملات موشکی به فرودگاه عدن و کاخ معاشیق و پیش از آن در ۱۳ اکتبر حملهٔ هوایی به یک مرکز فرماندهی حوثی–سپاه در تعز گزارش شد. حوثی‌ها روز یکشنبه ۱۵ نوامبر ۲۰۲۶ مدعی شدند فرودگاه بین‌المللی ملک خالد و یک مرکز مالی در ریاض را با دو موشک بالستیک هدف قرار داده‌اند و این عملیات به هدف رسیده است. از نگاه منابع بشردوستانهٔ سازمان ملل، پس از ۲۰ روز محاصره و درگیری در تعز دسترسی صدها هزار نفر به غذا، آب سالم و کمک‌های ضروری تهدید شده است، درگیری‌ها در ۱۵ نوامبر به اردوگاه پناهندگان خرز در لحج رسیده و هزاران پناهنده را به خطر انداخته است، و داده‌های سازمان بین‌المللی مهاجرت از آوارگی حدود ۳۰۰ هزار نفر در پی گسترش درگیری‌ها در ساحل غربی و جنوب تعز حکایت دارد.",
+   "counts": [
+    {
+     "faction": "houthi",
+     "count": 39
+    },
+    {
+     "faction": "contested",
+     "count": 16
+    },
+    {
+     "faction": "govt",
+     "count": 30
+    },
+    {
+     "faction": "aqap",
+     "count": 3
+    },
+    {
+     "faction": "stc",
+     "count": 1
+    },
+    {
+     "faction": "unknown",
+     "count": 1
+    }
+   ]
+  }
+ ],
+ "frontline_warning_fa": "هشدار مختصات (قید خود پژوهش): هیچ منبعی برای این جبهه‌ها مختصات منتشر نکرده است. همهٔ نقاط مسیر زیر، ژئوکد تقریبیِ استنباطیِ پژوهشگر از نام مکان‌هاست (حدود ±۱۰ کیلومتر) — نه مختصات منتشرشدهٔ منبع، نه رد GPS و نه خط پیمایش‌شده. این خطوط فقط ترتیب تقریبی نبرد را نشان می‌دهند؛ برای پنج جبهه‌ای که رد قابل‌اعتمادی ندارند، عمداً هیچ خطی کشیده نشده و فقط نقاط فعالیت گزارش‌شده آمده است."
+}

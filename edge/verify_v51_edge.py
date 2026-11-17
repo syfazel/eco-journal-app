@@ -4,7 +4,7 @@
 Fetches (live mode) or reads (local mode) the ECO JOURNAL app edge
 and verifies the WHOLE contract, not a sample:
 
-  * manifest.json is version 3 and parses.
+  * manifest.json is version 3 or 4 (v4 adds sections.yemen) and parses.
   * EVERY article file listed in manifest.sections.articles.items
     exists, returns HTTP 200 (live) / is present on disk (local),
     and its content_hash + app_key match the manifest item exactly.
@@ -124,11 +124,11 @@ def check_edge(label, get_json, get_bytes, exists, list_article_files):
     except Exception as e:
         c.fail("manifest.json unreadable: %s" % e)
         return c
-    if manifest.get("version") != 3:
-        c.fail("manifest version is %r, expected 3" % manifest.get("version"))
+    if manifest.get("version") not in (3, 4):
+        c.fail("manifest version is %r, expected 3 or 4" % manifest.get("version"))
         return c
-    c.ok("manifest.json parses, version 3, generated_at %s"
-         % manifest.get("generated_at_utc"))
+    c.ok("manifest.json parses, version %s, generated_at %s"
+         % (manifest.get("version"), manifest.get("generated_at_utc")))
     sections = manifest.get("sections", {})
 
     def need_json(path):

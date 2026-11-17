@@ -1,7 +1,7 @@
 {
- "version": 3,
- "generated_at_utc": "2026-10-26T21:01:11.965419+00:00",
- "generator": "edge/fullsync.py (S1/S2/S3, 2026-10-26)",
+ "version": 4,
+ "generated_at_utc": "2026-11-17T21:39:10.179010+00:00",
+ "generator": "edge/generate_yemen.py (v5.2, LAB ONLY)",
  "sections": {
   "articles": {
    "hash": "12ee88eb00298b8c364c1bd39c93061a391ebf17c633ff0352e71ea34c340bbf",
@@ -10177,6 +10177,16 @@
      "story_id": "story-ffcc7c3d8cf3434c4cf4"
     }
    ]
+  },
+  "yemen": {
+   "file": "yemen.json",
+   "count": 90,
+   "hash": "f85d5398db4d612cecf47040400832ed7fa90b560ead4bc9cae1187641090975",
+   "file_sha256": "4490a5cfc51c85bcd43d680de385a0d6a900323600718cb2ce3357ba68ba60a0",
+   "schema_version": 1,
+   "generated_at_utc": "2026-11-17T07:29:23.236Z",
+   "update_cadence_hours": 24,
+   "stale_after_hours": 24
   }
  },
  "join_keys_file": "join_keys.json"

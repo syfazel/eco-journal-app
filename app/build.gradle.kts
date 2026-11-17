@@ -27,12 +27,12 @@ android {
         applicationId = "com.ecojournal.app"
         minSdk = 26
         targetSdk = 34
-        // v5: 5.0.0 / 6 (P6 publish bump). Never reused, never
+        // v5.2: 5.2.0 / 8 (Yemen-only tab). Never reused, never
         // reversed; the version manifest (v4-I) must name exactly
-        // this name/code at publish time. Code 6 > 5, so a phone
-        // on 4.0.1 must show the remote-update banner.
-        versionCode = 7
-        versionName = "5.1.0"
+        // this name/code at publish time. Code 8 > 7, so a phone
+        // on 5.1.0 must show the remote-update banner.
+        versionCode = 8
+        versionName = "5.2.0"
         buildConfigField("String", "GIT_COMMIT", "\"$v5GitCommit\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

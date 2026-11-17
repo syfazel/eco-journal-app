@@ -51,3 +51,16 @@ jobs:
         with:
           name: eco-journal-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+
+      # v5.2 update gate (audit U-01 / T7): verify version.json
+      # against the APK just built. version_manifest.py reads the
+      # version from app/build.gradle.kts, so a mismatch fails the
+      # run here instead of surfacing as a hash_mismatch on the
+      # phone. The step runs AFTER the upload on purpose: on the
+      # first 5.2 pass version.json still names 5.1.0/7, so the
+      # verify fails (gate working as designed) — but the APK is
+      # already uploaded, which is what Phase U needs to generate
+      # the real 5.2 version.json from. Once version.json names
+      # 5.2.0/8 with the real APK hash, this step passes.
+      - name: Verify version manifest against built APK
+        run: python3 edge/version_manifest.py verify --apk app/build/outputs/apk/debug/app-debug.apk

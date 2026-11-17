@@ -351,6 +351,121 @@ data class BundleBookmarkEntity(
 )
 
 /**
+ * Yemen tab (v5.2, audit §4.3). Entities carry [provenance] and
+ * [sourceNote] from day one (P1-26 lesson: article entities lost
+ * them at the Room boundary). Identity is [appKey] ("y-" + 20 hex
+ * of SHA-256(name_fa + "|" + governorate_fa)); the dashboard
+ * numeric id is kept as [externalId] and never used for identity.
+ * [contentHash] covers the control-bearing fields, so a faction
+ * change is detectable as a control change on the next sync.
+ */
+@Entity(
+    tableName = "yemen_places",
+    indices = [
+        Index(value = ["appKey"], unique = true),
+        Index(value = ["faction"]),
+        Index(value = ["governorateFa"]),
+    ],
+)
+data class YemenPlaceEntity(
+    val externalId: Int,
+    @PrimaryKey val appKey: String,
+    val nameFa: String,
+    val nameEn: String,
+    val governorateFa: String,
+    val lat: Double,
+    val lon: Double,
+    val faction: String,
+    val controlLabel: String,
+    val confidence: String,
+    val note: String,
+    val provenance: String,
+    val sourceNote: String,
+    val updatedAt: String?,
+    val contentHash: String?,
+)
+
+@Entity(
+    tableName = "yemen_events",
+    indices = [
+        Index(value = ["appKey"], unique = true),
+        Index(value = ["eventDate"]),
+    ],
+)
+data class YemenEventEntity(
+    val externalId: Int,
+    @PrimaryKey val appKey: String,
+    val eventDate: String,
+    val titleFa: String,
+    val detailFa: String,
+    val origin: String,
+    val corroboration: Int,
+    val families: String?,
+    val sourceName: String,
+    val sourceUrl: String,
+)
+
+/** Yemen frontline: waypoints + sources stored as verbatim JSON
+ * (same pattern as ChannelItemEntity's JSON columns), so a
+ * malformed sub-object degrades one frontline, never the table. */
+@Entity(tableName = "yemen_frontlines")
+data class YemenFrontlineEntity(
+    @PrimaryKey val id: String,
+    val nameFa: String,
+    val nameEn: String,
+    val statusKind: String,
+    val statusFa: String,
+    val traceKind: String,
+    val waypointsJson: String,
+    val sideAFa: String,
+    val sideBFa: String,
+    val confidenceFa: String,
+    val summaryFa: String,
+    val governoratesFa: String,
+    val movementFa: String,
+    val traceNoteFa: String,
+    val sourcesJson: String,
+)
+
+/** Aden verdict, single row (id = "aden"). Ring, timeline, layers
+ * and the rest are verbatim JSON columns parsed at render time. */
+@Entity(tableName = "yemen_aden")
+data class YemenAdenEntity(
+    @PrimaryKey val id: String,
+    val verdictTitleFa: String,
+    val verdictBodyFa: String,
+    val verdictConfidenceFa: String,
+    val ringJson: String,
+    val timelineJson: String,
+    val keyPointsJson: String,
+    val sourcesJson: String,
+    val layersJson: String,
+    val contradictionsJson: String,
+    val channelsMethodFa: String,
+    val crossCheckSummaryFa: String,
+    val seenNoteFa: String,
+    val taizNoteFa: String,
+    val openQuestionsJson: String,
+)
+
+/** Yemen sync bookkeeping, single row (key = "yemen").
+ * [yemenHash] is the manifest section hash, stored ONLY after a
+ * fully successful apply. [yemenSeedHash] is the SHA-256 of the
+ * bundled seed file, stored ONLY when the seed is complete.
+ * [controlChanges] counts places whose faction changed on the
+ * last successful sync. */
+@Entity(tableName = "yemen_meta")
+data class YemenMetaEntity(
+    @PrimaryKey val key: String,
+    val yemenHash: String?,
+    val yemenGeneratedAt: String?,
+    val yemenSeedHash: String?,
+    val lastYemenSyncAt: Long?,
+    val lastYemenErrorCode: String?,
+    val controlChanges: Int,
+)
+
+/**
  * Active market formulas as shipped by the edge/bundled market.json
  * (M4). The definition is the shipped S-expression string, stored
  * verbatim; MarketFormulas evaluates it at display time, so a
@@ -716,6 +831,81 @@ interface ChannelDao {
 }
 
 @Dao
+interface YemenDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertPlaces(places: List<YemenPlaceEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertEvents(events: List<YemenEventEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertFrontlines(frontlines: List<YemenFrontlineEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertAden(aden: YemenAdenEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertMeta(meta: YemenMetaEntity)
+
+    @Query("SELECT * FROM yemen_places ORDER BY nameFa ASC")
+    fun placesFlow(): Flow<List<YemenPlaceEntity>>
+
+    @Query("SELECT * FROM yemen_places ORDER BY nameFa ASC")
+    suspend fun places(): List<YemenPlaceEntity>
+
+    @Query("SELECT * FROM yemen_events ORDER BY eventDate DESC, titleFa ASC")
+    fun eventsFlow(): Flow<List<YemenEventEntity>>
+
+    @Query("SELECT * FROM yemen_events ORDER BY eventDate DESC, titleFa ASC")
+    suspend fun events(): List<YemenEventEntity>
+
+    @Query("SELECT * FROM yemen_frontlines ORDER BY nameFa ASC")
+    fun frontlinesFlow(): Flow<List<YemenFrontlineEntity>>
+
+    @Query("SELECT * FROM yemen_frontlines ORDER BY nameFa ASC")
+    suspend fun frontlines(): List<YemenFrontlineEntity>
+
+    @Query("SELECT * FROM yemen_aden WHERE id = 'aden' LIMIT 1")
+    fun adenFlow(): Flow<YemenAdenEntity?>
+
+    @Query("SELECT * FROM yemen_aden WHERE id = 'aden' LIMIT 1")
+    suspend fun aden(): YemenAdenEntity?
+
+    @Query("SELECT * FROM yemen_meta WHERE `key` = 'yemen' LIMIT 1")
+    suspend fun meta(): YemenMetaEntity?
+
+    @Query("SELECT * FROM yemen_meta WHERE `key` = 'yemen' LIMIT 1")
+    fun metaFlow(): Flow<YemenMetaEntity?>
+
+    @Query("SELECT COUNT(*) FROM yemen_places")
+    suspend fun placeCount(): Int
+
+    @Query("SELECT COUNT(*) FROM yemen_events")
+    suspend fun eventCount(): Int
+
+    @Query("SELECT appKey FROM yemen_places")
+    suspend fun allPlaceAppKeys(): List<String>
+
+    @Query("SELECT faction, COUNT(*) AS c FROM yemen_places GROUP BY faction")
+    suspend fun factionCounts(): List<YemenFactionCount>
+
+    @Query("DELETE FROM yemen_places")
+    suspend fun deleteAllPlaces()
+
+    @Query("DELETE FROM yemen_events")
+    suspend fun deleteAllEvents()
+
+    @Query("DELETE FROM yemen_frontlines")
+    suspend fun deleteAllFrontlines()
+}
+
+/** GROUP BY result holder for yemen_places faction counts. */
+data class YemenFactionCount(
+    val faction: String,
+    val c: Int,
+)
+
+@Dao
 interface Phase4Dao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAlertEvent(event: MarketAlertEventEntity)
@@ -840,6 +1030,73 @@ data class NotificationReasonCount(
     val suppressedReason: String,
     val count: Int,
 )
+
+// Version 7 -> 8 migration (v5.2 Yemen tab, audit §4.3). Additive
+// only: five new tables (yemen_places, yemen_events,
+// yemen_frontlines, yemen_aden, yemen_meta). No existing table is
+// altered, so a v7 install keeps its full cache; Yemen content
+// backfills from the bundled seed (BUNDLED_SEED_VERSION 2) on the
+// next launch and from the 24h YemenSyncWorker after that.
+val MIGRATION_7_8: Migration = object : Migration(7, 8) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `yemen_places` (" +
+                "`externalId` INTEGER NOT NULL, `appKey` TEXT NOT NULL, " +
+                "`nameFa` TEXT NOT NULL, `nameEn` TEXT NOT NULL, " +
+                "`governorateFa` TEXT NOT NULL, `lat` REAL NOT NULL, " +
+                "`lon` REAL NOT NULL, `faction` TEXT NOT NULL, " +
+                "`controlLabel` TEXT NOT NULL, `confidence` TEXT NOT NULL, " +
+                "`note` TEXT NOT NULL, `provenance` TEXT NOT NULL, " +
+                "`sourceNote` TEXT NOT NULL, `updatedAt` TEXT, " +
+                "`contentHash` TEXT, PRIMARY KEY(`appKey`))"
+        )
+        db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_yemen_places_appKey` ON `yemen_places` (`appKey`)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_yemen_places_faction` ON `yemen_places` (`faction`)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_yemen_places_governorateFa` ON `yemen_places` (`governorateFa`)")
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `yemen_events` (" +
+                "`externalId` INTEGER NOT NULL, `appKey` TEXT NOT NULL, " +
+                "`eventDate` TEXT NOT NULL, `titleFa` TEXT NOT NULL, " +
+                "`detailFa` TEXT NOT NULL, `origin` TEXT NOT NULL, " +
+                "`corroboration` INTEGER NOT NULL, `families` TEXT, " +
+                "`sourceName` TEXT NOT NULL, `sourceUrl` TEXT NOT NULL, " +
+                "PRIMARY KEY(`appKey`))"
+        )
+        db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_yemen_events_appKey` ON `yemen_events` (`appKey`)")
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_yemen_events_eventDate` ON `yemen_events` (`eventDate`)")
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `yemen_frontlines` (" +
+                "`id` TEXT NOT NULL, `nameFa` TEXT NOT NULL, " +
+                "`nameEn` TEXT NOT NULL, `statusKind` TEXT NOT NULL, " +
+                "`statusFa` TEXT NOT NULL, `traceKind` TEXT NOT NULL, " +
+                "`waypointsJson` TEXT NOT NULL, `sideAFa` TEXT NOT NULL, " +
+                "`sideBFa` TEXT NOT NULL, `confidenceFa` TEXT NOT NULL, " +
+                "`summaryFa` TEXT NOT NULL, `governoratesFa` TEXT NOT NULL, " +
+                "`movementFa` TEXT NOT NULL, `traceNoteFa` TEXT NOT NULL, " +
+                "`sourcesJson` TEXT NOT NULL, PRIMARY KEY(`id`))"
+        )
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `yemen_aden` (" +
+                "`id` TEXT NOT NULL, `verdictTitleFa` TEXT NOT NULL, " +
+                "`verdictBodyFa` TEXT NOT NULL, " +
+                "`verdictConfidenceFa` TEXT NOT NULL, " +
+                "`ringJson` TEXT NOT NULL, `timelineJson` TEXT NOT NULL, " +
+                "`keyPointsJson` TEXT NOT NULL, `sourcesJson` TEXT NOT NULL, " +
+                "`layersJson` TEXT NOT NULL, `contradictionsJson` TEXT NOT NULL, " +
+                "`channelsMethodFa` TEXT NOT NULL, " +
+                "`crossCheckSummaryFa` TEXT NOT NULL, " +
+                "`seenNoteFa` TEXT NOT NULL, `taizNoteFa` TEXT NOT NULL, " +
+                "`openQuestionsJson` TEXT NOT NULL, PRIMARY KEY(`id`))"
+        )
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `yemen_meta` (" +
+                "`key` TEXT NOT NULL, `yemenHash` TEXT, " +
+                "`yemenGeneratedAt` TEXT, `yemenSeedHash` TEXT, " +
+                "`lastYemenSyncAt` INTEGER, `lastYemenErrorCode` TEXT, " +
+                "`controlChanges` INTEGER NOT NULL, PRIMARY KEY(`key`))"
+        )
+    }
+}
 
 // Version 6 -> 7 migration (Phase 5). Additive only: three new
 // tables (nightly_editions, nightly_items, dossiers). No existing
@@ -1159,8 +1416,13 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
         NightlyEditionEntity::class,
         NightlyItemEntity::class,
         DossierEntity::class,
+        YemenPlaceEntity::class,
+        YemenEventEntity::class,
+        YemenFrontlineEntity::class,
+        YemenAdenEntity::class,
+        YemenMetaEntity::class,
     ],
-    version = 7,
+    version = 8,
     exportSchema = false,
 )
 @TypeConverters(StringListConverter::class)
@@ -1169,4 +1431,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun channelDao(): ChannelDao
     abstract fun phase4Dao(): Phase4Dao
     abstract fun nightlyDao(): NightlyDao
+    abstract fun yemenDao(): YemenDao
 }

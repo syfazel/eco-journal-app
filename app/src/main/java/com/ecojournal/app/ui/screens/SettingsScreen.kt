@@ -46,7 +46,6 @@ import com.ecojournal.app.data.AppUpdateRepository
 import com.ecojournal.app.data.AppUpdateSession
 import com.ecojournal.app.data.Settings
 import com.ecojournal.app.data.SettingsStore
-import com.ecojournal.app.data.UpdateUiState
 import com.ecojournal.app.data.installedVersion
 import com.ecojournal.app.ui.components.AppUpdateCard
 import com.ecojournal.app.ui.theme.EcoFontFamily
@@ -662,15 +661,11 @@ fun SettingsScreen(
                 scope.launch { updateRepo.download(pending) }
             },
             onInstall = {
-                val s = AppUpdateSession.state.value
-                if (s is UpdateUiState.ReadyToInstall) {
-                    updateRepo.install(context, s.file)
-                } else {
-                    val f = updateRepo.downloadFile()
-                    if (f.exists()) {
-                        updateRepo.install(context, f)
-                    }
-                }
+                // U-04 fix: never hand an unvalidated file to the
+                // installer. installValidated re-checks the pending
+                // record, the file's SHA-256 and the version code,
+                // and deletes a stale/corrupt file instead.
+                scope.launch { updateRepo.installValidated(context) }
             },
             onDismiss = { pending ->
                 scope.launch { updateRepo.dismiss(pending) }
