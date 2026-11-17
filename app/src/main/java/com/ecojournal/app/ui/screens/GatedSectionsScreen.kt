@@ -38,7 +38,8 @@ fun VoicesScreen(
     // Guard, not decoration: if finalisation ever lands, this
     // screen must be replaced by the real section (§3.8), never
     // by adding names to the placeholder.
-    check(!VoicesGate.FINALISED) { "Voices placeholder rendered after finalisation" }    Column(
+    check(!VoicesGate.FINALISED) { "Voices placeholder rendered after finalisation" }
+    Column(
         modifier = modifier
             .fillMaxSize()
             // Phase 7: non-scrolling column could clip the
