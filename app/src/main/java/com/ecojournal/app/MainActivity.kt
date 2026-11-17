@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Message
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -42,9 +43,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ecojournal.app.R
 import com.ecojournal.app.data.AppUpdateRepository
+import com.ecojournal.app.data.BroadcastRules
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.SettingsStore
 import com.ecojournal.app.data.SyncTrace
+import com.ecojournal.app.ui.screens.BroadcastScreen
 import com.ecojournal.app.ui.screens.DiagnosticsScreen
 import com.ecojournal.app.ui.screens.InviteScreen
 import com.ecojournal.app.ui.screens.SettingsScreen
@@ -52,6 +55,7 @@ import com.ecojournal.app.ui.screens.YemenScreen
 import com.ecojournal.app.ui.theme.EcoDesignTokens
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.ui.theme.EcoTheme
+import com.ecojournal.app.util.Notifications
 
 private data class Tab(
     val route: String,
@@ -81,15 +85,13 @@ object InviteLockSignal {
     var manualLockRequested: Boolean = false
 }
 
-// Phase 4 (v5.3): the app is Yemen-only. The bottom bar is TWO
-// destinations — Yemen and Settings. Every other section (feed,
-// war room, market, bookmarks, bundles, nightly, analysis,
-// method, voices, special issues) was REMOVED in v5.3, not
-// locked: their screens, data and sync are deleted (see
-// files/archive-sections-5.3/). Diagnostics stays a settings
-// detail screen, reached from Settings.
+// Phase 5 (v5.4): the app is Yemen + broadcast messaging. The
+// bottom bar is THREE destinations — Yemen, Messaging, Settings.
+// Broadcast is a separate tab, never mixed into Yemen (design §1);
+// it has its own Room tables, no network, no FCM, no worker.
 private val TABS = listOf(
     Tab("yemen", R.string.tab_yemen, Icons.Filled.LocationOn),
+    Tab("broadcast", R.string.tab_broadcast, Icons.Filled.Message),
     Tab("settings", R.string.tab_settings, Icons.Filled.Settings),
 )
 
@@ -195,6 +197,23 @@ class MainActivity : ComponentActivity() {
                             updateRepo.check()
                         }
                     }
+                    // v5.4 morning bundle (Law 15, no worker):
+                    // night-held (70-84) broadcast messages are
+                    // released on the first launch after 08:00
+                    // Tehran, with ONE bundled notification. No
+                    // WorkManager, no polling (G-BATT-4).
+                    val launchContext = LocalContext.current
+                    LaunchedEffect(Unit) {
+                        val held = BroadcastRules.releaseMorningBundle(
+                            repo.broadcastDao,
+                            System.currentTimeMillis(),
+                        )
+                        if (held.isNotEmpty() && settings.notificationsEnabled &&
+                            settings.broadcastNotifications
+                        ) {
+                            Notifications.showMorningBundle(launchContext, held.size)
+                        }
+                    }
                     val nav = rememberNavController()
                     // M5 (P2-16): notification permission is NOT
                     // requested blindly on launch any more. It is
@@ -221,14 +240,26 @@ class MainActivity : ComponentActivity() {
                         LaunchedEffect(Unit) {
                             com.ecojournal.app.data.BundledSeed.ensureSeed(context)
                         }
+                        // Broadcast notifications deep-link here:
+                        // "broadcast" only when the launch intent
+                        // asked for it, otherwise the Yemen tab.
+                        val startTab =
+                            intent.getStringExtra("open_tab")
+                                ?.takeIf { it == "broadcast" } ?: "yemen"
                         NavHost(
                             navController = nav,
-                            startDestination = "yemen",
+                            startDestination = startTab,
                             modifier = pad,
                         ) {
                             composable("yemen") {
                                 YemenScreen(
                                     repo = repo,
+                                    fontScale = settings.fontScale,
+                                )
+                            }
+                            composable("broadcast") {
+                                BroadcastScreen(
+                                    settings = settings,
                                     fontScale = settings.fontScale,
                                 )
                             }

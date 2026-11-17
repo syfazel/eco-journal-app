@@ -52,17 +52,17 @@ jobs:
           name: eco-journal-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
 
-      # v5.2 update gate (audit U-01 / T7), kept for 5.3:
+      # v5.2 update gate (audit U-01 / T7), kept for 5.4:
       # verify version.json against the APK just built.
       # version_manifest.py reads the version from
       # app/build.gradle.kts, so a mismatch fails the run here
       # instead of surfacing as a hash_mismatch on the phone. The
-      # step runs AFTER the upload on purpose: on the first 5.3
-      # pass version.json still names 5.2.0/8, so the verify fails
+      # step runs AFTER the upload on purpose: on the first 5.4
+      # pass version.json still names 5.3.0/9, so the verify fails
       # (gate working as designed) — but the APK is already
-      # uploaded, which is what Phase 4 needs to generate the
-      # real 5.3 version.json from. Once version.json names
-      # 5.3.0/9 with the real APK hash, this step passes.
+      # uploaded, which is what Phase 5 needs to generate the
+      # real 5.4 version.json from. Once version.json names
+      # 5.4.0/10 with the real APK hash, this step passes.
       #
       # TWO CHECKS, NOT ONE (D18 — DEX non-determinism, proven
       # by runs 44183915798 vs 44185080944: same source, same
@@ -75,7 +75,7 @@ jobs:
       #     hash is NOT comparable, because a rebuild from the
       #     same source is not byte-identical.
       - name: Verify version manifest against served APK
-        run: python3 edge/version_manifest.py verify --apk edge/out/app-debug-v5.3.apk
+        run: python3 edge/version_manifest.py verify --apk edge/out/app-debug-v5.4.apk
 
       - name: Verify freshly built APK identity
         run: python3 edge/version_manifest.py verify --apk app/build/outputs/apk/debug/app-debug.apk --identity-only

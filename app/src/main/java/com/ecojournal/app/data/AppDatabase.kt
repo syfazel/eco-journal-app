@@ -250,6 +250,32 @@ data class YemenFactionCount(
     val c: Int,
 )
 
+// Version 9 -> 10 migration (Phase 5, v5.4 broadcast messaging).
+// Additive only: two new tables (broadcast_messages,
+// broadcast_members). No existing table is altered, so a v9
+// install keeps its full Yemen cache and invite gate; messaging
+// starts empty (there is deliberately no seed — a seeded message
+// would be a fake message).
+val MIGRATION_9_10: Migration = object : Migration(9, 10) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `broadcast_messages` (" +
+                "`id` TEXT NOT NULL, `senderName` TEXT NOT NULL, " +
+                "`body` TEXT NOT NULL, `urgencyScore` INTEGER NOT NULL, " +
+                "`sentAtEpoch` INTEGER NOT NULL, `receivedAtEpoch` INTEGER NOT NULL, " +
+                "`origin` TEXT NOT NULL, `status` TEXT NOT NULL, " +
+                "PRIMARY KEY(`id`))"
+        )
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `broadcast_members` (" +
+                "`memberId` TEXT NOT NULL, `displayName` TEXT NOT NULL, " +
+                "`codeHash` TEXT NOT NULL, `role` TEXT NOT NULL, " +
+                "`active` INTEGER NOT NULL, `addedAtEpoch` INTEGER NOT NULL, " +
+                "PRIMARY KEY(`memberId`))"
+        )
+    }
+}
+
 // Version 8 -> 9 migration (Phase 4, v5.3 removal). Drops the
 // fourteen non-Yemen tables and their indexes. The `meta` table
 // and the five Yemen tables are untouched, so the invite gate,
@@ -721,11 +747,14 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
         YemenFrontlineEntity::class,
         YemenAdenEntity::class,
         YemenMetaEntity::class,
+        BroadcastMessageEntity::class,
+        BroadcastMemberEntity::class,
     ],
-    version = 9,
+    version = 10,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun metaDao(): MetaDao
     abstract fun yemenDao(): YemenDao
+    abstract fun broadcastDao(): BroadcastDao
 }

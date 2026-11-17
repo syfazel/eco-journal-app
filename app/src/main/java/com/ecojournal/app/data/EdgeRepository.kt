@@ -147,6 +147,7 @@ class EdgeRepository(context: Context) {
     private val db: AppDatabase = DatabaseProvider.get(context)
     val dao: MetaDao = db.metaDao()
     val yemenDao: YemenDao = db.yemenDao()
+    val broadcastDao: BroadcastDao = db.broadcastDao()
     private val appContext: Context = context.applicationContext
     private val settings = SettingsStore(context)
 

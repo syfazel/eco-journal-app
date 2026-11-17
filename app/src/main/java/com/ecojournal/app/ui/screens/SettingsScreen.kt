@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -21,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -83,6 +85,11 @@ fun SettingsScreen(
     // use it (the old declaration sat after the Switch block).
     val context = LocalContext.current
     var sliderValue by remember(settings.fontScale) { mutableStateOf(settings.fontScale) }
+    // Phase 5 (v5.4): hoisted, not conditional — remember() inside
+    // the sender-only branch would reset whenever the toggle flips.
+    var senderName by remember(settings.senderDisplayName) {
+        mutableStateOf(settings.senderDisplayName)
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -229,6 +236,81 @@ fun SettingsScreen(
                 }
             }
         }
+        // Phase 5 (v5.4) broadcast messaging: the sender-mode
+        // toggle (default off — only Yasin turns it on), the
+        // broadcast notification toggle (default on, Law 15), and
+        // the display name shown on outgoing envelopes.
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.tab_broadcast),
+            fontFamily = EcoFontFamily,
+            fontSize = 16.sp * fontScale,
+            modifier = Modifier.semantics { heading() },
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.semantics(mergeDescendants = true) {},
+        ) {
+            Text(
+                text = stringResource(R.string.broadcast_sender_toggle),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+                modifier = Modifier.weight(1f),
+            )
+            Switch(
+                checked = settings.broadcastSender,
+                onCheckedChange = { v ->
+                    scope.launch { store.setBroadcastSender(v) }
+                },
+            )
+        }
+        Text(
+            text = stringResource(R.string.broadcast_sender_desc),
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+        )
+        if (settings.broadcastSender) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.broadcast_sender_name_label),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+            )
+            TextField(
+                value = senderName,
+                onValueChange = {
+                    senderName = it
+                    scope.launch { store.setSenderDisplayName(it) }
+                },
+                placeholder = {
+                    Text(text = stringResource(R.string.broadcast_sender_name_hint), fontFamily = EcoFontFamily)
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.semantics(mergeDescendants = true) {},
+        ) {
+            Text(
+                text = stringResource(R.string.broadcast_notif_toggle),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+                modifier = Modifier.weight(1f),
+            )
+            Switch(
+                checked = settings.broadcastNotifications,
+                onCheckedChange = { v ->
+                    scope.launch { store.setBroadcastNotifications(v) }
+                },
+            )
+        }
+        Text(
+            text = stringResource(R.string.broadcast_notif_desc),
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+        )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = if (settings.inviteOk) {

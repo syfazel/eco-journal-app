@@ -39,6 +39,9 @@ private object Keys {
     val PENDING_UPDATE_SHA = stringPreferencesKey("pending_update_sha")
     val PENDING_UPDATE_CHANGELOG = stringPreferencesKey("pending_update_changelog")
     val PENDING_UPDATE_MANDATORY = booleanPreferencesKey("pending_update_mandatory")
+    val BROADCAST_SENDER = booleanPreferencesKey("broadcast_sender")
+    val BROADCAST_NOTIFICATIONS = booleanPreferencesKey("broadcast_notifications")
+    val SENDER_DISPLAY_NAME = stringPreferencesKey("sender_display_name")
 }
 
 data class Settings(
@@ -47,6 +50,14 @@ data class Settings(
     val notificationsEnabled: Boolean = true,
     val inviteOk: Boolean = false,
     val inviteHash: String? = null,
+    // Phase 5 (v5.4) broadcast messaging. broadcastSender = this
+    // device may compose broadcasts (in practice only Yasin turns
+    // it on); broadcastNotifications gates only broadcast notices,
+    // never the app-update notice; senderDisplayName is the name
+    // shown on outgoing envelopes (default "یاسین").
+    val broadcastSender: Boolean = false,
+    val broadcastNotifications: Boolean = true,
+    val senderDisplayName: String = "یاسین",
     val updateCheckEnabled: Boolean = true,
     val dismissedUpdateCode: Long = 0L,
     val pendingUpdate: PendingUpdate? = null,
@@ -79,6 +90,9 @@ class SettingsStore(private val context: Context) {
                 notificationsEnabled = p[Keys.NOTIFICATIONS] ?: true,
                 inviteOk = p[Keys.INVITE_OK] ?: false,
                 inviteHash = p[Keys.INVITE_HASH],
+                broadcastSender = p[Keys.BROADCAST_SENDER] ?: false,
+                broadcastNotifications = p[Keys.BROADCAST_NOTIFICATIONS] ?: true,
+                senderDisplayName = (p[Keys.SENDER_DISPLAY_NAME] ?: "یاسین").take(100),
                 updateCheckEnabled = p[Keys.UPDATE_CHECK_ENABLED] ?: true,
                 dismissedUpdateCode = p[Keys.DISMISSED_UPDATE_CODE] ?: 0L,
                 pendingUpdate = run {
@@ -115,6 +129,17 @@ class SettingsStore(private val context: Context) {
 
     suspend fun setNotifications(v: Boolean) =
         context.settingsStore.edit { it[Keys.NOTIFICATIONS] = v }
+
+    suspend fun setBroadcastSender(v: Boolean) =
+        context.settingsStore.edit { it[Keys.BROADCAST_SENDER] = v }
+
+    suspend fun setBroadcastNotifications(v: Boolean) =
+        context.settingsStore.edit { it[Keys.BROADCAST_NOTIFICATIONS] = v }
+
+    suspend fun setSenderDisplayName(v: String) =
+        context.settingsStore.edit {
+            it[Keys.SENDER_DISPLAY_NAME] = v.trim().take(100).ifBlank { "یاسین" }
+        }
 
     suspend fun setUpdateCheckEnabled(v: Boolean) =
         context.settingsStore.edit { it[Keys.UPDATE_CHECK_ENABLED] = v }

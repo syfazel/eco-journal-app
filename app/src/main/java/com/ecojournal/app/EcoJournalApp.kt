@@ -13,6 +13,7 @@ class EcoJournalApp : Application() {
     override fun onCreate() {
         super.onCreate()
         Notifications.ensureChannel(this)
+        Notifications.ensureBroadcastChannel(this)
         // Phase 4 (v5.3): the 15-minute SyncWorker is deleted
         // with the sections it synced. Yemen syncs on its own
         // 24-hour worker below, plus the launch one-time it
@@ -43,7 +44,9 @@ class EcoJournalApp : Application() {
         // for the vNext pilot — no project, no google-services.json,
         // no topic subscription. Phase 4 deleted the dormant FCM
         // service and the firebase-messaging dependency outright.
-        // The only notification left is the local app-update
-        // notice from AppUpdateWorker.
+        // Phase 5 adds only LOCAL broadcast notifications (Law 15,
+        // from messages already on the device) — still no FCM, no
+        // server, no push. The only notifications are the local
+        // app-update notice and the local broadcast notice.
     }
 }

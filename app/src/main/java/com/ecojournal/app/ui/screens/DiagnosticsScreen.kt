@@ -201,6 +201,10 @@ fun DiagnosticsScreen(
     val events by repo.yemenDao.eventsFlow().collectAsState(initial = emptyList())
     val frontlines by repo.yemenDao.frontlinesFlow().collectAsState(initial = emptyList())
     val yemenMeta by repo.yemenDao.metaFlow().collectAsState(initial = null)
+    // Phase 5 (v5.4): broadcast counts only — never content,
+    // never member names, never codes (G-DIAG-2).
+    val broadcastMessages by repo.broadcastDao.messagesFlow().collectAsState(initial = emptyList())
+    val broadcastMembers by repo.broadcastDao.activeMembersFlow().collectAsState(initial = emptyList())
     val seedVersion by repo.dao.metaValueFlow("seed_version").collectAsState(initial = null)
     // v4.0.1 (fix plan X8): seed missing count + seed error, so a
     // phone report can distinguish seed-empty from seed-failed.
@@ -388,6 +392,12 @@ fun DiagnosticsScreen(
         stringResource(
             R.string.diagnostics_yemen_frontlines,
             frontlines.size.toString().toPersianDigits(),
+        ),
+        stringResource(
+            R.string.diagnostics_broadcast,
+            broadcastMessages.size.toString().toPersianDigits(),
+            broadcastMembers.size.toString().toPersianDigits(),
+            broadcastMessages.count { it.status == "held" }.toString().toPersianDigits(),
         ),
         stringResource(
             R.string.diagnostics_seed_version,

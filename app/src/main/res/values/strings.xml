@@ -567,4 +567,45 @@
          locked line for every non-Yemen section. -->
     <string name="v52_locked_title">این بخش فعلاً متوقف است</string>
     <string name="v52_locked_body">در نسخهٔ ۵٫۲ فقط تب یمن فعال است؛ بقیهٔ بخش‌ها تا اطلاع بعدی خاموش‌اند.</string>
+    <!-- v5.4 broadcast messaging (Phase 5, design tarahi-payamresani-faz5.md).
+         One-way broadcast to a closed group of up to 10 people.
+         No FCM, no server, no public edge: envelopes travel only
+         through a private channel the user controls, pasted in by hand. -->
+    <string name="tab_broadcast">پیام‌رسانی</string>
+    <string name="broadcast_empty">هنوز پیامی نیست.</string>
+    <string name="broadcast_honest_note">پیام‌ها خودبه‌خود نمی‌رسند: فرستنده پاکتِ پیام را از راه یک کانالِ خصوصی (مثلاً بله) می‌فرستد و گیرنده آن را اینجا وارد می‌کند. اپ هیچ پیامی را خودش نمی‌فرستد و هیچ سروری ندارد.</string>
+    <string name="broadcast_compose_heading">نوشتنِ پخش</string>
+    <string name="broadcast_body_hint">متنِ پیام (تا ۲۰۰۰ نویسه)…</string>
+    <string name="broadcast_score_label">فوریت (۰ تا ۱۰۰)</string>
+    <string name="broadcast_score_urgent">فوری (۷۰ به بالا؛ شب فقط ۸۵ به بالا فوری است)</string>
+    <string name="broadcast_share_button">پخش و اشتراک‌گذاریِ پاکت</string>
+    <string name="broadcast_not_sender">نوشتنِ پخش فقط وقتی ممکن است که «من فرستندهٔ پخش هستم» در تنظیمات روشن باشد.</string>
+    <string name="broadcast_import_heading">وارد کردنِ پاکت</string>
+    <string name="broadcast_import_hint">پاکتِ دریافتی را اینجا بچسبانید…</string>
+    <string name="broadcast_import_button">وارد کردن</string>
+    <string name="broadcast_import_ok">پیام وارد شد.</string>
+    <string name="broadcast_import_duplicate">این پیام قبلاً وارد شده است.</string>
+    <string name="broadcast_members_heading">اعضا</string>
+    <string name="broadcast_members_count">%1$s از ۱۰ عضو</string>
+    <string name="broadcast_add_member">افزودن عضو</string>
+    <string name="broadcast_member_name_hint">نام نمایشی (مثلاً احمد)…</string>
+    <string name="broadcast_member_code_hint">کد عضویت (فقط هشِ آن ذخیره می‌شود)…</string>
+    <string name="broadcast_member_added">عضو اضافه شد.</string>
+    <string name="broadcast_member_full">جمع کامل است — بیشتر از ۱۰ عضو فعال نمی‌شود.</string>
+    <string name="broadcast_member_invalid">نام و کد عضویت هر دو لازم‌اند.</string>
+    <string name="broadcast_member_code_used">این کد قبلاً استفاده شده است.</string>
+    <string name="broadcast_remove_member">حذف</string>
+    <string name="broadcast_delete">حذف پیام</string>
+    <string name="broadcast_delete_all">حذف همهٔ پیام‌ها</string>
+    <string name="broadcast_held_badge">نگه‌داشته‌شده — بستهٔ صبح</string>
+    <string name="broadcast_imported_badge">واردشده</string>
+    <string name="broadcast_local_badge">پخش‌شده از این گوشی</string>
+    <string name="broadcast_sender_toggle">من فرستندهٔ پخش هستم</string>
+    <string name="broadcast_sender_desc">فقط وقتی روشن است، جعبهٔ نوشتنِ پخش دیده می‌شود. در عمل فقط یاسین آن را روشن می‌کند.</string>
+    <string name="broadcast_notif_toggle">اعلانِ پیام‌رسانی</string>
+    <string name="broadcast_notif_desc">اعلانِ پیام‌های پخش، تابع قانون ۱۵ (شب فقط ۸۵ به بالا فوری است؛ ۷۰ تا ۸۴ صبح می‌رسد).</string>
+    <string name="broadcast_sender_name_label">نام نمایشیِ فرستنده</string>
+    <string name="broadcast_sender_name_hint">یاسین</string>
+    <string name="broadcast_pruned">%1$s پیامِ قدیمی پاک شد.</string>
+    <string name="diagnostics_broadcast">پیام‌رسانی: %1$s پیام • %2$s عضو فعال • %3$s نگه‌داشته‌شده</string>
 </resources>
