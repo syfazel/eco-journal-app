@@ -144,10 +144,10 @@ object Law15 {
     fun decide(score: Int, isNight: Boolean): Decision {
         val s = score.coerceIn(0, 100)
         return when {
-            !isNight -> NOTIFY_NOW
-            s >= 85 -> NOTIFY_NOW
-            s >= 70 -> HOLD_FOR_MORNING
-            else -> SILENT
+            !isNight -> Decision.NOTIFY_NOW
+            s >= 85 -> Decision.NOTIFY_NOW
+            s >= 70 -> Decision.HOLD_FOR_MORNING
+            else -> Decision.SILENT
         }
     }
 }
