@@ -62,5 +62,19 @@ jobs:
       # already uploaded, which is what Phase U needs to generate
       # the real 5.2 version.json from. Once version.json names
       # 5.2.0/8 with the real APK hash, this step passes.
-      - name: Verify version manifest against built APK
-        run: python3 edge/version_manifest.py verify --apk app/build/outputs/apk/debug/app-debug.apk
+      #
+      # TWO CHECKS, NOT ONE (D18 — DEX non-determinism, proven
+      # by runs 44183915798 vs 44185080944: same source, same
+      # size, only classes.dex +4B and classes7.dex +8B differ):
+      #  1. hash check against the COMMITTED APK, which is the
+      #     exact file Pages serves at the manifest apk_url —
+      #     this is the real update-safety invariant;
+      #  2. identity-only check of the FRESHLY BUILT APK
+      #     (package/versionName/versionCode via aapt) — its
+      #     hash is NOT comparable, because a rebuild from the
+      #     same source is not byte-identical.
+      - name: Verify version manifest against served APK
+        run: python3 edge/version_manifest.py verify --apk edge/out/app-debug-v5.2.apk
+
+      - name: Verify freshly built APK identity
+        run: python3 edge/version_manifest.py verify --apk app/build/outputs/apk/debug/app-debug.apk --identity-only
