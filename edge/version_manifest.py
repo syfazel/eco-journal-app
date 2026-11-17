@@ -44,7 +44,7 @@ Usage:
   python3 edge/version_manifest.py verify --apk FILE
       [--manifest FILE] [--expect-name NAME] [--expect-code N]
 Default --out/--manifest is edge/out/version.json. --out must
-resolve inside ~/workspace/goals/eco-journal/app/.
+resolve inside the repo root (the parent of edge/).
 
 Python standard library only. No network access.
 """
@@ -58,9 +58,12 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 
-HOME = os.path.expanduser("~")
-APP_ROOT = os.path.join(HOME, "workspace", "goals", "eco-journal", "app")
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Repo-relative root: this script lives in <repo>/edge/, so the repo
+# root is its parent. A hard-coded lab path (~/workspace/...) broke
+# the CI verify step (run 44183915798): the runner has no such path.
+# The guard still confines --out/--manifest to inside this repo.
+APP_ROOT = os.path.dirname(SCRIPT_DIR)
 DEFAULT_MANIFEST = os.path.join(SCRIPT_DIR, "out", "version.json")
 BUILD_GRADLE = os.path.join(APP_ROOT, "app", "build.gradle.kts")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
@@ -92,9 +95,24 @@ def sha256_of(path):
     return digest.hexdigest()
 
 
+def _aapt_candidates():
+    cands = list(AAPT_CANDIDATES)
+    for env in ("ANDROID_HOME", "ANDROID_SDK_ROOT"):
+        home = os.environ.get(env)
+        if not home:
+            continue
+        bt = os.path.join(home, "build-tools")
+        if not os.path.isdir(bt):
+            continue
+        for ver in sorted(os.listdir(bt), reverse=True):
+            for name in ("aapt", "aapt2"):
+                cands.append(os.path.join(bt, ver, name))
+    return cands
+
+
 def aapt_info(apk):
     """aapt badging identity, or None when aapt is unavailable."""
-    for candidate in AAPT_CANDIDATES:
+    for candidate in _aapt_candidates():
         if not os.path.exists(candidate):
             continue
         try:
