@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Local notifications for new articles (WorkManager fallback path). -->
+    <!-- Local notifications: only the app-update notice from AppUpdateWorker. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -47,20 +47,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <!-- FCM scaffolding, DORMANT BY DECISION (M5,
-             docs/vnext-decisions.md §3): no Firebase project, no
-             google-services.json, no FCM activation for the pilot.
-             Declaring the service here with no keys committed is
-             harmless: Firebase simply has no project to register
-             against. -->
-        <service
-            android:name=".fcm.EcoMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
 
     </application>
 </manifest>

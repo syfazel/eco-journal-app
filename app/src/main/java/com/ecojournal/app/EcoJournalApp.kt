@@ -3,7 +3,6 @@ package com.ecojournal.app
 import android.app.Application
 import com.ecojournal.app.data.AppUpdateWorker
 import com.ecojournal.app.data.BundledSeed
-import com.ecojournal.app.data.SyncWorker
 import com.ecojournal.app.data.YemenSyncWorker
 import com.ecojournal.app.util.Notifications
 import kotlinx.coroutines.CoroutineScope
@@ -14,13 +13,10 @@ class EcoJournalApp : Application() {
     override fun onCreate() {
         super.onCreate()
         Notifications.ensureChannel(this)
-        // v5.2 Yemen-only mode (audit §4.5 option A): the 15-minute
-        // periodic edge sync is gated off — SyncWorker.schedule
-        // cancels it (all its sections are locked, and it must
-        // never sync Yemen either, which would break the 24-hour
-        // cadence). Yemen syncs on its own 24-hour worker below,
-        // plus the launch one-time it enqueues.
-        SyncWorker.schedule(this)
+        // Phase 4 (v5.3): the 15-minute SyncWorker is deleted
+        // with the sections it synced. Yemen syncs on its own
+        // 24-hour worker below, plus the launch one-time it
+        // enqueues. No other periodic content sync exists.
         // v5.2: 24-hour periodic Yemen sync (NOT content sync —
         // the only content section left, on its own cadence).
         YemenSyncWorker.schedule(this)
@@ -45,10 +41,9 @@ class EcoJournalApp : Application() {
         }
         // M5 decision (docs/vnext-decisions.md §3): NO Firebase/FCM
         // for the vNext pilot — no project, no google-services.json,
-        // no topic subscription. Polling (SyncWorker, 15 min) plus
-        // local notifications is the only notification path. The
-        // FCM service stays dormant scaffolding; it is revisited
-        // only if push latency is proven a pilot blocker, as a new
-        // decision — never assumed here.
+        // no topic subscription. Phase 4 deleted the dormant FCM
+        // service and the firebase-messaging dependency outright.
+        // The only notification left is the local app-update
+        // notice from AppUpdateWorker.
     }
 }

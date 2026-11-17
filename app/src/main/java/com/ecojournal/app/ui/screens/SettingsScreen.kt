@@ -15,12 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -53,7 +50,17 @@ import com.ecojournal.app.util.toPersianDigits
 import kotlinx.coroutines.launch
 
 /**
- * Settings: font scale, theme (incl. sepia), notifications, invite state.
+ * Settings (Phase 4, v5.3 — Yemen-only): font scale, theme
+ * (incl. sepia), the master notification switch (which now
+ * gates only the app-update notice), invite state, diagnostics
+ * entry, and the app-update card.
+ *
+ * Removed in v5.3 with their sections: the reader helpers
+ * (ticker / ruler / calm — feed-reader features), the Phase 4
+ * per-service notification toggles and quiet hours (their
+ * notification types no longer exist), the market-threshold
+ * presence line, and the Method / voices / special-issues /
+ * sections-hub entries.
  *
  * M3 (P1-20): the font slider saves on every change, not only on
  * release — before, leaving Settings mid-drag lost the value — and
@@ -63,49 +70,13 @@ import kotlinx.coroutines.launch
  * screen. M7: invite state is now the real gate — confirmed text,
  * a revocation note, and a manual re-lock button.
  */
-/** Phase 4 helper: "HH:MM" (Tehran wall clock) → minutes after midnight, or null. */
-private fun parseQuietTime(raw: String): Int? {
-    val latin = buildString {
-        for (c in raw.trim()) {
-            append(
-                when (c) {
-                    in '۰'..'۹' -> ('0' + (c - '۰'))
-                    in '٠'..'٩' -> ('0' + (c - '٠'))
-                    else -> c
-                }
-            )
-        }
-    }
-    val parts = latin.split(":")
-    if (parts.size != 2) return null
-    val hour = parts[0].toIntOrNull() ?: return null
-    val minute = parts[1].toIntOrNull() ?: return null
-    if (hour !in 0..23 || minute !in 0..59) return null
-    return hour * 60 + minute
-}
-
-private fun formatQuietTime(minutes: Int): String =
-    "%02d:%02d".format(minutes / 60, minutes % 60)
-
 @Composable
 fun SettingsScreen(
     settings: Settings,
     store: SettingsStore,
     onDiagnostics: () -> Unit = {},
-    // Phase 6: Method page + gated placeholders, reached from
-    // Settings so their absence is honest rather than hidden.
-    onMethod: () -> Unit = {},
-    onVoices: () -> Unit = {},
-    onSpecialIssues: () -> Unit = {},
-    // v5 P2: sections hub entry (bundles / nightly / analysis /
-    // method in one place). The hub is NOT a bottom-bar item —
-    // the bar stays at five — so it is reached from here.
-    onSections: () -> Unit = {},
     modifier: Modifier = Modifier,
     fontScale: Float = 1f,
-    // Phase 4: threshold PRESENCE only (never the value — the
-    // value belongs on the Market banner, not in Settings).
-    marketThresholdSet: Boolean = false,
 ) {
     val scope = rememberCoroutineScope()
     // M8: declared at the top so the Switch semantics below can
@@ -175,100 +146,6 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(6.dp))
         }
         Spacer(modifier = Modifier.height(16.dp))
-        // v4-H reader helpers + ticker: presentation-only toggles.
-        // Defaults keep pre-H behaviour (ticker on, ruler/calm off).
-        Text(
-            text = stringResource(R.string.reader_helpers_title),
-            fontFamily = EcoFontFamily,
-            fontSize = 16.sp * fontScale,
-            modifier = Modifier.semantics { heading() },
-        )
-        // v5 P5: label + switch merge into one TalkBack node
-        // (the Phase 7 pattern from the per-service toggles
-        // below); before this the bare switch announced with
-        // no label at all.
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.semantics(mergeDescendants = true) {},
-        ) {
-            Switch(
-                checked = settings.tickerEnabled,
-                onCheckedChange = { v -> scope.launch { store.setTickerEnabled(v) } },
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.ticker_toggle),
-                fontFamily = EcoFontFamily,
-                fontSize = 14.sp * fontScale,
-            )
-        }
-        // v5 P2: reduced-motion toggle for the ticker. Session
-        // pause lives on the ticker itself; this is the
-        // persistent control (no infinite motion without one).
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.semantics(mergeDescendants = true) {},
-        ) {
-            Switch(
-                checked = settings.reducedMotion,
-                onCheckedChange = { v -> scope.launch { store.setReducedMotion(v) } },
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.ticker_motion_toggle),
-                fontFamily = EcoFontFamily,
-                fontSize = 14.sp * fontScale,
-            )
-        }
-        Text(
-            text = stringResource(R.string.ticker_motion_desc),
-            fontFamily = EcoFontFamily,
-            fontSize = 12.sp * fontScale,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.semantics(mergeDescendants = true) {},
-        ) {
-            Switch(
-                checked = settings.readingRuler,
-                onCheckedChange = { v -> scope.launch { store.setReadingRuler(v) } },
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.reading_ruler_toggle),
-                fontFamily = EcoFontFamily,
-                fontSize = 14.sp * fontScale,
-            )
-        }
-        Text(
-            text = stringResource(R.string.reading_ruler_desc),
-            fontFamily = EcoFontFamily,
-            fontSize = 12.sp * fontScale,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.semantics(mergeDescendants = true) {},
-        ) {
-            Switch(
-                checked = settings.calmMode,
-                onCheckedChange = { v -> scope.launch { store.setCalmMode(v) } },
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.calm_mode_toggle),
-                fontFamily = EcoFontFamily,
-                fontSize = 14.sp * fontScale,
-            )
-        }
-        Text(
-            text = stringResource(R.string.calm_mode_desc),
-            fontFamily = EcoFontFamily,
-            fontSize = 12.sp * fontScale,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = stringResource(R.string.settings_notifications_heading),
             fontFamily = EcoFontFamily,
@@ -290,7 +167,7 @@ fun SettingsScreen(
         // a request button; after a denial it shows in-app guidance
         // to the system app-settings page instead of failing
         // silently. The toggle itself still works without the
-        // permission — polling continues, notify() is a no-op.
+        // permission — the update worker's notify() is a no-op.
         // Hoisted (not conditional): the launcher must be
         // registered on every composition, not only when the
         // guidance block is visible.
@@ -352,171 +229,6 @@ fun SettingsScreen(
                 }
             }
         }
-        // ---- Phase 4: per-service toggles + quiet hours ----
-        // The master switch above remains the kill switch. Each
-        // row below is one DataStore key (spec §4.7); turning the
-        // master back ON restores per-service behaviour without
-        // re-firing suppressed items as a burst (dispatcher rule).
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(R.string.settings_notifications_heading_p4),
-            fontFamily = EcoFontFamily,
-            fontSize = 16.sp * fontScale,
-            modifier = Modifier.semantics { heading() },
-        )
-        Text(
-            text = stringResource(R.string.settings_notifications_master_desc),
-            fontFamily = EcoFontFamily,
-            fontSize = 14.sp * fontScale,
-        )
-        val p4Toggles: List<Triple<String, Boolean, (Boolean) -> Unit>> = listOf(
-            Triple(stringResource(R.string.settings_notify_urgent), settings.notifyUrgent) { v: Boolean ->
-                scope.launch { store.setNotifyUrgent(v) }
-            },
-            Triple(stringResource(R.string.settings_notify_market_alerts), settings.notifyMarketAlerts) { v: Boolean ->
-                scope.launch { store.setNotifyMarketAlerts(v) }
-            },
-            Triple(stringResource(R.string.settings_notify_bundles), settings.notifyBundles) { v: Boolean ->
-                scope.launch { store.setNotifyBundles(v) }
-            },
-            Triple(stringResource(R.string.settings_notify_sitrep), settings.notifySitrep) { v: Boolean ->
-                scope.launch { store.setNotifySitrep(v) }
-            },
-            Triple(stringResource(R.string.settings_notify_nightly), settings.notifyNightly) { v: Boolean ->
-                scope.launch { store.setNotifyNightly(v) }
-            },
-            Triple(stringResource(R.string.settings_notify_special_issues), settings.notifySpecialIssues) { v: Boolean ->
-                scope.launch { store.setNotifySpecialIssues(v) }
-            },
-            Triple(stringResource(R.string.settings_notify_radar), settings.notifyRadar) { v: Boolean ->
-                scope.launch { store.setNotifyRadar(v) }
-            },
-        )
-        for ((label, checked, onChange) in p4Toggles) {
-            Spacer(modifier = Modifier.height(6.dp))
-            // Phase 7: label + switch merge into one TalkBack node,
-            // so the switch is never announced unlabelled.
-            Column(modifier = Modifier.semantics(mergeDescendants = true) {}) {
-                Text(
-                    text = label,
-                    fontFamily = EcoFontFamily,
-                    fontSize = 14.sp * fontScale,
-                )
-                Switch(checked = checked, onCheckedChange = onChange)
-            }
-        }
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(
-            text = if (marketThresholdSet) {
-                stringResource(R.string.settings_threshold_status_set)
-            } else {
-                stringResource(R.string.settings_threshold_status_unset)
-            },
-            fontFamily = EcoFontFamily,
-            fontSize = 14.sp * fontScale,
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(R.string.settings_quiet_heading),
-            fontFamily = EcoFontFamily,
-            fontSize = 16.sp * fontScale,
-            modifier = Modifier.semantics { heading() },
-        )
-        Switch(
-            checked = settings.quietHoursEnabled,
-            modifier = Modifier.semantics {
-                contentDescription = context.getString(R.string.settings_quiet_heading)
-            },
-            onCheckedChange = { v -> scope.launch { store.setQuietHoursEnabled(v) } },
-        )
-        var quietStartText by remember(settings.quietStartMin) {
-            mutableStateOf(formatQuietTime(settings.quietStartMin))
-        }
-        var quietEndText by remember(settings.quietEndMin) {
-            mutableStateOf(formatQuietTime(settings.quietEndMin))
-        }
-        var quietError by remember { mutableStateOf(false) }
-        OutlinedTextField(
-            value = quietStartText,
-            onValueChange = { quietStartText = it },
-            label = {
-                Text(
-                    text = stringResource(R.string.settings_quiet_start_label),
-                    fontFamily = EcoFontFamily,
-                )
-            },
-        )
-        Spacer(modifier = Modifier.height(6.dp))
-        OutlinedTextField(
-            value = quietEndText,
-            onValueChange = { quietEndText = it },
-            label = {
-                Text(
-                    text = stringResource(R.string.settings_quiet_end_label),
-                    fontFamily = EcoFontFamily,
-                )
-            },
-        )
-        if (quietError) {
-            Text(
-                text = stringResource(R.string.settings_quiet_invalid),
-                fontFamily = EcoFontFamily,
-                fontSize = 14.sp * fontScale,
-            )
-        }
-        Spacer(modifier = Modifier.height(6.dp))
-        Button(onClick = {
-            val start = parseQuietTime(quietStartText)
-            val end = parseQuietTime(quietEndText)
-            if (start == null || end == null) {
-                quietError = true
-            } else {
-                quietError = false
-                scope.launch {
-                    store.setQuietStartMin(start)
-                    store.setQuietEndMin(end)
-                }
-            }
-        }, modifier = Modifier.heightIn(min = 48.dp)) {
-            Text(text = "ذخیرهٔ ساعات سکوت", fontFamily = EcoFontFamily)
-        }
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(
-            text = stringResource(R.string.settings_quiet_mute_urgent),
-            fontFamily = EcoFontFamily,
-            fontSize = 14.sp * fontScale,
-        )
-        Text(
-            text = stringResource(R.string.settings_quiet_mute_urgent_desc),
-            fontFamily = EcoFontFamily,
-            fontSize = 14.sp * fontScale,
-        )
-        Switch(
-            checked = settings.quietMuteUrgent,
-            modifier = Modifier.semantics {
-                contentDescription = context.getString(R.string.settings_quiet_mute_urgent_desc)
-            },
-            onCheckedChange = { v -> scope.launch { store.setQuietMuteUrgent(v) } },
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = stringResource(R.string.settings_system_notifications_desc),
-            fontFamily = EcoFontFamily,
-            fontSize = 14.sp * fontScale,
-        )
-        Button(onClick = {
-            context.startActivity(
-                Intent(
-                    SystemSettings.ACTION_APP_NOTIFICATION_SETTINGS,
-                    Uri.fromParts("package", context.packageName, null),
-                )
-            )
-        }, modifier = Modifier.heightIn(min = 48.dp)) {
-            Text(
-                text = stringResource(R.string.settings_system_notifications),
-                fontFamily = EcoFontFamily,
-            )
-        }
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = if (settings.inviteOk) {
@@ -538,7 +250,7 @@ fun SettingsScreen(
             Button(onClick = {
                 // M7: manual re-lock. Clears flag + stored hash,
                 // so the next launch shows the code-entry screen
-                // again. Cached articles are hidden, not deleted.
+                // again. Cached Yemen rows are hidden, not deleted.
                 // v5.1: mark the lock as user-initiated BEFORE
                 // clearing, so MainActivity's flip guard can
                 // tell this explicit lock apart from a transient
@@ -563,55 +275,9 @@ fun SettingsScreen(
                 fontFamily = EcoFontFamily,
             )
         }
-        // Phase 6: Method page (bundled) + gated placeholders.
-        // The voices/special-issues buttons open placeholders
-        // only — no voice name, badge, page, or queued content.
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(
-            onClick = onMethod,
-            modifier = Modifier.heightIn(min = 48.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.settings_method_button),
-                fontFamily = EcoFontFamily,
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(
-            onClick = onVoices,
-            modifier = Modifier.heightIn(min = 48.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.settings_voices_button),
-                fontFamily = EcoFontFamily,
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(
-            onClick = onSpecialIssues,
-            modifier = Modifier.heightIn(min = 48.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.settings_special_issues_button),
-                fontFamily = EcoFontFamily,
-            )
-        }
-        // v5 P2: sections hub entry. Gated sections (voices /
-        // special issues) are NOT hub destinations — they stay
-        // reachable only via their gated placeholders above.
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(
-            onClick = onSections,
-            modifier = Modifier.heightIn(min = 48.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.sections_hub_title),
-                fontFamily = EcoFontFamily,
-            )
-        }
         // v4-I: remote app update. Content updates need NO APK
-        // (manifest-v3 delta sync); this section is ONLY about
-        // updating the app binary itself. The check runs on
+        // (the Yemen sync is a data sync); this section is ONLY
+        // about updating the app binary itself. The check runs on
         // launch and every 24h (AppUpdateWorker); this button
         // is the manual re-check. A sideloaded app cannot
         // install itself silently — install always opens the

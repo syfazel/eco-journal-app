@@ -14,11 +14,11 @@ import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.flow.first
 
 /**
- * v4-I periodic update check. This is NOT the content sync:
- * SyncWorker (15 min) refreshes articles; this worker (24 h)
- * only asks "is there a newer app binary?" — checking for a
- * new binary every 15 minutes would be pure waste, and a
- * binary release is never urgent on a 15-minute cadence.
+ * v4-I periodic update check. This is NOT a content sync:
+ * the only content sync left is the Yemen 24h worker; this
+ * worker (24 h) only asks "is there a newer app binary?" —
+ * checking for a new binary more often would be pure waste,
+ * and a binary release is never urgent on a short cadence.
  *
  * Behaviour: run the same check the launch path runs. When
  * it finds an offered update that the user has not dismissed,

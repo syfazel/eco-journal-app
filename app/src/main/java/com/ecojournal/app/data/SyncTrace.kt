@@ -101,7 +101,7 @@ object SyncTrace {
     )
 
     suspend fun record(
-        dao: ArticleDao,
+        dao: MetaDao,
         section: String,
         code: String,
         fetched: Int,
@@ -130,7 +130,7 @@ object SyncTrace {
     }
 
     suspend fun recordFeedBranch(
-        dao: ArticleDao,
+        dao: MetaDao,
         branch: String,
         articles: Int,
         typed: Int,
@@ -156,7 +156,7 @@ object SyncTrace {
 
     /** v5.1: upsert one section's outcome into the keyed object. */
     suspend fun recordSectionOutcome(
-        dao: ArticleDao,
+        dao: MetaDao,
         section: String,
         code: String,
         fetched: Int,
@@ -185,7 +185,7 @@ object SyncTrace {
 
     /** v5.1: last network probe. code "" on an online probe. */
     suspend fun recordNetworkState(
-        dao: ArticleDao,
+        dao: MetaDao,
         online: Boolean,
         code: String,
     ) {
@@ -202,7 +202,7 @@ object SyncTrace {
     /** v5.1: last seed computation. Callers write AFTER any Room
      * transaction for the seed, never inside it. */
     suspend fun recordSeedReport(
-        dao: ArticleDao,
+        dao: MetaDao,
         inserted: Int,
         missing: Int,
         complete: Boolean,
@@ -221,7 +221,7 @@ object SyncTrace {
     }
 
     suspend fun recordRecon(
-        dao: ArticleDao,
+        dao: MetaDao,
         local: Int,
         manifest: Int,
         missing: Int,

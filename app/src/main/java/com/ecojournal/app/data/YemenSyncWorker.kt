@@ -16,12 +16,11 @@ import java.util.concurrent.TimeUnit
 /**
  * Yemen-only periodic sync (v5.2, audit §4.3).
  *
- * 24-hour cadence, separate from the 15-minute SyncWorker — the
- * 15-minute worker NEVER syncs Yemen (that would violate the
- * 24-hour order) and never syncs any other section either (all
- * locked, see SyncSections.YEMEN_ONLY_MODE). This worker is the
- * only periodic Yemen path, plus the launch one-time below and
- * the Yemen tab's manual refresh (same repo.syncYemen path).
+ * 24-hour cadence. Phase 4 (v5.3): the old 15-minute
+ * SyncWorker is deleted with the sections it synced, so this
+ * worker is the only periodic content sync left — plus the
+ * launch one-time below and the Yemen tab's manual refresh
+ * (same repo.syncYemen path).
  *
  * Manifest-gated: when sections.yemen.hash equals the stored
  * hash the pass fetches nothing. A failure is a fixed error code

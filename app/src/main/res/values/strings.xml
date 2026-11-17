@@ -108,6 +108,11 @@
     <string name="diagnostics_recon_title">تطابق بذر و فهرست انتشار</string>
     <string name="diagnostics_recon_line">%1$s • کش‌شده: %2$s • در فهرست: %3$s • جا مانده: %4$s • اضافه: %5$s</string>
     <string name="diagnostics_recon_none">هنوز تطابقی ثبت نشده است</string>
+    <string name="diagnostics_yemen_places">نقاط یمن: %1$s</string>
+    <string name="diagnostics_yemen_events">رویدادهای یمن: %1$s</string>
+    <string name="diagnostics_yemen_frontlines">جبهه‌های یمن: %1$s</string>
+    <string name="diagnostics_yemen_last_sync">آخرین همگام‌سازی یمن: %1$s</string>
+    <string name="diagnostics_yemen_error">آخرین خطای یمن: %1$s</string>
     <string name="diagnostics_articles">مقالات کش‌شده: %1$s</string>
     <string name="diagnostics_market">اسنپ‌شات‌های بازار: %1$s</string>
     <string name="diagnostics_formulas">فرمول‌های بازار: %1$s</string>
