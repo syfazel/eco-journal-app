@@ -51,6 +51,7 @@ import com.ecojournal.app.data.YemenDoc
 import com.ecojournal.app.data.YemenFrontline
 import com.ecojournal.app.data.YemenParsers
 import com.ecojournal.app.data.YemenPlace
+import com.ecojournal.app.data.toDomain
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.util.toPersianDigits
 import java.time.Instant
@@ -838,9 +839,14 @@ private fun ArchiveTab(doc: YemenDoc?, fontScale: Float) {
             fontFamily = EcoFontFamily,
             fontSize = 12.sp * fontScale,
         )
-        val factionLine = snap.counts.joinToString(" • ") { (faction, count) ->
-            "${factionLabel(faction)} ${count.toString().toPersianDigits()}"
+        // factionLabel is @Composable (it reads strings), so it
+        // cannot be called inside a joinToString/map lambda. Build
+        // the parts with a plain for loop in composable scope.
+        val factionParts = mutableListOf<String>()
+        for ((faction, count) in snap.counts) {
+            factionParts.add("${factionLabel(faction)} ${count.toString().toPersianDigits()}")
         }
+        val factionLine = factionParts.joinToString(" • ")
         if (factionLine.isNotBlank()) {
             Text(text = factionLine, fontFamily = EcoFontFamily, fontSize = 12.sp * fontScale)
         }
