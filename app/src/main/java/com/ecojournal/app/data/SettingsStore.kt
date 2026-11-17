@@ -116,6 +116,22 @@ class SettingsStore(private val context: Context) {
     suspend fun setNotifications(v: Boolean) =
         context.settingsStore.edit { it[Keys.NOTIFICATIONS] = v }
 
+    suspend fun setUpdateCheckEnabled(v: Boolean) =
+        context.settingsStore.edit { it[Keys.UPDATE_CHECK_ENABLED] = v }
+
+    suspend fun setDismissedUpdateCode(code: Long) =
+        context.settingsStore.edit { it[Keys.DISMISSED_UPDATE_CODE] = code }
+
+    suspend fun setPendingUpdate(p: PendingUpdate) =
+        context.settingsStore.edit {
+            it[Keys.PENDING_UPDATE_NAME] = p.versionName
+            it[Keys.PENDING_UPDATE_CODE] = p.versionCode
+            it[Keys.PENDING_UPDATE_URL] = p.apkUrl
+            it[Keys.PENDING_UPDATE_SHA] = p.apkSha256
+            it[Keys.PENDING_UPDATE_CHANGELOG] = p.changelogFa
+            it[Keys.PENDING_UPDATE_MANDATORY] = p.mandatory
+        }
+
     suspend fun setInviteOk(v: Boolean) =
         context.settingsStore.edit { it[Keys.INVITE_OK] = v }
 
