@@ -1,12 +1,12 @@
 # Publishes the static edge (edge/out/) to GitHub Pages.
 #
 # DESIGN NOTE — why CI does NOT regenerate the edge:
-# edge/generate_edge.py reads the lab database, which is NOT in this
+# edge/generate_yemen.py reads the lab dashboard snapshot, which is NOT in this
 # repo and must never be committed. So the edge snapshot is generated
 # in the lab and COMMITTED here; this workflow only publishes what
 # is committed. When new editorial content is approved, regenerate
 # in the lab (python3 edge/generate_edge.py), commit edge/out/ and
-# the bundled assets copy (app/src/main/assets/seed/), and push —
+# the bundled seed copy (assets/seed/yemen.json), and push —
 # Pages republishes automatically.
 #
 # Published layout: edge/out/index.json becomes

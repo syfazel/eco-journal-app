@@ -4,7 +4,7 @@
 Reads the verified live-dashboard snapshot
 (~/workspace/goals/eco-journal/hidden_files/yemen-dashboard-v5-20261118.json,
 dashboard v5, fetched 2026-11-18) and writes edge/out/yemen.json plus
-the IDENTICAL seed copy app/src/main/assets/seed/yemen.json from the
+the IDENTICAL seed copy assets/seed/yemen.json from the
 SAME run and the SAME dashboard state, so seed and edge can never
 drift (audit §5 risk 6). Nothing is typed by hand: every number,
 name, coordinate and link comes from the snapshot. Human-stats
@@ -47,9 +47,9 @@ DEFAULT_SNAPSHOT = os.path.join(
 )
 OUT_DIR = os.path.join(SCRIPT_DIR, "out")
 EDGE_YEMEN = os.path.join(OUT_DIR, "yemen.json")
-SEED_YEMEN = os.path.join(
-    APP_ROOT, "app", "src", "main", "assets", "seed", "yemen.json",
-)
+# v6.0 (Flutter rebuild): the bundled seed lives in the Flutter assets
+# directory. The old Kotlin path app/src/main/assets/seed/ is gone.
+SEED_YEMEN = os.path.join(APP_ROOT, "assets", "seed", "yemen.json")
 MANIFEST_PATH = os.path.join(OUT_DIR, "manifest.json")
 HEALTH_PATH = os.path.join(OUT_DIR, "health.json")
 MANIFEST_VERSION = 4
@@ -498,7 +498,7 @@ def main():
     generated_at_utc = datetime.now(timezone.utc).isoformat()
     manifest["version"] = MANIFEST_VERSION
     manifest["generated_at_utc"] = generated_at_utc
-    manifest["generator"] = "edge/generate_yemen.py (v5.6, LAB ONLY)"
+    manifest["generator"] = "edge/generate_yemen.py (v6.0, LAB ONLY)"
     manifest.setdefault("sections", {})["yemen"] = {
         "file": "yemen.json",
         "count": counts["places"],
@@ -522,7 +522,7 @@ def main():
         health["manifest_version"] = MANIFEST_VERSION
         health["manifest_generated_at_utc"] = generated_at_utc
         health["generated_at_utc"] = generated_at_utc
-        health["generator"] = "edge/generate_yemen.py (v5.6, LAB ONLY)"
+        health["generator"] = "edge/generate_yemen.py (v6.0, LAB ONLY)"
         health.setdefault("sections", {})["yemen"] = {
             "count": counts["places"],
             "hash": doc_hash,

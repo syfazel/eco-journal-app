@@ -8,8 +8,8 @@ is only about updating the binary itself.
 
 Manifest shape (served at the Pages root as version.json, next
 to manifest.json — pages.yml publishes edge/out/ as the root):
-  version_name:  "4.0.0"      (from app/build.gradle.kts, never typed)
-  version_code:  4            (from app/build.gradle.kts, never typed)
+  version_name:  "6.0.0"      (from pubspec.yaml, never typed)
+  version_code:  13           (from pubspec.yaml, never typed)
   apk_url:       "https://…"  (HTTPS only; the APK download URL)
   apk_sha256:    64 lowercase hex, computed from the REAL APK file
   changelog_fa:  Persian changelog text (may be "")
@@ -21,11 +21,11 @@ RELEASE BLOCKER, enforced here, not by convention:
     placeholder, example, or "fill in later" hash: without a
     real APK the script refuses and writes nothing.
   * generate READS version_name/version_code from
-    app/build.gradle.kts (single source of truth) — the values
+    pubspec.yaml (single source of truth) — the values
     are never typed on the command line, so a typo cannot ship
     a manifest the app can never match.
   * verify FAILS (exit 1) unless: manifest name/code equal
-    build.gradle.kts, apk_sha256 equals the SHA-256 of the
+    pubspec.yaml, apk_sha256 equals the SHA-256 of the
     given APK file, apk_url is HTTPS, and (when aapt is
     available) aapt badging agrees on package/versionName/
     versionCode. A failed verify blocks the publish step.
@@ -86,7 +86,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 # The guard still confines --out/--manifest to inside this repo.
 APP_ROOT = os.path.dirname(SCRIPT_DIR)
 DEFAULT_MANIFEST = os.path.join(SCRIPT_DIR, "out", "version.json")
-BUILD_GRADLE = os.path.join(APP_ROOT, "app", "build.gradle.kts")
+PUBSPEC = os.path.join(APP_ROOT, "pubspec.yaml")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
 AAPT_CANDIDATES = [
     os.path.join(APP_ROOT, ".tools", "android-sdk", "build-tools", "34.0.0", "aapt"),
@@ -95,14 +95,19 @@ AAPT_CANDIDATES = [
 
 
 def app_version():
-    """Read (versionName, versionCode) from build.gradle.kts."""
-    with open(BUILD_GRADLE, encoding="utf-8") as f:
+    """Read (versionName, versionCode) from pubspec.yaml.
+
+    v6.0 (Flutter rebuild): the single source of truth is the
+    `version: 6.0.0+13` line in pubspec.yaml (name+code). The old
+    Kotlin build.gradle.kts is gone.
+    """
+    with open(PUBSPEC, encoding="utf-8") as f:
         text = f.read()
-    name = re.search(r'versionName\s*=\s*"([^"]+)"', text)
-    code = re.search(r"versionCode\s*=\s*(\d+)", text)
-    if not name or not code:
-        raise SystemExit("REFUSED: cannot parse version from %s" % BUILD_GRADLE)
-    return name.group(1), int(code.group(1))
+    m = re.search(r"^version:\s*([0-9]+\.[0-9]+\.[0-9]+)\+(\d+)\s*$",
+                  text, re.MULTILINE)
+    if not m:
+        raise SystemExit("REFUSED: cannot parse version from %s" % PUBSPEC)
+    return m.group(1), int(m.group(2))
 
 
 def sha256_of(path):
@@ -215,7 +220,7 @@ def cmd_verify(args):
     if manifest.get("version_code") != expect_code:
         fails.append("version_code %r != expected %r" % (manifest.get("version_code"), expect_code))
     if manifest.get("version_name") != gradle_name or manifest.get("version_code") != gradle_code:
-        fails.append("manifest disagrees with build.gradle.kts (%s/%s)" % (gradle_name, gradle_code))
+        fails.append("manifest disagrees with pubspec.yaml (%s/%s)" % (gradle_name, gradle_code))
     if not isinstance(manifest.get("apk_url"), str) or not manifest["apk_url"].startswith("https://"):
         fails.append("apk_url is not HTTPS: %r" % manifest.get("apk_url"))
     sha = manifest.get("apk_sha256")

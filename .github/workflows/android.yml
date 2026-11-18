@@ -1,15 +1,21 @@
-# Cloud debug build for the ECO JOURNAL app (Phase 1).
-# No secrets, no signing, no Firebase keys: this builds a DEBUG apk
-# only. Release signing is a separate, later decision by Yasin.
-# Layout assumption: the CONTENTS of the lab's app/ folder are the
-# repo root (settings.gradle.kts at the root, :app module under app/).
-# If instead the whole app/ folder is pushed as a subdirectory, set
-# working-directory: app and path: app/app/build/... accordingly.
-name: Android debug build
+# ECO JOURNAL — Yemen only, v6.0.0/code 13 (Flutter rebuild).
+# Builds the debug APK and signs it with the ONE shared debug keystore
+# (restored from the DEBUG_KEYSTORE_BASE64 secret), exactly as the 5.6
+# Kotlin app did. The certificate fingerprint MUST be
+# 45220b1509e14db5fd9a8e42220547ea94da48bdc4a4ccc5fc2f1bcb9968fd40 —
+# otherwise Android refuses to update over 5.6
+# (INSTALL_FAILED_UPDATE_INCOMPATIBLE).
+#
+# G-CI-5(d): FAIL if the secret is absent — never silently fall back to
+# an ephemeral runner key.
+#
+# Runs on push to the flutter-yemen-6.0 branch and on workflow_dispatch.
+# It does NOT publish to main or to Pages (that is a separate step).
+name: Build Yemen app (Flutter)
 
 on:
   push:
-    branches: [main]
+    branches: [flutter-yemen-6.0]
   workflow_dispatch:
 
 jobs:
@@ -25,14 +31,13 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
+      - name: Set up Flutter 3.35.7
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.35.7"
+          channel: stable
+          cache: true
 
-      # Phase 6 (G-CI-5(d)): the shared debug signing secret MUST
-      # be present. If it is absent, FAIL here — never silently
-      # fall back to AGP's ephemeral debug key, which would sign
-      # this APK with a different signature and break updates
-      # (INSTALL_FAILED_UPDATE_INCOMPATIBLE, 2026-10-25).
       - name: Require shared debug signing secret
         env:
           DEBUG_KEYSTORE_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
@@ -42,54 +47,70 @@ jobs:
             exit 1
           fi
 
-      # Shared debug signing (fix for the 2026-10-25 install failure):
-      # every ephemeral runner used to generate its own Android Debug
-      # keystore, so each cloud APK had a different signature and
-      # Android refused to update over the previous one. All builds
-      # now share ONE keystore, stored only as a GitHub secret (never
-      # committed — *.keystore is gitignored). The keystore itself is
-      # a debug key with the standard Android debug credentials.
       - name: Restore shared debug keystore
         env:
           DEBUG_KEYSTORE_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
         run: |
-          if [ -n "$DEBUG_KEYSTORE_BASE64" ]; then
-            echo "$DEBUG_KEYSTORE_BASE64" | base64 -d > app/debug.keystore
-          fi
+          echo "$DEBUG_KEYSTORE_BASE64" | base64 -d > android/app/debug.keystore
+          ls -l android/app/debug.keystore
+
+      - name: Verify Yemen data (edge contract)
+        run: |
+          python3 edge/verify_yemen.py
+          python3 edge/generate_yemen.py --check-only
+
+      - name: Analyze + test
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
 
       - name: Build debug APK
-        run: gradle assembleDebug --stacktrace
+        run: flutter build apk --debug
+
+      - name: Verify identity (package / version)
+        run: |
+          AAPT="$ANDROID_SDK_ROOT/build-tools/$(ls "$ANDROID_SDK_ROOT/build-tools" | sort -V | tail -1)/aapt"
+          "$AAPT" dump badging build/app/outputs/flutter-apk/app-debug.apk | grep -E "package:|application-label"
+
+      # The update-safety invariant: the v6 APK must carry the exact 5.6
+      # signing certificate, or Android refuses to update over 5.6.
+      - name: Verify signing certificate fingerprint
+        run: |
+          APKSIGNER="$ANDROID_SDK_ROOT/build-tools/$(ls "$ANDROID_SDK_ROOT/build-tools" | sort -V | tail -1)/apksigner"
+          "$APKSIGNER" verify --print-certs build/app/outputs/flutter-apk/app-debug.apk
+          FPRINT=$("$APKSIGNER" verify --print-certs build/app/outputs/flutter-apk/app-debug.apk | grep "SHA-256 digest" | awk '{print $NF}')
+          echo "fingerprint=$FPRINT"
+          if [ "$FPRINT" != "45220b1509e14db5fd9a8e42220547ea94da48bdc4a4ccc5fc2f1bcb9968fd40" ]; then
+            echo "REFUSED: certificate fingerprint does not match the 5.6 shared debug keystore." >&2
+            exit 1
+          fi
+
+      # version.json is generated ONLY by edge/version_manifest.py, from
+      # the real APK and the version in pubspec.yaml (single source of
+      # truth). Identity-only verify here: two builds from the same
+      # source are not byte-identical, so the hash is checked against
+      # the COMMITTED APK when it lands, not against this fresh build.
+      - name: Generate + verify version.json (identity only)
+        run: |
+          python3 edge/version_manifest.py generate \
+            --apk build/app/outputs/flutter-apk/app-debug.apk \
+            --apk-url https://syfazel.github.io/eco-journal-app/app-debug-v6.0.apk \
+            --changelog "نسخهٔ ۶٫۰ (بازسازی کامل با فلاتر): فقط یمن — نقشهٔ درگیری، جبهه‌ها، بررسی عدن، پرونده‌ها، گاه‌شمار و آرشیو. بدون پیام‌رسانی و بدون کد دعوت. رفع یخ‌زدگی تب یمن: همهٔ کارهای شبکه و پردازش داده خارج از نخ اصلی انجام می‌شود." \
+            --mandatory \
+            --out version-6.0.json
+          python3 edge/version_manifest.py verify \
+            --apk build/app/outputs/flutter-apk/app-debug.apk \
+            --manifest version-6.0.json --identity-only
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: eco-journal-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: eco-journal-yemen-v6-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
 
-      # v5.6 update gate (audit U-01 / T7), kept for 5.6:
-      # verify version.json against the APK just built.
-      # version_manifest.py reads the version from
-      # app/build.gradle.kts, so a mismatch fails the run here
-      # instead of surfacing as a hash_mismatch on the phone. The
-      # step runs AFTER the upload on purpose: on the first 5.6
-      # pass version.json still names 5.5.0/11, so the verify fails
-      # (gate working as designed) — but the APK is already
-      # uploaded, which is what Phase 6 needs to generate the
-      # real 5.6 version.json from. Once version.json names
-      # 5.6.0/12 with the real APK hash, this step passes.
-      #
-      # TWO CHECKS, NOT ONE (D18 — DEX non-determinism, proven
-      # by runs 44183915798 vs 44185080944: same source, same
-      # size, only classes.dex +4B and classes7.dex +8B differ):
-      #  1. hash check against the COMMITTED APK, which is the
-      #     exact file Pages serves at the manifest apk_url —
-      #     this is the real update-safety invariant;
-      #  2. identity-only check of the FRESHLY BUILT APK
-      #     (package/versionName/versionCode via aapt) — its
-      #     hash is NOT comparable, because a rebuild from the
-      #     same source is not byte-identical.
-      - name: Verify version manifest against served APK
-        run: python3 edge/version_manifest.py verify --apk edge/out/app-debug-v5.6.apk
-
-      - name: Verify freshly built APK identity
-        run: python3 edge/version_manifest.py verify --apk app/build/outputs/apk/debug/app-debug.apk --identity-only
+      - name: Upload generated version.json
+        uses: actions/upload-artifact@v4
+        with:
+          name: eco-journal-yemen-v6-version-json
+          path: version-6.0.json

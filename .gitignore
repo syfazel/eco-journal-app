@@ -1,54 +1,50 @@
-# ECO JOURNAL app — .gitignore (LAB, Phase 1 setup)
-# Intent: the repo must be pushable as-is with zero secrets in it.
-# edge/out/ is INTENTIONALLY committed: GitHub Pages serves the
-# committed snapshot (CI does not regenerate it — the source
-# database is not in this repo; regeneration happens in the lab).
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
 
-# Android / Gradle build outputs
-.gradle/
-build/
-app/build/
-*.apk
-*.aab
-
-# Local SDK / IDE config
-local.properties
+# IntelliJ related
 *.iml
+*.ipr
+*.iws
 .idea/
-*.DS_Store
 
-# Signing keys — NEVER commit. Release signing is a separate,
-# later decision by Yasin, with a key he creates himself.
-*.jks
-*.keystore
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
 
-# Firebase — supplied later by the owner, NEVER committed.
-# The app compiles and runs without it (FCM is optional at runtime;
-# see docs/firebase-setup.md).
-google-services.json
-app/google-services.json
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
 
-# Secrets of any kind
-*.env
-*.pem
-*.key
+# Symbolication related
+app.*.symbols
 
-# Lab dry-run bridge state — scratch only, NOT the production
-# sent-record. See bridge/dryrun.py.
-bridge/.dryrun-state/
+# Obfuscation related
+app.*.map.json
 
-# Lab queue DB (Phase 2) — holds queue state, sent records and
-# invite-code hashes. Lab-only, NEVER committed (it is state, not
-# source), and never the production database.
-bridge/queue.db
-bridge/queue.db-journal
-bridge/send.lock
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
 
-# Python bytecode
-__pycache__/
-
-# Phase 3 pilot — invite codes in plaintext. LAB ONLY, never committed.
-docs/pilot-invite-codes-private.md
-
-# Phase 3 local toolchain (JDK/SDK/Gradle) — lab-local, never committed.
-.tools/
+# ECO JOURNAL: never commit the shared debug keystore (CI restores it from
+# the DEBUG_KEYSTORE_BASE64 secret) or CI-generated version files.
+android/app/debug.keystore
+version-6.0.json

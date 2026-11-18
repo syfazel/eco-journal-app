@@ -1,0 +1,45 @@
+name: ecojournal_yemen
+description: "ECO JOURNAL — Yemen only (v6.0.0). Single-feature dashboard: Yemen conflict map, frontlines, Aden investigation, dossiers, timeline, archive. No messaging, no invite gate."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# Single source of truth for the app version. edge/version_manifest.py
+# reads this file (version: 6.0.0+13 -> versionName 6.0.0, versionCode 13).
+# Never type the version anywhere else.
+version: 6.0.0+13
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  path_provider: ^2.1.5
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  # Bundled seed: the current edge/out/yemen.json, copied verbatim by
+  # edge/generate_yemen.py. The app renders from this seed immediately on
+  # first launch, even with no network. Seed and edge must stay
+  # byte-identical (checked by edge/verify_yemen.py and by CI).
+  assets:
+    - assets/seed/yemen.json
+
+  # Vazirmatn (SIL OFL) — Persian UI font, bundled so the UI does not
+  # depend on any network font fetch.
+  fonts:
+    - family: Vazirmatn
+      fonts:
+        - asset: assets/fonts/Vazirmatn-Regular.ttf
+        - asset: assets/fonts/Vazirmatn-Bold.ttf
+          weight: 700

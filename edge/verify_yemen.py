@@ -82,9 +82,8 @@ def main():
     with open(args.snapshot, encoding="utf-8") as f:
         snap = json.load(f)
     edge_path = os.path.join(args.dir, "yemen.json")
-    seed_path = os.path.join(
-        APP_ROOT, "app", "src", "main", "assets", "seed", "yemen.json",
-    )
+    # v6.0 (Flutter rebuild): the bundled seed lives in assets/seed/.
+    seed_path = os.path.join(APP_ROOT, "assets", "seed", "yemen.json")
     if not os.path.exists(edge_path):
         print("FAIL: edge yemen.json missing: %s" % edge_path, file=sys.stderr)
         return 1

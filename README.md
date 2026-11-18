@@ -1,235 +1,96 @@
-# ECO JOURNAL — Android App (Phase 1, LAB)
+# ECO JOURNAL — Yemen only (v6.0.0 / code 13)
 
-**Phase 2 update (2026-10-25):** the Telegram bridge and control
-plane are now BUILT in `bridge/` — `channel_reader.py`
-(channel→app staging), `publish_worker.py` (gated write path,
-dry-run default), `control.py` (queue + invites CLI engine) and
-`bridge_lib.py` (shared machine/validator/lock). Verified: 19/19
-Phase 2 tests + 13/13 dry-run harness cases, `live_sends` 0,
-production DBs untouched. The bridge remains dry-run-only until
-Yasin supplies a test channel id and an explicit reopen order for
-the live channel. See `docs/telegram-bridge-spec.md` (Phase 2 notes
-at the top) for the exact gates.
+Flutter/Dart rebuild of the ECO JOURNAL app. **One feature: the Yemen
+dashboard.** No messaging, no invite gate, no broadcast packets, no shared
+password, no other sections, no FCM, no channel posts, no cron.
 
-**Lab only.** This project lives under `goals/eco-journal/app/` and is
-deliberately separate from the live platform. It never touches
-`econ-news-blog/` or `yasineco_bot/` except read-only, never posts to
-the live channel, and never starts or re-enables any live cron or
-service. The live ECO JOURNAL platform is frozen until Yasin says
-"open" — this app does not change that.
+## What it does
 
-## What Phase 1 is
+Six tabs, all driven by one bundled/live JSON document (`yemen.json`,
+dashboard v5 data — 90 places, 24 events, 8 frontlines, 9 arrows,
+12 unit positions; Aden: 7 images / 7 cross-check / 5 channels /
+9 social posts / 4 amplifiers / 28 sources):
 
-A single-module, single-activity Kotlin + Jetpack Compose app,
-offline-first, Persian RTL, Vazirmatn font, with:
+1. **وضعیت و نقشه** — headline, counts, drawn conflict map
+   (`CustomPainter`: frontlines, advance arrows with triangular heads,
+   unit positions, faction colours + legend, dashed 5-slot Aden ring),
+   the ±10 km coordinate warning always under the map, human stats.
+2. **جبهه‌ها** — frontlines, advance arrows, unit positions.
+3. **عدن** — the full Aden investigation: verdict, 5-direction ring,
+   images, cross-check, official channels, social posts, amplifiers,
+   seen/taiz notes, evidence layers, contradictions, 28 sources.
+4. **پرونده‌ها** — forces, claims (confirmed / contested / Houthi-only),
+   key points, disagreements, open questions.
+5. **گاه‌شمار و منابع** — event timeline, Aden timeline, 25 sources.
+6. **آرشیو** — local snapshots (plain JSON files: create / view frozen
+   points / delete) + dashboard version history v1–v5.
 
-- **Feed** — cached articles, newest first (sync order = index order).
-- **Article reader** — verbatim body, font-size slider (0.85–1.3),
-  light / dark / sepia themes, bookmark toggle, "view original source"
-  (opens the source URL in the user's browser, verbatim).
-- **Categories** — from the edge data itself.
-- **Offline search** — Room full-text-ish search over cached titles
-  and summaries. No network needed once cached.
-- **Bookmarks** — local only.
-- **Market board** — latest snapshot + active formulas from
-  `edge/out/market.json`, with its snapshot date shown (stale data is
-  never presented as fresh).
-- **Settings** — font scale, theme, notifications, invite state
-  (invite codes are never hardcoded in the app).
-- **Sync** — WorkManager every 15 minutes (the Android minimum) +
-  manual sync button; fetches `index.json`, checks its hash, fetches
-  only new articles, shows a local notification for ≤ 5 new articles
-  (aggregated above that).
-- **FCM scaffolding** — data-message contract (`article_id` → fetch
-  that article). **No keys:** until Yasin supplies a Firebase project,
-  `google-services.json` and the `google-services` Gradle plugin are
-  TODOs, and the app must not be described as push-enabled.
+Plus, on every tab: a full-width **«به‌روزرسانی لحظه‌ای»** button with
+the last-refresh time (Jalali), a staleness label, and a Persian error
+with retry on failure. Offline-first: the bundled seed renders
+immediately on first launch, even with no network.
 
-## What Phase 1 is NOT
+## Why Flutter (the v5.6 freeze)
 
-- No APK has been built on this machine (see below).
-- No FCM with real keys, no invite-code server check, no review
-  queue UI — the bridge code itself landed in Phase 2 (`bridge/`),
-  but FCM keys and the dashboard UI are still outstanding (see
-  "Still needed from Yasin" below).
-- No invented article text. Seed content comes only from the real
-  databases (see `edge/`).
+The Kotlin app froze the Yemen tab because it did blocking network I/O
+(`HttpURLConnection`, up to 3 retries × 2 fetches) and a ~249 KB JSON
+parse on the UI thread, behind a mutex shared with a 24 h worker.
+This rebuild makes that structurally impossible:
 
-## Project layout
+- **One immutable state object, one update path** (`lib/main.dart`).
+- **All network is async** (`dart:io` HttpClient, 15 s timeout, one
+  attempt) and **all JSON parsing runs in an isolate** (`compute`).
+  Nothing is ever awaited on the build path.
+- **No database, no workers, no mutex.** Snapshots are plain JSON
+  files; the 24 h refresh is a plain `Timer` that only starts a
+  background fetch.
+- See `~/workspace/goals/eco-journal/files/rebuild-yemen-only.md`
+  (Step 1) for the full diagnosis.
+
+## Layout
 
 ```
-app/                          Android project (this folder)
-  settings.gradle.kts         single module ":app"
-  build.gradle.kts            AGP 8.5.2, Kotlin 2.0.21
-  gradle.properties
-  app/build.gradle.kts        compileSdk 34, minSdk 26, targetSdk 34
-  app/proguard-rules.pro
-  app/src/main/AndroidManifest.xml
-  app/src/main/java/com/ecojournal/app/
-    MainActivity.kt           NavHost, bottom bar, RTL, notification deep link
-    EcoJournalApp.kt          Application: channel + WorkManager schedule
-    data/
-      Article.kt              network model (Article, MarketSnapshot, MarketFormula)
-      AppDatabase.kt          Room: articles, bookmarks, meta
-      SettingsStore.kt        DataStore: font scale, theme, notifications, invite flag
-      EdgeRepository.kt       edge fetch + hash check + Room upsert
-      SyncWorker.kt           15-min periodic worker + local notifications
-    util/Notifications.kt     notification channel + article deep link
-    fcm/EcoMessagingService.kt  FCM scaffold (TODO: project + google-services.json)
-    ui/theme/Theme.kt         Material3 + Vazirmatn
-    ui/components/ArticleCard.kt
-    ui/screens/               Feed, Article, Categories(+Bookmarks),
-                              Market, Settings
-  app/src/main/res/
-    values/strings.xml, values/themes.xml
-    font/vazirmatn_regular.ttf, vazirmatn_bold.ttf  (OFL, v33.003)
-    mipmap-*/ic_launcher*.png  PLACEHOLDER icons — replace before any
-                              public-facing release (see below)
-edge/
-  generate_edge.py            stdlib + sqlite3 only, read-only (mode=ro)
-  out/                        generated seed JSON (do not hand-edit)
-    index.json                versioned, hashed, 281 entries
-    articles/*.json           249 full articles
-    short_cards.json          32 short cards («گزیده»)
-    market.json               164 snapshots + 4 active formulas
-    channel_refs.json         23 channel references (message_id only)
-    GENERATION_REPORT.json    counts + exclusions, auditable
-docs/
-  control-plane-spec.md       private Muse dashboard spec
-  telegram-bridge-spec.md     channel↔app bridge spec (gated, dry-run default)
-  OFL-vazirmatn.txt           Vazirmatn licence
+lib/main.dart        app shell, single state object, refresh button
+lib/yemen.dart       plain Dart models + isolate parse entry point
+lib/repository.dart  seed / cache / live fetch / snapshots (plain JSON files)
+lib/jalali.dart      Gregorian -> Jalali (verified vs jdatetime)
+lib/map_painter.dart CustomPainter conflict map + legend
+lib/sections.dart    the six tabs + snapshot viewer
+assets/seed/yemen.json   bundled seed (byte-identical to edge/out/yemen.json)
+assets/fonts/        Vazirmatn (SIL OFL)
+edge/                Yemen data source: generate_yemen.py, verify_yemen.py,
+                     version_manifest.py, out/yemen.json
 ```
 
-## Seed counts (verified, 2026-10-25)
+## Version (single source of truth)
 
-| Output | Count |
-| --- | --- |
-| index.json entries | 281 |
-| full articles (`articles/*.json`) | 249 |
-| short cards (`short_cards.json`) | 32 |
-| market snapshots (`market.json`) | 164 (2026-04-15 → 2026-10-24) |
-| active formulas | 4 |
-| channel references | 23 (message_id only) |
-| excluded: pending extracts | 2,560 |
-| excluded: rejected extracts | 277 |
-| excluded: approved/posted without body | 84 |
-| excluded: rejected drafts | 52 |
-| excluded: channel posts without body text | 23 |
+`pubspec.yaml` — `version: 6.0.0+13`. `edge/version_manifest.py`
+reads it to generate `edge/out/version.json` from the real APK.
+Never type the version anywhere else.
 
-Regenerate any time (read-only on production, writes only to
-`edge/out/`):
+## Build (CI is authoritative)
 
-```bash
-python3 edge/generate_edge.py
+Local `flutter build apk` is unreliable on the 6 GB lab VM (Gradle
+daemon wants `-Xmx8G`). GitHub Actions is the build:
+
+```
+.github/workflows/android.yml   # push to flutter-yemen-6.0 / dispatch
 ```
 
-The generator deletes stale `out/articles/*.json` before writing, so
-re-runs are exactly reproducible. Production database mtimes were
-verified unchanged after generation.
+It verifies the Yemen edge contract, runs `flutter analyze` + `flutter
+test`, builds the debug APK, checks package `com.ecojournal.app` /
+`6.0.0` / code `13`, and enforces the signing fingerprint
+`45220b1509e14db5fd9a8e42220547ea94da48bdc4a4ccc5fc2f1bcb9968fd40`
+(the shared debug keystore, restored from the
+`DEBUG_KEYSTORE_BASE64` secret — the build FAILS if the secret is
+absent, never silently signs with an ephemeral key). The same
+fingerprint as 5.6, so the app updates over 5.6.
 
-## Building the APK — HONESTY NOTE
+`.github/workflows/pages.yml` publishes `edge/out/` to GitHub Pages
+(the live `yemen.json` URL the app fetches).
 
-**A Gradle build was NOT run on this machine.** This VM has no JDK
-and no Android SDK, so no APK exists from Phase 1. What was verified
-here is structural only: full file tree, Gradle files, Kotlin sources
-present, JSON outputs valid, no tokens/keys in the tree, production
-untouched. The first real build must happen on one of the two routes
-below, and its success is unverified until then.
+## Archive
 
-### Route A — Android Studio (Yasin's machine)
-
-1. Open this `app/` folder in Android Studio (it will download the
-   Gradle wrapper + AGP 8.5.2 + SDK 34 on first sync; internet
-   required once).
-2. Let Gradle sync finish. If it asks for a JDK, use the bundled one
-   (Android Studio → Settings → Build Tools → Gradle → Gradle JDK).
-3. Run → Run 'app' on a device/emulator, or Build → Build App
-   Bundle(s) / APK(s) → Build APK(s) for a debug APK.
-4. **No Gradle wrapper is committed** (`gradlew` deliberately not
-   included, because no build runs here). Android Studio generates
-   the wrapper on import, or run `gradle wrapper` once with a local
-   Gradle install.
-
-### Route B — GitHub Actions cloud build (no local SDK needed)
-
-1. Create the GitHub repo for the edge + app (Yasin's input — see
-   below) and push the **contents** of this `app/` folder to the repo
-   root (so `settings.gradle.kts` is at the root).
-2. The workflow `.github/workflows/android.yml` (at the repo root)
-   runs on push: checks out, sets up JDK 17, runs
-   `gradle assembleDebug` via `gradle/actions/setup-gradle`.
-3. Download the debug APK from the workflow's artifacts.
-4. No secrets are needed for a debug build. **Never add a Firebase
-   key, bot token, or signing key to the repo or the workflow.**
-   Release signing is a Phase 2 decision (Yasin's keystore, kept
-   outside the repo).
-
-### After the first successful build
-
-- Install the debug APK on a test device, point the app at the edge
-  URL (see below), confirm the feed loads, search works offline,
-  and the reader renders RTL Persian with the font slider.
-- Report back: build log + device result. Until that happens, the
-  app is "skeleton + verified seed", not "tested".
-
-## Wiring the edge URL (required before the app shows content)
-
-`data/EdgeRepository.kt` → `EdgeConfig.BASE_URL` is intentionally
-empty. Set it to the published edge base URL, e.g.:
-
-```kotlin
-object EdgeConfig {
-    const val BASE_URL = "https://<user>.github.io/<repo>"
-}
-```
-
-The edge files (`edge/out/*`) are published to that base (GitHub
-Pages, free). Until then the app shows only its empty state and the
-sync button reports "edge not configured" — it never fabricates
-content to fill the feed.
-
-## Still needed from Yasin (exact inputs)
-
-1. **Firebase project** (free tier) + `google-services.json` placed
-   in `app/` + the `google-services` Gradle plugin applied — only
-   then is FCM real. No key is faked in the meantime.
-2. **GitHub repo** for the edge (Pages URL becomes `BASE_URL`) and
-   for the cloud build (Route B).
-3. **A private test Telegram channel** (Yasin creates, bot added as
-   admin) for bridge dry-runs — before any live-channel work, which
-   additionally needs his explicit reopen order.
-4. **Final launcher icon** — the current `mipmap-*` icons are valid
-   PNG placeholders (navy + gold block), not the ECO JOURNAL mark.
-
-## Phase 3 update (2026-10-25): local build BLOCKED, wrapper done, pilot prepped
-
-- **No APK was built locally.** Root cause, verified: JVM
-  loopback TCP is intercepted in this sandbox (Java→loopback
-  gets a policy denial / reset, while Python→loopback works),
-  and the Gradle daemon protocol requires JVM→JVM loopback TCP.
-  Every Gradle invocation fails with "Could not receive a
-  message from the daemon" after the daemon starts cleanly
-  (heap size and `--no-daemon`/`--foreground` do not change it).
-  Full evidence + minimal reproductions:
-  `docs/apk-build-phase3.md`. The remaining route to the first
-  APK is the GitHub Actions cloud build (Route B above) after
-  the one-time repo push — no settings change was requested.
-- **Toolchain + wrapper ARE done (lab only):** JDK 17.0.21,
-  SDK 34 + build-tools 34.0.0 + platform-tools under
-  `.tools/` (gitignored), and a verified `gradlew` +
-  `gradle/wrapper/*` (bootstrap tested: `./gradlew --version`
-  prints Gradle 8.7). `local.properties` points at the lab SDK
-  (gitignored).
-- **Pilot prep done, pilot NOT started:** 10 invite codes in
-  `docs/pilot-invite-codes-private.md` (gitignored, hashes only
-  in the control plane) and `docs/pilot-test-plan.md`. No code
-  has left the lab and no reader has been contacted.
-
-## Rules that bind later phases
-
-- Never write to production DBs; never post to the live channel
-  while frozen; bot posts to channel only, never DMs (law 14).
-- Never invent article text; missing body → short card or exclusion.
-- No Play Store, no paid service, zero-cost stack only.
-- Bot token: environment variable name only, never a value, never
-  in the app or repo.
+v5.6 (Kotlin) is archived, not deleted from history: git tag
+`archive-v5.6-pre-rebuild` + tarball in
+`~/workspace/goals/eco-journal/files/`.
