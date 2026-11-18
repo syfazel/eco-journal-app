@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
-import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -28,35 +27,6 @@ private object Keys {
     // the code itself. Clearing it (with inviteOk=false) is the
     // re-lock path used by revocation and by the Settings lock button.
     val INVITE_HASH = stringPreferencesKey("invite_hash")
-    val FCM_TOKEN = stringPreferencesKey("fcm_token")
-    // Phase 4 per-service toggles (spec §4.7). The master switch
-    // REMAINS the top-level kill switch: master OFF = nothing
-    // notifies, regardless of these. Defaults per spec §4.7/§4.8:
-    // special_issues OFF + hidden while frozen/gated, radar OFF
-    // so the radar list does not become a notification firehose.
-    val NOTIFY_URGENT = booleanPreferencesKey("notify_urgent")
-    val NOTIFY_MARKET_ALERTS = booleanPreferencesKey("notify_market_alerts")
-    val NOTIFY_BUNDLES = booleanPreferencesKey("notify_bundles")
-    val NOTIFY_SITREP = booleanPreferencesKey("notify_sitrep")
-    val NOTIFY_NIGHTLY = booleanPreferencesKey("notify_nightly")
-    val NOTIFY_SPECIAL_ISSUES = booleanPreferencesKey("notify_special_issues")
-    val NOTIFY_RADAR = booleanPreferencesKey("notify_radar")
-    // Phase 4 quiet hours (spec §4.8). Default: none (enabled
-    // false). Start/end are minutes after midnight Tehran time
-    // and may wrap midnight. quiet_mute_urgent defaults false and
-    // is a deliberate, separate toggle — never a default.
-    val QUIET_HOURS_ENABLED = booleanPreferencesKey("quiet_hours_enabled")
-    val QUIET_START_MIN = intPreferencesKey("quiet_start_min")
-    val QUIET_END_MIN = intPreferencesKey("quiet_end_min")
-    val QUIET_MUTE_URGENT = booleanPreferencesKey("quiet_mute_urgent")
-    // v4-H helper modules + ticker (presentation only; defaults
-    // keep the pre-H behaviour: ticker on, ruler off, calm off).
-    val READING_RULER = booleanPreferencesKey("reading_ruler")
-    val CALM_MODE = booleanPreferencesKey("calm_mode")
-    val TICKER_ENABLED = booleanPreferencesKey("ticker_enabled")
-    // v5 P2: persistent reduced-motion setting (DataStore key
-    // only — no Room schema change, no migration needed).
-    val REDUCED_MOTION = booleanPreferencesKey("reduced_motion")
     // v4-I remote app update. The pending record is the offered
     // binary only (version + URL + hash + changelog + flag) —
     // never an APK, never a token, never device data. A missing
@@ -69,10 +39,27 @@ private object Keys {
     val PENDING_UPDATE_SHA = stringPreferencesKey("pending_update_sha")
     val PENDING_UPDATE_CHANGELOG = stringPreferencesKey("pending_update_changelog")
     val PENDING_UPDATE_MANDATORY = booleanPreferencesKey("pending_update_mandatory")
-    // Phase 4 market-alert cooldown state (spec §4.6, app-local).
-    // Written ONLY after a notification was actually posted.
-    val MARKET_ALERT_LAST_BUBBLE = longPreferencesKey("market_alert_last_notified_bubble")
-    val MARKET_ALERT_LAST_SPREAD = longPreferencesKey("market_alert_last_notified_spread")
+    val BROADCAST_SENDER = booleanPreferencesKey("broadcast_sender")
+    val BROADCAST_NOTIFICATIONS = booleanPreferencesKey("broadcast_notifications")
+    val SENDER_DISPLAY_NAME = stringPreferencesKey("sender_display_name")
+    // Phase 6 (v5.5) signed broadcast (ECOJ-BCAST/2, design
+    // tarahi-faz6.md §3.4): ONLY the PBKDF2-derived key (hex)
+    // is stored — never the shared password itself, never in a
+    // log, never in a packet. keyVersion 0 = no key set yet.
+    // The previous key is kept for the 7-day grace after a
+    // rotation, for packets already in flight.
+    val BROADCAST_KEY_HEX = stringPreferencesKey("broadcast_key_hex")
+    val BROADCAST_KEY_VERSION = longPreferencesKey("broadcast_key_version")
+    val BROADCAST_KEY_SINCE = longPreferencesKey("broadcast_key_since")
+    val BROADCAST_PREV_KEY_HEX = stringPreferencesKey("broadcast_prev_key_hex")
+    val BROADCAST_PREV_KEY_VERSION = longPreferencesKey("broadcast_prev_key_version")
+    val BROADCAST_PREV_KEY_UNTIL = longPreferencesKey("broadcast_prev_key_until")
+    // Member-list version (design §1.3): rises by 1 on every
+    // applied member-add / member-remove control packet.
+    val BROADCAST_LIST_VERSION = longPreferencesKey("broadcast_list_version")
+    // Latest key version announced by a verified key-announce
+    // packet; the new password still has to arrive via Bale.
+    val BROADCAST_ANNOUNCED_KEY_VERSION = longPreferencesKey("broadcast_announced_key_version")
 }
 
 data class Settings(
@@ -81,43 +68,29 @@ data class Settings(
     val notificationsEnabled: Boolean = true,
     val inviteOk: Boolean = false,
     val inviteHash: String? = null,
-    val fcmToken: String? = null,
-    val notifyUrgent: Boolean = true,
-    val notifyMarketAlerts: Boolean = true,
-    val notifyBundles: Boolean = true,
-    val notifySitrep: Boolean = true,
-    val notifyNightly: Boolean = true,
-    val notifySpecialIssues: Boolean = false,
-    val notifyRadar: Boolean = false,
-    val quietHoursEnabled: Boolean = false,
-    val quietStartMin: Int = 0,
-    val quietEndMin: Int = 0,
-    val quietMuteUrgent: Boolean = false,
-    val marketAlertLastBubbleMs: Long? = null,
-    val marketAlertLastSpreadMs: Long? = null,
-    val readingRuler: Boolean = false,
-    val calmMode: Boolean = false,
-    val tickerEnabled: Boolean = true,
-    val reducedMotion: Boolean = false,
+    // Phase 5 (v5.4) broadcast messaging. broadcastSender = this
+    // device may compose broadcasts (in practice only Yasin turns
+    // it on); broadcastNotifications gates only broadcast notices,
+    // never the app-update notice; senderDisplayName is the name
+    // shown on outgoing envelopes (default "یاسین").
+    val broadcastSender: Boolean = false,
+    val broadcastNotifications: Boolean = true,
+    val senderDisplayName: String = "یاسین",
+    // Phase 6 (v5.5): derived signing key only — never the
+    // password. broadcastKeyVersion 0 = no key set. prev* = the
+    // rotated-out key inside its 7-day grace (null when none).
+    val broadcastKeyHex: String? = null,
+    val broadcastKeyVersion: Int = 0,
+    val broadcastKeySince: Long? = null,
+    val broadcastPrevKeyHex: String? = null,
+    val broadcastPrevKeyVersion: Int = 0,
+    val broadcastPrevKeyUntil: Long? = null,
+    val broadcastListVersion: Long = 0L,
+    val broadcastAnnouncedKeyVersion: Int = 0,
     val updateCheckEnabled: Boolean = true,
     val dismissedUpdateCode: Long = 0L,
     val pendingUpdate: PendingUpdate? = null,
 ) {
-    /** Phase 4 NotificationPolicy view of these settings. */
-    fun toNotificationPrefs(): NotificationPrefs = NotificationPrefs(
-        masterEnabled = notificationsEnabled,
-        notifyUrgent = notifyUrgent,
-        notifyMarketAlerts = notifyMarketAlerts,
-        notifyBundles = notifyBundles,
-        notifySitrep = notifySitrep,
-        notifyNightly = notifyNightly,
-        notifySpecialIssues = notifySpecialIssues,
-        notifyRadar = notifyRadar,
-        quietHoursEnabled = quietHoursEnabled,
-        quietStartMin = quietStartMin,
-        quietEndMin = quietEndMin,
-        quietMuteUrgent = quietMuteUrgent,
-    )
 }
 
 /**
@@ -146,24 +119,17 @@ class SettingsStore(private val context: Context) {
                 notificationsEnabled = p[Keys.NOTIFICATIONS] ?: true,
                 inviteOk = p[Keys.INVITE_OK] ?: false,
                 inviteHash = p[Keys.INVITE_HASH],
-                fcmToken = p[Keys.FCM_TOKEN],
-                notifyUrgent = p[Keys.NOTIFY_URGENT] ?: true,
-                notifyMarketAlerts = p[Keys.NOTIFY_MARKET_ALERTS] ?: true,
-                notifyBundles = p[Keys.NOTIFY_BUNDLES] ?: true,
-                notifySitrep = p[Keys.NOTIFY_SITREP] ?: true,
-                notifyNightly = p[Keys.NOTIFY_NIGHTLY] ?: true,
-                notifySpecialIssues = p[Keys.NOTIFY_SPECIAL_ISSUES] ?: false,
-                notifyRadar = p[Keys.NOTIFY_RADAR] ?: false,
-                quietHoursEnabled = p[Keys.QUIET_HOURS_ENABLED] ?: false,
-                quietStartMin = (p[Keys.QUIET_START_MIN] ?: 0).coerceIn(0, 1439),
-                quietEndMin = (p[Keys.QUIET_END_MIN] ?: 0).coerceIn(0, 1439),
-                quietMuteUrgent = p[Keys.QUIET_MUTE_URGENT] ?: false,
-                marketAlertLastBubbleMs = p[Keys.MARKET_ALERT_LAST_BUBBLE],
-                marketAlertLastSpreadMs = p[Keys.MARKET_ALERT_LAST_SPREAD],
-                readingRuler = p[Keys.READING_RULER] ?: false,
-                calmMode = p[Keys.CALM_MODE] ?: false,
-                tickerEnabled = p[Keys.TICKER_ENABLED] ?: true,
-                reducedMotion = p[Keys.REDUCED_MOTION] ?: false,
+                broadcastSender = p[Keys.BROADCAST_SENDER] ?: false,
+                broadcastNotifications = p[Keys.BROADCAST_NOTIFICATIONS] ?: true,
+                senderDisplayName = (p[Keys.SENDER_DISPLAY_NAME] ?: "یاسین").take(100),
+                broadcastKeyHex = p[Keys.BROADCAST_KEY_HEX]?.takeIf { it.length == 64 },
+                broadcastKeyVersion = (p[Keys.BROADCAST_KEY_VERSION] ?: 0L).toInt().coerceAtLeast(0),
+                broadcastKeySince = p[Keys.BROADCAST_KEY_SINCE],
+                broadcastPrevKeyHex = p[Keys.BROADCAST_PREV_KEY_HEX]?.takeIf { it.length == 64 },
+                broadcastPrevKeyVersion = (p[Keys.BROADCAST_PREV_KEY_VERSION] ?: 0L).toInt().coerceAtLeast(0),
+                broadcastPrevKeyUntil = p[Keys.BROADCAST_PREV_KEY_UNTIL],
+                broadcastListVersion = (p[Keys.BROADCAST_LIST_VERSION] ?: 0L).coerceAtLeast(0L),
+                broadcastAnnouncedKeyVersion = (p[Keys.BROADCAST_ANNOUNCED_KEY_VERSION] ?: 0L).toInt().coerceAtLeast(0),
                 updateCheckEnabled = p[Keys.UPDATE_CHECK_ENABLED] ?: true,
                 dismissedUpdateCode = p[Keys.DISMISSED_UPDATE_CODE] ?: 0L,
                 pendingUpdate = run {
@@ -201,44 +167,81 @@ class SettingsStore(private val context: Context) {
     suspend fun setNotifications(v: Boolean) =
         context.settingsStore.edit { it[Keys.NOTIFICATIONS] = v }
 
-    // Phase 4 setters (one key each; a failed write never touches
-    // the other toggles).
-    suspend fun setNotifyUrgent(v: Boolean) =
-        context.settingsStore.edit { it[Keys.NOTIFY_URGENT] = v }
+    suspend fun setBroadcastSender(v: Boolean) =
+        context.settingsStore.edit { it[Keys.BROADCAST_SENDER] = v }
 
-    suspend fun setNotifyMarketAlerts(v: Boolean) =
-        context.settingsStore.edit { it[Keys.NOTIFY_MARKET_ALERTS] = v }
+    suspend fun setBroadcastNotifications(v: Boolean) =
+        context.settingsStore.edit { it[Keys.BROADCAST_NOTIFICATIONS] = v }
 
-    suspend fun setNotifyBundles(v: Boolean) =
-        context.settingsStore.edit { it[Keys.NOTIFY_BUNDLES] = v }
-
-    suspend fun setNotifySitrep(v: Boolean) =
-        context.settingsStore.edit { it[Keys.NOTIFY_SITREP] = v }
-
-    suspend fun setNotifyNightly(v: Boolean) =
-        context.settingsStore.edit { it[Keys.NOTIFY_NIGHTLY] = v }
-
-    suspend fun setNotifySpecialIssues(v: Boolean) =
-        context.settingsStore.edit { it[Keys.NOTIFY_SPECIAL_ISSUES] = v }
-
-    suspend fun setNotifyRadar(v: Boolean) =
-        context.settingsStore.edit { it[Keys.NOTIFY_RADAR] = v }
-
-    suspend fun setQuietHoursEnabled(v: Boolean) =
-        context.settingsStore.edit { it[Keys.QUIET_HOURS_ENABLED] = v }
-
-    suspend fun setQuietStartMin(v: Int) =
-        context.settingsStore.edit { it[Keys.QUIET_START_MIN] = v.coerceIn(0, 1439) }
-
-    suspend fun setQuietEndMin(v: Int) =
-        context.settingsStore.edit { it[Keys.QUIET_END_MIN] = v.coerceIn(0, 1439) }
-
-    suspend fun setQuietMuteUrgent(v: Boolean) =
-        context.settingsStore.edit { it[Keys.QUIET_MUTE_URGENT] = v }
-
-    suspend fun setMarketAlertLastNotified(metric: AlertMetric, epochMs: Long) =
+    suspend fun setSenderDisplayName(v: String) =
         context.settingsStore.edit {
-            it[if (metric == AlertMetric.BUBBLE) Keys.MARKET_ALERT_LAST_BUBBLE else Keys.MARKET_ALERT_LAST_SPREAD] = epochMs
+            it[Keys.SENDER_DISPLAY_NAME] = v.trim().take(100).ifBlank { "یاسین" }
+        }
+
+    /**
+     * Phase 6 (v5.5): store a freshly derived signing key. The
+     * caller passes ONLY the derived hex — the password never
+     * reaches this function. On rotation the previous key moves
+     * to the prev* slots with a 7-day expiry; on first set
+     * there is no previous key.
+     */
+    suspend fun setBroadcastSigningKey(
+        derivedHex: String,
+        version: Int,
+        sinceEpoch: Long,
+        prevHex: String?,
+        prevVersion: Int,
+        prevUntilEpoch: Long?,
+    ) = context.settingsStore.edit {
+        it[Keys.BROADCAST_KEY_HEX] = derivedHex
+        it[Keys.BROADCAST_KEY_VERSION] = version.toLong()
+        it[Keys.BROADCAST_KEY_SINCE] = sinceEpoch
+        if (prevHex == null) {
+            it.remove(Keys.BROADCAST_PREV_KEY_HEX)
+            it.remove(Keys.BROADCAST_PREV_KEY_VERSION)
+            it.remove(Keys.BROADCAST_PREV_KEY_UNTIL)
+        } else {
+            it[Keys.BROADCAST_PREV_KEY_HEX] = prevHex
+            it[Keys.BROADCAST_PREV_KEY_VERSION] = prevVersion.toLong()
+            it[Keys.BROADCAST_PREV_KEY_UNTIL] = prevUntilEpoch ?: 0L
+        }
+    }
+
+    /** Phase 6: drop the signing key entirely (current + previous). */
+    suspend fun clearBroadcastSigningKey() =
+        context.settingsStore.edit {
+            it.remove(Keys.BROADCAST_KEY_HEX)
+            it.remove(Keys.BROADCAST_KEY_VERSION)
+            it.remove(Keys.BROADCAST_KEY_SINCE)
+            it.remove(Keys.BROADCAST_PREV_KEY_HEX)
+            it.remove(Keys.BROADCAST_PREV_KEY_VERSION)
+            it.remove(Keys.BROADCAST_PREV_KEY_UNTIL)
+        }
+
+    suspend fun setBroadcastListVersion(v: Long) =
+        context.settingsStore.edit {
+            it[Keys.BROADCAST_LIST_VERSION] = v.coerceAtLeast(0L)
+        }
+
+    suspend fun setBroadcastAnnouncedKeyVersion(v: Int) =
+        context.settingsStore.edit {
+            it[Keys.BROADCAST_ANNOUNCED_KEY_VERSION] = v.coerceAtLeast(0).toLong()
+        }
+
+    suspend fun setUpdateCheckEnabled(v: Boolean) =
+        context.settingsStore.edit { it[Keys.UPDATE_CHECK_ENABLED] = v }
+
+    suspend fun setDismissedUpdateCode(code: Long) =
+        context.settingsStore.edit { it[Keys.DISMISSED_UPDATE_CODE] = code }
+
+    suspend fun setPendingUpdate(p: PendingUpdate) =
+        context.settingsStore.edit {
+            it[Keys.PENDING_UPDATE_NAME] = p.versionName
+            it[Keys.PENDING_UPDATE_CODE] = p.versionCode
+            it[Keys.PENDING_UPDATE_URL] = p.apkUrl
+            it[Keys.PENDING_UPDATE_SHA] = p.apkSha256
+            it[Keys.PENDING_UPDATE_CHANGELOG] = p.changelogFa
+            it[Keys.PENDING_UPDATE_MANDATORY] = p.mandatory
         }
 
     suspend fun setInviteOk(v: Boolean) =
@@ -254,42 +257,6 @@ class SettingsStore(private val context: Context) {
         context.settingsStore.edit {
             it[Keys.INVITE_OK] = false
             it.remove(Keys.INVITE_HASH)
-        }
-
-    // v4-H setters (one key each; a failed write never touches
-    // the other toggles).
-    suspend fun setReadingRuler(v: Boolean) =
-        context.settingsStore.edit { it[Keys.READING_RULER] = v }
-
-    suspend fun setCalmMode(v: Boolean) =
-        context.settingsStore.edit { it[Keys.CALM_MODE] = v }
-
-    suspend fun setTickerEnabled(v: Boolean) =
-        context.settingsStore.edit { it[Keys.TICKER_ENABLED] = v }
-
-    // v5 P2: persistent reduced-motion toggle for the ticker.
-    suspend fun setReducedMotion(v: Boolean) =
-        context.settingsStore.edit { it[Keys.REDUCED_MOTION] = v }
-
-    suspend fun setFcmToken(v: String) =
-        context.settingsStore.edit { it[Keys.FCM_TOKEN] = v }
-
-    // v4-I setters (one key group each; a failed write never
-    // touches the other toggles).
-    suspend fun setUpdateCheckEnabled(v: Boolean) =
-        context.settingsStore.edit { it[Keys.UPDATE_CHECK_ENABLED] = v }
-
-    suspend fun setDismissedUpdateCode(code: Long) =
-        context.settingsStore.edit { it[Keys.DISMISSED_UPDATE_CODE] = code }
-
-    suspend fun setPendingUpdate(pending: PendingUpdate) =
-        context.settingsStore.edit {
-            it[Keys.PENDING_UPDATE_NAME] = pending.versionName
-            it[Keys.PENDING_UPDATE_CODE] = pending.versionCode
-            it[Keys.PENDING_UPDATE_URL] = pending.apkUrl
-            it[Keys.PENDING_UPDATE_SHA] = pending.apkSha256
-            it[Keys.PENDING_UPDATE_CHANGELOG] = pending.changelogFa
-            it[Keys.PENDING_UPDATE_MANDATORY] = pending.mandatory
         }
 
     suspend fun clearPendingUpdate() =

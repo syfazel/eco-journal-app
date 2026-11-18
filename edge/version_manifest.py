@@ -29,6 +29,27 @@ RELEASE BLOCKER, enforced here, not by convention:
     given APK file, apk_url is HTTPS, and (when aapt is
     available) aapt badging agrees on package/versionName/
     versionCode. A failed verify blocks the publish step.
+  * verify --identity-only checks everything EXCEPT the hash
+    against the given APK (the hash field must still be 64
+    lowercase hex). This is for the freshly built APK in CI:
+    two CI builds from the same app source do NOT produce
+    byte-identical APKs (runs 44183915798 vs 44185080944:
+    same size, only classes.dex +4 bytes and classes7.dex
+    +8 bytes differ — DEX-layout non-determinism), so a hash
+    check against a fresh build can never pass reliably.
+    The hash invariant is checked by the plain verify
+    against the COMMITTED APK (edge/out/app-debug-vX.Y.apk),
+    which is exactly the file Pages serves at apk_url. The
+    fresh build is checked for identity (package/version)
+    only. Never weaken this split: the served pair
+    (version.json + committed APK) is always hash-verified.
+
+Usage:
+  python3 edge/version_manifest.py generate --apk FILE --apk-url URL
+      --changelog TEXT [--mandatory] [--out FILE]
+  python3 edge/version_manifest.py verify --apk FILE
+      [--manifest FILE] [--expect-name NAME] [--expect-code N]
+      [--identity-only]
   * Until the v4 publish step runs this with the REAL v4 APK,
     version.json must NOT exist in edge/out: the app treats a
     404 as "no update info", never as an error banner.
@@ -44,7 +65,7 @@ Usage:
   python3 edge/version_manifest.py verify --apk FILE
       [--manifest FILE] [--expect-name NAME] [--expect-code N]
 Default --out/--manifest is edge/out/version.json. --out must
-resolve inside ~/workspace/goals/eco-journal/app/.
+resolve inside the repo root (the parent of edge/).
 
 Python standard library only. No network access.
 """
@@ -58,9 +79,12 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 
-HOME = os.path.expanduser("~")
-APP_ROOT = os.path.join(HOME, "workspace", "goals", "eco-journal", "app")
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Repo-relative root: this script lives in <repo>/edge/, so the repo
+# root is its parent. A hard-coded lab path (~/workspace/...) broke
+# the CI verify step (run 44183915798): the runner has no such path.
+# The guard still confines --out/--manifest to inside this repo.
+APP_ROOT = os.path.dirname(SCRIPT_DIR)
 DEFAULT_MANIFEST = os.path.join(SCRIPT_DIR, "out", "version.json")
 BUILD_GRADLE = os.path.join(APP_ROOT, "app", "build.gradle.kts")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
@@ -92,9 +116,24 @@ def sha256_of(path):
     return digest.hexdigest()
 
 
+def _aapt_candidates():
+    cands = list(AAPT_CANDIDATES)
+    for env in ("ANDROID_HOME", "ANDROID_SDK_ROOT"):
+        home = os.environ.get(env)
+        if not home:
+            continue
+        bt = os.path.join(home, "build-tools")
+        if not os.path.isdir(bt):
+            continue
+        for ver in sorted(os.listdir(bt), reverse=True):
+            for name in ("aapt", "aapt2"):
+                cands.append(os.path.join(bt, ver, name))
+    return cands
+
+
 def aapt_info(apk):
     """aapt badging identity, or None when aapt is unavailable."""
-    for candidate in AAPT_CANDIDATES:
+    for candidate in _aapt_candidates():
         if not os.path.exists(candidate):
             continue
         try:
@@ -182,6 +221,8 @@ def cmd_verify(args):
     sha = manifest.get("apk_sha256")
     if not isinstance(sha, str) or not HEX64.match(sha):
         fails.append("apk_sha256 is not 64 lowercase hex")
+    elif args.identity_only:
+        print("NOTE: --identity-only: hash field format OK; not compared to this APK")
     elif sha != sha256_of(args.apk):
         fails.append("apk_sha256 != SHA-256 of the given APK file")
     if not isinstance(manifest.get("changelog_fa"), str):
@@ -203,8 +244,9 @@ def cmd_verify(args):
         for msg in fails:
             print("FAIL:", msg, file=sys.stderr)
         return 1
-    print("VERIFY PASS: %s matches %s (%s/%s, hash OK%s)" % (
+    print("VERIFY PASS: %s matches %s (%s/%s, %s%s)" % (
         manifest_path, args.apk, expect_name, expect_code,
+        "hash OK" if not args.identity_only else "hash not compared (identity-only)",
         ", aapt identity OK" if info is not None else ", aapt skipped"))
     return 0
 
@@ -223,6 +265,9 @@ def main():
     ver.add_argument("--manifest", default=None)
     ver.add_argument("--expect-name", default=None)
     ver.add_argument("--expect-code", type=int, default=None)
+    ver.add_argument("--identity-only", action="store_true",
+                     help="check name/code/URL/identity but do not "
+                          "compare apk_sha256 to this APK file")
     args = ap.parse_args()
     if args.cmd == "generate":
         return cmd_generate(args)

@@ -5,10 +5,10 @@ import androidx.room.Room
 
 /**
  * Single Room instance for the whole app (M2). Before this, the seed,
- * the repository, every SyncWorker run and every FCM message each
- * built their own database object on the same "eco.db" file, with
- * no shared transaction or lock. The one instance here is never
- * closed by callers; Room owns its lifecycle with the process.
+ * the repository and every worker run each built their own database
+ * object on the same "eco.db" file, with no shared transaction or
+ * lock. The one instance here is never closed by callers; Room owns
+ * its lifecycle with the process.
  */
 object DatabaseProvider {
     @Volatile
@@ -20,7 +20,7 @@ object DatabaseProvider {
                 context.applicationContext,
                 AppDatabase::class.java,
                 "eco.db",
-            ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7).build().also { instance = it }
+            ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11).build().also { instance = it }
         }
     }
 }

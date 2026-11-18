@@ -108,6 +108,11 @@
     <string name="diagnostics_recon_title">تطابق بذر و فهرست انتشار</string>
     <string name="diagnostics_recon_line">%1$s • کش‌شده: %2$s • در فهرست: %3$s • جا مانده: %4$s • اضافه: %5$s</string>
     <string name="diagnostics_recon_none">هنوز تطابقی ثبت نشده است</string>
+    <string name="diagnostics_yemen_places">نقاط یمن: %1$s</string>
+    <string name="diagnostics_yemen_events">رویدادهای یمن: %1$s</string>
+    <string name="diagnostics_yemen_frontlines">جبهه‌های یمن: %1$s</string>
+    <string name="diagnostics_yemen_last_sync">آخرین همگام‌سازی یمن: %1$s</string>
+    <string name="diagnostics_yemen_error">آخرین خطای یمن: %1$s</string>
     <string name="diagnostics_articles">مقالات کش‌شده: %1$s</string>
     <string name="diagnostics_market">اسنپ‌شات‌های بازار: %1$s</string>
     <string name="diagnostics_formulas">فرمول‌های بازار: %1$s</string>
@@ -506,4 +511,128 @@
     <string name="v51_diagnostics_network_none">هنوز وضعیت شبکه‌ای ثبت نشده است</string>
     <string name="v51_diagnostics_seed_report_title">گزارش بذر (نسخهٔ ۵٫۱)</string>
     <string name="v51_diagnostics_seed_report_none">هنوز گزارش بذری ثبت نشده است</string>
+    <!-- v5.2 Yemen tab (audit §4): sixth bottom-bar tab, six
+         sub-tabs mirroring dashboard v5. All copy is Persian;
+         nothing claim-only is ever labelled confirmed. -->
+    <string name="tab_yemen">یمن</string>
+    <string name="yemen_title">یمن</string>
+    <string name="yemen_sub_status">وضعیت و نقشه</string>
+    <string name="yemen_sub_frontlines">مرزهای درگیری</string>
+    <string name="yemen_sub_aden">محاصرهٔ عدن</string>
+    <string name="yemen_sub_dossiers">پرونده‌ها و تحلیل</string>
+    <string name="yemen_sub_timeline">خط زمانی و منابع</string>
+    <string name="yemen_sub_archive">آرشیو نسخه‌ها</string>
+    <string name="yemen_refresh">به‌روزرسانی</string>
+    <string name="yemen_refreshing">در حال به‌روزرسانی…</string>
+    <string name="yemen_updated">آخرین به‌روزرسانی: %1$s • %2$s ساعت پیش</string>
+    <string name="yemen_stale">داده کهنه است — بیش از ۲۴ ساعت از آخرین به‌روزرسانی گذشته است.</string>
+    <string name="yemen_offline">آفلاین — نمایش دادهٔ ذخیره‌شده</string>
+    <string name="yemen_sync_failed">به‌روزرسانی یمن ناموفق بود (کد: %1$s)؛ دادهٔ ذخیره‌شده نمایش داده می‌شود.</string>
+    <string name="yemen_empty">هنوز دادهٔ یمن در دستگاه نیست؛ بذر آفلاین در حال بارگذاری است.</string>
+    <string name="yemen_events_count">%1$s رویداد</string>
+    <string name="yemen_places_count">%1$s نقطهٔ کنترل</string>
+    <string name="yemen_control_changes">تغییر کنترل از آخرین به‌روزرسانی: %1$s</string>
+    <string name="yemen_aden_valid_to">این حکم تا %1$s معتبر است؛ وضعیت می‌تواند سریع عوض شود.</string>
+    <string name="yemen_filter_all">همه</string>
+    <string name="yemen_filter_confirmed">تأییدشده</string>
+    <string name="yemen_filter_contested">مورد مناقشه</string>
+    <string name="yemen_filter_houthi_only">فقط ادعای حوثی‌ها</string>
+    <string name="yemen_layer_confirmed">تأییدشده</string>
+    <string name="yemen_layer_contested">مورد مناقشه</string>
+    <string name="yemen_layer_houthi_only">فقط ادعای حوثی‌ها</string>
+    <string name="yemen_layer_rumour">شایعه</string>
+    <string name="yemen_layer_official_claim">ادعای رسمی</string>
+    <string name="yemen_corroboration">هم‌تأییدی: %1$s</string>
+    <string name="yemen_human_stats">شاخص‌های انسانی</string>
+    <string name="yemen_sources">منابع</string>
+    <string name="yemen_map_reading">خوانش نقشه</string>
+    <string name="yemen_forces">نیروهای طرف‌ها</string>
+    <string name="yemen_arrows">پیکان‌های پیشروی</string>
+    <string name="yemen_units">مواضع یگان‌ها</string>
+    <string name="yemen_military_features">ویژگی‌های نظامی</string>
+    <string name="yemen_open_questions">پرسش‌های باز</string>
+    <string name="yemen_disagreements">اختلاف‌ها</string>
+    <string name="yemen_contradictions">تناقض‌ها</string>
+    <string name="yemen_channels_method">روش‌شناسی کانال‌ها</string>
+    <string name="yemen_snapshots">اسنپ‌شات‌ها</string>
+    <string name="yemen_snapshot_line">%1$s • %2$s نقطه • %3$s رویداد</string>
+    <string name="yemen_faction_houthi">حوثی / انصارالله</string>
+    <string name="yemen_faction_govt">دولت</string>
+    <string name="yemen_faction_contested">مورد مناقشه</string>
+    <string name="yemen_faction_aqap">القاعده</string>
+    <string name="yemen_faction_stc">شورای انتقالی</string>
+    <string name="yemen_faction_unknown">نامشخص</string>
+    <string name="yemen_frontline_no_line">برای این جبهه خط قابل‌اعتمادی کشیده نشده است؛ فقط نقاط فعالیت گزارش‌شده آمده است.</string>
+    <!-- v5.2 locked sections (audit §4.5 option A): the fixed
+         locked line for every non-Yemen section. -->
+    <string name="v52_locked_title">این بخش فعلاً متوقف است</string>
+    <string name="v52_locked_body">در نسخهٔ ۵٫۲ فقط تب یمن فعال است؛ بقیهٔ بخش‌ها تا اطلاع بعدی خاموش‌اند.</string>
+    <!-- v5.4 broadcast messaging (Phase 5, design tarahi-payamresani-faz5.md).
+         One-way broadcast to a closed group of up to 10 people.
+         No FCM, no server, no public edge: envelopes travel only
+         through a private channel the user controls, pasted in by hand. -->
+    <string name="tab_broadcast">پیام‌رسانی</string>
+    <string name="broadcast_empty">هنوز پیامی نیست.</string>
+    <string name="broadcast_honest_note">پیام‌ها خودبه‌خود نمی‌رسند: فرستنده پاکتِ پیام را از راه یک کانالِ خصوصی (مثلاً بله) می‌فرستد و گیرنده آن را اینجا وارد می‌کند. اپ هیچ پیامی را خودش نمی‌فرستد و هیچ سروری ندارد.</string>
+    <string name="broadcast_compose_heading">نوشتنِ پخش</string>
+    <string name="broadcast_body_hint">متنِ پیام (تا ۲۰۰۰ نویسه)…</string>
+    <string name="broadcast_score_label">فوریت (۰ تا ۱۰۰)</string>
+    <string name="broadcast_score_urgent">فوری (۷۰ به بالا؛ شب فقط ۸۵ به بالا فوری است)</string>
+    <string name="broadcast_share_button">پخش و اشتراک‌گذاریِ پاکت</string>
+    <string name="broadcast_not_sender">نوشتنِ پخش فقط وقتی ممکن است که «من فرستندهٔ پخش هستم» در تنظیمات روشن باشد.</string>
+    <string name="broadcast_import_heading">وارد کردنِ پاکت</string>
+    <string name="broadcast_import_hint">پاکتِ دریافتی را اینجا بچسبانید…</string>
+    <string name="broadcast_import_button">وارد کردن</string>
+    <string name="broadcast_import_ok">پیام وارد شد.</string>
+    <string name="broadcast_import_duplicate">این پیام قبلاً وارد شده است.</string>
+    <string name="broadcast_members_heading">اعضا</string>
+    <string name="broadcast_members_count">%1$s از ۱۰ عضو</string>
+    <string name="broadcast_add_member">افزودن عضو</string>
+    <string name="broadcast_member_name_hint">نام نمایشی (مثلاً احمد)…</string>
+    <string name="broadcast_member_code_hint">کد عضویت (فقط هشِ آن ذخیره می‌شود)…</string>
+    <string name="broadcast_member_added">عضو اضافه شد.</string>
+    <string name="broadcast_member_full">جمع کامل است — بیشتر از ۱۰ عضو فعال نمی‌شود.</string>
+    <string name="broadcast_member_invalid">نام و کد عضویت هر دو لازم‌اند.</string>
+    <string name="broadcast_member_code_used">این کد قبلاً استفاده شده است.</string>
+    <string name="broadcast_remove_member">حذف</string>
+    <string name="broadcast_delete">حذف پیام</string>
+    <string name="broadcast_delete_all">حذف همهٔ پیام‌ها</string>
+    <string name="broadcast_held_badge">نگه‌داشته‌شده — بستهٔ صبح</string>
+    <string name="broadcast_imported_badge">واردشده</string>
+    <string name="broadcast_local_badge">پخش‌شده از این گوشی</string>
+    <string name="broadcast_sender_toggle">من فرستندهٔ پخش هستم</string>
+    <string name="broadcast_sender_desc">فقط وقتی روشن است، جعبهٔ نوشتنِ پخش دیده می‌شود. در عمل فقط یاسین آن را روشن می‌کند.</string>
+    <string name="broadcast_notif_toggle">اعلانِ پیام‌رسانی</string>
+    <string name="broadcast_notif_desc">اعلانِ پیام‌های پخش، تابع قانون ۱۵ (شب فقط ۸۵ به بالا فوری است؛ ۷۰ تا ۸۴ صبح می‌رسد).</string>
+    <string name="broadcast_sender_name_label">نام نمایشیِ فرستنده</string>
+    <string name="broadcast_sender_name_hint">یاسین</string>
+    <string name="broadcast_pruned">%1$s پیامِ قدیمی پاک شد.</string>
+    <!-- v5.5 signed broadcast (Phase 6, design tarahi-faz6.md).
+         ECOJ-BCAST/2 packets are HMAC-signed with a shared
+         password the user types in Settings; the app never sends
+         anything itself and has no server. -->
+    <string name="broadcast_stale_none">هنوز پیامی نیست.</string>
+    <string name="broadcast_stale_last">آخرین پیام: %1$s • %2$s ساعت پیش</string>
+    <string name="broadcast_stale_old">پیام تازه‌ای نرسیده — آخرین پیام %1$s ساعت پیش</string>
+    <string name="broadcast_offline">آفلاین — نمایش پیام‌های ذخیره‌شده</string>
+    <string name="broadcast_unsigned_badge">بدون امضا</string>
+    <string name="broadcast_unsent_badge">ارسال‌نشده — منتظر کانال</string>
+    <string name="broadcast_mark_sent">فرستاده شد</string>
+    <string name="broadcast_no_key_note">کلید امضا وارد نشده — این پاکت بدون امضا ساخته می‌شود. گذرواژهٔ مشترک را در تنظیمات وارد کنید تا پاکت‌ها امضا شوند.</string>
+    <string name="broadcast_members_version">فهرست اعضا — نسخهٔ %1$s</string>
+    <string name="broadcast_control_shared">پاکت کنترلی ساخته شد — آن را از راه کانال خصوصی (مثلاً بله) برای اعضا بفرستید.</string>
+    <string name="broadcast_key_announce_button">ساختن پاکت اعلام کلید تازه</string>
+    <string name="broadcast_key_announce_note">پاکت اعلام کلید با کلید فعلی امضا می‌شود. اول آن را بفرستید، بعد گذرواژهٔ تازه را از راه بله به اعضا بگویید، بعد گذرواژهٔ تازه را در تنظیمات وارد کنید.</string>
+    <string name="broadcast_key_announced">اعلام کلید تازه (نسخهٔ %1$s) وارد شد — گذرواژهٔ تازه را از راه بله بگیرید و در تنظیمات وارد کنید.</string>
+    <string name="broadcast_key_heading">کلید امضای پیام‌رسانی</string>
+    <string name="broadcast_key_password_hint">گذرواژهٔ مشترک امضا…</string>
+    <string name="broadcast_key_save">ذخیرهٔ کلید امضا</string>
+    <string name="broadcast_key_saved">کلید امضا ذخیره شد.</string>
+    <string name="broadcast_key_status">کلید امضا — نسخهٔ %1$s • از %2$s</string>
+    <string name="broadcast_key_none">کلید امضا وارد نشده است — پاکت‌ها بدون امضا ساخته می‌شوند.</string>
+    <string name="broadcast_key_rotate_note">برای چرخش کلید: اول از تب پیام‌رسانی پاکت اعلام کلید را بفرستید، بعد گذرواژهٔ تازه را از راه بله به اعضا بگویید، بعد آن را اینجا وارد کنید. کلید قبلی ۷ روز برای پاکت‌های در راه نگه داشته می‌شود. گذرواژه هرگز در جایی نوشته نمی‌شود.</string>
+    <string name="broadcast_key_clear">حذف کلید امضا</string>
+    <string name="broadcast_key_cleared">کلید امضا حذف شد.</string>
+    <string name="broadcast_key_short">گذرواژه خیلی کوتاه است (دست‌کم ۸ نویسه).</string>
+    <string name="diagnostics_broadcast">پیام‌رسانی: %1$s پیام • %2$s عضو فعال • %3$s نگه‌داشته‌شده • %4$s پاکتِ ردشده • فهرست نسخهٔ %5$s • کلید نسخهٔ %6$s</string>
 </resources>

@@ -200,6 +200,12 @@ class AppUpdateRepository(private val context: Context) {
         }
         try {
             if (conn.responseCode != HttpURLConnection.HTTP_OK) {
+                // U-04 fix: an HTTP-error download must delete the
+                // partial file, exactly like the exception path
+                // below. Otherwise a stale/incomplete APK from a
+                // previous attempt survives and the fallback
+                // install path can hand it to the installer.
+                file.delete()
                 AppUpdateSession.setState(
                     UpdateUiState.Failed(
                         when (conn.responseCode) {
@@ -267,6 +273,42 @@ class AppUpdateRepository(private val context: Context) {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
         }
         context.startActivity(intent)
+    }
+
+    /**
+     * U-04 fix — the ONLY install path callers should use for a
+     * file that was not just hash-verified in this session (the
+     * fallback path: ReadyToInstall was lost, the process died,
+     * or the user tapped install again later). Before handing
+     * ANY file to the installer it re-validates, on IO:
+     * a pending update record exists, the file exists, its
+     * SHA-256 equals the pending record's hash, and its version
+     * code is newer than the installed one. Anything else deletes
+     * the file and yields Failed("hash_mismatch") (or
+     * Failed("no_pending_update") with no record) instead of
+     * showing the user a confusing system-installer error for a
+     * corrupt/stale APK. The ReadyToInstall path goes through
+     * here too, so a file can never reach the installer
+     * unvalidated.
+     */
+    suspend fun installValidated(context: Context) = withContext(Dispatchers.IO) {
+        val pending = store.settings.first().pendingUpdate
+        if (pending == null) {
+            AppUpdateSession.setState(UpdateUiState.Failed("no_pending_update"))
+            return@withContext
+        }
+        val file = downloadFile()
+        val installed = installedVersion(context)
+        if (!file.exists() || pending.versionCode <= installed.versionCode ||
+            sha256Of(file) != pending.apkSha256
+        ) {
+            file.delete()
+            AppUpdateSession.setState(UpdateUiState.Failed("hash_mismatch"))
+            return@withContext
+        }
+        withContext(Dispatchers.Main) {
+            install(context, file)
+        }
     }
 
     /** Dismiss an OPTIONAL update (mandatory updates ignore this). */

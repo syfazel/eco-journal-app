@@ -6,73 +6,45 @@ import android.net.NetworkCapabilities
 import androidx.room.withTransaction
 import java.net.HttpURLConnection
 import java.net.URL
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
-import org.json.JSONArray
 import org.json.JSONObject
-import com.ecojournal.app.util.Notifications
 
 /**
- * Edge URL decision (docs/vnext-decisions.md §2, M5): the Pages
- * root https://syfazel.github.io/eco-journal-app/ — WITHOUT any
- * /out suffix, because .github/workflows/pages.yml publishes
- * edge/out/index.json as <root>/index.json. The repo's Pages
- * source was switched to "GitHub Actions" via the GitHub API in
- * M5, so the workflow now serves the edge. If Pages is not yet
- * serving (or the device is offline), sync() returns a fixed
- * error code and the app keeps showing only what is already
- * cached — it never invents content and never ships a
- * placeholder feed. The edge is static JSON produced by
- * edge/generate_edge.py; the app talks to nothing else. No token,
- * key or secret is used here. Callers must use [edgeBase] (the
- * URL without a trailing slash), never the raw constant, so
- * "$base/index.json" never becomes a double-slash URL.
+ * Phase 4 (v5.3): Yemen-only edge repository.
  *
- * Sync rules (M2), replacing the old "hash on partial" behaviour:
- * - An article is fetched only if it is absent, or if its stored
- *   content hash differs from the index entry's hash. A changed
- *   body therefore replaces the old body in the same transaction
- *   that records the sync; an unchanged body is never refetched.
- *   Since M3 the generator emits content_hash, app_key and status
- *   in every index entry, so the skip-unchanged comparison and
- *   the tombstone path are live (previously the generator emitted
- *   none of them and the paths stayed dormant).
- * - A retracted entry becomes a tombstone: the local row keeps its
- *   bookmark link but leaves the feed (status = "retracted").
- * - The index hash is written ONLY after a transaction that
- *   fetched everything missing with zero corrupt entries. Any
- *   failure yields Partial, and the next sync retries exactly the
- *   missing set instead of declaring success.
- * - Per-entry corruption is counted and skipped, never a crash.
+ * The old multi-section sync (articles / shorts / market /
+ * channel_typed / bundles / radar / nightly + the legacy
+ * index.json path) is gone with those sections. The app talks
+ * to exactly one edge file pair now: `manifest.json` (for the
+ * `sections.yemen` hash) and `yemen.json`, plus the invite /
+ * revocation lists for the gate re-check. Nothing else is
+ * fetched, ever. A Yemen failure never touches any global clock
+ * (there is no global clock any more — the Yemen clock lives
+ * in yemen_meta, P4 both directions).
+ *
+ * Edge URL (M5): the Pages root
+ * https://syfazel.github.io/eco-journal-app/ — WITHOUT any
+ * /out suffix. The edge is static JSON; the app talks to
+ * nothing else. No token, key or secret is used here.
  */
 object EdgeConfig {
     const val BASE_URL: String = "https://syfazel.github.io/eco-journal-app/"
 }
 
 /**
- * Fixed sync error codes (M5, P1-25; Phase 1 adds the v3 codes).
- * The UI maps each code to a fixed Persian string; raw exception
- * text and HTTP internals are never shown to the user and never
- * stored as free text.
- * Codes: "network" (offline/DNS/timeout), "http_404",
- * "http_403", "http_other" (any other non-200), "bad_index"
- * (index.json unparsable), "bad_manifest" (manifest.json fetched
- * but not parseable as v3), "bad_market" (market.json unparsable),
- * "invite_fetch" (invite/revocation lists unfetchable; the gate
- * re-check is skipped, never a lock-out), "partial" (a section
- * incomplete), "insecure_edge" (non-HTTPS base).
+ * Fixed sync error codes (M5, P1-25). The UI maps each code to
+ * a fixed Persian string; raw exception text and HTTP internals
+ * are never shown to the user and never stored as free text.
+ * Codes: "network", "http_404", "http_403", "http_other",
+ * "bad_manifest", "bad_yemen", "invite_fetch", "partial",
+ * "section_locked" (kept for callers that still pass it),
+ * "insecure_edge" (non-HTTPS base).
  */
 sealed class SyncResult {
     data object NotConfigured : SyncResult()
@@ -125,12 +97,7 @@ private fun httpGet(url: String): HttpOutcome {
  * v5.1 per-section retry: NETWORK errors only, with a short
  * in-app backoff (500 ms, then 1000 ms). An HTTP error — 404,
  * 403, anything else — is returned immediately and is NEVER
- * retried: retrying a 404 cannot help and the v5 404-pin
- * behaviour for guarded sections depends on a single attempt
- * per manifest state. Callers that loop over many files
- * (article files, nightly editions) do NOT use this helper:
- * they keep their existing single/double-attempt fetch, because
- * retrying every file would blow the per-sync bound.
+ * retried: retrying a 404 cannot help.
  */
 private suspend fun httpGetRetried(url: String, attempts: Int = 3): HttpOutcome {
     var last: HttpOutcome = HttpOutcome.NetworkError
@@ -167,36 +134,25 @@ private fun edgeBase(): String? {
 class EdgeRepository(context: Context) {
     companion object {
         // v5.1 process-wide sync mutex. Every EdgeRepository
-        // instance is a fresh object (FeedScreen, Diagnostics,
-        // SyncWorker each build their own), so an instance mutex
-        // would serialise nothing. The companion mutex serialises
-        // ALL sync passes in this process — launch sync, periodic
-        // worker and manual refresh — so two passes can never
-        // interleave transactions or double-report progress.
-        // A caller that loses the race simply waits; the lock is
-        // held for at most one bounded sync pass (300 s, see
-        // syncLocked), never indefinitely.
+        // instance is a fresh object, so an instance mutex would
+        // serialise nothing. The companion mutex serialises ALL
+        // Yemen sync passes in this process — launch sync,
+        // periodic worker and manual refresh — so two passes can
+        // never interleave transactions. A caller that loses the
+        // race simply waits; the lock is held for at most one
+        // bounded sync pass (300 s), never indefinitely.
         private val syncMutex = Mutex()
     }
 
-    // v4.0.1 sync-progress signal (fix plan X5): while the articles
-    // section is fetching, (fetched, total); null otherwise. The
-    // feed shows it in the sync line so a long fetch reads as
-    // progress, never as a hang. Counts only, never content.
-    private val _syncProgress = MutableStateFlow<Pair<Int, Int>?>(null)
-    val syncProgress: StateFlow<Pair<Int, Int>?> = _syncProgress.asStateFlow()
-
     private val db: AppDatabase = DatabaseProvider.get(context)
-    val dao: ArticleDao = db.articleDao()
-    val channelDao: ChannelDao = db.channelDao()
-    val phase4Dao: Phase4Dao = db.phase4Dao()
-    val nightlyDao: NightlyDao = db.nightlyDao()
+    val dao: MetaDao = db.metaDao()
+    val yemenDao: YemenDao = db.yemenDao()
+    val broadcastDao: BroadcastDao = db.broadcastDao()
     private val appContext: Context = context.applicationContext
     private val settings = SettingsStore(context)
 
     /** Records an attempt (M5): attempt time on every real attempt,
-     * and a fixed error code — "" only on a complete success, so
-     * the feed can always show an honest last-sync state. */
+     * and a fixed error code — "" only on a complete success. */
     private suspend fun recordAttempt(code: String) {
         val now = System.currentTimeMillis()
         dao.upsertMeta(MetaEntity("last_sync_attempt_at", now.toString()))
@@ -206,7 +162,7 @@ class EdgeRepository(context: Context) {
     // v4.0.1 (fix plan X1): a seed that throws must leave a trace,
     // so Diagnostics and the empty state can tell "seed failed"
     // from "seed empty". Failures here are swallowed on purpose:
-    // recording a failure must never itself crash the feed.
+    // recording a failure must never itself crash the tab.
     suspend fun recordSeedFailure() {
         try {
             dao.upsertMeta(MetaEntity("seed_error", "seed_failed"))
@@ -281,231 +237,7 @@ class EdgeRepository(context: Context) {
             try {
                 dao.upsertMeta(MetaEntity(SyncTrace.SYNC_IN_PROGRESS_KEY, "0"))
             } catch (_: Exception) {
-            }
         }
-    }
-
-    // v5.1 section isolation for the function-call sections
-    // (channel_typed, bundles, radar, nightly): an unexpected
-    // exception inside one section function must not abort the
-    // whole pass. The section is recorded FAILED with the fixed
-    // code "section_error" and the pass continues with the next
-    // section. Network/parse failures never reach here — those
-    // sections already return FAILED outcomes themselves.
-    private suspend fun failSection(key: String, now: Long) {
-        try {
-            recordSectionMeta(key, SectionStates.FAILED, "section_error", null, 0, now, null, null)
-        } catch (_: Exception) {
-        }
-        trace(key, "section_error", -1, -1, SectionStates.FAILED)
-        recordV51(key, "section_error", -1, 0, -1)
-    }
-
-    // v5.1: derive a v51 outcome line from a section function's
-    // returned outcome. fetched is -1 (not recorded) for these
-    // sections because SectionOutcome carries only the missing
-    // count; the per-section state + error code are authoritative.
-    private suspend fun recordV51FromOutcome(outcome: SectionOutcome) {
-        val code = when (outcome.state) {
-            SectionStates.UP_TO_DATE,
-            SectionStates.NOT_YET_PUBLISHED,
-            SectionStates.GATED_FROZEN -> ""
-            SectionStates.PARTIAL -> "partial"
-            SectionStates.UNKNOWN -> "no_section"
-            SectionStates.FAILED -> dao.metaValue(SyncSections.errorKey(outcome.key))
-                ?.takeIf { it.isNotBlank() } ?: "failed"
-            else -> "failed"
-        }
-        recordV51(outcome.key, code, -1, outcome.missingCount, -1)
-    }
-
-    // Phase 1 Update Engine: sync() fetches manifest.json (v3)
-    // FIRST. A parseable v3 manifest takes the per-section path
-    // below; a missing manifest (an older Pages deploy) falls back
-    // to the legacy index path, which keeps the old behaviour
-    // verbatim and does not update per-section states. A manifest
-    // that fetches but does not parse reports bad_manifest and
-    // touches nothing. Force-refresh bypasses the stored section
-    // hashes (every section hash is re-checked) but never
-    // re-downloads an unchanged body: per-item hash comparison
-    // still skips unchanged items, and it never bypasses the
-    // invite gate or the revocation re-check.
-    // v5.1: the public entry point is a mutex serialiser around
-    // syncLocked. Callers keep calling sync(); the lock, the
-    // offline fast path, the in-progress flag and the overall
-    // bound all live inside, so no caller can bypass them.
-    suspend fun sync(forceRefresh: Boolean = false): SyncResult {
-        return syncMutex.withLock { syncLocked(forceRefresh) }
-    }
-
-    private suspend fun syncLocked(forceRefresh: Boolean = false): SyncResult {
-        val base = edgeBase() ?: return SyncResult.NotConfigured
-        val startedAt = System.currentTimeMillis()
-        markSyncStart(startedAt)
-        try {
-            // v5.1 offline fast path: no active network means the
-            // manifest fetch would hang on connect timeouts and
-            // then misreport. Return the fixed "network" code
-            // immediately; the cache is untouched and the worker
-            // retries on its backoff (or on the next launch).
-            if (!isOnline()) {
-                recordAttempt("network")
-                SyncTrace.recordNetworkState(dao, false, "network")
-                trace("manifest", "network", -1, -1, "failed")
-                return SyncResult.Failed("network")
-            }
-            SyncTrace.recordNetworkState(dao, true, "")
-            return when (val outcome = httpGetRetried("$base/manifest.json")) {
-                is HttpOutcome.Ok -> {
-                    val manifest = ManifestParser.parse(outcome.body)
-                    if (manifest == null) {
-                        recordAttempt("bad_manifest")
-                        trace("manifest", "bad_manifest", -1, -1, "failed")
-                        SyncResult.Failed("bad_manifest")
-                    } else {
-                        trace("manifest", "ok", -1, -1, "ok")
-                        syncV3Bounded(
-                            base, manifest, forceRefresh, null,
-                            if (forceRefresh) "manual" else "periodic_or_foreground",
-                        )
-                    }
-                }
-                // v4.0.1 manifest-failure split (fix plan F6/X6): a
-                // network failure cannot be rescued by the legacy path
-                // (it needs the same network), so report it honestly
-                // instead of misreporting the index fetch's code. Only
-                // a 404 (an older Pages deploy without a manifest)
-                // falls back to legacy; other HTTP errors are reported
-                // as themselves.
-                is HttpOutcome.NetworkError -> {
-                    recordAttempt("network")
-                    SyncTrace.recordNetworkState(dao, isOnline(), "network")
-                    trace("manifest", "network", -1, -1, "failed")
-                    SyncResult.Failed("network")
-                }
-                is HttpOutcome.HttpError -> {
-                    if (outcome.status == 404) {
-                        trace("manifest", "http_404", -1, -1, "legacy_fallback")
-                        syncLegacy()
-                    } else {
-                        val code = outcome.toFailedCode()
-                        recordAttempt(code)
-                        trace("manifest", code, -1, -1, "failed")
-                        SyncResult.Failed(code)
-                    }
-                }
-            }
-        } finally {
-            _syncProgress.value = null
-            markSyncEnd()
-        }
-    }
-
-    // v5.1 overall per-sync bound. The articles loop already has
-    // its own 240 s deadline; this 300 s bound covers the WHOLE
-    // pass (all sections + invites + notifications), so a slow
-    // edge can never make a sync feel unbounded. On timeout the
-    // sections that already completed keep their transactions
-    // and their success hashes (per-section isolation); sections
-    // not yet run simply do not run, the global clock does not
-    // advance, and the result is Partial — never a half-marked
-    // success. The progress signal is cleared by the caller's
-    // finally block.
-    private suspend fun syncV3Bounded(
-        base: String,
-        manifest: EdgeManifest,
-        forceRefresh: Boolean,
-        onlySection: String?,
-        pollPath: String,
-    ): SyncResult {
-        val res = withTimeoutOrNull(300_000L) {
-            syncV3(base, manifest, forceRefresh, onlySection, pollPath)
-        }
-        if (res != null) return res
-        recordAttempt("partial")
-        trace("sync", "timeout", -1, -1, "partial")
-        return SyncResult.Partial(
-            emptyList(), 0, dao.allIds().size, emptyList(),
-        )
-    }
-
-    // Per-section force-refresh from Diagnostics. Re-reads the
-    // manifest and applies only the requested section; every other
-    // section's cache and state are untouched. For a
-    // not-yet-published or gated section this re-records its state
-    // from the manifest, which is the honest outcome: there is
-    // nothing to fetch for it yet.
-    suspend fun syncOnly(sectionKey: String, forceRefresh: Boolean = true): SyncResult {
-        if (sectionKey !in SyncSections.ALL) return SyncResult.Failed("unknown_section")
-        return syncMutex.withLock { syncOnlyLocked(sectionKey, forceRefresh) }
-    }
-
-    private suspend fun syncOnlyLocked(
-        sectionKey: String,
-        forceRefresh: Boolean = true,
-    ): SyncResult {
-        val base = edgeBase() ?: return SyncResult.NotConfigured
-        markSyncStart(System.currentTimeMillis())
-        try {
-            // v5.1: same offline fast path as a full sync — a
-            // manual section refresh offline reports "network"
-            // immediately instead of hanging.
-            if (!isOnline()) {
-                recordAttempt("network")
-                SyncTrace.recordNetworkState(dao, false, "network")
-                trace("manifest", "network", -1, -1, "failed")
-                return SyncResult.Failed("network")
-            }
-            SyncTrace.recordNetworkState(dao, true, "")
-            val outcome = httpGetRetried("$base/manifest.json")
-            val manifest = if (outcome is HttpOutcome.Ok) {
-                ManifestParser.parse(outcome.body)
-            } else {
-                null
-            }
-            if (manifest == null) {
-                val code = when (outcome) {
-                    is HttpOutcome.Ok -> "bad_manifest"
-                    else -> outcome.toFailedCode()
-                }
-                recordAttempt(code)
-                trace("manifest", code, -1, -1, "failed")
-                return SyncResult.Failed(code)
-            }
-            trace("manifest", "ok", -1, -1, "ok")
-            return syncV3Bounded(base, manifest, forceRefresh, sectionKey, "manual")
-        } finally {
-            _syncProgress.value = null
-            markSyncEnd()
-        }
-    }
-
-    // Per-section Diagnostics snapshot. Counts for articles, shorts
-    // and market come from the live tables; counts for the other
-    // sections come from the last recorded manifest values. Hash
-    // values are never returned, only present/absent.
-    suspend fun sectionStates(): List<SectionSyncState> {
-        return SyncSections.ALL.map { key ->
-            val count = when (key) {
-                SyncSections.ARTICLES -> dao.articleKindCount("article")
-                SyncSections.SHORTS -> dao.articleKindCount("short")
-                SyncSections.MARKET -> dao.marketCount()
-                SyncSections.CHANNEL_TYPED -> channelDao.channelCount()
-                SyncSections.BUNDLES -> channelDao.allBundles().size
-                SyncSections.RADAR -> channelDao.radarCount()
-                SyncSections.NIGHTLY -> nightlyDao.latestEditionCount()
-                else -> dao.metaValue(SyncSections.countKey(key))?.toIntOrNull() ?: 0
-            }
-            SectionSyncState(
-                section = key,
-                state = dao.metaValue(SyncSections.stateKey(key)) ?: SectionStates.UNKNOWN,
-                lastSyncAt = dao.metaValue(SyncSections.lastSyncKey(key))?.toLongOrNull(),
-                lastAttemptAt = dao.metaValue(SyncSections.lastAttemptKey(key))?.toLongOrNull(),
-                lastErrorCode = dao.metaValue(SyncSections.errorKey(key)) ?: "",
-                itemCount = count,
-                hashPresent = !dao.metaValue(SyncSections.hashKey(key)).isNullOrBlank(),
-                missingCount = dao.metaValue(SyncSections.missingKey(key))?.toIntOrNull() ?: 0,
-            )
         }
     }
 
@@ -534,871 +266,81 @@ class EdgeRepository(context: Context) {
         }
     }
 
-    private suspend fun fetchJoinGuids(base: String, joinKeysFile: String?): Map<String, String> {
-        val file = joinKeysFile?.takeIf { it.isNotBlank() } ?: "join_keys.json"
-        // v5.1: 2 attempts, network errors only (httpGetRetried
-        // never retries an HTTP error). A failure here is still
-        // non-fatal: the caller proceeds with an empty map.
-        val text = when (val outcome = httpGetRetried("$base/$file", attempts = 2)) {
-            is HttpOutcome.Ok -> outcome.body
-            else -> return emptyMap()
-        }
-        return try {
-            val arr = JSONObject(text).optJSONArray("entries") ?: return emptyMap()
-            val map = mutableMapOf<String, String>()
-            for (i in 0 until arr.length()) {
-                val obj = try {
-                    arr.getJSONObject(i)
-                } catch (_: Exception) {
-                    continue
+    /**
+     * v5.2 Yemen-only sync (audit §4.3), Phase 4 direct path.
+     * The single entry point for Yemen content: manifest-gated,
+     * one transaction, hash stored only on complete success.
+     * Used by YemenSyncWorker (24h), the launch one-time and
+     * the Yemen tab's manual refresh. A Yemen failure never
+     * touches any other clock (there is no other clock left).
+     * The 300 s bound covers the whole pass; on timeout the
+     * sections that already completed keep their transactions
+     * and their success hashes, and the result is Partial —
+     * never a half-marked success.
+     */
+    suspend fun syncYemen(forceRefresh: Boolean = false): SyncResult {
+        return syncMutex.withLock {
+            val base = edgeBase() ?: return@withLock SyncResult.NotConfigured
+            val now = System.currentTimeMillis()
+            markSyncStart(now)
+            try {
+                if (!isOnline()) {
+                    recordAttempt("network")
+                    SyncTrace.recordNetworkState(dao, false, "network")
+                    trace("manifest", "network", -1, -1, "failed")
+                    return@withLock SyncResult.Failed("network")
                 }
-                val appKey = obj.optString("app_key")
-                val guid = obj.optString("guid")
-                if (appKey.isNotBlank() && guid.isNotBlank()) map[appKey] = guid
-            }
-            map
-        } catch (_: Exception) {
-            emptyMap()
-        }
-    }
-
-    // v4.0.1 (fix plan X5): one retry on a NETWORK error only. A
-    // 404 is final (retrying it cannot help); a transient blip
-    // must not cost an article until the next sync pass.
-    private fun fetchArticleFile(base: String, item: ManifestItem, now: Long): ArticleEntity? {
-        val file = item.file ?: return null
-        repeat(2) { attempt ->
-            when (val outcome = httpGet("$base/$file")) {
-                is HttpOutcome.Ok -> {
-                    return try {
-                        ArticleParsers.entityFromArticleJson(JSONObject(outcome.body), now)
-                    } catch (_: Exception) {
-                        null
+                SyncTrace.recordNetworkState(dao, true, "")
+                val outcome = httpGetRetried("$base/manifest.json")
+                val manifest = if (outcome is HttpOutcome.Ok) {
+                    ManifestParser.parse(outcome.body)
+                } else {
+                    null
+                }
+                if (manifest == null) {
+                    val code = when (outcome) {
+                        is HttpOutcome.Ok -> "bad_manifest"
+                        else -> outcome.toFailedCode()
                     }
+                    recordAttempt(code)
+                    trace("manifest", code, -1, -1, "failed")
+                    return@withLock SyncResult.Failed(code)
                 }
-                is HttpOutcome.NetworkError -> {
-                    if (attempt == 0) return@repeat else return null
+                trace("manifest", "ok", -1, -1, "ok")
+                val res = withTimeoutOrNull(300_000L) {
+                    syncYemenPass(base, manifest, forceRefresh, now)
                 }
-                is HttpOutcome.HttpError -> return null
+                if (res != null) return@withLock res
+                recordAttempt("partial")
+                trace("sync", "timeout", -1, -1, "partial")
+                SyncResult.Partial(emptyList(), 0, yemenDao.placeCount(), emptyList())
+            } finally {
+                markSyncEnd()
             }
         }
-        return null
     }
 
-    // Manifest-v3 per-section sync. One Room transaction per
-    // section, and a section hash is stored only on that section's
-    // complete success, so a failed section retries exactly its
-    // missing set next time. Nothing here deletes a cached row:
-    // failures and corrupt items leave the cache untouched, and a
-    // retracted item becomes a tombstone (row kept, bookmark kept).
-    private suspend fun syncV3(
+    private suspend fun syncYemenPass(
         base: String,
         manifest: EdgeManifest,
         forceRefresh: Boolean,
-        onlySection: String?,
-        pollPath: String = "periodic_or_foreground",
+        now: Long,
     ): SyncResult {
-        val now = System.currentTimeMillis()
         val inviteLists = fetchInviteLists(base)
-        val joinGuids = fetchJoinGuids(base, manifest.joinKeysFile)
-        val existingByKey = dao.all().associate { it.appKey to it }
-        val existingKeys = existingByKey.keys
-        val storedHashes = existingByKey.mapValues { it.value.contentHash }
-        // v5 P1 reconciliation (H4): cached article appKeys vs
-        // manifest article appKeys. Shorts are excluded (kind
-        // filter) so the short-card set cannot inflate "extra".
-        // A key mismatch shows as large missing AND extra counts;
-        // it duplicates rows, never hides them.
-        val articlesSection = manifest.sections[SyncSections.ARTICLES]
-        if (articlesSection != null) {
-            val localArticleKeys = existingByKey.values
-                .filter { it.kind == "article" }.map { it.appKey }.toSet()
-            val manifestKeys = articlesSection.items.map { it.appKey }.toSet()
-            SyncTrace.recordRecon(
-                dao,
-                localArticleKeys.size,
-                manifestKeys.size,
-                (manifestKeys - localArticleKeys).size,
-                (localArticleKeys - manifestKeys).size,
-            )
-        }
-        val outcomes = mutableListOf<SectionOutcome>()
-        val newKeys = mutableListOf<String>()
-        var missingTotal = 0
-        // v5 P4: the global clock and the whole-sync result are
-        // defined over REQUIRED sections only (SyncSections.
-        // REQUIRED). An optional section — bundles, radar,
-        // nightly, voices, special issues, invites, revocations —
-        // degrades independently with its own per-section state
-        // and reason, and can never again block last_sync_at.
-        // UNKNOWN (section absent from the manifest) never blocks
-        // either, matching the pre-P4 no_section behaviour; the
-        // live manifest carries no channel_typed section, so
-        // counting UNKNOWN would break the clock on the live edge.
-        var anyRequiredIncomplete = false
-
-        fun wants(section: String): Boolean = onlySection == null || onlySection == section
-
-        // Articles section.
-        if (wants(SyncSections.ARTICLES)) {
-            val section = manifest.sections[SyncSections.ARTICLES]
-            if (section == null) {
-                outcomes.add(SectionOutcome(SyncSections.ARTICLES, SectionStates.UNKNOWN, 0))
-                trace(SyncSections.ARTICLES, "no_section", -1, -1, SectionStates.UNKNOWN)
-                recordV51(SyncSections.ARTICLES, "no_section", -1, -1, -1)
-            } else {
-                val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.ARTICLES))
-                // v4.0.1 self-healing hash guard (fix plan X7): a
-                // stored hash with ZERO local rows while the
-                // manifest counts rows must not skip the section
-                // forever — re-plan it instead.
-                val articleCount = dao.articleKindCount("article")
-                val hashUpToDate = DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh) &&
-                    !(articleCount == 0 && section.count > 0)
-                if (hashUpToDate) {
-                    recordSectionMeta(
-                        SyncSections.ARTICLES, SectionStates.UP_TO_DATE, "",
-                        articleCount, 0, now, now, null,
-                    )
-                    outcomes.add(SectionOutcome(SyncSections.ARTICLES, SectionStates.UP_TO_DATE, 0))
-                    trace(SyncSections.ARTICLES, "", 0, 0, SectionStates.UP_TO_DATE)
-                    recordV51(SyncSections.ARTICLES, "", 0, 0, -1)
-                } else {
-                    val plan = DeltaPlanner.plan(
-                        section.items, storedHashes, existingKeys, requiresFile = true,
-                    )
-                    val fresh = mutableListOf<ArticleEntity>()
-                    val missingKeys = mutableListOf<String>()
-                    if (plan.toFetch.isNotEmpty()) {
-                        // v4.0.1 bounded fetch (fix plan X5): the
-                        // 249-file loop gets a 240 s deadline and a
-                        // progress signal. On timeout the fetched
-                        // rows still land and the rest are marked
-                        // missing (PARTIAL, hash not stored) —
-                        // never a hang, never a silent success.
-                        _syncProgress.value = 0 to plan.toFetch.size
-                        val fetched = withTimeoutOrNull(240_000L) {
-                            withContext(Dispatchers.IO) {
-                                coroutineScope {
-                                    plan.toFetch.chunked(4).forEach { chunk ->
-                                        val results = chunk.map { item ->
-                                            async { item to fetchArticleFile(base, item, now) }
-                                        }.awaitAll()
-                                        for ((item, entity) in results) {
-                                            if (entity != null) fresh.add(entity)
-                                            else missingKeys.add(item.appKey)
-                                        }
-                                        _syncProgress.value =
-                                            fresh.size + missingKeys.size to plan.toFetch.size
-                                    }
-                                }
-                            }
-                            true
-                        }
-                        if (fetched == null) {
-                            // Timed out mid-loop: everything not yet
-                            // fetched or failed is missing, so the
-                            // next pass retries exactly that set.
-                            val seen = fresh.map { it.appKey }.toSet() + missingKeys.toSet()
-                            missingKeys.addAll(
-                                plan.toFetch.map { it.appKey }.filter { it !in seen }
-                            )
-                        }
-                    }
-                    val tombstoneRows = plan.tombstones.mapNotNull { item ->
-                        val stored = existingByKey[item.appKey] ?: return@mapNotNull null
-                        stored.copy(
-                            status = "retracted",
-                            retractedAtEpoch = now,
-                            updatedAtEpoch = now,
-                        )
-                    }
-                    val complete = missingKeys.isEmpty() && plan.corruptCount == 0
-                    val missing = missingKeys.size + plan.corruptCount
-                    val joins = section.items.mapNotNull { item ->
-                        val guid = joinGuids[item.appKey]
-                        if (item.storyId == null && guid == null &&
-                            item.channelMessageId == null
-                        ) {
-                            null
-                        } else {
-                            JoinKeyEntity(
-                                item.appKey, guid, item.storyId, item.channelMessageId,
-                            )
-                        }
-                    }
-                    db.withTransaction {
-                        if (fresh.isNotEmpty()) dao.upsertAll(fresh)
-                        if (tombstoneRows.isNotEmpty()) dao.upsertAll(tombstoneRows)
-                        if (joins.isNotEmpty()) dao.upsertJoinKeys(joins)
-                        recordSectionMeta(
-                            SyncSections.ARTICLES,
-                            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-                            if (complete) "" else "partial",
-                            dao.articleKindCount("article"),
-                            missing, now,
-                            if (complete) now else null,
-                            if (complete) section.hash else null,
-                        )
-                    }
-                    trace(
-                        SyncSections.ARTICLES,
-                        if (complete) "" else "partial",
-                        fresh.size, missing,
-                        if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-                    )
-                    recordV51(
-                        SyncSections.ARTICLES,
-                        if (complete) "" else "partial",
-                        fresh.size, missing, -1,
-                    )
-                    newKeys.addAll(fresh.map { it.appKey })
-                    missingTotal += missing
-                    if (!complete) anyRequiredIncomplete = true
-                    outcomes.add(
-                        SectionOutcome(
-                            SyncSections.ARTICLES,
-                            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-                            missing,
-                        )
-                    )
-                }
-            }
-        }
-
-        // Shorts section: resolved through short_cards.json, not
-        // per-item files, so the plan runs with requiresFile false.
-        if (wants(SyncSections.SHORTS)) {
-            val section = manifest.sections[SyncSections.SHORTS]
-            if (section == null) {
-                outcomes.add(SectionOutcome(SyncSections.SHORTS, SectionStates.UNKNOWN, 0))
-                trace(SyncSections.SHORTS, "no_section", -1, -1, SectionStates.UNKNOWN)
-                recordV51(SyncSections.SHORTS, "no_section", -1, -1, -1)
-            } else {
-                val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.SHORTS))
-                // v4.0.1 self-healing hash guard (fix plan X7).
-                val shortCount = dao.articleKindCount("short")
-                if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh) &&
-                    !(shortCount == 0 && section.count > 0)
-                ) {
-                    val count = shortCount
-                    recordSectionMeta(
-                        SyncSections.SHORTS, SectionStates.UP_TO_DATE, "",
-                        count, 0, now, now, null,
-                    )
-                    outcomes.add(SectionOutcome(SyncSections.SHORTS, SectionStates.UP_TO_DATE, 0))
-                    trace(SyncSections.SHORTS, "", 0, 0, SectionStates.UP_TO_DATE)
-                    recordV51(SyncSections.SHORTS, "", 0, 0, -1)
-                } else {
-                    val plan = DeltaPlanner.plan(
-                        section.items, storedHashes, existingKeys, requiresFile = false,
-                    )
-                    val fresh = mutableListOf<ArticleEntity>()
-                    val missingKeys = mutableListOf<String>()
-                    var shortsHttp = -1
-                    if (plan.toFetch.isNotEmpty()) {
-                        // v5.1: network-only retry for the single
-                        // shorts file; an HTTP error is final.
-                        val shortsOutcome = httpGetRetried("$base/short_cards.json")
-                        shortsHttp = if (shortsOutcome is HttpOutcome.HttpError) {
-                            shortsOutcome.status
-                        } else {
-                            -1
-                        }
-                        val shortsText = when (shortsOutcome) {
-                            is HttpOutcome.Ok -> shortsOutcome.body
-                            else -> null
-                        }
-                        if (shortsText == null) {
-                            missingKeys.addAll(plan.toFetch.map { it.appKey })
-                        } else {
-                            try {
-                                val arr = JSONArray(shortsText)
-                                val wanted = plan.toFetch.map { it.id }.toSet()
-                                val found = mutableSetOf<String>()
-                                for (i in 0 until arr.length()) {
-                                    val obj = try {
-                                        arr.getJSONObject(i)
-                                    } catch (_: Exception) {
-                                        continue
-                                    }
-                                    val id = obj.optString("id")
-                                    if (id in wanted) {
-                                        found.add(id)
-                                        try {
-                                            fresh.add(ArticleParsers.entityFromShortJson(obj, now))
-                                        } catch (_: Exception) {
-                                            missingKeys.add(ArticleKeys.appKeyFor(id))
-                                        }
-                                    }
-                                }
-                                missingKeys.addAll(
-                                    plan.toFetch.filter { it.id !in found }
-                                        .map { it.appKey }
-                                )
-                            } catch (_: Exception) {
-                                missingKeys.addAll(plan.toFetch.map { it.appKey })
-                            }
-                        }
-                    }
-                    val tombstoneRows = plan.tombstones.mapNotNull { item ->
-                        val stored = existingByKey[item.appKey] ?: return@mapNotNull null
-                        stored.copy(
-                            status = "retracted",
-                            retractedAtEpoch = now,
-                            updatedAtEpoch = now,
-                        )
-                    }
-                    val complete = missingKeys.isEmpty() && plan.corruptCount == 0
-                    val missing = missingKeys.size + plan.corruptCount
-                    val joins = section.items.mapNotNull { item ->
-                        val guid = joinGuids[item.appKey]
-                        if (item.storyId == null && guid == null &&
-                            item.channelMessageId == null
-                        ) {
-                            null
-                        } else {
-                            JoinKeyEntity(
-                                item.appKey, guid, item.storyId, item.channelMessageId,
-                            )
-                        }
-                    }
-                    db.withTransaction {
-                        if (fresh.isNotEmpty()) dao.upsertAll(fresh)
-                        if (tombstoneRows.isNotEmpty()) dao.upsertAll(tombstoneRows)
-                        if (joins.isNotEmpty()) dao.upsertJoinKeys(joins)
-                        recordSectionMeta(
-                            SyncSections.SHORTS,
-                            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-                            if (complete) "" else "partial",
-                            dao.articleKindCount("short"),
-                            missing, now,
-                            if (complete) now else null,
-                            if (complete) section.hash else null,
-                        )
-                    }
-                    trace(
-                        SyncSections.SHORTS,
-                        if (complete) "" else "partial",
-                        fresh.size, missing,
-                        if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-                    )
-                    recordV51(
-                        SyncSections.SHORTS,
-                        if (complete) "" else "partial",
-                        fresh.size, missing, shortsHttp,
-                    )
-                    newKeys.addAll(fresh.map { it.appKey })
-                    missingTotal += missing
-                    if (!complete) anyRequiredIncomplete = true
-                    outcomes.add(
-                        SectionOutcome(
-                            SyncSections.SHORTS,
-                            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-                            missing,
-                        )
-                    )
-                }
-            }
-        }
-
-        // Market section: one file, one transaction. A market
-        // failure is that section's failure only; articles synced
-        // in this same pass keep their success.
-        if (wants(SyncSections.MARKET)) {
-            val section = manifest.sections[SyncSections.MARKET]
-            if (section == null) {
-                outcomes.add(SectionOutcome(SyncSections.MARKET, SectionStates.UNKNOWN, 0))
-                trace(SyncSections.MARKET, "no_section", -1, -1, SectionStates.UNKNOWN)
-                recordV51(SyncSections.MARKET, "no_section", -1, -1, -1)
-            } else {
-                val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.MARKET))
-                // v4.0.1 self-healing hash guard (fix plan X7).
-                val marketCount = dao.marketCount()
-                if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh) &&
-                    !(marketCount == 0 && section.count > 0)
-                ) {
-                    recordSectionMeta(
-                        SyncSections.MARKET, SectionStates.UP_TO_DATE, "",
-                        marketCount, 0, now, now, null,
-                    )
-                    outcomes.add(SectionOutcome(SyncSections.MARKET, SectionStates.UP_TO_DATE, 0))
-                    trace(SyncSections.MARKET, "", 0, 0, SectionStates.UP_TO_DATE)
-                    recordV51(SyncSections.MARKET, "", 0, 0, -1)
-                } else {
-                    // v5.1: network-only retry for the single
-                    // market file; an HTTP error is final.
-                    val marketOutcome = httpGetRetried("$base/${section.file ?: "market.json"}")
-                    val marketHttp = if (marketOutcome is HttpOutcome.HttpError) {
-                        marketOutcome.status
-                    } else {
-                        -1
-                    }
-                    val marketText = if (marketOutcome is HttpOutcome.Ok) {
-                        marketOutcome.body
-                    } else {
-                        null
-                    }
-                    if (marketText == null) {
-                        val code = marketOutcome.toFailedCode()
-                        recordSectionMeta(
-                            SyncSections.MARKET, SectionStates.FAILED, code,
-                            null, 0, now, null, null,
-                        )
-                        trace(SyncSections.MARKET, code, -1, -1, SectionStates.FAILED)
-                        recordV51(SyncSections.MARKET, code, -1, -1, marketHttp)
-                        anyRequiredIncomplete = true
-                        outcomes.add(SectionOutcome(SyncSections.MARKET, SectionStates.FAILED, 0))
-                    } else {
-                        var marketFresh = emptyList<MarketSnapshotEntity>()
-                        var formulasFresh = emptyList<MarketFormulaEntity>()
-                        var corruptSnaps = 0
-                        var marketFailed = false
-                        // Phase 4: admin thresholds from the edge
-                        // market_alerts object (spec §4.1). Null =
-                        // OFF. They are read here, never defaulted
-                        // and never taken from help-text examples.
-                        var marketThresholds: MarketThresholds? = null
-                        try {
-                            val marketObj = JSONObject(marketText)
-                            val snaps = marketObj.optJSONArray("snapshots") ?: JSONArray()
-                            val parsed = mutableListOf<MarketSnapshotEntity>()
-                            for (i in 0 until snaps.length()) {
-                                try {
-                                    parsed.add(
-                                        ArticleParsers.marketEntityFromJson(snaps.getJSONObject(i))
-                                    )
-                                } catch (_: Exception) {
-                                    corruptSnaps++
-                                }
-                            }
-                            marketFresh = parsed
-                            val farr = marketObj.optJSONArray("formulas_active") ?: JSONArray()
-                            val parsedFormulas = mutableListOf<MarketFormulaEntity>()
-                            for (i in 0 until farr.length()) {
-                                try {
-                                    val formula = MarketFormulas.formulaFromJson(
-                                        farr.getJSONObject(i)
-                                    ) ?: continue
-                                    parsedFormulas.add(
-                                        MarketFormulaEntity(
-                                            name = formula.name,
-                                            version = formula.version,
-                                            definition = formula.definition,
-                                            inputs = formula.inputs,
-                                            descriptionFa = formula.descriptionFa,
-                                        )
-                                    )
-                                } catch (_: Exception) {
-                                    continue
-                                }
-                            }
-                            formulasFresh = parsedFormulas
-                            val alertsObj = marketObj.optJSONObject("market_alerts")
-                            marketThresholds = MarketThresholds(
-                                bubblePct = alertsObj?.let {
-                                    if (it.isNull("bubble_threshold_pct")) null
-                                    else it.optDouble("bubble_threshold_pct")
-                                        .takeIf { v -> v.isFinite() }
-                                },
-                                spreadPct = alertsObj?.let {
-                                    if (it.isNull("spread_threshold_pct")) null
-                                    else it.optDouble("spread_threshold_pct")
-                                        .takeIf { v -> v.isFinite() }
-                                },
-                            )
-                        } catch (_: Exception) {
-                            marketFailed = true
-                        }
-                        if (marketFailed) {
-                            recordSectionMeta(
-                                SyncSections.MARKET, SectionStates.FAILED, "bad_market",
-                                null, 0, now, null, null,
-                            )
-                            trace(SyncSections.MARKET, "bad_market", -1, -1, SectionStates.FAILED)
-                            recordV51(SyncSections.MARKET, "bad_market", -1, -1, -1)
-                            anyRequiredIncomplete = true
-                            outcomes.add(
-                                SectionOutcome(SyncSections.MARKET, SectionStates.FAILED, 0)
-                            )
-                        } else {
-                            val complete = corruptSnaps == 0
-                            db.withTransaction {
-                                if (marketFresh.isNotEmpty()) dao.upsertMarket(marketFresh)
-                                if (formulasFresh.isNotEmpty()) {
-                                    dao.deleteAllFormulas()
-                                    dao.upsertFormulas(formulasFresh)
-                                }
-                                // Phase 4 thresholds: stored in meta
-                                // on every successful market sync, so
-                                // the banner/alert logic always reads
-                                // the edge value, never a stale one.
-                                // Absent object = all null = OFF.
-                                val thresholds = marketThresholds ?: MarketThresholds(null, null)
-                                dao.upsertMeta(
-                                    MetaEntity(
-                                        "p4_market_alerts_bubble",
-                                        thresholds.bubblePct?.toString() ?: "",
-                                    )
-                                )
-                                dao.upsertMeta(
-                                    MetaEntity(
-                                        "p4_market_alerts_spread",
-                                        thresholds.spreadPct?.toString() ?: "",
-                                    )
-                                )
-                                recordSectionMeta(
-                                    SyncSections.MARKET,
-                                    if (complete) SectionStates.UP_TO_DATE
-                                    else SectionStates.PARTIAL,
-                                    if (complete) "" else "partial",
-                                    dao.marketCount(),
-                                    corruptSnaps, now,
-                                    if (complete) now else null,
-                                    if (complete) section.hash else null,
-                                )
-                            }
-                            trace(
-                                SyncSections.MARKET,
-                                if (complete) "" else "partial",
-                                marketFresh.size, corruptSnaps,
-                                if (complete) SectionStates.UP_TO_DATE
-                                else SectionStates.PARTIAL,
-                            )
-                            recordV51(
-                                SyncSections.MARKET,
-                                if (complete) "" else "partial",
-                                marketFresh.size, corruptSnaps, -1,
-                            )
-                            // Phase 4 alert evaluation (§4.6): on
-                            // every market-section sync completion
-                            // (and on manual market refresh, which
-                            // runs this same block via syncOnly).
-                            // No separate alert poll, no push.
-                            evaluateMarketAlerts(now)
-                            if (!complete) anyRequiredIncomplete = true
-                            outcomes.add(
-                                SectionOutcome(
-                                    SyncSections.MARKET,
-                                    if (complete) SectionStates.UP_TO_DATE
-                                    else SectionStates.PARTIAL,
-                                    corruptSnaps,
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // Channel refs: no local table; the section state records
-        // reachability and the manifest count, so Diagnostics can
-        // still show it honestly. A fetch failure is a failed
-        // section, never an empty feed.
-        if (wants(SyncSections.CHANNEL_REFS)) {
-            val section = manifest.sections[SyncSections.CHANNEL_REFS]
-            if (section == null) {
-                outcomes.add(SectionOutcome(SyncSections.CHANNEL_REFS, SectionStates.UNKNOWN, 0))
-                trace(SyncSections.CHANNEL_REFS, "no_section", -1, -1, SectionStates.UNKNOWN)
-                recordV51(SyncSections.CHANNEL_REFS, "no_section", -1, -1, -1)
-            } else {
-                val storedHash = dao.metaValue(SyncSections.hashKey(SyncSections.CHANNEL_REFS))
-                if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
-                    recordSectionMeta(
-                        SyncSections.CHANNEL_REFS, SectionStates.UP_TO_DATE, "",
-                        section.count, 0, now, now, null,
-                    )
-                    outcomes.add(
-                        SectionOutcome(SyncSections.CHANNEL_REFS, SectionStates.UP_TO_DATE, 0)
-                    )
-                    trace(SyncSections.CHANNEL_REFS, "", 0, 0, SectionStates.UP_TO_DATE)
-                    recordV51(SyncSections.CHANNEL_REFS, "", 0, 0, -1)
-                } else {
-                    // v5.1: network-only retry for the single
-                    // refs file; an HTTP error is final.
-                    val refsOutcome = httpGetRetried("$base/${section.file ?: "channel_refs.json"}")
-                    val refsHttp = if (refsOutcome is HttpOutcome.HttpError) {
-                        refsOutcome.status
-                    } else {
-                        -1
-                    }
-                    if (refsOutcome is HttpOutcome.Ok) {
-                        db.withTransaction {
-                            recordSectionMeta(
-                                SyncSections.CHANNEL_REFS, SectionStates.UP_TO_DATE, "",
-                                section.count, 0, now, now, section.hash,
-                            )
-                        }
-                        outcomes.add(
-                            SectionOutcome(
-                                SyncSections.CHANNEL_REFS, SectionStates.UP_TO_DATE, 0
-                            )
-                        )
-                        recordV51(SyncSections.CHANNEL_REFS, "", 0, 0, 200)
-                    } else {
-                        val code = refsOutcome.toFailedCode()
-                        recordSectionMeta(
-                            SyncSections.CHANNEL_REFS, SectionStates.FAILED, code,
-                            null, 0, now, null, null,
-                        )
-                        trace(SyncSections.CHANNEL_REFS, code, -1, -1, SectionStates.FAILED)
-                        recordV51(SyncSections.CHANNEL_REFS, code, -1, -1, refsHttp)
-                        anyRequiredIncomplete = true
-                        outcomes.add(
-                            SectionOutcome(SyncSections.CHANNEL_REFS, SectionStates.FAILED, 0)
-                        )
-                    }
-                }
-            }
-        }
-
-        // Invites + revocations: a fetch failure skips the re-check
-        // entirely (offline must never lock a reader out) but still
-        // records failed section states, so Diagnostics stays honest.
-        if (wants(SyncSections.INVITES) || wants(SyncSections.REVOCATIONS)) {
-            val invSection = manifest.sections[SyncSections.INVITES]
-            val revSection = manifest.sections[SyncSections.REVOCATIONS]
-            if (inviteLists != null) {
-                db.withTransaction {
-                    dao.upsertMeta(
-                        MetaEntity(
-                            "edge_invite_hashes", JSONArray(inviteLists.first).toString()
-                        )
-                    )
-                    dao.upsertMeta(
-                        MetaEntity(
-                            "edge_revocations", JSONArray(inviteLists.second).toString()
-                        )
-                    )
-                    if (wants(SyncSections.INVITES)) {
-                        recordSectionMeta(
-                            SyncSections.INVITES, SectionStates.UP_TO_DATE, "",
-                            inviteLists.first.size, 0, now, now,
-                            invSection?.hash?.takeIf { it.isNotBlank() },
-                        )
-                    }
-                    if (wants(SyncSections.REVOCATIONS)) {
-                        recordSectionMeta(
-                            SyncSections.REVOCATIONS, SectionStates.UP_TO_DATE, "",
-                            inviteLists.second.size, 0, now, now,
-                            revSection?.hash?.takeIf { it.isNotBlank() },
-                        )
-                    }
-                }
-                if (wants(SyncSections.INVITES)) {
-                    trace(
-                        SyncSections.INVITES, "", inviteLists.first.size, 0,
-                        SectionStates.UP_TO_DATE,
-                    )
-                    recordV51(
-                        SyncSections.INVITES, "", inviteLists.first.size, 0, -1,
-                    )
-                }
-                if (wants(SyncSections.REVOCATIONS)) {
-                    trace(
-                        SyncSections.REVOCATIONS, "", inviteLists.second.size, 0,
-                        SectionStates.UP_TO_DATE,
-                    )
-                    recordV51(
-                        SyncSections.REVOCATIONS, "", inviteLists.second.size, 0, -1,
-                    )
-                }
-                if (wants(SyncSections.INVITES)) {
-                    outcomes.add(SectionOutcome(SyncSections.INVITES, SectionStates.UP_TO_DATE, 0))
-                }
-                if (wants(SyncSections.REVOCATIONS)) {
-                    outcomes.add(
-                        SectionOutcome(SyncSections.REVOCATIONS, SectionStates.UP_TO_DATE, 0)
-                    )
-                }
-            } else {
-                if (wants(SyncSections.INVITES)) {
-                    recordSectionMeta(
-                        SyncSections.INVITES, SectionStates.FAILED, "invite_fetch",
-                        null, 0, now, null, null,
-                    )
-                    // v5 P4: invites are optional for the global
-                    // clock — an invite-fetch failure skips the
-                    // re-check (as before) but never blocks
-                    // last_sync_at.
-                    outcomes.add(SectionOutcome(SyncSections.INVITES, SectionStates.FAILED, 0))
-                    trace(SyncSections.INVITES, "invite_fetch", -1, -1, SectionStates.FAILED)
-                    recordV51(SyncSections.INVITES, "invite_fetch", -1, -1, -1)
-                }
-                if (wants(SyncSections.REVOCATIONS)) {
-                    recordSectionMeta(
-                        SyncSections.REVOCATIONS, SectionStates.FAILED, "invite_fetch",
-                        null, 0, now, null, null,
-                    )
-                    // v5 P4: revocations are optional for the global
-                    // clock, same as invites above.
-                    outcomes.add(
-                        SectionOutcome(SyncSections.REVOCATIONS, SectionStates.FAILED, 0)
-                    )
-                    trace(SyncSections.REVOCATIONS, "invite_fetch", -1, -1, SectionStates.FAILED)
-                    recordV51(SyncSections.REVOCATIONS, "invite_fetch", -1, -1, -1)
-                }
-            }
-        }
-
-        // Phase 2 sections: typed channel items, bundles, radar.
-        // Same Phase 1 rules (manifest-first, per-section hash,
-        // one transaction per section, hash stored only on complete
-        // success, failed/corrupt section never empties its cache).
-        // No new sync mechanism is invented here.
-        val phase2Anomalies = AnomalyBag()
-        if (wants(SyncSections.CHANNEL_TYPED)) {
-            // v5.1 isolation: an unexpected throw inside the
-            // section function degrades that section only.
-            var typedOutcomeIsolated = false
-            val typedOutcome = try {
-                syncChannelTypedSection(base, manifest, forceRefresh, now, phase2Anomalies, pollPath)
-            } catch (_: Exception) {
-                typedOutcomeIsolated = true
-                failSection(SyncSections.CHANNEL_TYPED, now)
-                SectionOutcome(SyncSections.CHANNEL_TYPED, SectionStates.FAILED, 0)
-            }
-            outcomes.add(typedOutcome.also {
-                if (it.key in SyncSections.REQUIRED &&
-                    (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL)
-                ) {
-                    anyRequiredIncomplete = true
-                }
-                missingTotal += it.missingCount
-            })
-            // failSection already wrote the v51 line; a normal
-            // outcome still needs one.
-            if (!typedOutcomeIsolated) recordV51FromOutcome(typedOutcome)
-        }
-        if (wants(SyncSections.BUNDLES)) {
-            var bundlesOutcomeIsolated = false
-            val bundlesOutcome = try {
-                syncBundlesSection(base, manifest, forceRefresh, now, phase2Anomalies)
-            } catch (_: Exception) {
-                bundlesOutcomeIsolated = true
-                failSection(SyncSections.BUNDLES, now)
-                SectionOutcome(SyncSections.BUNDLES, SectionStates.FAILED, 0)
-            }
-            outcomes.add(bundlesOutcome.also {
-                if (it.key in SyncSections.REQUIRED &&
-                    (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL)
-                ) {
-                    anyRequiredIncomplete = true
-                }
-                missingTotal += it.missingCount
-            })
-            if (!bundlesOutcomeIsolated) recordV51FromOutcome(bundlesOutcome)
-        }
-        if (wants(SyncSections.RADAR)) {
-            var radarOutcomeIsolated = false
-            val radarOutcome = try {
-                syncRadarSection(base, manifest, forceRefresh, now, phase2Anomalies)
-            } catch (_: Exception) {
-                radarOutcomeIsolated = true
-                failSection(SyncSections.RADAR, now)
-                SectionOutcome(SyncSections.RADAR, SectionStates.FAILED, 0)
-            }
-            outcomes.add(radarOutcome.also {
-                if (it.key in SyncSections.REQUIRED &&
-                    (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL)
-                ) {
-                    anyRequiredIncomplete = true
-                }
-                missingTotal += it.missingCount
-            })
-            if (!radarOutcomeIsolated) recordV51FromOutcome(radarOutcome)
-        }
-        // Phase 5 nightly section: same Phase 1 rules (manifest
-        // first, per-section hash, one transaction, hash stored
-        // only on complete success, failed/corrupt never empties
-        // the cache — yesterday's edition stays with an honest
-        // failure line, never a blank Nightly section, P5-4).
-        if (wants(SyncSections.NIGHTLY)) {
-            // v5.1 isolation, same shape as the Phase 2 sections.
-            var nightlyOutcomeIsolated = false
-            val nightlyOutcome = try {
-                syncNightlySection(base, manifest, forceRefresh, now)
-            } catch (_: Exception) {
-                nightlyOutcomeIsolated = true
-                failSection(SyncSections.NIGHTLY, now)
-                SectionOutcome(SyncSections.NIGHTLY, SectionStates.FAILED, 0)
-            }
-            outcomes.add(nightlyOutcome.also {
-                if (it.key in SyncSections.REQUIRED &&
-                    (it.state == SectionStates.FAILED || it.state == SectionStates.PARTIAL)
-                ) {
-                    anyRequiredIncomplete = true
-                }
-                missingTotal += it.missingCount
-            })
-            if (!nightlyOutcomeIsolated) recordV51FromOutcome(nightlyOutcome)
-        }
-        // Computed (overwrite-for-today) Phase 2 anomaly codes:
-        // caps, bundle-shape flags. Parse anomalies (above) are
-        // accumulated for the day instead.
-        persistPhase2Anomalies(now, phase2Anomalies, computePhase2Computed(now))
-        if (onlySection == null) {
-            dispatchPhase4Notifications(now)
-        }
-
-        // Phase 5 nightly notification: fires on the first
-        // successful nightly sync after publication (full syncs
-        // and nightly-only syncs alike); a failed nightly sync
-        // produces NO notification for an edition the app does
-        // not have (spec §5.15). Timing comes ONLY from
-        // NotificationPolicy.decide for NIGHTLY — this producer
-        // never re-implements night/quiet-hours timing.
-        if (onlySection == null || onlySection == SyncSections.NIGHTLY) {
-            dispatchNightlyNotifications(now)
-        }
-        // Not-yet-published and gated sections: state comes from the
-        // manifest, no fetch is attempted, nothing is invented.
-        // NIGHTLY left this list in Phase 5 (it is fetchable now);
-        // VOICES stays not-yet-published and SPECIAL_ISSUES stays
-        // gated_frozen under its separate freeze decision.
-        for (key in listOf(
-            SyncSections.VOICES, SyncSections.SPECIAL_ISSUES,
-        )) {
-            if (!wants(key)) continue
-            // v5.1 isolation: a meta-write failure for one gated
-            // section must not abort the global-clock block below.
+        val yemenOutcome = try {
+            syncYemenSection(base, manifest, forceRefresh, now)
+        } catch (_: Exception) {
             try {
-                val section = manifest.sections[key]
-                val state = when (section?.status) {
-                    "gated_frozen" -> SectionStates.GATED_FROZEN
-                    "not_yet_published" -> SectionStates.NOT_YET_PUBLISHED
-                    "" -> SectionStates.NOT_YET_PUBLISHED
-                    null -> SectionStates.UNKNOWN
-                    else -> SectionStates.UNKNOWN
-                }
                 recordSectionMeta(
-                    key, state, "", section?.count ?: 0, 0, now, null, null,
+                    SyncSections.YEMEN, SectionStates.FAILED, "section_error",
+                    null, 0, now, null, null,
                 )
-                outcomes.add(SectionOutcome(key, state, 0))
-                recordV51(key, "", 0, 0, -1)
             } catch (_: Exception) {
-                trace(key, "section_error", -1, -1, SectionStates.FAILED)
-                recordV51(key, "section_error", -1, -1, -1)
             }
+            trace(SyncSections.YEMEN, "section_error", -1, -1, SectionStates.FAILED)
+            recordV51(SyncSections.YEMEN, "section_error", -1, 0, -1)
+            SectionOutcome(SyncSections.YEMEN, SectionStates.FAILED, 0)
         }
-
-        // Legacy global metas, kept for the feed's last-sync line:
-        // v5 P4: last_sync_at advances when every REQUIRED
-        // section completed (up to date or fresh success) in this
-        // pass, regardless of optional sections. An optional
-        // failure leaves last_sync_at advancing and records no
-        // global "partial" — the failure lives on that section's
-        // own state, the P3 digest, and its section screen.
-        db.withTransaction {
-            dao.upsertMeta(MetaEntity("last_sync_attempt_at", now.toString()))
-            if (!anyRequiredIncomplete && onlySection == null) {
-                dao.upsertMeta(MetaEntity("last_sync_at", now.toString()))
-                dao.upsertMeta(MetaEntity("last_sync_error_code", ""))
-            } else if (onlySection == null) {
-                dao.upsertMeta(MetaEntity("last_sync_error_code", "partial"))
-            }
-        }
-
         // Invite re-check (M7 rule, unchanged): only a successfully
         // fetched list can re-lock, and cached rows are never deleted.
         if (inviteLists != null) {
@@ -1410,1507 +352,161 @@ class EdgeRepository(context: Context) {
                 trace("invite_gate", "invite_relock", -1, -1, "relocked")
             }
         }
-
-        val total = dao.allIds().size
-        if (onlySection != null) {
-            val only = outcomes.firstOrNull { it.key == onlySection }
-            return when (only?.state) {
-                SectionStates.UP_TO_DATE -> SyncResult.Ok(newKeys, total, outcomes)
-                SectionStates.PARTIAL -> SyncResult.Partial(newKeys, missingTotal, total, outcomes)
-                SectionStates.FAILED -> SyncResult.Failed(
-                    dao.metaValue(SyncSections.errorKey(onlySection)) ?: "network"
-                )
-                else -> SyncResult.Ok(newKeys, total, outcomes)
-            }
-        }
-        // v5 P4: the whole-sync result follows the same
-        // required-only rule as the clock. Optional failures are
-        // still visible per section (outcomes list, Diagnostics,
-        // P3 digest, section screens) — they just never turn a
-        // required-complete pass into a whole-sync Partial.
-        return if (anyRequiredIncomplete) {
-            SyncResult.Partial(newKeys, missingTotal, total, outcomes)
-        } else {
-            SyncResult.Ok(newKeys, total, outcomes)
+        val total = yemenDao.placeCount()
+        return when (yemenOutcome.state) {
+            SectionStates.UP_TO_DATE -> SyncResult.Ok(emptyList(), total, listOf(yemenOutcome))
+            SectionStates.PARTIAL -> SyncResult.Partial(
+                emptyList(), yemenOutcome.missingCount, total, listOf(yemenOutcome),
+            )
+            SectionStates.FAILED -> SyncResult.Failed(
+                dao.metaValue(SyncSections.errorKey(SyncSections.YEMEN)) ?: "network"
+            )
+            else -> SyncResult.Ok(emptyList(), total, listOf(yemenOutcome))
         }
     }
 
-    // ---- Phase 2 section sync (channel_typed, bundles, radar) ----
+    /** Yemen meta for the tab header (staleness, error code). */
+    suspend fun yemenMeta(): YemenMetaEntity? = yemenDao.meta()
 
-    private suspend fun syncChannelTypedSection(
-        base: String,
-        manifest: EdgeManifest,
-        forceRefresh: Boolean,
-        now: Long,
-        anomalies: AnomalyBag,
-        pollPath: String = "periodic_or_foreground",
-    ): SectionOutcome {
-        val key = SyncSections.CHANNEL_TYPED
-        val section = manifest.sections[key]
-            ?: return SectionOutcome(key, SectionStates.UNKNOWN, 0)
-        val storedHash = dao.metaValue(SyncSections.hashKey(key))
-        if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
-            recordSectionMeta(
-                key, SectionStates.UP_TO_DATE, "",
-                channelDao.channelCount(), 0, now, now, null,
+    // Diagnostics snapshot for the single remaining section.
+    // Hash values are never returned, only present/absent.
+    suspend fun sectionStates(): List<SectionSyncState> {
+        val key = SyncSections.YEMEN
+        return listOf(
+            SectionSyncState(
+                section = key,
+                state = dao.metaValue(SyncSections.stateKey(key)) ?: SectionStates.UNKNOWN,
+                lastSyncAt = dao.metaValue(SyncSections.lastSyncKey(key))?.toLongOrNull(),
+                lastAttemptAt = dao.metaValue(SyncSections.lastAttemptKey(key))?.toLongOrNull(),
+                lastErrorCode = dao.metaValue(SyncSections.errorKey(key)) ?: "",
+                itemCount = yemenDao.placeCount(),
+                hashPresent = !dao.metaValue(SyncSections.hashKey(key)).isNullOrBlank(),
+                missingCount = dao.metaValue(SyncSections.missingKey(key))?.toIntOrNull() ?: 0,
             )
-            // Held release is a time rule, not a new-content rule:
-            // an up-to-date section still releases items whose
-            // 08:00 has passed on a successful sync.
-            channelDao.releaseHeld(now)
-            trace(key, "", 0, 0, SectionStates.UP_TO_DATE)
-            return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
-        }
-        val existing = channelDao.allChannelItems().associateBy { it.appKey }
-        val storedHashes = existing.mapValues { it.value.contentHash }
-        val plan = DeltaPlanner.plan(
-            section.items, storedHashes, existing.keys, requiresFile = false,
-        )
-        val fresh = mutableListOf<ChannelItemEntity>()
-        var latestChain: EdgeChain? = null
-        val missingKeys = mutableListOf<String>()
-        if (plan.toFetch.isNotEmpty()) {
-            val text = when (val outcome = httpGetRetried("$base/${section.file ?: "channel_typed.json"}")) {
-                is HttpOutcome.Ok -> outcome.body
-                else -> null
-            }
-            if (text == null) {
-                missingKeys.addAll(plan.toFetch.map { it.appKey })
-            } else {
-                try {
-                    val arr = JSONObject(text).optJSONArray("items") ?: JSONArray()
-                    val byKey = mutableMapOf<String, JSONObject>()
-                    for (i in 0 until arr.length()) {
-                        try {
-                            val obj = arr.getJSONObject(i)
-                            val k = obj.optString("app_key")
-                            if (k.isNotBlank()) byKey[k] = obj
-                        } catch (_: Exception) {
-                            continue
-                        }
-                    }
-                    for (item in plan.toFetch) {
-                        val obj = byKey[item.appKey]
-                        if (obj == null) {
-                            missingKeys.add(item.appKey)
-                        } else {
-                            val parsed = ChannelParsers.parseChannelItem(
-                                obj, existing[item.appKey], now, anomalies,
-                            )
-                            if (parsed != null) {
-                                fresh.add(parsed)
-                                val chain = ChainRecord.parseEdgeChain(item.appKey, obj)
-                                if (chain != null) {
-                                    val prev = latestChain
-                                    if (prev == null ||
-                                        (chain.edgeGeneratedEpoch ?: 0L) >=
-                                            (prev.edgeGeneratedEpoch ?: 0L)
-                                    ) {
-                                        latestChain = chain
-                                    }
-                                }
-                            } else missingKeys.add(item.appKey)
-                        }
-                    }
-                } catch (_: Exception) {
-                    missingKeys.addAll(plan.toFetch.map { it.appKey })
-                }
-            }
-        }
-        val tombstoneRows = plan.tombstones.mapNotNull { item ->
-            existing[item.appKey]?.copy(status = "retracted", updatedAtEpoch = now)
-        }
-        val complete = missingKeys.isEmpty() && plan.corruptCount == 0
-        val missing = missingKeys.size + plan.corruptCount
-        db.withTransaction {
-            if (fresh.isNotEmpty()) channelDao.upsertChannelItems(fresh)
-            if (tombstoneRows.isNotEmpty()) channelDao.upsertChannelItems(tombstoneRows)
-            channelDao.releaseHeld(now)
-            recordSectionMeta(
-                key,
-                if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-                if (complete) "" else "partial",
-                channelDao.channelCount(),
-                missing, now,
-                if (complete) now else null,
-                if (complete) section.hash else null,
-            )
-        }
-        // Phase 3 chain record (spec 3.2): the latest chain-carrying
-        // item applied by this sync becomes the Diagnostics chain.
-        // app_manifest_seen_epoch is approximated by the sync start
-        // (the manifest is fetched first, at sync start); the
-        // applied epoch is the post-transaction instant. A
-        // re-sync of the same item keeps an already-recorded
-        // notification time (it is never re-stamped).
-        val chain = latestChain
-        if (chain != null && fresh.isNotEmpty()) {
-            val stored = ChainRecord.fromMetaJson(dao.metaValue(ChainRecord.META_KEY))
-            val notified = if (stored?.appKey == chain.appKey) {
-                stored.appNotifiedEpoch
-            } else {
-                null
-            }
-            dao.upsertMeta(
-                MetaEntity(
-                    ChainRecord.META_KEY,
-                    chain.copy(
-                        appManifestSeenEpoch = now / 1000,
-                        appItemAppliedEpoch = System.currentTimeMillis() / 1000,
-                        appNotifiedEpoch = notified,
-                        pollPath = pollPath,
-                    ).toMetaJson(),
-                )
-            )
-        }
-        trace(
-            key,
-            if (complete) "" else "partial",
-            fresh.size, missing,
-            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-        )
-        return SectionOutcome(
-            key,
-            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-            missing,
         )
     }
 
-    private suspend fun syncBundlesSection(
-        base: String,
-        manifest: EdgeManifest,
-        forceRefresh: Boolean,
-        now: Long,
-        anomalies: AnomalyBag,
-    ): SectionOutcome {
-        val key = SyncSections.BUNDLES
-        val section = manifest.sections[key]
-            ?: return SectionOutcome(key, SectionStates.UNKNOWN, 0)
-        // v5 P4 (A2 fix, nightly guard mirrored): an unpublished
-        // or gated section is an honest zero state, not a
-        // fetchable section — NO fetch is attempted, so the live
-        // bundles state (not_yet_published, count 0, no file,
-        // blank hash) can never produce a bundles.json 404 again.
-        // A published section with no file field violates the
-        // edge contract (fetchable ⇒ file exists); it also never
-        // fetches a guessed default — it fails as missing_file.
-        if (section.status == "not_yet_published" || section.status == "gated_frozen") {
-            recordSectionMeta(
-                key, SectionStates.NOT_YET_PUBLISHED, "", section.count, 0, now, null, null,
-            )
-            trace(key, "", 0, 0, SectionStates.NOT_YET_PUBLISHED)
-            return SectionOutcome(key, SectionStates.NOT_YET_PUBLISHED, 0)
-        }
-        if (section.file.isNullOrBlank()) {
-            recordSectionMeta(
-                key, SectionStates.FAILED, "missing_file",
-                null, 0, now, null, null,
-            )
-            trace(key, "missing_file", -1, -1, SectionStates.FAILED)
-            return SectionOutcome(key, SectionStates.FAILED, 0)
-        }
-        // v5 P4: a known 404 is never re-run without a changed
-        // manifest. The guard sits BEFORE the up-to-date check
-        // and ignores forceRefresh on purpose: a manual retry
-        // re-reads the manifest, and only a changed hash unlocks
-        // a new fetch. The section error stays "http_404" (so
-        // section screens keep their 404 reason line); the trace
-        // code says "http_404_unchanged" so Diagnostics proves
-        // the fetch was skipped rather than repeated.
-        val failedHash = dao.metaValue(SyncSections.failedHashKey(key))
-        if (!failedHash.isNullOrBlank() && failedHash == section.hash) {
-            recordSectionMeta(
-                key, SectionStates.FAILED, "http_404",
-                null, 0, now, null, null,
-            )
-            trace(key, "http_404_unchanged", -1, -1, SectionStates.FAILED)
-            return SectionOutcome(key, SectionStates.FAILED, 0)
-        }
-        val storedHash = dao.metaValue(SyncSections.hashKey(key))
-        if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
-            recordSectionMeta(
-                key, SectionStates.UP_TO_DATE, "",
-                channelDao.allBundles().size, 0, now, now, null,
-            )
-            trace(key, "", 0, 0, SectionStates.UP_TO_DATE)
-            return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
-        }
-        val bundleOutcome = httpGetRetried("$base/${section.file ?: "bundles.json"}")
-        val text = when (bundleOutcome) {
-            is HttpOutcome.Ok -> bundleOutcome.body
-            else -> null
-        }
-        if (text == null) {
-            recordSectionMeta(
-                key, SectionStates.FAILED, bundleOutcome.toFailedCode(),
-                null, 0, now, null, null,
-            )
-            // A 404 pins the manifest hash; any other failure
-            // leaves the previous pin untouched (it is inert once
-            // the hash differs, and a success clears it below).
-            if (bundleOutcome is HttpOutcome.HttpError && bundleOutcome.status == 404 &&
-                section.hash.isNotBlank()
-            ) {
-                dao.upsertMeta(
-                    MetaEntity(SyncSections.failedHashKey(key), section.hash)
-                )
-            }
-            trace(key, bundleOutcome.toFailedCode(), -1, -1, SectionStates.FAILED)
-            return SectionOutcome(key, SectionStates.FAILED, 0)
-        }
-        val parsed = mutableListOf<BundleEntity>()
-        var corrupt = 0
-        try {
-            val arr = JSONObject(text).optJSONArray("bundles") ?: JSONArray()
-            for (i in 0 until arr.length()) {
-                try {
-                    val bundle = ChannelParsers.parseBundle(arr.getJSONObject(i), anomalies)
-                    if (bundle != null) parsed.add(bundle)
-                } catch (_: Exception) {
-                    corrupt++
-                }
-            }
-        } catch (_: Exception) {
-            recordSectionMeta(key, SectionStates.FAILED, "bad_section", null, 0, now, null, null)
-            trace(key, "bad_section", -1, -1, SectionStates.FAILED)
-            return SectionOutcome(key, SectionStates.FAILED, 0)
-        }
-        val complete = corrupt == 0
-        db.withTransaction {
-            if (parsed.isNotEmpty()) channelDao.upsertBundles(parsed)
-            // v5 P4: a successful fetch clears any known-404 pin
-            // for this section, so the next manifest state is
-            // judged on its own hash.
-            if (complete) {
-                dao.upsertMeta(MetaEntity(SyncSections.failedHashKey(key), ""))
-            }
-            recordSectionMeta(
-                key,
-                if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-                if (complete) "" else "partial",
-                channelDao.allBundles().size,
-                corrupt, now,
-                if (complete) now else null,
-                if (complete) section.hash else null,
-            )
-        }
-        trace(
-            key,
-            if (complete) "" else "partial",
-            parsed.size, corrupt,
-            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-        )
-        return SectionOutcome(
-            key,
-            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-            corrupt,
-        )
-    }
+    // ---- v5.2 Yemen section sync (audit §4.3) ----
+    //
+    // Manifest-gated single-file section: if sections.yemen.hash
+    // equals the stored hash, zero fetch. Otherwise one fetch of
+    // yemen.json, applied in ONE transaction; the hash is stored
+    // only after that transaction succeeds. Control changes are
+    // detected by comparing each place's faction with the stored
+    // row before the replace. A failure never empties the cache
+    // and records a fixed error code in yemen_meta + the section
+    // meta, so the tab can show an honest staleness line.
 
-    private suspend fun syncRadarSection(
-        base: String,
-        manifest: EdgeManifest,
-        forceRefresh: Boolean,
-        now: Long,
-        anomalies: AnomalyBag,
-    ): SectionOutcome {
-        val key = SyncSections.RADAR
-        val section = manifest.sections[key]
-            ?: return SectionOutcome(key, SectionStates.UNKNOWN, 0)
-        // v5 P4 (A2 fix, nightly guard mirrored — same shape as
-        // bundles): unpublished/gated ⇒ no fetch, ever; a
-        // published section with no file ⇒ missing_file, never a
-        // guessed radar.json fetch; a known 404 with an unchanged
-        // manifest hash ⇒ skipped fetch (trace code
-        // "http_404_unchanged", section error stays "http_404").
-        if (section.status == "not_yet_published" || section.status == "gated_frozen") {
-            recordSectionMeta(
-                key, SectionStates.NOT_YET_PUBLISHED, "", section.count, 0, now, null, null,
-            )
-            trace(key, "", 0, 0, SectionStates.NOT_YET_PUBLISHED)
-            return SectionOutcome(key, SectionStates.NOT_YET_PUBLISHED, 0)
-        }
-        if (section.file.isNullOrBlank()) {
-            recordSectionMeta(
-                key, SectionStates.FAILED, "missing_file",
-                null, 0, now, null, null,
-            )
-            trace(key, "missing_file", -1, -1, SectionStates.FAILED)
-            return SectionOutcome(key, SectionStates.FAILED, 0)
-        }
-        val failedHash = dao.metaValue(SyncSections.failedHashKey(key))
-        if (!failedHash.isNullOrBlank() && failedHash == section.hash) {
-            recordSectionMeta(
-                key, SectionStates.FAILED, "http_404",
-                null, 0, now, null, null,
-            )
-            trace(key, "http_404_unchanged", -1, -1, SectionStates.FAILED)
-            return SectionOutcome(key, SectionStates.FAILED, 0)
-        }
-        val storedHash = dao.metaValue(SyncSections.hashKey(key))
-        if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
-            recordSectionMeta(
-                key, SectionStates.UP_TO_DATE, "",
-                channelDao.radarCount(), 0, now, now, null,
-            )
-            trace(key, "", 0, 0, SectionStates.UP_TO_DATE)
-            return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
-        }
-        val radarOutcome = httpGetRetried("$base/${section.file ?: "radar.json"}")
-        val text = when (radarOutcome) {
-            is HttpOutcome.Ok -> radarOutcome.body
-            else -> null
-        }
-        if (text == null) {
-            recordSectionMeta(
-                key, SectionStates.FAILED, radarOutcome.toFailedCode(),
-                null, 0, now, null, null,
-            )
-            if (radarOutcome is HttpOutcome.HttpError && radarOutcome.status == 404 &&
-                section.hash.isNotBlank()
-            ) {
-                dao.upsertMeta(
-                    MetaEntity(SyncSections.failedHashKey(key), section.hash)
-                )
-            }
-            trace(key, radarOutcome.toFailedCode(), -1, -1, SectionStates.FAILED)
-            return SectionOutcome(key, SectionStates.FAILED, 0)
-        }
-        val parsed = mutableListOf<RadarSignalEntity>()
-        var corrupt = 0
-        var interval: Int? = null
-        try {
-            val root = JSONObject(text)
-            val warRoom = root.optJSONObject("war_room")
-            if (warRoom != null) {
-                dao.upsertMeta(MetaEntity("p2_war_level", warRoom.optString("crisis_level")))
-                dao.upsertMeta(MetaEntity("p2_war_why", warRoom.optString("why_level")))
-                interval = if (warRoom.isNull("radar_interval_minutes")) {
-                    null
-                } else {
-                    warRoom.optInt("radar_interval_minutes")
-                }
-                dao.upsertMeta(
-                    MetaEntity("p2_radar_interval", interval?.toString() ?: "")
-                )
-            } else {
-                dao.upsertMeta(MetaEntity("p2_war_level", ""))
-                dao.upsertMeta(MetaEntity("p2_war_why", ""))
-                dao.upsertMeta(MetaEntity("p2_radar_interval", ""))
-            }
-            val arr = root.optJSONArray("signals") ?: JSONArray()
-            for (i in 0 until arr.length()) {
-                try {
-                    val signal = ChannelParsers.parseRadarSignal(arr.getJSONObject(i), anomalies)
-                    if (signal != null) parsed.add(signal)
-                } catch (_: Exception) {
-                    corrupt++
-                }
-            }
-        } catch (_: Exception) {
-            recordSectionMeta(key, SectionStates.FAILED, "bad_section", null, 0, now, null, null)
-            trace(key, "bad_section", -1, -1, SectionStates.FAILED)
-            return SectionOutcome(key, SectionStates.FAILED, 0)
-        }
-        if (interval == null) {
-            anomalies.add(Phase2Anomalies.RADAR_INTERVAL_MISSING)
-        }
-        val complete = corrupt == 0
-        db.withTransaction {
-            if (parsed.isNotEmpty()) channelDao.upsertRadarSignals(parsed)
-            // v5 P4: a successful fetch clears any known-404 pin,
-            // same as bundles above.
-            if (complete) {
-                dao.upsertMeta(MetaEntity(SyncSections.failedHashKey(key), ""))
-            }
-            recordSectionMeta(
-                key,
-                if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-                if (complete) "" else "partial",
-                channelDao.radarCount(),
-                corrupt, now,
-                if (complete) now else null,
-                if (complete) section.hash else null,
-            )
-        }
-        trace(
-            key,
-            if (complete) "" else "partial",
-            parsed.size, corrupt,
-            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-        )
-        return SectionOutcome(
-            key,
-            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-            corrupt,
-        )
-    }
-
-    // ---- Phase 5 nightly section sync + notification producer ----
-
-    private suspend fun syncNightlySection(
+    private suspend fun syncYemenSection(
         base: String,
         manifest: EdgeManifest,
         forceRefresh: Boolean,
         now: Long,
     ): SectionOutcome {
-        val key = SyncSections.NIGHTLY
+        val key = SyncSections.YEMEN
         val section = manifest.sections[key]
-            ?: return SectionOutcome(key, SectionStates.UNKNOWN, 0)
-        // A manifest that still reports nightly as not_yet_published
-        // or gated (the live edge during the freeze) is an honest
-        // zero state, not a fetchable section — no fetch attempted.
-        if (section.status == "not_yet_published" || section.status == "gated_frozen") {
-            recordSectionMeta(key, SectionStates.NOT_YET_PUBLISHED, "", section.count, 0, now, null, null)
-            trace(key, "", 0, 0, SectionStates.NOT_YET_PUBLISHED)
-            return SectionOutcome(key, SectionStates.NOT_YET_PUBLISHED, 0)
+        if (section == null) {
+            recordSectionMeta(key, SectionStates.UNKNOWN, "no_section", null, 0, now, null, null)
+            trace(key, "no_section", -1, -1, SectionStates.UNKNOWN)
+            recordV51(key, "no_section", -1, -1, -1)
+            return SectionOutcome(key, SectionStates.UNKNOWN, 0)
         }
-        val storedHash = dao.metaValue(SyncSections.hashKey(key))
-        if (DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh)) {
-            recordSectionMeta(
-                key, SectionStates.UP_TO_DATE, "",
-                nightlyDao.latestEditionCount(), 0, now, now, null,
-            )
-            pruneNightlyEditions()
+        val storedMeta = yemenDao.meta()
+        val storedHash = storedMeta?.yemenHash
+            ?: dao.metaValue(SyncSections.hashKey(key))
+        val placeCount = yemenDao.placeCount()
+        val hashUpToDate = DeltaPlanner.isUpToDate(storedHash, section.hash, forceRefresh) &&
+            !(placeCount == 0 && section.count > 0)
+        if (hashUpToDate) {
+            recordSectionMeta(key, SectionStates.UP_TO_DATE, "", placeCount, 0, now, now, null)
             trace(key, "", 0, 0, SectionStates.UP_TO_DATE)
+            recordV51(key, "", 0, 0, -1)
             return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
         }
-        val indexOutcome = httpGetRetried("$base/${section.file ?: "nightly.json"}")
-        val indexText = when (indexOutcome) {
-            is HttpOutcome.Ok -> indexOutcome.body
-            else -> null
-        }
-        if (indexText == null) {
-            recordSectionMeta(key, SectionStates.FAILED, indexOutcome.toFailedCode(), null, 0, now, null, null)
-            trace(key, indexOutcome.toFailedCode(), -1, -1, SectionStates.FAILED)
-            return SectionOutcome(key, SectionStates.FAILED, 0)
-        }
-        // Stored content hashes are per edition_id (manifest item
-        // app_key = edition_id for nightly items).
-        val storedByEdition = mutableMapOf<String, String?>()
-        val bookmarkedByEdition = mutableMapOf<String, Boolean>()
-        for (row in nightlyDao.latestEditionsFlow().first()) {
-            storedByEdition[row.editionId] = row.contentHash
-            bookmarkedByEdition[row.editionId] = row.bookmarked
-        }
-        val toFetch = mutableListOf<ManifestItem>()
-        val retracted = mutableListOf<ManifestItem>()
-        var corrupt = 0
-        for (item in section.items) {
-            if (item.status == "retracted") {
-                if (item.appKey in storedByEdition) retracted.add(item)
-                continue
-            }
-            val stored = storedByEdition[item.appKey]
-            if (stored != null && item.contentHash != null && stored == item.contentHash) continue
-            if (item.file == null) {
-                corrupt++
-                continue
-            }
-            toFetch.add(item)
-        }
-        val parsedEditions = mutableListOf<NightlyEditionParsed>()
-        for (item in toFetch) {
-            val text = when (val outcome = httpGet("$base/${item.file}")) {
-                is HttpOutcome.Ok -> outcome.body
-                else -> null
-            }
-            if (text == null) {
-                corrupt++
-                continue
-            }
-            val parsed = try {
-                NightlyParsing.parseEdition(JSONObject(text))
-            } catch (_: Exception) {
-                null
-            }
-            if (parsed == null) {
-                // Corrupt edition: counted, skipped, rest of the
-                // section still applies (Phase 1 corrupt rule).
-                corrupt++
-            } else {
-                parsedEditions.add(parsed)
-            }
-        }
-        val dossiers = mutableListOf<DossierEntity>()
-        try {
-            val root = JSONObject(indexText)
-            val arr = root.optJSONArray("dossiers") ?: JSONArray()
-            for (i in 0 until arr.length()) {
-                val obj = try {
-                    arr.getJSONObject(i)
-                } catch (_: Exception) {
-                    continue
-                }
-                val triple = NightlyParsing.parseDossier(obj) ?: continue
-                dossiers.add(
-                    DossierEntity(
-                        dossierId = triple.first,
-                        topicTitleFa = triple.second,
-                        storyIdsJson = obj.optJSONArray("story_ids")?.toString() ?: "[]",
-                        firstSeenTehran = obj.optString("first_seen_tehran"),
-                        lastUpdatedTehran = obj.optString("last_updated_tehran"),
-                        summary = obj.optString("summary"),
-                        editionIdsJson = obj.optJSONArray("edition_ids")?.toString() ?: "[]",
-                    )
-                )
-            }
-        } catch (_: Exception) {
-            // A corrupt index dossiers block degrades dossiers
-            // only; editions parsed above still apply.
-            corrupt++
-        }
-        val complete = corrupt == 0
-        db.withTransaction {
-            if (dossiers.isNotEmpty()) {
-                for (d in dossiers) nightlyDao.upsertDossier(d)
-            }
-            for (parsed in parsedEditions) {
-                val wasBookmarked = bookmarkedByEdition[parsed.editionId] ?: false
-                nightlyDao.demoteOlderVersions(parsed.editionId, parsed.version)
-                nightlyDao.upsertEdition(
-                    NightlyEditionEntity(
-                        editionId = parsed.editionId,
-                        version = parsed.version,
-                        shamsiDate = parsed.shamsiDate,
-                        tehranDate = parsed.tehranDate,
-                        status = parsed.status,
-                        generatedAtTehran = parsed.generatedAtTehran,
-                        publishedAtTehran = parsed.publishedAtTehran,
-                        cutTehran = parsed.cutTehran,
-                        contentHash = parsed.contentHash,
-                        articlesState = parsed.articlesState,
-                        articlesJson = parsed.articlesJson,
-                        marketCloseState = parsed.marketCloseState,
-                        marketCloseJson = parsed.marketCloseJson,
-                        digestsState = parsed.digestsState,
-                        digestsJson = parsed.digestsJson,
-                        analysisState = parsed.analysisState,
-                        analysisJson = parsed.analysisJson,
-                        specialIssuesState = parsed.specialIssuesState,
-                        correctionsState = parsed.correctionsState,
-                        correctionsJson = parsed.correctionsJson,
-                        dossierLinksJson = parsed.dossierLinksJson,
-                        isLatest = true,
-                        bookmarked = wasBookmarked,
-                        cachedAt = now,
-                    )
-                )
-                nightlyDao.deleteItemsForEdition(parsed.editionId)
-                nightlyDao.upsertItems(
-                    parsed.items.map { item ->
-                        NightlyItemEntity(
-                            editionKey = item.editionKey,
-                            editionId = parsed.editionId,
-                            version = parsed.version,
-                            storyId = item.storyId,
-                            appKey = item.appKey,
-                            kind = item.kind,
-                            title = item.title,
-                            body = item.body,
-                            wordCount = item.wordCount,
-                            freshness = item.freshness,
-                            sourceName = item.sourceName,
-                            sourceUrl = item.sourceUrl,
-                            verbatimBadge = item.verbatimBadge,
-                            formatType = item.formatType,
-                            crisisLevel = item.crisisLevel,
-                            category = item.category,
-                            categoryFa = item.categoryFa,
-                            slot = item.slot,
-                            bundleId = item.bundleId,
-                            position = item.position,
-                        )
-                    }
-                )
-            }
-            for (item in retracted) {
-                nightlyDao.retractEdition(item.appKey)
-                nightlyDao.deleteItemsForEdition(item.appKey)
-            }
-            recordSectionMeta(
-                key,
-                if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-                if (complete) "" else "partial",
-                nightlyDao.latestEditionCount(),
-                corrupt, now,
-                if (complete) now else null,
-                if (complete) section.hash else null,
-            )
-        }
-        pruneNightlyEditions()
-        trace(
-            key,
-            if (complete) "" else "partial",
-            parsedEditions.size, corrupt,
-            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-        )
-        return SectionOutcome(
-            key,
-            if (complete) SectionStates.UP_TO_DATE else SectionStates.PARTIAL,
-            corrupt,
-        )
-    }
-
-    /** 30-edition archive prune (spec §5.13): bookmarked
-     * editions never pruned; pruning is by edition date, oldest
-     * first, never by size surprise. */
-    private suspend fun pruneNightlyEditions() {
-        for (editionId in nightlyDao.prunableEditionIds()) {
-            nightlyDao.deleteItemsForEdition(editionId)
-            nightlyDao.deleteEdition(editionId)
-        }
-    }
-
-    /**
-     * Phase 5 nightly notification producer (spec §5.15). It wires
-     * through Phase 4's NotificationPolicy.decide for NIGHTLY and
-     * NEVER re-implements timing: night (00:00–08:00) and quiet
-     * hours both defer to the first sync at/after max(08:00,
-     * quiet-hours end) — polling reality, same as the Phase 4
-     * deferred summary (the app cannot wake itself exactly at
-     * 08:00). NOTE on the policy's defer flag: decide() returns
-     * deferToSummary=false for night-suppressed non-urgent types;
-     * the producer still defers via its own pending set (below),
-     * because §5.15 requires a deferred nightly notification, not
-     * a dropped one — the timing rule is honoured, the flag is
-     * not the mechanism. A corrected version 2 does NOT re-notify
-     * as new: the notified set is keyed by edition_id, so the
-     * first version's notification suppresses later versions
-     * (the correction is visible on the edition page itself).
-     * A failed nightly sync produces nothing here: the guard
-     * below returns early when the section state is FAILED, so
-     * no notification can announce an edition the app does not
-     * have (P5-4). The EDITION itself is always in-app on sync
-     * regardless of notification timing — only the interruption
-     * is deferred. Default channel (eco_articles), never urgent.
-     */
-    private suspend fun dispatchNightlyNotifications(now: Long) {
-        if (dao.metaValue(SyncSections.stateKey(SyncSections.NIGHTLY)) == SectionStates.FAILED) {
-            return
-        }
-        val prefs = settings.settings.first().toNotificationPrefs()
-        val pending = readMetaStringSet("p5_pending_nightly").toMutableSet()
-        val notified = readMetaStringSet("p5_notified_nightly").toMutableSet()
-        val pendingSince = dao.metaValue("p5_pending_since")?.toLongOrNull()
-        // Flush pending editions first (one notification each —
-        // a nightly notification is per edition, not a summary).
-        val flushed = mutableSetOf<String>()
-        for (editionId in pending.toList()) {
-            val edition = nightlyDao.latestEditionById(editionId)
-            if (edition == null || edition.status == "retracted") {
-                flushed.add(editionId)
-                continue
-            }
-            val decision = NotificationPolicy.decide(prefs, NotificationType.NIGHTLY, now)
-            if (decision.fire) {
-                Notifications.showNightly(appContext, edition.editionId, edition.shamsiDate)
-                recordNotificationHistory(
-                    NotificationType.NIGHTLY, edition.shamsiDate, edition.editionId, now,
-                    pendingSince, null,
-                )
-                notified.add(editionId)
-                flushed.add(editionId)
-            } else if (decision.suppressedReason == SuppressedReason.TOGGLE_OFF ||
-                decision.suppressedReason == SuppressedReason.MASTER_OFF
-            ) {
-                // Suppressed by choice: marked, never a retro
-                // burst when toggled back on (Phase 4 rule).
-                recordNotificationHistory(
-                    NotificationType.NIGHTLY, edition.shamsiDate, edition.editionId, now,
-                    pendingSince, decision.suppressedReason,
-                )
-                notified.add(editionId)
-                flushed.add(editionId)
-            }
-            // Night/quiet suppression keeps the edition pending.
-        }
-        pending.removeAll(flushed)
-        // New editions: first successful sync after publication.
-        val latest = nightlyDao.latestEditionsFlow().first()
-        for (edition in latest) {
-            if (edition.editionId in notified || edition.editionId in pending) continue
-            val decision = NotificationPolicy.decide(prefs, NotificationType.NIGHTLY, now)
-            if (decision.fire) {
-                Notifications.showNightly(appContext, edition.editionId, edition.shamsiDate)
-                recordNotificationHistory(
-                    NotificationType.NIGHTLY, edition.shamsiDate, edition.editionId, now,
-                    null, null,
-                )
-                notified.add(edition.editionId)
-            } else if (decision.suppressedReason == SuppressedReason.NIGHT_LAW ||
-                decision.suppressedReason == SuppressedReason.QUIET_HOURS
-            ) {
-                recordNotificationHistory(
-                    NotificationType.NIGHTLY, edition.shamsiDate, edition.editionId, now,
-                    now, decision.suppressedReason,
-                )
-                if (pending.isEmpty()) {
-                    dao.upsertMeta(MetaEntity("p5_pending_since", now.toString()))
-                }
-                pending.add(edition.editionId)
-            } else {
-                recordNotificationHistory(
-                    NotificationType.NIGHTLY, edition.shamsiDate, edition.editionId, now,
-                    null, decision.suppressedReason,
-                )
-                notified.add(edition.editionId)
-            }
-        }
-        if (pending.isEmpty()) {
-            dao.upsertMeta(MetaEntity("p5_pending_since", ""))
-        }
-        writeMetaStringSet("p5_pending_nightly", pending)
-        writeMetaStringSet("p5_notified_nightly", notified)
-    }
-
-    // ---- Phase 2 Diagnostics data (counts only, never content) ----
-
-    private fun latinDigits(raw: String): String = buildString {
-        for (c in raw) {
-            append(
-                when (c) {
-                    in '۰'..'۹' -> ('0' + (c - '۰'))
-                    in '٠'..'٩' -> ('0' + (c - '٠'))
-                    else -> c
-                }
-            )
-        }
-    }
-
-    /** Computed codes are overwritten for today; parse codes accumulate. */
-    private suspend fun persistPhase2Anomalies(
-        now: Long,
-        accumulated: AnomalyBag,
-        computed: Map<String, Int>,
-    ) {
-        val dayKey = Jalali.shamsiDayKey(now)
-        val metaKey = "p2_anomalies_$dayKey"
-        val existing = try {
-            val obj = JSONObject(dao.metaValue(metaKey) ?: "{}")
-            val map = mutableMapOf<String, Int>()
-            for (k in obj.keys()) map[k] = obj.optInt(k)
-            map
-        } catch (_: Exception) {
-            mutableMapOf()
-        }
-        for ((code, n) in accumulated.counts) {
-            existing[code] = (existing[code] ?: 0) + n
-        }
-        for ((code, n) in computed) {
-            existing[code] = n
-        }
-        val out = JSONObject()
-        for ((code, n) in existing) out.put(code, n)
-        dao.upsertMeta(MetaEntity(metaKey, out.toString()))
-    }
-
-    private suspend fun computePhase2Computed(now: Long): Map<String, Int> {
-        val dayKey = Jalali.shamsiDayKey(now)
-        val (start, end) = Jalali.tehranDayRangeEpoch(now)
-        val items = channelDao.allChannelItems().filter {
-            it.status != "retracted" && it.publishedAtEpoch in start until end
-        }
-        val computed = mutableMapOf<String, Int>()
-        var excess = 0
-        for ((format, list) in items.groupBy { it.formatType }) {
-            val cap = Formats.ALL[format]?.dailyCap
-            if (cap != null && list.size > cap) excess += list.size - cap
-        }
-        computed[Phase2Anomalies.FORMAT_OVER_CAP] = excess
-        val flashCount = items.count { it.formatType == "FLASH" }
-        computed[Phase2Anomalies.FLASH_CAP_HIT] =
-            if (flashCount >= 999) 1 else 0
-        val bundles = channelDao.allBundles().filter {
-            it.status != "retracted" && latinDigits(it.bundleDateShamsi) == dayKey
-        }
-        val byKind = bundles.groupBy { it.kind }
-        val shortNews = byKind[BundleKinds.SHORT_NEWS] ?: emptyList()
-        computed[Phase2Anomalies.SHORT_NEWS_TWICE] =
-            if (shortNews.size > 1) shortNews.size - 1 else 0
-        computed[Phase2Anomalies.SHORT_NEWS_SMALL] =
-            shortNews.count { it.memberAppKeys.size < 3 }
-        val morning = byKind[BundleKinds.MORNING_BUNDLE] ?: emptyList()
-        computed[Phase2Anomalies.MORNING_BUNDLE_TWICE] =
-            if (morning.size > 1) morning.size - 1 else 0
-        computed[Phase2Anomalies.NIGHT_DESK_RANGE] =
-            (byKind[BundleKinds.NIGHT_DESK] ?: emptyList())
-                .count { it.memberAppKeys.size !in 12..30 }
-        val allItems = channelDao.allChannelItems().associateBy { it.appKey }
-        var mismatch = 0
-        for (bundle in bundles) {
-            var bad = false
-            for ((index, memberKey) in bundle.memberAppKeys.withIndex()) {
-                val item = allItems[memberKey]
-                if (item != null && item.bundlePosition != null &&
-                    item.bundlePosition != index + 1
-                ) {
-                    bad = true
-                    break
-                }
-            }
-            if (bad) mismatch++
-        }
-        computed[Phase2Anomalies.BUNDLE_POSITION_MISMATCH] = mismatch
-        return computed
-    }
-
-    /** Today's Phase 2 anomaly counts (non-zero lines only, in UI). */
-    suspend fun anomalyCountsToday(): Map<String, Int> {
-        val dayKey = Jalali.shamsiDayKey(System.currentTimeMillis())
-        return try {
-            val obj = JSONObject(dao.metaValue("p2_anomalies_$dayKey") ?: "{}")
-            val map = mutableMapOf<String, Int>()
-            for (k in obj.keys()) {
-                val n = obj.optInt(k)
-                if (n > 0) map[k] = n
-            }
-            map
-        } catch (_: Exception) {
-            emptyMap()
-        }
-    }
-
-    /** Per-format counts for today (Tehran day) against daily caps. */
-    suspend fun formatCountsToday(): Map<String, Int> {
-        val now = System.currentTimeMillis()
-        val (start, end) = Jalali.tehranDayRangeEpoch(now)
-        return channelDao.allChannelItems()
-            .filter { it.status != "retracted" && it.publishedAtEpoch in start until end }
-            .groupingBy { it.formatType }
-            .eachCount()
-    }
-
-    /** War Room header fields shipped by the edge, if any. */
-    suspend fun warRoomMeta(): Triple<String?, String?, Int?> {
-        val level = dao.metaValue("p2_war_level")?.takeIf { it.isNotBlank() }
-        val why = dao.metaValue("p2_war_why")?.takeIf { it.isNotBlank() }
-        val interval = dao.metaValue("p2_radar_interval")?.toIntOrNull()
-        return Triple(level, why, interval)
-    }
-
-    private suspend fun readMetaStringSet(key: String): Set<String> {
-        return try {
-            val arr = JSONArray(dao.metaValue(key) ?: "[]")
-            (0 until arr.length()).mapNotNull {
-                arr.optString(it).takeIf { s -> s.isNotBlank() }
-            }.toSet()
-        } catch (_: Exception) {
-            emptySet()
-        }
-    }
-
-    private suspend fun writeMetaStringSet(key: String, values: Set<String>) {
-        dao.upsertMeta(MetaEntity(key, JSONArray(values.toList()).toString()))
-    }
-
-    suspend fun markBundleOpened(bundleId: String) {
-        val opened = readMetaStringSet("p2_opened_bundles") + bundleId
-        writeMetaStringSet("p2_opened_bundles", opened)
-    }
-
-    /**
-     * Phase 2 notification dispatch, full syncs only. Urgent:
-     * one notification per newly synced INSTANT item, deduped by
-     * the stored notified flag — re-syncs never re-notify, and
-     * an item that arrived while the toggle was off is marked
-     * notified without firing (no retro-notification on toggle).
-     * Morning Bundle: exactly one default-channel notification
-     * per bundle, never before 08:00 Tehran, suppressed when the
-     * bundle was already opened (spec 9.5).
-     */
-    /**
-     * Phase 3: stamp app_notified_epoch on the stored chain when
-     * its item actually fires an urgent notification. Items that
-     * arrive while the toggle is off are marked notified without
-     * firing, so their chain keeps app_notified_epoch null (no
-     * notification was due/fired -- a valid value, not a missing
-     * measurement, per spec 3.1).
-     */
-    private suspend fun markChainNotified(appKey: String, now: Long) {
-        val stored = ChainRecord.fromMetaJson(dao.metaValue(ChainRecord.META_KEY))
-            ?: return
-        if (stored.appKey != appKey || stored.appNotifiedEpoch != null) return
-        dao.upsertMeta(
-            MetaEntity(
-                ChainRecord.META_KEY,
-                stored.copy(appNotifiedEpoch = now / 1000).toMetaJson(),
-            )
-        )
-    }
-
-    // ---- Phase 4: thresholds, alert evaluation, dispatcher ----
-
-    /** Edge thresholds as last stored by a market sync; null = OFF. */
-    suspend fun marketThresholds(): MarketThresholds {
-        val bubble = dao.metaValue("p4_market_alerts_bubble")
-            ?.takeIf { it.isNotBlank() }?.toDoubleOrNull()
-        val spread = dao.metaValue("p4_market_alerts_spread")
-            ?.takeIf { it.isNotBlank() }?.toDoubleOrNull()
-        return MarketThresholds(bubble, spread)
-    }
-
-    suspend fun dismissedBannerSnapshot(metric: AlertMetric): String? {
-        val key = if (metric == AlertMetric.BUBBLE) {
-            "p4_banner_dismissed_bubble"
-        } else {
-            "p4_banner_dismissed_spread"
-        }
-        return dao.metaValue(key)?.takeIf { it.isNotBlank() }
-    }
-
-    suspend fun dismissMarketBanner(metric: AlertMetric, snapshotId: String) {
-        val key = if (metric == AlertMetric.BUBBLE) {
-            "p4_banner_dismissed_bubble"
-        } else {
-            "p4_banner_dismissed_spread"
-        }
-        dao.upsertMeta(MetaEntity(key, snapshotId))
-    }
-
-    private suspend fun recordNotificationHistory(
-        type: NotificationType,
-        title: String,
-        targetKey: String?,
-        now: Long,
-        deferredFromEpoch: Long?,
-        suppressedReason: SuppressedReason?,
-    ) {
-        phase4Dao.insertNotificationHistory(
-            NotificationHistoryEntity(
-                type = type.key,
-                title = title,
-                targetKey = targetKey,
-                firedAtEpoch = now,
-                deferredFromEpoch = deferredFromEpoch,
-                suppressedReason = suppressedReason?.key,
-            )
-        )
-        // Spec §4.1 prune: newest 200 rows or 90 days, whichever
-        // is smaller (both applied; the smaller set survives).
-        phase4Dao.pruneNotificationHistoryTo200()
-        phase4Dao.pruneNotificationHistoryOlderThan(now - 90L * 24L * 60L * 60L * 1000L)
-    }
-
-    /** Phase 4 Diagnostics data (counts only, never content). */
-    suspend fun radarCounts(): Triple<Int, Int, Int> {
-        val all = channelDao.allRadar().filter { it.status != "retracted" }
-        return Triple(
-            all.size,
-            all.count { it.status == "active" },
-            all.count { it.status == "resolved" },
-        )
-    }
-
-    suspend fun notificationStatsToday(): Pair<Map<String, Int>, Map<String, Int>> {
-        val (start, _) = Jalali.tehranDayRangeEpoch(System.currentTimeMillis())
-        val fired = phase4Dao.firedCountsByTypeSince(start)
-            .associate { it.type to it.count }
-        val suppressed = phase4Dao.suppressedCountsByReasonSince(start)
-            .associate { it.suppressedReason to it.count }
-        return fired to suppressed
-    }
-
-    /**
-     * Phase 4 market-alert evaluation (§4.6). Runs on every
-     * market-section sync completion (see the market block) and
-     * therefore on manual market refresh too. No separate alert
-     * poll, no push; alert latency = sync latency.
-     *
-     * Banner state itself is NOT stored: the Market tab derives
-     * it from the latest snapshot + thresholds on every render,
-     * so a banner can never outlive the snapshot it describes.
-     * Event rows ARE stored (one per metric per snapshot): with
-     * notified = 1 only when a notification was actually posted
-     * — the cooldown timestamp is written only in that same
-     * branch, so a failed/suppressed post never consumes the
-     * cooldown (the channel code's defect, not copied).
-     */
-    private suspend fun evaluateMarketAlerts(now: Long) {
-        val thresholds = marketThresholds()
-        if (!thresholds.anySet) return
-        val latestEntity = dao.marketLatest() ?: return
-        val latest = ArticleParsers.marketSnapshotFromEntity(latestEntity)
-        val previous = dao.marketPrevious(latestEntity.tsEpoch)?.let {
-            ArticleParsers.marketSnapshotFromEntity(it)
-        }
-        val formulas = dao.formulas().map {
-            MarketFormula(
-                name = it.name,
-                version = it.version,
-                definition = it.definition,
-                inputs = it.inputs,
-                descriptionFa = it.descriptionFa,
-            )
-        }
-        val currentSettings = settings.settings.first()
-        val prefs = currentSettings.toNotificationPrefs()
-        val lastBubble = currentSettings.marketAlertLastBubbleMs
-        val lastSpread = currentSettings.marketAlertLastSpreadMs
-        val evals = MarketAlerts.evaluateAll(
-            latest, previous, formulas, thresholds,
-            lastBubble, lastSpread, now,
-        )
-        for ((metric, ev) in evals) {
-            if (!ev.bannerOn || ev.value == null || ev.threshold == null) continue
-            val decision = NotificationPolicy.decide(
-                prefs, NotificationType.MARKET_ALERTS, now,
-                cooldownOk = ev.cooldownOk,
-            )
-            var posted = false
-            if (ev.shouldNotify && decision.fire) {
-                val label = if (metric == AlertMetric.BUBBLE) {
-                    "حباب سکه"
-                } else {
-                    "اسپرد تتر/دلار"
-                }
-                val valueFa = com.ecojournal.app.util.formatPersianDouble(ev.value, 1)
-                val thrFa = com.ecojournal.app.util.formatPersianDouble(ev.threshold, 1)
-                Notifications.showMarketAlert(
-                    appContext,
-                    metric = if (metric == AlertMetric.BUBBLE) "bubble" else "spread",
-                    snapshotId = latest.snapshotId,
-                    title = "🔔 هشدار بازار: $label",
-                    text = "$label به $valueFa٪ رسید (آستانه: $thrFa٪) — ${latest.tsTehran}",
-                )
-                settings.setMarketAlertLastNotified(metric, now)
-                posted = true
-                recordNotificationHistory(
-                    NotificationType.MARKET_ALERTS, "هشدار بازار: $label",
-                    latest.snapshotId, now, null, null,
-                )
-            } else if (ev.shouldNotify && !decision.fire) {
-                // A fresh crossing that was suppressed is a
-                // diagnosable candidate (first failing check).
-                // A merely-above-threshold snapshot with no fresh
-                // crossing is NOT a candidate and records nothing.
-                recordNotificationHistory(
-                    NotificationType.MARKET_ALERTS, "هشدار بازار",
-                    latest.snapshotId, now, null, decision.suppressedReason,
-                )
-            }
-            phase4Dao.upsertAlertEvent(
-                MarketAlertEventEntity(
-                    eventId = MarketAlerts.eventId(metric, latest.snapshotId),
-                    metric = if (metric == AlertMetric.BUBBLE) "bubble" else "spread",
-                    snapshotId = latest.snapshotId,
-                    valuePct = ev.value,
-                    thresholdPct = ev.threshold,
-                    firedAtEpoch = now,
-                    notified = if (posted) 1 else 0,
-                )
-            )
-        }
-    }
-
-    /**
-     * Phase 4 notification dispatcher (full syncs only, as before).
-     * Replaces the Phase 2 dispatcher with the §4.7 check order
-     * (master → per-service toggle → Law 15 → quiet hours →
-     * cooldown) and the §4.8 precedence table. Phase 2 rules kept:
-     * an item that arrived while its toggle was off is marked
-     * notified WITHOUT firing (no retro-notification on toggle);
-     * Morning Bundle fires at most once per bundle, never before
-     * 08:00 Tehran, suppressed when already opened.
-     *
-     * Producer coverage, stated plainly: urgent, Morning Bundle,
-     * and market alerts (evaluated in the market block) are the
-     * wired producers. SITREP / nightly / special-issues / radar
-     * toggles are stored and shown in Settings, but no per-item
-     * producer fires for them in Phase 4 — Phase 2 deliberately
-     * fires no radar notification (P2-A8), SITREP cards arrive
-     * via the typed feed without a per-card notification, and
-     * the nightly edition is Phase 5. Wiring a producer for any
-     * of them is that phase's work, not a silent Phase 4 addition.
-     */
-    private suspend fun dispatchPhase4Notifications(now: Long) {
-        val prefs = settings.settings.first().toNotificationPrefs()
-        val isNight = Jalali.isNightTehran(now)
-        val inQuiet = prefs.quietHoursEnabled && NotificationPolicy.isInsideQuietHours(
-            NotificationPolicy.minuteOfDayTehran(now),
-            prefs.quietStartMin, prefs.quietEndMin,
-        )
-
-        // Deferred summary flush: first sync after quiet-hours end
-        // (and outside night), one summary for all deferred
-        // bundle/nightly items. If the user has since turned
-        // bundles off, the deferred set is dropped silently —
-        // the user's current choice wins over a burst.
-        val deferred = readMetaStringSet("p4_deferred_bundles")
-        if (deferred.isNotEmpty() && !isNight && !inQuiet) {
-            if (prefs.masterEnabled && prefs.notifyBundles) {
-                Notifications.showDeferredSummary(appContext, deferred.size)
-                recordNotificationHistory(
-                    NotificationType.BUNDLES, "خلاصهٔ موارد به‌تعویق‌افتاده",
-                    null, now,
-                    dao.metaValue("p4_deferred_since")?.toLongOrNull(), null,
-                )
-            }
-            writeMetaStringSet("p4_deferred_bundles", emptySet())
-            dao.upsertMeta(MetaEntity("p4_deferred_since", ""))
-        }
-
-        for (item in channelDao.unnotifiedInstant()) {
-            // unnotifiedInstant returns nightLawResult = 'instant'
-            // rows only, so Law 15 eligibility holds by
-            // construction; decide() still applies master, toggle,
-            // and quiet-hours (with the urgent bypass) in order.
-            val decision = NotificationPolicy.decide(
-                prefs, NotificationType.URGENT, now, isLaw15Instant = true,
-            )
-            if (decision.fire) {
-                Notifications.showUrgent(
-                    appContext,
-                    articleId = item.appKey,
-                    title = item.headline,
-                    text = item.body,
-                )
-                markChainNotified(item.appKey, now)
-                recordNotificationHistory(
-                    NotificationType.URGENT, item.headline, item.appKey, now, null, null,
-                )
-            } else {
-                recordNotificationHistory(
-                    NotificationType.URGENT, item.headline, item.appKey, now, null,
-                    decision.suppressedReason,
-                )
-            }
-            channelDao.markNotified(item.appKey)
-        }
-
-        val todayKey = Jalali.shamsiDayKey(now)
-        val notified = readMetaStringSet("p2_notified_bundles")
-        val opened = readMetaStringSet("p2_opened_bundles")
-        val freshNotified = notified.toMutableSet()
-        val freshDeferred = readMetaStringSet("p4_deferred_bundles").toMutableSet()
-        val suppressedNight = readMetaStringSet("p4_bundle_suppressed_night").toMutableSet()
-        for (bundle in channelDao.allBundles()) {
-            if (bundle.kind != BundleKinds.MORNING_BUNDLE) continue
-            if (bundle.status == "retracted") continue
-            if (bundle.bundleId in notified || bundle.bundleId in opened) continue
-            val bundleDay = latinDigits(bundle.bundleDateShamsi)
-            val pastDay = bundleDay < todayKey
-            if (!pastDay && bundleDay != todayKey) continue
-            if (!pastDay && isNight) {
-                // Night law: no instant bundle notification, ever.
-                // Recorded once per bundle (not every night sync);
-                // the 08:00 Morning Bundle notification is the
-                // deferred presentation, not a second summary.
-                if (bundle.bundleId !in suppressedNight) {
-                    suppressedNight.add(bundle.bundleId)
-                    recordNotificationHistory(
-                        NotificationType.BUNDLES, "بستهٔ صبح",
-                        bundle.bundleId, now, null, SuppressedReason.NIGHT_LAW,
-                    )
-                }
-                continue
-            }
-            val decision = NotificationPolicy.decide(
-                prefs, NotificationType.BUNDLES, now,
-            )
-            if (!decision.fire) {
-                if (decision.suppressedReason == SuppressedReason.NIGHT_LAW) {
-                    // Night-suppressed bundles stay PENDING (not
-                    // marked notified) so they can fire at 08:00;
-                    // recorded once per bundle, not every sync.
-                    if (bundle.bundleId !in suppressedNight) {
-                        suppressedNight.add(bundle.bundleId)
-                        recordNotificationHistory(
-                            NotificationType.BUNDLES, "بستهٔ صبح",
-                            bundle.bundleId, now, null, SuppressedReason.NIGHT_LAW,
-                        )
-                    }
-                    continue
-                }
-                recordNotificationHistory(
-                    NotificationType.BUNDLES, "بستهٔ صبح",
-                    bundle.bundleId, now, null, decision.suppressedReason,
-                )
-                if (decision.deferToSummary) {
-                    if (freshDeferred.isEmpty()) {
-                        dao.upsertMeta(MetaEntity("p4_deferred_since", now.toString()))
-                    }
-                    freshDeferred.add(bundle.bundleId)
-                }
-                // Suppressed-by-choice bundles are still marked
-                // notified (no retro burst when toggled back on);
-                // quiet-deferred bundles are marked too — the
-                // deferred summary is their presentation.
-                freshNotified.add(bundle.bundleId)
-                continue
-            }
-            val heldCount = bundle.memberAppKeys.count { key ->
-                channelDao.channelByAppKey(key)?.wasHeld == true
-            }
-            val n = if (heldCount > 0) heldCount else bundle.memberAppKeys.size
-            Notifications.showMorningBundle(appContext, bundle.bundleId, n)
-            recordNotificationHistory(
-                NotificationType.BUNDLES, "بستهٔ صبح",
-                bundle.bundleId, now, null, null,
-            )
-            freshNotified.add(bundle.bundleId)
-        }
-        if (freshNotified != notified) {
-            writeMetaStringSet("p2_notified_bundles", freshNotified)
-        }
-        if (freshDeferred != readMetaStringSet("p4_deferred_bundles")) {
-            writeMetaStringSet("p4_deferred_bundles", freshDeferred)
-        }
-        if (suppressedNight != readMetaStringSet("p4_bundle_suppressed_night")) {
-            writeMetaStringSet("p4_bundle_suppressed_night", suppressedNight)
-        }
-    }
-
-    /** Legacy full sync: index first, then only missing or changed items. */
-    private suspend fun syncLegacy(): SyncResult {
-        val base = edgeBase() ?: return SyncResult.NotConfigured
-        val indexOutcome = httpGet("$base/index.json")
-        val indexText = when (indexOutcome) {
-            is HttpOutcome.Ok -> indexOutcome.body
-            else -> {
-                val code = indexOutcome.toFailedCode()
-                recordAttempt(code)
-                return SyncResult.Failed(code)
-            }
-        }
-        val index = try {
-            JSONObject(indexText)
-        } catch (_: Exception) {
-            recordAttempt("bad_index")
-            return SyncResult.Failed("bad_index")
-        }
-        val hash = index.optString("hash_sha256", "")
-        val entries = index.optJSONArray("entries") ?: JSONArray()
-        val now = System.currentTimeMillis()
-
-        // M7 invite re-check: fetch the edge invite + revocation
-        // lists in the same sync pass. A fetch failure yields null
-        // and the re-check is skipped entirely — offline must never
-        // lock a reader out. Only a successfully fetched list can
-        // re-lock, and it does so after the content transaction.
-        val inviteLists = fetchInviteLists(base)
-
-        // Existing rows keyed by appKey, with their stored hashes.
-        val existingByKey = dao.all().associate { it.appKey to it }
-        val existingKeys = existingByKey.keys
-
-        val toFetch = mutableListOf<JSONObject>()
-        val shortIds = mutableListOf<String>()
-        val tombstones = mutableListOf<JSONObject>()
-        var corruptEntries = 0
-
-        for (i in 0 until entries.length()) {
-            val entry = try {
-                entries.getJSONObject(i)
-            } catch (_: Exception) {
-                corruptEntries++
-                continue
-            }
-            val id = entry.optString("id")
-            if (id.isBlank()) {
-                corruptEntries++
-                continue
-            }
-            val appKey = entry.optStringOrNull("app_key")?.takeIf { it.isNotBlank() }
-                ?: ArticleKeys.appKeyFor(id)
-            val status = entry.optString("status", "approved")
-            if (status == "retracted") {
-                if (appKey in existingKeys) tombstones.add(entry)
-                continue
-            }
-            val stored = existingByKey[appKey]
-            val entryHash = entry.optStringOrNull("content_hash")
-            if (stored != null && entryHash != null && stored.contentHash == entryHash) {
-                continue
-            }
-            if (entry.optString("kind") == "short") {
-                shortIds.add(id)
-            } else if (!entry.isNull("file")) {
-                toFetch.add(entry)
-            } else {
-                corruptEntries++
-            }
-        }
-
-        val fresh = mutableListOf<ArticleEntity>()
-        val missingKeys = mutableListOf<String>()
-        for (entry in toFetch) {
-            val file = entry.optString("file")
-            val appKey = entry.optStringOrNull("app_key")?.takeIf { it.isNotBlank() }
-                ?: ArticleKeys.appKeyFor(entry.optString("id"))
-            val text = when (val outcome = httpGet("$base/$file")) {
-                is HttpOutcome.Ok -> outcome.body
-                else -> null
-            }
-            if (text == null) {
-                missingKeys.add(appKey)
-                continue
-            }
-            try {
-                fresh.add(ArticleParsers.entityFromArticleJson(JSONObject(text), now))
-            } catch (_: Exception) {
-                missingKeys.add(appKey)
-            }
-        }
-
-        if (shortIds.isNotEmpty()) {
-            val shortsText = when (val outcome = httpGet("$base/short_cards.json")) {
-                is HttpOutcome.Ok -> outcome.body
-                else -> null
-            }
-            if (shortsText == null) {
-                missingKeys.addAll(shortIds.map { ArticleKeys.appKeyFor(it) })
-            } else {
-                try {
-                    val arr = JSONArray(shortsText)
-                    val wanted = shortIds.toSet()
-                    val found = mutableSetOf<String>()
-                    for (i in 0 until arr.length()) {
-                        val obj = try {
-                            arr.getJSONObject(i)
-                        } catch (_: Exception) {
-                            continue
-                        }
-                        val id = obj.optString("id")
-                        if (id in wanted) {
-                            found.add(id)
-                            try {
-                                fresh.add(ArticleParsers.entityFromShortJson(obj, now))
-                            } catch (_: Exception) {
-                                missingKeys.add(ArticleKeys.appKeyFor(id))
-                            }
-                        }
-                    }
-                    missingKeys.addAll(
-                        shortIds.filter { it !in found }.map { ArticleKeys.appKeyFor(it) }
-                    )
-                } catch (_: Exception) {
-                    missingKeys.addAll(shortIds.map { ArticleKeys.appKeyFor(it) })
-                }
-            }
-        }
-
-        // Tombstones: keep the row, flip only its status, so a
-        // bookmark on it survives and the feed stops showing it.
-        val tombstoneRows = tombstones.mapNotNull { entry ->
-            val id = entry.optString("id")
-            val appKey = entry.optStringOrNull("app_key")?.takeIf { it.isNotBlank() }
-                ?: ArticleKeys.appKeyFor(id)
-            val stored = existingByKey[appKey] ?: return@mapNotNull null
-            stored.copy(
-                status = "retracted",
-                retractedAtEpoch = entry.optLong("retracted_at_epoch", 0L).takeIf { it > 0L } ?: now,
-                updatedAtEpoch = now,
-            )
-        }
-
-        // Market travels in the same manifest-gated pass when the
-        // edge serves it; a market failure makes the sync Partial,
-        // never a silent success with stale market data. Formulas
-        // travel with it (M4): a non-empty formulas_active replaces
-        // the cached set, so a deactivated formula disappears
-        // instead of lingering; an empty/missing array leaves the
-        // cached set untouched rather than deleting it on a guess.
-        var marketFresh = emptyList<MarketSnapshotEntity>()
-        var formulasFresh = emptyList<MarketFormulaEntity>()
-        var marketFailed = false
-        val marketText = when (val outcome = httpGet("$base/market.json")) {
+        val file = section.file?.takeIf { it.isNotBlank() } ?: "yemen.json"
+        val outcome = httpGetRetried("$base/$file", attempts = 3)
+        val body = when (outcome) {
             is HttpOutcome.Ok -> outcome.body
-            else -> null
-        }
-        if (marketText == null) {
-            marketFailed = true
-        } else {
-            try {
-                val marketObj = JSONObject(marketText)
-                val snaps = marketObj.optJSONArray("snapshots") ?: JSONArray()
-                val parsed = mutableListOf<MarketSnapshotEntity>()
-                for (i in 0 until snaps.length()) {
-                    try {
-                        parsed.add(ArticleParsers.marketEntityFromJson(snaps.getJSONObject(i)))
-                    } catch (_: Exception) {
-                        continue
-                    }
-                }
-                marketFresh = parsed
-                val farr = marketObj.optJSONArray("formulas_active") ?: JSONArray()
-                val parsedFormulas = mutableListOf<MarketFormulaEntity>()
-                for (i in 0 until farr.length()) {
-                    try {
-                        val formula = MarketFormulas.formulaFromJson(farr.getJSONObject(i))
-                            ?: continue
-                        parsedFormulas.add(
-                            MarketFormulaEntity(
-                                name = formula.name,
-                                version = formula.version,
-                                definition = formula.definition,
-                                inputs = formula.inputs,
-                                descriptionFa = formula.descriptionFa,
-                            )
-                        )
-                    } catch (_: Exception) {
-                        continue
-                    }
-                }
-                formulasFresh = parsedFormulas
-            } catch (_: Exception) {
-                marketFailed = true
+            else -> {
+                val code = outcome.toFailedCode()
+                recordYemenFailure(code, now)
+                recordSectionMeta(key, SectionStates.FAILED, code, null, 0, now, null, null)
+                trace(key, code, -1, -1, SectionStates.FAILED)
+                recordV51(key, code, -1, 0, -1)
+                return SectionOutcome(key, SectionStates.FAILED, 0)
             }
         }
-
-        val complete = missingKeys.isEmpty() && corruptEntries == 0 && !marketFailed
-        val newKeys = fresh.map { it.appKey }
+        val doc = YemenParsers.parseDoc(body)
+        if (doc == null || doc.places.isEmpty()) {
+            recordYemenFailure("bad_yemen", now)
+            recordSectionMeta(key, SectionStates.FAILED, "bad_yemen", null, 0, now, null, null)
+            trace(key, "bad_yemen", -1, -1, SectionStates.FAILED)
+            recordV51(key, "bad_yemen", -1, 0, -1)
+            return SectionOutcome(key, SectionStates.FAILED, 0)
+        }
+        // Control-change detection, before the replace.
+        val oldFactions = yemenDao.places().associate { it.appKey to it.faction }
+        var controlChanges = 0
+        for (place in doc.places) {
+            val old = oldFactions[place.appKey]
+            if (old != null && old != place.faction) controlChanges++
+        }
         db.withTransaction {
-            if (fresh.isNotEmpty()) dao.upsertAll(fresh)
-            if (tombstoneRows.isNotEmpty()) dao.upsertAll(tombstoneRows)
-            if (marketFresh.isNotEmpty()) dao.upsertMarket(marketFresh)
-            if (formulasFresh.isNotEmpty()) {
-                dao.deleteAllFormulas()
-                dao.upsertFormulas(formulasFresh)
-            }
-            // M7: store the fetched edge invite lists (hashes only)
-            // in the same transaction, so a later code entry can be
-            // checked against the edge list without a new fetch.
-            if (inviteLists != null) {
-                dao.upsertMeta(MetaEntity("edge_invite_hashes",
-                    JSONArray(inviteLists.first).toString()))
-                dao.upsertMeta(MetaEntity("edge_revocations",
-                    JSONArray(inviteLists.second).toString()))
-            }
-            dao.upsertMeta(MetaEntity("last_sync_attempt_at", now.toString()))
-            if (complete) {
-                if (hash.isNotBlank()) dao.upsertMeta(MetaEntity("index_hash", hash))
-                dao.upsertMeta(MetaEntity("last_sync_at", now.toString()))
-                dao.upsertMeta(MetaEntity("last_sync_error_code", ""))
-            } else {
-                dao.upsertMeta(MetaEntity("last_sync_error_code", "partial"))
-            }
+            yemenDao.deleteAllPlaces()
+            yemenDao.deleteAllEvents()
+            yemenDao.deleteAllFrontlines()
+            yemenDao.upsertPlaces(doc.places.map { it.toEntity() })
+            yemenDao.upsertEvents(doc.events.map { it.toEntity() })
+            yemenDao.upsertFrontlines(doc.frontlines.map { it.toEntity() })
+            yemenDao.upsertAden(doc.aden.toEntity())
+            // The full document verbatim, for the supplementary
+            // sections (arrows, units, forces, claims, human
+            // stats, sources, map reading, snapshots) that have
+            // no dedicated table — written in the SAME
+            // transaction, so the doc and the tables can never
+            // disagree about which dashboard state they show.
+            dao.upsertMeta(MetaEntity("yemen_doc_json", body))
+            yemenDao.upsertMeta(
+                YemenMetaEntity(
+                    key = "yemen",
+                    yemenHash = section.hash,
+                    yemenGeneratedAt = doc.generatedAtUtc,
+                    yemenSeedHash = storedMeta?.yemenSeedHash,
+                    lastYemenSyncAt = now,
+                    lastYemenErrorCode = "",
+                    controlChanges = controlChanges,
+                ),
+            )
         }
-        // M7 sync-time re-check: a revoked (or list-dropped) hash
-        // re-locks the feed. Cached rows are NOT deleted — only the
-        // gate closes, so a re-grant restores them without download.
-        if (inviteLists != null) {
-            val storedHash = settings.settings.first().inviteHash
-            if (storedHash != null &&
-                !InviteGate.stillValid(storedHash, inviteLists.first, inviteLists.second)
-            ) {
-                settings.setInviteOk(false)
-                trace("invite_gate", "invite_relock", -1, -1, "relocked")
-            }
-        }
-        val total = dao.allIds().size
-        return if (complete) {
-            SyncResult.Ok(newKeys, total)
-        } else {
-            SyncResult.Partial(newKeys, missingKeys.size + corruptEntries, total)
+        recordSectionMeta(
+            key, SectionStates.UP_TO_DATE, "", doc.places.size, 0, now, now, section.hash,
+        )
+        trace(key, "", doc.places.size, 0, SectionStates.UP_TO_DATE)
+        recordV51(key, "", doc.places.size, 0, -1)
+        return SectionOutcome(key, SectionStates.UP_TO_DATE, 0)
+    }
+
+    /** Record a Yemen failure without touching the stored hash or
+     * the cached rows: the next run retries exactly this section. */
+    private suspend fun recordYemenFailure(code: String, now: Long) {
+        try {
+            val old = yemenDao.meta()
+            yemenDao.upsertMeta(
+                YemenMetaEntity(
+                    key = "yemen",
+                    yemenHash = old?.yemenHash,
+                    yemenGeneratedAt = old?.yemenGeneratedAt,
+                    yemenSeedHash = old?.yemenSeedHash,
+                    lastYemenSyncAt = old?.lastYemenSyncAt,
+                    lastYemenErrorCode = code,
+                    controlChanges = old?.controlChanges ?: 0,
+                ),
+            )
+            dao.upsertMeta(MetaEntity("last_yemen_attempt_at", now.toString()))
+        } catch (_: Exception) {
         }
     }
 
-    /**
-     * Fetch the edge invite + revocation lists (hashes only).
-     * Returns null when either file cannot be fetched or parsed —
-     * callers must then skip the re-check, never lock on a failure.
-     */
     private suspend fun fetchInviteLists(base: String): Pair<List<String>, List<String>>? {
         suspend fun hashes(url: String): List<String>? {
             // v5.1: 2 attempts, network errors only. A failure
@@ -2933,131 +529,4 @@ class EdgeRepository(context: Context) {
         val revocations = hashes("$base/revocations.json") ?: return null
         return invites to revocations
     }
-
-    /**
-     * Fetch one article by appKey, falling back to the verbatim
-     * source id for older deep links. Short cards are fetchable
-     * through the same path (they have no per-article file).
-     */
-    suspend fun fetchOne(appKeyOrId: String): Boolean {
-        val base = edgeBase() ?: return false
-        val indexText = when (val outcome = httpGet("$base/index.json")) {
-            is HttpOutcome.Ok -> outcome.body
-            else -> return false
-        }
-        val entries = try {
-            JSONObject(indexText).optJSONArray("entries") ?: return false
-        } catch (_: Exception) {
-            return false
-        }
-        for (i in 0 until entries.length()) {
-            val entry = try {
-                entries.getJSONObject(i)
-            } catch (_: Exception) {
-                continue
-            }
-            val id = entry.optString("id")
-            val appKey = entry.optStringOrNull("app_key")?.takeIf { it.isNotBlank() }
-                ?: ArticleKeys.appKeyFor(id)
-            if (appKey != appKeyOrId && id != appKeyOrId) continue
-            if (entry.optString("kind") == "short") {
-                val shortsText = when (val outcome = httpGet("$base/short_cards.json")) {
-                    is HttpOutcome.Ok -> outcome.body
-                    else -> return false
-                }
-                return try {
-                    val arr = JSONArray(shortsText)
-                    for (j in 0 until arr.length()) {
-                        val obj = arr.getJSONObject(j)
-                        if (obj.optString("id") == id) {
-                            dao.upsertAll(listOf(ArticleParsers.entityFromShortJson(obj)))
-                            return true
-                        }
-                    }
-                    false
-                } catch (_: Exception) {
-                    false
-                }
-            }
-            if (entry.isNull("file")) return false
-            val text = when (val outcome = httpGet("$base/${entry.optString("file")}")) {
-                is HttpOutcome.Ok -> outcome.body
-                else -> return false
-            }
-            return try {
-                dao.upsertAll(listOf(ArticleParsers.entityFromArticleJson(JSONObject(text))))
-                true
-            } catch (_: Exception) {
-                false
-            }
-        }
-        return false
-    }
-
-    /** Fetch market.json (snapshots + active formulas) from the edge. */
-    suspend fun fetchMarket(): Triple<MarketSnapshot?, List<MarketFormula>, Int> {
-        val base = edgeBase() ?: return Triple(null, emptyList(), 0)
-        val text = when (val outcome = httpGet("$base/market.json")) {
-            is HttpOutcome.Ok -> outcome.body
-            else -> return Triple(null, emptyList(), 0)
-        }
-        return try {
-            val obj = JSONObject(text)
-            val snaps = obj.optJSONArray("snapshots") ?: JSONArray()
-            var latest: MarketSnapshot? = null
-            var latestEpoch: Long? = null
-            for (i in 0 until snaps.length()) {
-                val entity = ArticleParsers.marketEntityFromJson(snaps.getJSONObject(i))
-                val snap = ArticleParsers.marketSnapshotFromEntity(entity)
-                // Latest means max timestamp, not last array element.
-                if (latest == null || (snap.tsEpoch ?: Long.MIN_VALUE) > (latestEpoch ?: Long.MIN_VALUE)) {
-                    latest = snap
-                    latestEpoch = snap.tsEpoch
-                }
-            }
-            val forms = mutableListOf<MarketFormula>()
-            val farr = obj.optJSONArray("formulas_active") ?: JSONArray()
-            for (i in 0 until farr.length()) {
-                try {
-                    MarketFormulas.formulaFromJson(farr.getJSONObject(i))?.let { forms.add(it) }
-                } catch (_: Exception) {
-                    continue
-                }
-            }
-            Triple(latest, forms, snaps.length())
-        } catch (_: Exception) {
-            Triple(null, emptyList(), 0)
-        }
-    }
-
-    fun entityToArticle(e: ArticleEntity): Article {
-        val points = try {
-            val arr = JSONArray(e.pointsJson)
-            (0 until arr.length()).map { arr.optString(it) }
-        } catch (_: Exception) {
-            emptyList()
-        }
-        return Article(
-            id = e.id,
-            appKey = e.appKey,
-            kind = e.kind,
-            title = e.title,
-            summary = e.summary,
-            bodyBlocks = e.bodyBlocks,
-            points = points,
-            whyMatters = e.whyMatters,
-            category = e.category,
-            categoryFa = e.categoryFa,
-            source = e.source,
-            originalUrl = e.originalUrl,
-            publishedAt = e.publishedAt,
-            publishedAtEpoch = e.publishedAtEpoch,
-            contentHash = e.contentHash,
-            status = e.status,
-            channelMessageId = e.channelMessageId,
-        )
-    }
 }
-
-private fun JSONObject.optStringOrNull(key: String): String? =
-    if (isNull(key)) null else optString(key)

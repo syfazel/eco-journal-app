@@ -27,12 +27,15 @@ android {
         applicationId = "com.ecojournal.app"
         minSdk = 26
         targetSdk = 34
-        // v5: 5.0.0 / 6 (P6 publish bump). Never reused, never
-        // reversed; the version manifest (v4-I) must name exactly
-        // this name/code at publish time. Code 6 > 5, so a phone
-        // on 4.0.1 must show the remote-update banner.
-        versionCode = 7
-        versionName = "5.1.0"
+        // v5.5: 5.5.0 / 11 (Phase 6 signed broadcast messaging:
+        // ECOJ-BCAST/2 HMAC packets, member control packets,
+        // Room 10->11, no FCM, no new worker). Never reused,
+        // never reversed; the version manifest (v4-I) must name
+        // exactly this name/code at publish time. Code 11 > 10,
+        // so a phone on 5.4.0 is offered the update. Same
+        // package, same shared debug signing.
+        versionCode = 11
+        versionName = "5.5.0"
         buildConfigField("String", "GIT_COMMIT", "\"$v5GitCommit\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -123,19 +126,9 @@ dependencies {
     // Settings (font scale, theme, notifications, invite state).
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
-    // Background sync (15-minute periodic work, Android minimum).
+    // Background sync (Yemen 24h + app-update 24h workers).
     implementation("androidx.work:work-runtime-ktx:2.9.0")
 
-    // WebP image loading with disk cache.
-    implementation("io.coil-kt:coil-compose:2.7.0")
-
-    // FCM scaffolding ONLY, dormant by decision (M5,
-    // docs/vnext-decisions.md §3). No google-services.json is
-    // committed and no Firebase key exists anywhere in this repo.
-    // The dependency alone needs no key; enabling real push later
-    // (a new decision) would additionally require the
-    // google-services Gradle plugin + google-services.json.
-    implementation("com.google.firebase:firebase-messaging:23.4.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
