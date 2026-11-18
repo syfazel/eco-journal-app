@@ -98,20 +98,27 @@ jobs:
       # SERVED APK: arm64-only. The fat debug APK is 138 MB — GitHub
       # rejects any file over 100 MB, so it can never be committed to
       # edge/out/ for Pages to serve (push rejected 2026-11-19). The
-      # arm64-only build is the same app, same version, same signing
-      # certificate, ~45-50 MB. Limitation: it installs only on arm64
-      # devices (all modern phones, including the user's). The fat APK
-      # above stays the all-ABI verification build.
-      # NOTE: --split-per-abi, not --target-platform: a second
-      # --target-platform build in the same build dir re-packages the
-      # fat build's stale ABIs (run 44421823161: still 144,693,592 B).
-      # The split build writes a genuinely arm64-only APK.
-      - name: Build served debug APK (arm64 only)
-        run: flutter build apk --debug --split-per-abi
+      # arm64-only build is the same app, same versionCode 13, same
+      # signing certificate, ~45-50 MB. Limitation: it installs only on
+      # arm64 devices (all modern phones, including the user's). The
+      # fat APK above stays the all-ABI verification build.
+      # HOW IT IS BUILT (two failed attempts, keep both notes):
+      #  * --target-platform in the SAME build dir re-packages the fat
+      #    build's stale ABIs (run 44421823161: still 144,693,592 B).
+      #  * --split-per-abi writes a genuinely arm64-only APK but
+      #    REWRITES the version code (arm64 APK reports versionCode
+      #    2013, not 13 — run 44422503773), which breaks the version
+      #    contract and would block future updates. NOT usable.
+      #  * So: `flutter clean` first, then --target-platform in a
+      #    fresh build dir. The size gate below proves it worked.
+      - name: Build served debug APK (arm64 only, clean build)
+        run: |
+          flutter clean
+          flutter build apk --debug --target-platform android-arm64
 
       - name: Verify served APK identity + signing
         run: |
-          APK=build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk
+          APK=build/app/outputs/flutter-apk/app-debug.apk
           AAPT="$ANDROID_SDK_ROOT/build-tools/$(ls "$ANDROID_SDK_ROOT/build-tools" | sort -V | tail -1)/aapt"
           APKSIGNER="$ANDROID_SDK_ROOT/build-tools/$(ls "$ANDROID_SDK_ROOT/build-tools" | sort -V | tail -1)/apksigner"
           "$AAPT" dump badging "$APK" | grep -E "package:|application-label"
@@ -137,20 +144,20 @@ jobs:
       - name: Generate + verify version.json (identity only)
         run: |
           python3 edge/version_manifest.py generate \
-            --apk build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk \
+            --apk build/app/outputs/flutter-apk/app-debug.apk \
             --apk-url https://syfazel.github.io/eco-journal-app/app-debug-v6.0.apk \
             --changelog "نسخهٔ ۶٫۰ (بازسازی کامل با فلاتر): فقط یمن — نقشهٔ درگیری، جبهه‌ها، بررسی عدن، پرونده‌ها، گاه‌شمار و آرشیو. بدون پیام‌رسانی و بدون کد دعوت. رفع یخ‌زدگی تب یمن: همهٔ کارهای شبکه و پردازش داده خارج از نخ اصلی انجام می‌شود." \
             --mandatory \
             --out version-6.0.json
           python3 edge/version_manifest.py verify \
-            --apk build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk \
+            --apk build/app/outputs/flutter-apk/app-debug.apk \
             --manifest version-6.0.json --identity-only
 
       - name: Upload served debug APK (arm64)
         uses: actions/upload-artifact@v4
         with:
           name: eco-journal-yemen-v6-apk
-          path: build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
 
       - name: Upload generated version.json
         uses: actions/upload-artifact@v4
