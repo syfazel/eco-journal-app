@@ -27,14 +27,15 @@ android {
         applicationId = "com.ecojournal.app"
         minSdk = 26
         targetSdk = 34
-        // v5.4: 5.4.0 / 10 (Phase 5 broadcast messaging: Yemen +
-        // messaging tabs, Room 9->10, no FCM, no new worker).
-        // Never reused, never reversed; the version manifest
-        // (v4-I) must name exactly this name/code at publish
-        // time. Code 10 > 9, so a phone on 5.3.0 is offered the
-        // update. Same package, same shared debug signing.
-        versionCode = 10
-        versionName = "5.4.0"
+        // v5.5: 5.5.0 / 11 (Phase 6 signed broadcast messaging:
+        // ECOJ-BCAST/2 HMAC packets, member control packets,
+        // Room 10->11, no FCM, no new worker). Never reused,
+        // never reversed; the version manifest (v4-I) must name
+        // exactly this name/code at publish time. Code 11 > 10,
+        // so a phone on 5.4.0 is offered the update. Same
+        // package, same shared debug signing.
+        versionCode = 11
+        versionName = "5.5.0"
         buildConfigField("String", "GIT_COMMIT", "\"$v5GitCommit\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

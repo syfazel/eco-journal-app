@@ -28,6 +28,20 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      # Phase 6 (G-CI-5(d)): the shared debug signing secret MUST
+      # be present. If it is absent, FAIL here — never silently
+      # fall back to AGP's ephemeral debug key, which would sign
+      # this APK with a different signature and break updates
+      # (INSTALL_FAILED_UPDATE_INCOMPATIBLE, 2026-10-25).
+      - name: Require shared debug signing secret
+        env:
+          DEBUG_KEYSTORE_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$DEBUG_KEYSTORE_BASE64" ]; then
+            echo "REFUSED: DEBUG_KEYSTORE_BASE64 secret is absent — refusing to build with an ephemeral debug key (G-CI-5(d))." >&2
+            exit 1
+          fi
+
       # Shared debug signing (fix for the 2026-10-25 install failure):
       # every ephemeral runner used to generate its own Android Debug
       # keystore, so each cloud APK had a different signature and
@@ -52,17 +66,17 @@ jobs:
           name: eco-journal-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
 
-      # v5.2 update gate (audit U-01 / T7), kept for 5.4:
+      # v5.2 update gate (audit U-01 / T7), kept for 5.5:
       # verify version.json against the APK just built.
       # version_manifest.py reads the version from
       # app/build.gradle.kts, so a mismatch fails the run here
       # instead of surfacing as a hash_mismatch on the phone. The
-      # step runs AFTER the upload on purpose: on the first 5.4
-      # pass version.json still names 5.3.0/9, so the verify fails
+      # step runs AFTER the upload on purpose: on the first 5.5
+      # pass version.json still names 5.4.0/10, so the verify fails
       # (gate working as designed) — but the APK is already
-      # uploaded, which is what Phase 5 needs to generate the
-      # real 5.4 version.json from. Once version.json names
-      # 5.4.0/10 with the real APK hash, this step passes.
+      # uploaded, which is what Phase 6 needs to generate the
+      # real 5.5 version.json from. Once version.json names
+      # 5.5.0/11 with the real APK hash, this step passes.
       #
       # TWO CHECKS, NOT ONE (D18 — DEX non-determinism, proven
       # by runs 44183915798 vs 44185080944: same source, same
@@ -75,7 +89,7 @@ jobs:
       #     hash is NOT comparable, because a rebuild from the
       #     same source is not byte-identical.
       - name: Verify version manifest against served APK
-        run: python3 edge/version_manifest.py verify --apk edge/out/app-debug-v5.4.apk
+        run: python3 edge/version_manifest.py verify --apk edge/out/app-debug-v5.5.apk
 
       - name: Verify freshly built APK identity
         run: python3 edge/version_manifest.py verify --apk app/build/outputs/apk/debug/app-debug.apk --identity-only

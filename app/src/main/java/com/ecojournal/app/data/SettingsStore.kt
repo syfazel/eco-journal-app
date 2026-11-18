@@ -42,6 +42,24 @@ private object Keys {
     val BROADCAST_SENDER = booleanPreferencesKey("broadcast_sender")
     val BROADCAST_NOTIFICATIONS = booleanPreferencesKey("broadcast_notifications")
     val SENDER_DISPLAY_NAME = stringPreferencesKey("sender_display_name")
+    // Phase 6 (v5.5) signed broadcast (ECOJ-BCAST/2, design
+    // tarahi-faz6.md §3.4): ONLY the PBKDF2-derived key (hex)
+    // is stored — never the shared password itself, never in a
+    // log, never in a packet. keyVersion 0 = no key set yet.
+    // The previous key is kept for the 7-day grace after a
+    // rotation, for packets already in flight.
+    val BROADCAST_KEY_HEX = stringPreferencesKey("broadcast_key_hex")
+    val BROADCAST_KEY_VERSION = longPreferencesKey("broadcast_key_version")
+    val BROADCAST_KEY_SINCE = longPreferencesKey("broadcast_key_since")
+    val BROADCAST_PREV_KEY_HEX = stringPreferencesKey("broadcast_prev_key_hex")
+    val BROADCAST_PREV_KEY_VERSION = longPreferencesKey("broadcast_prev_key_version")
+    val BROADCAST_PREV_KEY_UNTIL = longPreferencesKey("broadcast_prev_key_until")
+    // Member-list version (design §1.3): rises by 1 on every
+    // applied member-add / member-remove control packet.
+    val BROADCAST_LIST_VERSION = longPreferencesKey("broadcast_list_version")
+    // Latest key version announced by a verified key-announce
+    // packet; the new password still has to arrive via Bale.
+    val BROADCAST_ANNOUNCED_KEY_VERSION = longPreferencesKey("broadcast_announced_key_version")
 }
 
 data class Settings(
@@ -58,6 +76,17 @@ data class Settings(
     val broadcastSender: Boolean = false,
     val broadcastNotifications: Boolean = true,
     val senderDisplayName: String = "یاسین",
+    // Phase 6 (v5.5): derived signing key only — never the
+    // password. broadcastKeyVersion 0 = no key set. prev* = the
+    // rotated-out key inside its 7-day grace (null when none).
+    val broadcastKeyHex: String? = null,
+    val broadcastKeyVersion: Int = 0,
+    val broadcastKeySince: Long? = null,
+    val broadcastPrevKeyHex: String? = null,
+    val broadcastPrevKeyVersion: Int = 0,
+    val broadcastPrevKeyUntil: Long? = null,
+    val broadcastListVersion: Long = 0L,
+    val broadcastAnnouncedKeyVersion: Int = 0,
     val updateCheckEnabled: Boolean = true,
     val dismissedUpdateCode: Long = 0L,
     val pendingUpdate: PendingUpdate? = null,
@@ -93,6 +122,14 @@ class SettingsStore(private val context: Context) {
                 broadcastSender = p[Keys.BROADCAST_SENDER] ?: false,
                 broadcastNotifications = p[Keys.BROADCAST_NOTIFICATIONS] ?: true,
                 senderDisplayName = (p[Keys.SENDER_DISPLAY_NAME] ?: "یاسین").take(100),
+                broadcastKeyHex = p[Keys.BROADCAST_KEY_HEX]?.takeIf { it.length == 64 },
+                broadcastKeyVersion = (p[Keys.BROADCAST_KEY_VERSION] ?: 0L).toInt().coerceAtLeast(0),
+                broadcastKeySince = p[Keys.BROADCAST_KEY_SINCE],
+                broadcastPrevKeyHex = p[Keys.BROADCAST_PREV_KEY_HEX]?.takeIf { it.length == 64 },
+                broadcastPrevKeyVersion = (p[Keys.BROADCAST_PREV_KEY_VERSION] ?: 0L).toInt().coerceAtLeast(0),
+                broadcastPrevKeyUntil = p[Keys.BROADCAST_PREV_KEY_UNTIL],
+                broadcastListVersion = (p[Keys.BROADCAST_LIST_VERSION] ?: 0L).coerceAtLeast(0L),
+                broadcastAnnouncedKeyVersion = (p[Keys.BROADCAST_ANNOUNCED_KEY_VERSION] ?: 0L).toInt().coerceAtLeast(0),
                 updateCheckEnabled = p[Keys.UPDATE_CHECK_ENABLED] ?: true,
                 dismissedUpdateCode = p[Keys.DISMISSED_UPDATE_CODE] ?: 0L,
                 pendingUpdate = run {
@@ -139,6 +176,56 @@ class SettingsStore(private val context: Context) {
     suspend fun setSenderDisplayName(v: String) =
         context.settingsStore.edit {
             it[Keys.SENDER_DISPLAY_NAME] = v.trim().take(100).ifBlank { "یاسین" }
+        }
+
+    /**
+     * Phase 6 (v5.5): store a freshly derived signing key. The
+     * caller passes ONLY the derived hex — the password never
+     * reaches this function. On rotation the previous key moves
+     * to the prev* slots with a 7-day expiry; on first set
+     * there is no previous key.
+     */
+    suspend fun setBroadcastSigningKey(
+        derivedHex: String,
+        version: Int,
+        sinceEpoch: Long,
+        prevHex: String?,
+        prevVersion: Int,
+        prevUntilEpoch: Long?,
+    ) = context.settingsStore.edit {
+        it[Keys.BROADCAST_KEY_HEX] = derivedHex
+        it[Keys.BROADCAST_KEY_VERSION] = version.toLong()
+        it[Keys.BROADCAST_KEY_SINCE] = sinceEpoch
+        if (prevHex == null) {
+            it.remove(Keys.BROADCAST_PREV_KEY_HEX)
+            it.remove(Keys.BROADCAST_PREV_KEY_VERSION)
+            it.remove(Keys.BROADCAST_PREV_KEY_UNTIL)
+        } else {
+            it[Keys.BROADCAST_PREV_KEY_HEX] = prevHex
+            it[Keys.BROADCAST_PREV_KEY_VERSION] = prevVersion.toLong()
+            it[Keys.BROADCAST_PREV_KEY_UNTIL] = prevUntilEpoch ?: 0L
+        }
+    }
+
+    /** Phase 6: drop the signing key entirely (current + previous). */
+    suspend fun clearBroadcastSigningKey() =
+        context.settingsStore.edit {
+            it.remove(Keys.BROADCAST_KEY_HEX)
+            it.remove(Keys.BROADCAST_KEY_VERSION)
+            it.remove(Keys.BROADCAST_KEY_SINCE)
+            it.remove(Keys.BROADCAST_PREV_KEY_HEX)
+            it.remove(Keys.BROADCAST_PREV_KEY_VERSION)
+            it.remove(Keys.BROADCAST_PREV_KEY_UNTIL)
+        }
+
+    suspend fun setBroadcastListVersion(v: Long) =
+        context.settingsStore.edit {
+            it[Keys.BROADCAST_LIST_VERSION] = v.coerceAtLeast(0L)
+        }
+
+    suspend fun setBroadcastAnnouncedKeyVersion(v: Int) =
+        context.settingsStore.edit {
+            it[Keys.BROADCAST_ANNOUNCED_KEY_VERSION] = v.coerceAtLeast(0).toLong()
         }
 
     suspend fun setUpdateCheckEnabled(v: Boolean) =

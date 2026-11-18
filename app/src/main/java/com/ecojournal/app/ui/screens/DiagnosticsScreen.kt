@@ -36,6 +36,8 @@ import com.ecojournal.app.R
 import com.ecojournal.app.data.EdgeConfig
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.SectionSyncState
+import com.ecojournal.app.data.Settings
+import com.ecojournal.app.data.SettingsStore
 import com.ecojournal.app.data.SyncResult
 import com.ecojournal.app.data.SyncSections
 import com.ecojournal.app.data.SyncTrace
@@ -205,6 +207,16 @@ fun DiagnosticsScreen(
     // never member names, never codes (G-DIAG-2).
     val broadcastMessages by repo.broadcastDao.messagesFlow().collectAsState(initial = emptyList())
     val broadcastMembers by repo.broadcastDao.activeMembersFlow().collectAsState(initial = emptyList())
+    // Phase 6 (v5.5): rejected-packet total (counts by fixed
+    // reason only) + member-list version + signing-key version.
+    // Key version comes from Settings (derived key hex itself is
+    // never read or shown here); list version too.
+    val diagStore = remember(context) { SettingsStore(context) }
+    val diagSettings by diagStore.settings.collectAsState(initial = Settings())
+    var broadcastRejected by remember { mutableStateOf(0) }
+    LaunchedEffect(Unit) {
+        broadcastRejected = repo.broadcastDao.rejectCounts().sumOf { it.rejectCount }
+    }
     val seedVersion by repo.dao.metaValueFlow("seed_version").collectAsState(initial = null)
     // v4.0.1 (fix plan X8): seed missing count + seed error, so a
     // phone report can distinguish seed-empty from seed-failed.
@@ -398,6 +410,9 @@ fun DiagnosticsScreen(
             broadcastMessages.size.toString().toPersianDigits(),
             broadcastMembers.size.toString().toPersianDigits(),
             broadcastMessages.count { it.status == "held" }.toString().toPersianDigits(),
+            broadcastRejected.toString().toPersianDigits(),
+            diagSettings.broadcastListVersion.toString().toPersianDigits(),
+            diagSettings.broadcastKeyVersion.toString().toPersianDigits(),
         ),
         stringResource(
             R.string.diagnostics_seed_version,

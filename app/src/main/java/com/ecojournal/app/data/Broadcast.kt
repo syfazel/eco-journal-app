@@ -45,7 +45,9 @@ const val BROADCAST_RETENTION_DAYS = 30L
 const val BROADCAST_ENVELOPE_HEADER = "ECOJ-BCAST/1"
 
 /** Message status: delivered (shown, notified or silent),
- * held (night 70-84, waiting for the morning bundle), read. */
+ * held (night 70-84, waiting for the morning bundle), read,
+ * unsent (Phase 6: composed on this device, not yet shared —
+ * the local outbox, "waiting for channel"). */
 @Entity(tableName = "broadcast_messages")
 data class BroadcastMessageEntity(
     /** SHA-256 of the canonical envelope content — identity and
@@ -59,8 +61,16 @@ data class BroadcastMessageEntity(
     val receivedAtEpoch: Long,
     /** "local" (composed on this device) or "imported" (pasted in). */
     val origin: String,
-    /** "delivered" | "held" | "read". */
+    /** "delivered" | "held" | "read" | "unsent". */
     val status: String,
+    /** Phase 6 (v5.5): v2 packet fields. v1 rows keep the
+     * defaults (seq 0, keyVersion 0, packetType "msg",
+     * signed 0 = unsigned). */
+    val seq: Long = 0L,
+    val keyVersion: Int = 0,
+    val packetType: String = BROADCAST_TYPE_MSG,
+    /** 1 = v2 packet whose HMAC verified, 0 = v1 unsigned. */
+    val signed: Int = 0,
 )
 
 /** One member of the closed broadcast group. The raw membership
@@ -131,7 +141,51 @@ interface BroadcastDao {
 
     @Query("UPDATE broadcast_members SET active = 0 WHERE memberId = :memberId")
     suspend fun deactivateMember(memberId: String)
+
+    /** Phase 6: re-activate a previously removed member (its
+     * code hash was kept so it can never be re-used by another
+     * row). Used when a member-add control packet names a hash
+     * that was removed earlier. */
+    @Query("UPDATE broadcast_members SET active = 1 WHERE memberId = :memberId")
+    suspend fun activateMember(memberId: String)
+
+    /** Phase 6 (v5.5): per-sender replay state — the highest
+     * accepted v2 `seq` from this sender. A packet with seq <=
+     * this is a replay and is rejected. */
+    @Query("SELECT * FROM broadcast_sender_state WHERE senderName = :name LIMIT 1")
+    suspend fun senderState(name: String): BroadcastSenderStateEntity?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertSenderState(state: BroadcastSenderStateEntity)
+
+    /** Phase 6 (v5.5): rejected-packet counts by FIXED reason
+     * code only — never packet content (G-DIAG-2). */
+    @Query("SELECT * FROM broadcast_reject_counts ORDER BY reason ASC")
+    suspend fun rejectCounts(): List<BroadcastRejectCountEntity>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertRejectIgnore(row: BroadcastRejectCountEntity): Long
+
+    @Query("UPDATE broadcast_reject_counts SET rejectCount = rejectCount + 1 WHERE reason = :reason")
+    suspend fun incrementReject(reason: String)
 }
+
+/** Phase 6 (v5.5): last accepted v2 seq per sender (replay
+ * protection, design §1.2). */
+@Entity(tableName = "broadcast_sender_state")
+data class BroadcastSenderStateEntity(
+    @PrimaryKey val senderName: String,
+    val lastSeq: Long,
+    val lastSeenEpoch: Long,
+)
+
+/** Phase 6 (v5.5): how many packets were rejected, per fixed
+ * reason code. Counts only — no content, no names. */
+@Entity(tableName = "broadcast_reject_counts")
+data class BroadcastRejectCountEntity(
+    @PrimaryKey val reason: String,
+    val rejectCount: Int,
+)
 
 /**
  * Law 15 (G-PRIV-5) as a pure function, so it is testable without
@@ -153,13 +207,23 @@ object Law15 {
 }
 
 /** A parsed broadcast envelope. [id] is the content hash, so the
- * same envelope pasted twice is the same message. */
+ * same envelope pasted twice is the same message. Phase 6 adds
+ * the v2 fields (defaults describe a v1 unsigned envelope). */
 data class BroadcastEnvelope(
     val id: String,
     val senderName: String,
     val body: String,
     val urgencyScore: Int,
     val sentAtEpoch: Long,
+    val packetVersion: Int = 1,
+    val seq: Long = 0L,
+    val keyVersion: Int = 0,
+    val packetType: String = BROADCAST_TYPE_MSG,
+    val signed: Boolean = false,
+    /** Phase 6: the v2 HMAC and canonical string, carried so the
+     * caller can verify the signature. Null for v1 envelopes. */
+    val hmac: String? = null,
+    val canonical: String? = null,
 )
 
 object BroadcastEnvelopeCodec {
@@ -269,6 +333,43 @@ object BroadcastRules {
             pruned += dao.deleteOldestRead(count - BROADCAST_MAX_STORED)
         }
         return pruned
+    }
+
+    /**
+     * Phase 6 (v5.5): count one rejected packet by fixed reason
+     * code. Two steps (insert-if-absent, then increment) because
+     * SQLite UPSERT needs API 30+ and minSdk is 26. Counts only.
+     */
+    suspend fun recordReject(dao: BroadcastDao, reason: String) {
+        dao.insertRejectIgnore(BroadcastRejectCountEntity(reason, 0))
+        dao.incrementReject(reason)
+    }
+
+    /**
+     * Phase 6 (v5.5): next seq for a sender — last accepted seq
+     * + 1, starting at 1. Used for packets this device builds.
+     */
+    suspend fun nextSeq(dao: BroadcastDao, senderName: String): Long {
+        val state = dao.senderState(senderName)
+        return (state?.lastSeq ?: 0L) + 1L
+    }
+
+    /**
+     * Phase 6 (v5.5): record an accepted v2 seq for a sender
+     * (replay protection). Only ever moves forward.
+     */
+    suspend fun acceptSeq(dao: BroadcastDao, senderName: String, seq: Long, nowEpoch: Long) {
+        val state = dao.senderState(senderName)
+        val last = state?.lastSeq ?: 0L
+        if (seq > last) {
+            dao.upsertSenderState(
+                BroadcastSenderStateEntity(
+                    senderName = senderName,
+                    lastSeq = seq,
+                    lastSeenEpoch = nowEpoch,
+                ),
+            )
+        }
     }
 
     /**

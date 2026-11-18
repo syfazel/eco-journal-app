@@ -250,6 +250,34 @@ data class YemenFactionCount(
     val c: Int,
 )
 
+// Version 10 -> 11 migration (Phase 6, v5.5 signed broadcast).
+// Additive only: four new columns on broadcast_messages (v2
+// packet fields, all defaulted so v1 rows read as unsigned),
+// plus two new tables (broadcast_sender_state for replay
+// protection, broadcast_reject_counts for Diagnostics). No
+// existing table is altered and no row is touched, so a v10
+// install keeps its full Yemen cache, invite gate and all
+// broadcast messages and members; v1 messages simply show the
+// "unsigned" badge.
+val MIGRATION_10_11: Migration = object : Migration(10, 11) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE `broadcast_messages` ADD COLUMN `seq` INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE `broadcast_messages` ADD COLUMN `keyVersion` INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE `broadcast_messages` ADD COLUMN `packetType` TEXT NOT NULL DEFAULT 'msg'")
+        db.execSQL("ALTER TABLE `broadcast_messages` ADD COLUMN `signed` INTEGER NOT NULL DEFAULT 0")
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `broadcast_sender_state` (" +
+                "`senderName` TEXT NOT NULL, `lastSeq` INTEGER NOT NULL, " +
+                "`lastSeenEpoch` INTEGER NOT NULL, PRIMARY KEY(`senderName`))"
+        )
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `broadcast_reject_counts` (" +
+                "`reason` TEXT NOT NULL, `rejectCount` INTEGER NOT NULL, " +
+                "PRIMARY KEY(`reason`))"
+        )
+    }
+}
+
 // Version 9 -> 10 migration (Phase 5, v5.4 broadcast messaging).
 // Additive only: two new tables (broadcast_messages,
 // broadcast_members). No existing table is altered, so a v9
@@ -749,8 +777,10 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
         YemenMetaEntity::class,
         BroadcastMessageEntity::class,
         BroadcastMemberEntity::class,
+        BroadcastSenderStateEntity::class,
+        BroadcastRejectCountEntity::class,
     ],
-    version = 10,
+    version = 11,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {

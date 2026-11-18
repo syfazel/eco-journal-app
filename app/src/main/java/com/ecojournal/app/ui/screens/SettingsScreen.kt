@@ -30,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -43,13 +44,18 @@ import androidx.core.content.ContextCompat
 import com.ecojournal.app.R
 import com.ecojournal.app.data.AppUpdateRepository
 import com.ecojournal.app.data.AppUpdateSession
+import com.ecojournal.app.data.BROADCAST_KEY_GRACE_DAYS
+import com.ecojournal.app.data.Jalali
 import com.ecojournal.app.data.Settings
 import com.ecojournal.app.data.SettingsStore
+import com.ecojournal.app.data.deriveSigningKeyHex
 import com.ecojournal.app.data.installedVersion
 import com.ecojournal.app.ui.components.AppUpdateCard
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.util.toPersianDigits
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Settings (Phase 4, v5.3 — Yemen-only): font scale, theme
@@ -90,6 +96,11 @@ fun SettingsScreen(
     var senderName by remember(settings.senderDisplayName) {
         mutableStateOf(settings.senderDisplayName)
     }
+    // Phase 6 (v5.5): shared signing password. The password
+    // lives ONLY in this field until the save tap; what is
+    // stored is the PBKDF2-derived key hex, never the password.
+    var keyPassword by remember { mutableStateOf("") }
+    var keyNotice by remember { mutableStateOf<String?>(null) }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -308,6 +319,125 @@ fun SettingsScreen(
         }
         Text(
             text = stringResource(R.string.broadcast_notif_desc),
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+        )
+        // Phase 6 (v5.5) signing key (design §3.4): the user
+        // types the shared password HERE, on their own phone
+        // (H-2). Only the PBKDF2-derived key is stored; the
+        // password is never stored, logged, or shown. Entering
+        // a new password rotates the key (version + 1) and keeps
+        // the old key for 7 days of grace.
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.broadcast_key_heading),
+            fontFamily = EcoFontFamily,
+            fontSize = 16.sp * fontScale,
+            modifier = Modifier.semantics { heading() },
+        )
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = if (settings.broadcastKeyVersion >= 1) {
+                stringResource(
+                    R.string.broadcast_key_status,
+                    settings.broadcastKeyVersion.toString().toPersianDigits(),
+                    settings.broadcastKeySince?.let { Jalali.formatShamsiDate(it) } ?: "—",
+                )
+            } else {
+                stringResource(R.string.broadcast_key_none)
+            },
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+        )
+        if (settings.broadcastAnnouncedKeyVersion > settings.broadcastKeyVersion) {
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = stringResource(
+                    R.string.broadcast_key_announced,
+                    settings.broadcastAnnouncedKeyVersion.toString().toPersianDigits(),
+                ),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+            )
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+        TextField(
+            value = keyPassword,
+            onValueChange = { keyPassword = it },
+            visualTransformation = PasswordVisualTransformation(),
+            placeholder = {
+                Text(text = stringResource(R.string.broadcast_key_password_hint), fontFamily = EcoFontFamily)
+            },
+            modifier = Modifier.fillMaxWidth(),
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = {
+            scope.launch {
+                val pw = keyPassword
+                if (pw.length < 8) {
+                    keyNotice = context.getString(R.string.broadcast_key_short)
+                    return@launch
+                }
+                val newVersion = if (settings.broadcastKeyVersion >= 1) {
+                    settings.broadcastKeyVersion + 1
+                } else {
+                    1
+                }
+                // 100,000 PBKDF2 iterations off the main thread.
+                val derived = withContext(Dispatchers.Default) {
+                    deriveSigningKeyHex(pw, newVersion)
+                }
+                val prevHex = settings.broadcastKeyHex
+                val prevVersion = settings.broadcastKeyVersion
+                val prevUntil = if (prevHex != null && prevVersion >= 1) {
+                    System.currentTimeMillis() +
+                        BROADCAST_KEY_GRACE_DAYS * 24L * 3_600_000L
+                } else {
+                    null
+                }
+                store.setBroadcastSigningKey(
+                    derivedHex = derived,
+                    version = newVersion,
+                    sinceEpoch = System.currentTimeMillis(),
+                    prevHex = prevHex,
+                    prevVersion = prevVersion,
+                    prevUntilEpoch = prevUntil,
+                )
+                keyPassword = ""
+                keyNotice = context.getString(R.string.broadcast_key_saved)
+            }
+        }, modifier = Modifier.heightIn(min = 48.dp)) {
+            Text(
+                text = stringResource(R.string.broadcast_key_save),
+                fontFamily = EcoFontFamily,
+            )
+        }
+        if (settings.broadcastKeyVersion >= 1) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = {
+                scope.launch {
+                    store.clearBroadcastSigningKey()
+                    keyPassword = ""
+                    keyNotice = context.getString(R.string.broadcast_key_cleared)
+                }
+            }, modifier = Modifier.heightIn(min = 48.dp)) {
+                Text(
+                    text = stringResource(R.string.broadcast_key_clear),
+                    fontFamily = EcoFontFamily,
+                )
+            }
+        }
+        keyNotice?.let {
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = it,
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+            )
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = stringResource(R.string.broadcast_key_rotate_note),
             fontFamily = EcoFontFamily,
             fontSize = 14.sp * fontScale,
         )
