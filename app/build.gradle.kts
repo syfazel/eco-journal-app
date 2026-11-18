@@ -27,15 +27,19 @@ android {
         applicationId = "com.ecojournal.app"
         minSdk = 26
         targetSdk = 34
-        // v5.5: 5.5.0 / 11 (Phase 6 signed broadcast messaging:
-        // ECOJ-BCAST/2 HMAC packets, member control packets,
-        // Room 10->11, no FCM, no new worker). Never reused,
-        // never reversed; the version manifest (v4-I) must name
-        // exactly this name/code at publish time. Code 11 > 10,
-        // so a phone on 5.4.0 is offered the update. Same
-        // package, same shared debug signing.
-        versionCode = 11
-        versionName = "5.5.0"
+        // v5.6: 5.6.0 / 12 (Yemen-tab fix: Yemen readable without
+        // an invite, Aden investigation sections, local
+        // snapshots, map legend + Aden ring + arrowheads,
+        // prominent live-refresh, empty-state retry, update
+        // banner on the Yemen tab; Room 11->12, no FCM, no new
+        // worker). Never reused, never reversed; the version
+        // manifest (v4-I) must name exactly this name/code at
+        // publish time. Code 12 > 11, so a phone on 5.5.0 is
+        // offered the update — and 5.6 is MANDATORY, so a phone
+        // on 5.1 (which has no Yemen tab at all) cannot dismiss
+        // it. Same package, same shared debug signing.
+        versionCode = 12
+        versionName = "5.6.0"
         buildConfigField("String", "GIT_COMMIT", "\"$v5GitCommit\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

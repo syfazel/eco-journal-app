@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ECO JOURNAL Yemen edge generator — v5.2.0, LAB ONLY.
+"""ECO JOURNAL Yemen edge generator — v5.6.0, LAB ONLY.
 
 Reads the verified live-dashboard snapshot
 (~/workspace/goals/eco-journal/hidden_files/yemen-dashboard-v5-20261118.json,
@@ -275,6 +275,42 @@ def build_yemen_doc(snap):
         },
         "contradictions": as_title_body_list(
             aden.get("contradictions") or [], "aden.contradictions"),
+        # v5.6 (R4): the Aden investigation sections the app was
+        # dropping — images, cross-check table, official channels,
+        # social posts, amplifiers. Field-for-field copy from the
+        # dashboard snapshot, same as everything else above.
+        "images": [{
+            "name": im.get("name", ""),
+            "origin_fa": im.get("originFa", ""),
+            "shows_fa": im.get("showsFa", ""),
+            "verdict_fa": im.get("verdictFa", ""),
+            "url": im.get("url", ""),
+        } for im in aden.get("images") or []],
+        "cross_check": [{
+            "date_fa": c.get("dateFa", ""),
+            "says_fa": c.get("saysFa", ""),
+            "source": c.get("source", ""),
+        } for c in aden.get("crossCheck") or []],
+        "channels_official": [{
+            "name": c.get("name", ""),
+            "handle": c.get("handle", ""),
+            "kind_fa": c.get("kindFa", ""),
+            "body_fa": c.get("bodyFa", ""),
+            "verdict_fa": c.get("verdictFa", ""),
+        } for c in aden.get("channelsOfficial") or []],
+        "social_posts": [{
+            "name": p.get("name", ""),
+            "kind_fa": p.get("kindFa", ""),
+            "date_fa": p.get("dateFa", ""),
+            "body_fa": p.get("bodyFa", ""),
+            "url": p.get("url", ""),
+        } for p in aden.get("socialPosts") or []],
+        "amplifiers": [{
+            "name": a.get("name", ""),
+            "date_fa": a.get("dateFa", ""),
+            "body_fa": a.get("bodyFa", ""),
+            "url": a.get("url", ""),
+        } for a in aden.get("amplifiers") or []],
         "channels_method_fa": aden.get("channelsMethodFa", ""),
         "cross_check_summary_fa": aden.get("crossCheckSummaryFa", ""),
         "seen_note_fa": aden.get("seenNoteFa", ""),
@@ -409,6 +445,14 @@ def main():
         print("REFUSED: aden ring segments %d != 5"
               % len(doc["aden"]["ring_segments"]), file=sys.stderr)
         return 1
+    for key, want in (("images", 7), ("cross_check", 7),
+                      ("channels_official", 5), ("social_posts", 9),
+                      ("amplifiers", 4), ("sources", 28)):
+        got = len(doc["aden"][key])
+        if got != want:
+            print("REFUSED: aden %s %d != expected %d"
+                  % (key, got, want), file=sys.stderr)
+            return 1
     if len({p["app_key"] for p in doc["places"]}) != len(doc["places"]):
         print("REFUSED: duplicate place app_key", file=sys.stderr)
         return 1
@@ -454,7 +498,7 @@ def main():
     generated_at_utc = datetime.now(timezone.utc).isoformat()
     manifest["version"] = MANIFEST_VERSION
     manifest["generated_at_utc"] = generated_at_utc
-    manifest["generator"] = "edge/generate_yemen.py (v5.2, LAB ONLY)"
+    manifest["generator"] = "edge/generate_yemen.py (v5.6, LAB ONLY)"
     manifest.setdefault("sections", {})["yemen"] = {
         "file": "yemen.json",
         "count": counts["places"],
@@ -478,7 +522,7 @@ def main():
         health["manifest_version"] = MANIFEST_VERSION
         health["manifest_generated_at_utc"] = generated_at_utc
         health["generated_at_utc"] = generated_at_utc
-        health["generator"] = "edge/generate_yemen.py (v5.2, LAB ONLY)"
+        health["generator"] = "edge/generate_yemen.py (v5.6, LAB ONLY)"
         health.setdefault("sections", {})["yemen"] = {
             "count": counts["places"],
             "hash": doc_hash,

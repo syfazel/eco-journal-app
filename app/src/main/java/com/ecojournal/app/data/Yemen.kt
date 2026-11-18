@@ -161,6 +161,43 @@ data class YemenLayers(
     val rumours: List<TitleBody>,
 )
 
+data class YemenAdenImage(
+    val name: String,
+    val originFa: String,
+    val showsFa: String,
+    val verdictFa: String,
+    val url: String,
+)
+
+data class YemenAdenCrossCheck(
+    val dateFa: String,
+    val saysFa: String,
+    val source: String,
+)
+
+data class YemenAdenChannelOfficial(
+    val name: String,
+    val handle: String,
+    val kindFa: String,
+    val bodyFa: String,
+    val verdictFa: String,
+)
+
+data class YemenAdenSocialPost(
+    val name: String,
+    val kindFa: String,
+    val dateFa: String,
+    val bodyFa: String,
+    val url: String,
+)
+
+data class YemenAdenAmplifier(
+    val name: String,
+    val dateFa: String,
+    val bodyFa: String,
+    val url: String,
+)
+
 data class YemenAden(
     val verdictTitleFa: String,
     val verdictBodyFa: String,
@@ -176,6 +213,15 @@ data class YemenAden(
     val seenNoteFa: String,
     val taizNoteFa: String,
     val openQuestions: List<String>,
+    // v5.6 (R4): the Aden investigation sections the app used to
+    // drop. All five travel verbatim from yemen.json (edge
+    // generate_yemen.py copies them field-for-field from the
+    // dashboard snapshot); empty lists on older bundles.
+    val images: List<YemenAdenImage>,
+    val crossCheck: List<YemenAdenCrossCheck>,
+    val channelsOfficial: List<YemenAdenChannelOfficial>,
+    val socialPosts: List<YemenAdenSocialPost>,
+    val amplifiers: List<YemenAdenAmplifier>,
 )
 
 data class YemenMilitaryFeature(
@@ -615,6 +661,108 @@ object YemenParsers {
             openQuestions = stringList(
                 obj.optJSONArray("open_questions") ?: JSONArray(),
             ),
+            images = run {
+                val out = mutableListOf<YemenAdenImage>()
+                val arr = obj.optJSONArray("images") ?: JSONArray()
+                for (i in 0 until arr.length()) {
+                    try {
+                        val o = arr.getJSONObject(i)
+                        out.add(
+                            YemenAdenImage(
+                                name = o.optString("name", ""),
+                                originFa = o.optString("origin_fa", ""),
+                                showsFa = o.optString("shows_fa", ""),
+                                verdictFa = o.optString("verdict_fa", ""),
+                                url = o.optString("url", ""),
+                            ),
+                        )
+                    } catch (_: Exception) {
+                        continue
+                    }
+                }
+                out
+            },
+            crossCheck = run {
+                val out = mutableListOf<YemenAdenCrossCheck>()
+                val arr = obj.optJSONArray("cross_check") ?: JSONArray()
+                for (i in 0 until arr.length()) {
+                    try {
+                        val o = arr.getJSONObject(i)
+                        out.add(
+                            YemenAdenCrossCheck(
+                                dateFa = o.optString("date_fa", ""),
+                                saysFa = o.optString("says_fa", ""),
+                                source = o.optString("source", ""),
+                            ),
+                        )
+                    } catch (_: Exception) {
+                        continue
+                    }
+                }
+                out
+            },
+            channelsOfficial = run {
+                val out = mutableListOf<YemenAdenChannelOfficial>()
+                val arr = obj.optJSONArray("channels_official") ?: JSONArray()
+                for (i in 0 until arr.length()) {
+                    try {
+                        val o = arr.getJSONObject(i)
+                        out.add(
+                            YemenAdenChannelOfficial(
+                                name = o.optString("name", ""),
+                                handle = o.optString("handle", ""),
+                                kindFa = o.optString("kind_fa", ""),
+                                bodyFa = o.optString("body_fa", ""),
+                                verdictFa = o.optString("verdict_fa", ""),
+                            ),
+                        )
+                    } catch (_: Exception) {
+                        continue
+                    }
+                }
+                out
+            },
+            socialPosts = run {
+                val out = mutableListOf<YemenAdenSocialPost>()
+                val arr = obj.optJSONArray("social_posts") ?: JSONArray()
+                for (i in 0 until arr.length()) {
+                    try {
+                        val o = arr.getJSONObject(i)
+                        out.add(
+                            YemenAdenSocialPost(
+                                name = o.optString("name", ""),
+                                kindFa = o.optString("kind_fa", ""),
+                                dateFa = o.optString("date_fa", ""),
+                                bodyFa = o.optString("body_fa", ""),
+                                url = o.optString("url", ""),
+                            ),
+                        )
+                    } catch (_: Exception) {
+                        continue
+                    }
+                }
+                out
+            },
+            amplifiers = run {
+                val out = mutableListOf<YemenAdenAmplifier>()
+                val arr = obj.optJSONArray("amplifiers") ?: JSONArray()
+                for (i in 0 until arr.length()) {
+                    try {
+                        val o = arr.getJSONObject(i)
+                        out.add(
+                            YemenAdenAmplifier(
+                                name = o.optString("name", ""),
+                                dateFa = o.optString("date_fa", ""),
+                                bodyFa = o.optString("body_fa", ""),
+                                url = o.optString("url", ""),
+                            ),
+                        )
+                    } catch (_: Exception) {
+                        continue
+                    }
+                }
+                out
+            },
         )
     }
 
@@ -841,6 +989,183 @@ object YemenParsers {
             .toString()
     }
 
+    // ---- v5.6 (R4): verbatim-JSON columns for the Aden
+    // investigation sections (same pattern as ringJson above) ----
+
+    fun adenImagesJson(list: List<YemenAdenImage>): String {
+        val arr = JSONArray()
+        for (im in list) {
+            arr.put(
+                JSONObject()
+                    .put("name", im.name)
+                    .put("origin_fa", im.originFa)
+                    .put("shows_fa", im.showsFa)
+                    .put("verdict_fa", im.verdictFa)
+                    .put("url", im.url),
+            )
+        }
+        return arr.toString()
+    }
+
+    fun adenImagesList(json: String): List<YemenAdenImage> {
+        val out = mutableListOf<YemenAdenImage>()
+        try {
+            val arr = JSONArray(json)
+            for (i in 0 until arr.length()) {
+                val o = arr.getJSONObject(i)
+                out.add(
+                    YemenAdenImage(
+                        name = o.optString("name", ""),
+                        originFa = o.optString("origin_fa", ""),
+                        showsFa = o.optString("shows_fa", ""),
+                        verdictFa = o.optString("verdict_fa", ""),
+                        url = o.optString("url", ""),
+                    ),
+                )
+            }
+        } catch (_: Exception) {
+        }
+        return out
+    }
+
+    fun adenCrossCheckJson(list: List<YemenAdenCrossCheck>): String {
+        val arr = JSONArray()
+        for (c in list) {
+            arr.put(
+                JSONObject()
+                    .put("date_fa", c.dateFa)
+                    .put("says_fa", c.saysFa)
+                    .put("source", c.source),
+            )
+        }
+        return arr.toString()
+    }
+
+    fun adenCrossCheckList(json: String): List<YemenAdenCrossCheck> {
+        val out = mutableListOf<YemenAdenCrossCheck>()
+        try {
+            val arr = JSONArray(json)
+            for (i in 0 until arr.length()) {
+                val o = arr.getJSONObject(i)
+                out.add(
+                    YemenAdenCrossCheck(
+                        dateFa = o.optString("date_fa", ""),
+                        saysFa = o.optString("says_fa", ""),
+                        source = o.optString("source", ""),
+                    ),
+                )
+            }
+        } catch (_: Exception) {
+        }
+        return out
+    }
+
+    fun adenChannelsOfficialJson(list: List<YemenAdenChannelOfficial>): String {
+        val arr = JSONArray()
+        for (c in list) {
+            arr.put(
+                JSONObject()
+                    .put("name", c.name)
+                    .put("handle", c.handle)
+                    .put("kind_fa", c.kindFa)
+                    .put("body_fa", c.bodyFa)
+                    .put("verdict_fa", c.verdictFa),
+            )
+        }
+        return arr.toString()
+    }
+
+    fun adenChannelsOfficialList(json: String): List<YemenAdenChannelOfficial> {
+        val out = mutableListOf<YemenAdenChannelOfficial>()
+        try {
+            val arr = JSONArray(json)
+            for (i in 0 until arr.length()) {
+                val o = arr.getJSONObject(i)
+                out.add(
+                    YemenAdenChannelOfficial(
+                        name = o.optString("name", ""),
+                        handle = o.optString("handle", ""),
+                        kindFa = o.optString("kind_fa", ""),
+                        bodyFa = o.optString("body_fa", ""),
+                        verdictFa = o.optString("verdict_fa", ""),
+                    ),
+                )
+            }
+        } catch (_: Exception) {
+        }
+        return out
+    }
+
+    fun adenSocialPostsJson(list: List<YemenAdenSocialPost>): String {
+        val arr = JSONArray()
+        for (p in list) {
+            arr.put(
+                JSONObject()
+                    .put("name", p.name)
+                    .put("kind_fa", p.kindFa)
+                    .put("date_fa", p.dateFa)
+                    .put("body_fa", p.bodyFa)
+                    .put("url", p.url),
+            )
+        }
+        return arr.toString()
+    }
+
+    fun adenSocialPostsList(json: String): List<YemenAdenSocialPost> {
+        val out = mutableListOf<YemenAdenSocialPost>()
+        try {
+            val arr = JSONArray(json)
+            for (i in 0 until arr.length()) {
+                val o = arr.getJSONObject(i)
+                out.add(
+                    YemenAdenSocialPost(
+                        name = o.optString("name", ""),
+                        kindFa = o.optString("kind_fa", ""),
+                        dateFa = o.optString("date_fa", ""),
+                        bodyFa = o.optString("body_fa", ""),
+                        url = o.optString("url", ""),
+                    ),
+                )
+            }
+        } catch (_: Exception) {
+        }
+        return out
+    }
+
+    fun adenAmplifiersJson(list: List<YemenAdenAmplifier>): String {
+        val arr = JSONArray()
+        for (a in list) {
+            arr.put(
+                JSONObject()
+                    .put("name", a.name)
+                    .put("date_fa", a.dateFa)
+                    .put("body_fa", a.bodyFa)
+                    .put("url", a.url),
+            )
+        }
+        return arr.toString()
+    }
+
+    fun adenAmplifiersList(json: String): List<YemenAdenAmplifier> {
+        val out = mutableListOf<YemenAdenAmplifier>()
+        try {
+            val arr = JSONArray(json)
+            for (i in 0 until arr.length()) {
+                val o = arr.getJSONObject(i)
+                out.add(
+                    YemenAdenAmplifier(
+                        name = o.optString("name", ""),
+                        dateFa = o.optString("date_fa", ""),
+                        bodyFa = o.optString("body_fa", ""),
+                        url = o.optString("url", ""),
+                    ),
+                )
+            }
+        } catch (_: Exception) {
+        }
+        return out
+    }
+
     fun layersFromJson(json: String): YemenLayers {
         return try {
             val o = JSONObject(json)
@@ -960,6 +1285,11 @@ fun YemenAden.toEntity(): YemenAdenEntity =
         seenNoteFa = seenNoteFa,
         taizNoteFa = taizNoteFa,
         openQuestionsJson = YemenParsers.stringListJson(openQuestions),
+        imagesJson = YemenParsers.adenImagesJson(images),
+        crossCheckJson = YemenParsers.adenCrossCheckJson(crossCheck),
+        channelsOfficialJson = YemenParsers.adenChannelsOfficialJson(channelsOfficial),
+        socialPostsJson = YemenParsers.adenSocialPostsJson(socialPosts),
+        amplifiersJson = YemenParsers.adenAmplifiersJson(amplifiers),
     )
 
 fun YemenFrontlineEntity.toDomain(): YemenFrontline =
@@ -1027,6 +1357,11 @@ fun YemenAdenEntity.toDomain(): YemenAden =
                 JSONArray()
             },
         ),
+        images = YemenParsers.adenImagesList(imagesJson),
+        crossCheck = YemenParsers.adenCrossCheckList(crossCheckJson),
+        channelsOfficial = YemenParsers.adenChannelsOfficialList(channelsOfficialJson),
+        socialPosts = YemenParsers.adenSocialPostsList(socialPostsJson),
+        amplifiers = YemenParsers.adenAmplifiersList(amplifiersJson),
     )
 
 fun YemenPlaceEntity.toDomain(): YemenPlace =

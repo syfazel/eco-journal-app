@@ -26,9 +26,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
@@ -46,7 +44,6 @@ import com.ecojournal.app.data.AppUpdateRepository
 import com.ecojournal.app.data.BroadcastRules
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.SettingsStore
-import com.ecojournal.app.data.SyncTrace
 import com.ecojournal.app.ui.screens.BroadcastScreen
 import com.ecojournal.app.ui.screens.DiagnosticsScreen
 import com.ecojournal.app.ui.screens.InviteScreen
@@ -65,20 +62,12 @@ private data class Tab(
 
 /**
  * v5.1 invite-gate flip guard (UI only; the gate itself and the
- * hash handling are untouched).
- *
- * The SettingsScreen manual re-lock button sets this flag before
- * clearing the invite (see SettingsScreen). MainActivity reads
- * it to tell an explicit user lock apart from a transient
- * settings emission that lost the flag AND the hash (e.g. a
- * corrupt DataStore read falling back to empty preferences):
- * the latter must never flip a signed-in, populated app back to
- * the code-entry screen. The flag is cleared as soon as a valid
- * invite is observed again, so an old manual lock can never
- * poison a later transient failure. A genuine revocation needs
- * no flag: EdgeRepository clears only the flag and KEEPS the
- * stored hash, so it is recognised by the hash still being
- * present (see the gate below) and always locks.
+ * hash handling are untouched). Kept for the Settings manual
+ * re-lock button, which sets this flag before clearing the
+ * invite (see SettingsScreen). v5.6: the whole-app gate that
+ * read this flag is gone — the gate now guards only the
+ * Broadcast tab — so the flag is a marker for the re-lock
+ * action itself, not a flip guard.
  */
 object InviteLockSignal {
     @Volatile
@@ -130,59 +119,24 @@ class MainActivity : ComponentActivity() {
                         }
                         return@EcoTheme
                     }
-                    // M7 real invite gate: the Yemen tab stays locked
-                    // until a valid code is entered (InviteScreen).
-                    // v5.1 shockproof — the re-check must NEVER
-                    // flip a signed-in app back to an empty /
-                    // locked screen on a transient failure. The
-                    // data layer already guarantees this for
-                    // fetch failures (EdgeRepository skips the
-                    // re-check entirely when the edge lists are
-                    // unfetchable, and only a successfully
-                    // fetched list can re-lock, with the stored
-                    // hash kept). This gate closes the remaining
-                    // UI-level flip: a settings emission that
-                    // lost BOTH the flag and the hash after this
-                    // process already saw a valid invite is a
-                    // corrupt/transient read, not a revocation,
-                    // so the session is kept and the suppression
-                    // is traced (branch "gate_held", visible on
-                    // Diagnostics). It locks when: the flag is
-                    // false and the hash is still present
-                    // (genuine revocation), the user tapped
-                    // re-lock (InviteLockSignal), or no invite
-                    // was ever seen in this process (fresh
-                    // install). A kept session is re-resolved by
-                    // the next successful sync re-check: a truly
-                    // revoked hash then locks via the hash-kept
-                    // path. A kept session is never presented
-                    // as an empty tab — the held tab stays.
-                    var gateEverOk by remember { mutableStateOf(false) }
-                    LaunchedEffect(settings.inviteOk) {
-                        if (settings.inviteOk) {
-                            gateEverOk = true
-                            InviteLockSignal.manualLockRequested = false
-                        }
-                    }
-                    val gateHeld = !settings.inviteOk &&
-                        settings.inviteHash == null &&
-                        !InviteLockSignal.manualLockRequested &&
-                        gateEverOk
-                    LaunchedEffect(gateHeld) {
-                        if (gateHeld) {
-                            SyncTrace.recordFeedBranch(
-                                repo.dao, "gate_held", -1, -1,
-                            )
-                        }
-                    }
-                    if (!settings.inviteOk && !gateHeld) {
-                        InviteScreen(
-                            repo = repo,
-                            store = store,
-                            fontScale = settings.fontScale,
-                        )
-                        return@EcoTheme
-                    }
+                    // v5.6 (R2): the invite gate NO LONGER locks
+                    // the whole app. The Yemen tab is public
+                    // dashboard data (no PII) and is readable
+                    // WITHOUT an invite — a fresh install, or a
+                    // revoked code, must never hide Yemen behind
+                    // a code-entry screen again. The gate now
+                    // guards ONLY the Broadcast tab (below): the
+                    // broadcast destination shows InviteScreen
+                    // until a valid code is entered, while Yemen
+                    // and Settings stay open. The old whole-app
+                    // gate (M7, with its gate_held flip guard)
+                    // is deleted with this change; revocation
+                    // still re-locks broadcast via the sync
+                    // re-check in EdgeRepository, and the
+                    // Settings manual re-lock still clears the
+                    // invite (InviteLockSignal, kept for that
+                    // button). A kept Yemen cache is never
+                    // hidden by the gate.
                     // v4-I: one update check per launch (only
                     // when the toggle is on) + restore of the
                     // stored pending record, so the Settings card
@@ -255,13 +209,28 @@ class MainActivity : ComponentActivity() {
                                 YemenScreen(
                                     repo = repo,
                                     fontScale = settings.fontScale,
+                                    onDiagnostics = { nav.navigate("diagnostics") },
                                 )
                             }
                             composable("broadcast") {
-                                BroadcastScreen(
-                                    settings = settings,
-                                    fontScale = settings.fontScale,
-                                )
+                                // v5.6 (R2): the invite gate lives
+                                // HERE now, on this tab only. No
+                                // valid code -> the code-entry
+                                // screen; a valid code -> the
+                                // messaging tab. Yemen and
+                                // Settings are never gated.
+                                if (!settings.inviteOk) {
+                                    InviteScreen(
+                                        repo = repo,
+                                        store = store,
+                                        fontScale = settings.fontScale,
+                                    )
+                                } else {
+                                    BroadcastScreen(
+                                        settings = settings,
+                                        fontScale = settings.fontScale,
+                                    )
+                                }
                             }
                             composable("settings") {
                                 SettingsScreen(

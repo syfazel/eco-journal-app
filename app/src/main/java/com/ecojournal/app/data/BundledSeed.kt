@@ -21,13 +21,20 @@ import kotlinx.coroutines.sync.withLock
  * BUNDLED_SEED_VERSION stays 2: the Yemen seed itself did
  * not change in v5.3, so installs that already seeded Yemen
  * need no re-seed; the fast path below recognises them.
+ *
+ * v5.6: 3 — the seed now carries the Aden investigation
+ * sections (images / cross-check / official channels / social
+ * posts / amplifiers) and the Aden row is re-seeded whenever
+ * the bundle hash changes, so a v11 install that already has
+ * an Aden row still gets the new sections on the next launch.
  */
 object BundledSeed {
 
     // v5.2: 2 — old installs backfill the Yemen seed on next
     // launch (the version bump is what re-runs the seed for
     // them; the missing-set logic below does the rest).
-    const val BUNDLED_SEED_VERSION = 2
+    // v5.6: 3 — Aden investigation sections added to the seed.
+    const val BUNDLED_SEED_VERSION = 3
 
     private const val SEED_YEMEN = "seed/yemen.json"
 
@@ -102,9 +109,12 @@ object BundledSeed {
                 if (yemenDao.frontlines().isEmpty()) {
                     yemenFreshFrontlines = yemenDoc.frontlines.map { it.toEntity() }
                 }
-                if (yemenDao.aden() == null) {
-                    yemenFreshAden = yemenDoc.aden.toEntity()
-                }
+                // v5.6: the Aden row is re-seeded whenever the
+                // bundle is re-parsed (not only when the row is
+                // missing) — upsert is REPLACE, so an older row
+                // gains the new investigation sections instead
+                // of keeping its pre-5.6 empty columns.
+                yemenFreshAden = yemenDoc.aden.toEntity()
             }
         }
         val yemenComplete = !yemenMissing && yemenSeedHash != null

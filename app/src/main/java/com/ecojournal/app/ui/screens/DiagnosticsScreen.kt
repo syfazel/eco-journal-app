@@ -203,6 +203,10 @@ fun DiagnosticsScreen(
     val events by repo.yemenDao.eventsFlow().collectAsState(initial = emptyList())
     val frontlines by repo.yemenDao.frontlinesFlow().collectAsState(initial = emptyList())
     val yemenMeta by repo.yemenDao.metaFlow().collectAsState(initial = null)
+    // v5.6 (R4): local snapshot count (count only, never labels
+    // or content).
+    val localSnapshots by repo.yemenDao.localSnapshotsFlow()
+        .collectAsState(initial = emptyList())
     // Phase 5 (v5.4): broadcast counts only — never content,
     // never member names, never codes (G-DIAG-2).
     val broadcastMessages by repo.broadcastDao.messagesFlow().collectAsState(initial = emptyList())
@@ -404,6 +408,10 @@ fun DiagnosticsScreen(
         stringResource(
             R.string.diagnostics_yemen_frontlines,
             frontlines.size.toString().toPersianDigits(),
+        ),
+        stringResource(
+            R.string.diagnostics_yemen_snapshots,
+            localSnapshots.size.toString().toPersianDigits(),
         ),
         stringResource(
             R.string.diagnostics_broadcast,

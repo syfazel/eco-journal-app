@@ -111,6 +111,7 @@
     <string name="diagnostics_yemen_places">نقاط یمن: %1$s</string>
     <string name="diagnostics_yemen_events">رویدادهای یمن: %1$s</string>
     <string name="diagnostics_yemen_frontlines">جبهه‌های یمن: %1$s</string>
+    <string name="diagnostics_yemen_snapshots">اسنپ‌شات‌های محلی یمن: %1$s</string>
     <string name="diagnostics_yemen_last_sync">آخرین همگام‌سازی یمن: %1$s</string>
     <string name="diagnostics_yemen_error">آخرین خطای یمن: %1$s</string>
     <string name="diagnostics_articles">مقالات کش‌شده: %1$s</string>
@@ -522,8 +523,13 @@
     <string name="yemen_sub_dossiers">پرونده‌ها و تحلیل</string>
     <string name="yemen_sub_timeline">خط زمانی و منابع</string>
     <string name="yemen_sub_archive">آرشیو نسخه‌ها</string>
-    <string name="yemen_refresh">به‌روزرسانی</string>
+    <string name="yemen_refresh">به‌روزرسانی لحظه‌ای</string>
     <string name="yemen_refreshing">در حال به‌روزرسانی…</string>
+    <string name="yemen_refresh_success">به‌روزرسانی شد: %1$s</string>
+    <string name="yemen_empty_retry">تلاش دوباره</string>
+    <string name="yemen_empty_error">آخرین خطا: %1$s</string>
+    <string name="yemen_empty_diagnostics">مشاهدهٔ عیب‌یابی</string>
+    <string name="yemen_empty_hint">اگر بذر بارگذاری نشد، با دکمهٔ زیر دوباره تلاش کنید؛ کد خطا و عیب‌یابی کمک می‌کند بفهمیم چرا.</string>
     <string name="yemen_updated">آخرین به‌روزرسانی: %1$s • %2$s ساعت پیش</string>
     <string name="yemen_stale">داده کهنه است — بیش از ۲۴ ساعت از آخرین به‌روزرسانی گذشته است.</string>
     <string name="yemen_offline">آفلاین — نمایش دادهٔ ذخیره‌شده</string>
@@ -562,6 +568,33 @@
     <string name="yemen_faction_aqap">القاعده</string>
     <string name="yemen_faction_stc">شورای انتقالی</string>
     <string name="yemen_faction_unknown">نامشخص</string>
+    <string name="yemen_aden_images">تصاویر بررسی‌شده</string>
+    <string name="yemen_aden_cross_check">راستی‌آزمایی با منابع مستقل</string>
+    <string name="yemen_aden_channels_official">کانال‌های رسمی</string>
+    <string name="yemen_aden_social_posts">پست‌های شبکه‌های اجتماعی</string>
+    <string name="yemen_aden_amplifiers">تقویت‌کننده‌ها</string>
+    <string name="yemen_aden_seen_note">یادداشت تصاویر دیده‌شده</string>
+    <string name="yemen_aden_taiz_note">یادداشت تعز</string>
+    <string name="yemen_archive_dashboard">اسنپ‌شات‌های داشبورد</string>
+    <string name="yemen_archive_local">اسنپ‌شات‌های محلی (روی همین گوشی)</string>
+    <string name="yemen_archive_versions">تاریخچهٔ نسخه‌های داشبورد</string>
+    <string name="yemen_archive_v1">نسخهٔ ۱ — ساخت داشبورد</string>
+    <string name="yemen_archive_v2">نسخهٔ ۲ — ادغام سه فضا</string>
+    <string name="yemen_archive_v3">نسخهٔ ۳ — مرزهای درگیری</string>
+    <string name="yemen_archive_v4">نسخهٔ ۴ — تب محاصرهٔ عدن</string>
+    <string name="yemen_archive_v5">نسخهٔ ۵ — ارتقای رابط کاربری و آرشیو نسخه‌ها (۱۷ نوامبر ۲۰۲۶)</string>
+    <string name="yemen_archive_create">ساختن اسنپ‌شات از وضعیت فعلی</string>
+    <string name="yemen_archive_label_hint">برچسب (اختیاری)</string>
+    <string name="yemen_archive_view">مشاهدهٔ نقاط</string>
+    <string name="yemen_archive_hide">پنهان کردن نقاط</string>
+    <string name="yemen_archive_delete">حذف</string>
+    <string name="yemen_archive_empty">هنوز اسنپ‌شات محلی نساخته‌اید.</string>
+    <string name="yemen_archive_created">اسنپ‌شات ساخته شد.</string>
+    <string name="yemen_map_legend">راهنما</string>
+    <string name="yemen_map_frontline">خط جبهه</string>
+    <string name="yemen_map_arrow">پیکان پیشروی</string>
+    <string name="yemen_map_unit">موضع یگان</string>
+    <string name="yemen_map_aden_ring">حلقهٔ عدن</string>
     <string name="yemen_frontline_no_line">برای این جبهه خط قابل‌اعتمادی کشیده نشده است؛ فقط نقاط فعالیت گزارش‌شده آمده است.</string>
     <!-- v5.2 locked sections (audit §4.5 option A): the fixed
          locked line for every non-Yemen section. -->

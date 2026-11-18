@@ -368,6 +368,67 @@ class EdgeRepository(context: Context) {
     /** Yemen meta for the tab header (staleness, error code). */
     suspend fun yemenMeta(): YemenMetaEntity? = yemenDao.meta()
 
+    /**
+     * v5.6 (R4): create a LOCAL snapshot — freeze the current
+     * Room state (all places + counts + headline) into the
+     * yemen_snapshots tables, in ONE transaction. The label is
+     * user-supplied (may be blank — the archive then shows the
+     * Jalali date). Returns the new snapshot id, or -1 when
+     * there is nothing to freeze (no places cached yet).
+     */
+    suspend fun createYemenSnapshot(label: String): Long {
+        val places = yemenDao.places()
+        if (places.isEmpty()) return -1
+        val events = yemenDao.events()
+        val doc = dao.metaValue("yemen_doc_json")
+            ?.let { YemenParsers.parseDoc(it) }
+        val countsArr = org.json.JSONArray()
+        for ((faction, list) in places.groupBy { it.faction }) {
+            countsArr.put(
+                org.json.JSONObject()
+                    .put("faction", faction)
+                    .put("count", list.size),
+            )
+        }
+        val snapshot = YemenLocalSnapshotEntity(
+            label = label.trim(),
+            createdAtEpoch = System.currentTimeMillis(),
+            placesCount = places.size,
+            eventsCount = events.size,
+            headlineFa = doc?.headlineFa ?: "",
+            countsJson = countsArr.toString(),
+        )
+        var id = -1L
+        db.withTransaction {
+            id = yemenDao.insertSnapshot(snapshot)
+            yemenDao.insertSnapshotPlaces(
+                places.map {
+                    YemenSnapshotPlaceEntity(
+                        snapshotId = id,
+                        appKey = it.appKey,
+                        nameFa = it.nameFa,
+                        governorateFa = it.governorateFa,
+                        lat = it.lat,
+                        lon = it.lon,
+                        faction = it.faction,
+                        controlLabel = it.controlLabel,
+                        confidence = it.confidence,
+                        note = it.note,
+                    )
+                },
+            )
+        }
+        return id
+    }
+
+    /** v5.6 (R4): delete a local snapshot and its frozen places. */
+    suspend fun deleteYemenSnapshot(snapshotId: Long) {
+        db.withTransaction {
+            yemenDao.deleteSnapshotPlaces(snapshotId)
+            yemenDao.deleteSnapshot(snapshotId)
+        }
+    }
+
     // Diagnostics snapshot for the single remaining section.
     // Hash values are never returned, only present/absent.
     suspend fun sectionStates(): List<SectionSyncState> {

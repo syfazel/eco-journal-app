@@ -1,5 +1,6 @@
 package com.ecojournal.app.ui.screens
 
+import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +11,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -18,9 +21,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,9 +37,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -43,6 +54,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ecojournal.app.R
+import com.ecojournal.app.data.AppUpdateRepository
+import com.ecojournal.app.data.AppUpdateSession
+import com.ecojournal.app.data.BundledSeed
 import com.ecojournal.app.data.EdgeRepository
 import com.ecojournal.app.data.Jalali
 import com.ecojournal.app.data.SyncResult
@@ -52,10 +66,12 @@ import com.ecojournal.app.data.YemenFrontline
 import com.ecojournal.app.data.YemenParsers
 import com.ecojournal.app.data.YemenPlace
 import com.ecojournal.app.data.toDomain
+import com.ecojournal.app.ui.components.AppUpdateCompactRow
 import com.ecojournal.app.ui.theme.EcoFontFamily
 import com.ecojournal.app.util.toPersianDigits
 import java.time.Instant
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 
 // v5.2 Yemen tab (audit §4.4). Six sub-tabs mirroring dashboard
 // v5: status+map, conflict borders, Aden encirclement,
@@ -100,9 +116,12 @@ fun YemenScreen(
     repo: EdgeRepository,
     fontScale: Float = 1f,
     modifier: Modifier = Modifier,
+    // v5.6 (R3): the empty state links to Diagnostics.
+    onDiagnostics: () -> Unit = {},
 ) {
     val vm: YemenViewModel = viewModel()
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     // Live Room reads (start empty on every recomposition).
     val places by repo.yemenDao.placesFlow().collectAsState(initial = emptyList())
@@ -142,6 +161,28 @@ fun YemenScreen(
     var selectedSub by remember { mutableStateOf(0) }
     var refreshing by remember { mutableStateOf(false) }
     var syncError by remember { mutableStateOf<String?>(null) }
+    // v5.6 (R6): epoch of the last successful manual refresh,
+    // so the header can show "به‌روزرسانی شد: <Jalali>" instead
+    // of leaving the user guessing whether the tap did anything.
+    var lastRefreshOkAt by remember { mutableStateOf<Long?>(null) }
+    // v5.6 (R3): the empty state's error sources — the seed
+    // failure flag, the seed-missing count and the last sync
+    // error code. A spinner with no code and no retry is the
+    // trap this fixes.
+    val seedError by repo.dao.metaValueFlow("seed_error")
+        .collectAsState(initial = null)
+    val seedMissing by repo.dao.metaValueFlow("seed_missing_count")
+        .collectAsState(initial = null)
+    val lastSyncError by repo.dao.metaValueFlow("last_sync_error_code")
+        .collectAsState(initial = null)
+    var retryingSeed by remember { mutableStateOf(false) }
+    // v5.6 (R1): the in-app update banner lives ON the Yemen
+    // tab now, not only in Settings — a phone on 5.1/5.5 must
+    // not be able to miss that 5.6 exists. The check itself
+    // still runs on launch + 24h (MainActivity / worker);
+    // this row only surfaces the already-computed state.
+    val updateRepo = remember(context) { AppUpdateRepository(context) }
+    val updateState by AppUpdateSession.state.collectAsState()
 
     val subTabs = listOf(
         R.string.yemen_sub_status,
@@ -162,10 +203,39 @@ fun YemenScreen(
                 .semantics { heading() }
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp),
         )
+        // v5.6 (R1): update banner on the Yemen tab itself.
+        // Available / Downloading / ReadyToInstall / Failed all
+        // render; Idle / Checking render nothing (the full card
+        // in Settings covers those). A mandatory 5.6 has no
+        // dismiss button (see AppUpdateCompactRow).
+        AppUpdateCompactRow(
+            state = updateState,
+            fontScale = fontScale,
+            onDownload = { pending ->
+                scope.launch { updateRepo.download(pending) }
+            },
+            onInstall = {
+                scope.launch { updateRepo.installValidated(context) }
+            },
+            onDismiss = { pending ->
+                scope.launch { updateRepo.dismiss(pending) }
+            },
+            modifier = Modifier.padding(
+                start = 16.dp, end = 16.dp, top = 8.dp,
+            ),
+        )
         if (displayPlaces.isEmpty() && displayDoc == null) {
             // Genuinely empty (held empty AND Room empty): the
             // seed has not landed yet. Never a flicker to empty
             // from a populated tab — that path is retained above.
+            // v5.6 (R3): this is no longer a bare infinite
+            // spinner. It shows the last known error code (if
+            // any), a retry button that re-runs the seed AND a
+            // forced sync, and a link to Diagnostics.
+            val emptyErrorCode = lastSyncError?.takeIf { it.isNotBlank() }
+                ?: displayMeta?.lastYemenErrorCode?.takeIf { it.isNotBlank() }
+                ?: seedError?.takeIf { it.isNotBlank() }
+                ?: if (seedMissing == "1") "seed_missing" else null
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -180,6 +250,59 @@ fun YemenScreen(
                     fontFamily = EcoFontFamily,
                     fontSize = 14.sp * fontScale,
                 )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(R.string.yemen_empty_hint),
+                    fontFamily = EcoFontFamily,
+                    fontSize = 12.sp * fontScale,
+                )
+                if (emptyErrorCode != null) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = stringResource(
+                            R.string.yemen_empty_error,
+                            emptyErrorCode,
+                        ),
+                        fontFamily = EcoFontFamily,
+                        fontSize = 12.sp * fontScale,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(
+                    onClick = {
+                        if (!retryingSeed) {
+                            retryingSeed = true
+                            scope.launch {
+                                try {
+                                    BundledSeed.ensureSeed(context)
+                                    repo.syncYemen(forceRefresh = true)
+                                } finally {
+                                    retryingSeed = false
+                                }
+                            }
+                        }
+                    },
+                    enabled = !retryingSeed,
+                    modifier = Modifier.heightIn(min = 48.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.yemen_empty_retry),
+                        fontFamily = EcoFontFamily,
+                        fontSize = 14.sp * fontScale,
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedButton(
+                    onClick = onDiagnostics,
+                    modifier = Modifier.heightIn(min = 48.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.yemen_empty_diagnostics),
+                        fontFamily = EcoFontFamily,
+                        fontSize = 14.sp * fontScale,
+                    )
+                }
             }
             return@Column
         }
@@ -189,6 +312,7 @@ fun YemenScreen(
             eventCount = displayEvents.size,
             refreshing = refreshing,
             syncError = syncError,
+            lastRefreshOkAt = lastRefreshOkAt,
             fontScale = fontScale,
             onRefresh = {
                 if (!refreshing) {
@@ -196,7 +320,10 @@ fun YemenScreen(
                     syncError = null
                     scope.launch {
                         when (val r = repo.syncYemen(forceRefresh = true)) {
-                            is SyncResult.Ok -> syncError = null
+                            is SyncResult.Ok -> {
+                                syncError = null
+                                lastRefreshOkAt = System.currentTimeMillis()
+                            }
                             is SyncResult.Partial -> syncError = "partial"
                             is SyncResult.Failed -> syncError = r.code
                             is SyncResult.NotConfigured -> syncError = "network"
@@ -247,7 +374,7 @@ fun YemenScreen(
                 )
                 3 -> DossiersTab(doc = displayDoc, fontScale = fontScale)
                 4 -> TimelineTab(doc = displayDoc, events = displayEvents, fontScale = fontScale)
-                5 -> ArchiveTab(doc = displayDoc, fontScale = fontScale)
+                5 -> ArchiveTab(doc = displayDoc, repo = repo, fontScale = fontScale)
             }
         }
     }
@@ -260,6 +387,7 @@ private fun YemenHeader(
     eventCount: Int,
     refreshing: Boolean,
     syncError: String?,
+    lastRefreshOkAt: Long?,
     fontScale: Float,
     onRefresh: () -> Unit,
 ) {
@@ -350,6 +478,20 @@ private fun YemenHeader(
                 color = MaterialTheme.colorScheme.error,
             )
         }
+        // v5.6 (R6): success is shown, not left to guess — the
+        // Jalali date-time of the manual refresh that just
+        // succeeded. A failure above + this button below is the
+        // retry; there is no separate retry control.
+        if (lastRefreshOkAt != null && syncError == null) {
+            Text(
+                text = stringResource(
+                    R.string.yemen_refresh_success,
+                    Jalali.formatShamsiDateTime(lastRefreshOkAt),
+                ),
+                fontFamily = EcoFontFamily,
+                fontSize = 12.sp * fontScale,
+            )
+        }
         val changes = meta?.controlChanges ?: 0
         if (changes > 0) {
             Text(
@@ -362,7 +504,18 @@ private fun YemenHeader(
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onRefresh, enabled = !refreshing) {
+        // v5.6 (R6): the refresh is a prominent, always-visible,
+        // full-width button labelled "به‌روزرسانی لحظه‌ای" — the
+        // old small "به‌روزرسانی" button hid the fact that the
+        // tap force-refreshes past the manifest hash gate
+        // (EdgeRepository.syncYemen forceRefresh=true).
+        Button(
+            onClick = onRefresh,
+            enabled = !refreshing,
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 48.dp),
+        ) {
             Text(
                 text = if (refreshing) {
                     stringResource(R.string.yemen_refreshing)
@@ -370,7 +523,8 @@ private fun YemenHeader(
                     stringResource(R.string.yemen_refresh)
                 },
                 fontFamily = EcoFontFamily,
-                fontSize = 14.sp * fontScale,
+                fontSize = 15.sp * fontScale,
+                fontWeight = FontWeight.Bold,
             )
         }
     }
@@ -447,6 +601,10 @@ private fun YemenSchematicMap(
     // Schematic only: lat/lon normalised to the data bounds with
     // padding. No tiles, no SDK, no images. Frontline coordinates
     // are approximate (±10 km) — the warning below the map says so.
+    // v5.6 (R5): this is now a real conflict scene, not bare
+    // dots — triangular arrowheads with direction, the dashed
+    // Aden ring (one 5-slot arc per ring segment, coloured by
+    // its status), labels for Aden + key points, and a legend.
     val lats = places.map { it.lat } +
         frontlines.flatMap { f -> f.waypoints.map { it.lat } } +
         (doc?.advanceArrows?.flatMap { listOf(it.fromLat, it.toLat) } ?: emptyList()) +
@@ -459,6 +617,19 @@ private fun YemenSchematicMap(
     val maxLat = (lats.maxOrNull() ?: 17.0) + 0.5
     val minLon = (lons.minOrNull() ?: 42.0) - 0.5
     val maxLon = (lons.maxOrNull() ?: 55.0) + 0.5
+    val adenPlace = places.firstOrNull { it.nameFa == "شهر عدن" }
+    val labelColor = MaterialTheme.colorScheme.onSurface.toArgb()
+    // Labels: Aden + the dashboard key points that match a
+    // control point by name (field-for-field, never invented).
+    val labelPlaces = buildList {
+        adenPlace?.let { add(it.nameFa to (it.lat to it.lon)) }
+        for (kp in doc?.keyPoints ?: emptyList()) {
+            val match = places.firstOrNull { it.nameFa == kp.name }
+            if (match != null && match.nameFa != adenPlace?.nameFa) {
+                add(match.nameFa to (match.lat to match.lon))
+            }
+        }
+    }.take(7)
     Canvas(
         modifier = Modifier
             .fillMaxWidth()
@@ -492,17 +663,31 @@ private fun YemenSchematicMap(
                 )
             }
         }
-        // Advance arrows.
+        // Advance arrows: line + a real triangular arrowhead at
+        // the tip, pointing along the direction of advance.
         for (arrow in doc?.advanceArrows ?: emptyList()) {
             val from = Offset(x(arrow.fromLon), y(arrow.fromLat))
             val to = Offset(x(arrow.toLon), y(arrow.toLat))
-            drawLine(
-                color = factionColor(arrow.side),
-                start = from,
-                end = to,
-                strokeWidth = 3f,
-            )
-            drawCircle(color = factionColor(arrow.side), radius = 5f, center = to)
+            val color = factionColor(arrow.side)
+            drawLine(color = color, start = from, end = to, strokeWidth = 3f)
+            val dx = to.x - from.x
+            val dy = to.y - from.y
+            val len = kotlin.math.sqrt(dx * dx + dy * dy)
+            if (len > 1f) {
+                val ux = dx / len
+                val uy = dy / len
+                val px = -uy
+                val py = ux
+                val headLen = 18f
+                val headHalf = 8f
+                val head = Path().apply {
+                    moveTo(to.x, to.y)
+                    lineTo(to.x - ux * headLen + px * headHalf, to.y - uy * headLen + py * headHalf)
+                    lineTo(to.x - ux * headLen - px * headHalf, to.y - uy * headLen - py * headHalf)
+                    close()
+                }
+                drawPath(path = head, color = color)
+            }
         }
         // Unit positions as squares.
         for (unit in doc?.unitPositions ?: emptyList()) {
@@ -510,7 +695,7 @@ private fun YemenSchematicMap(
             drawRect(
                 color = factionColor(unit.side),
                 topLeft = Offset(c.x - 5f, c.y - 5f),
-                size = androidx.compose.ui.geometry.Size(10f, 10f),
+                size = Size(10f, 10f),
             )
         }
         // Control points as dots, coloured by faction.
@@ -521,9 +706,163 @@ private fun YemenSchematicMap(
                 center = Offset(x(place.lon), y(place.lat)),
             )
         }
+        // v5.6: the Aden ring — five dashed arcs around the city
+        // of Aden, one per ring segment, coloured by that
+        // segment's status (threat red, contested orange, open
+        // green). Arc boundaries are the midpoints between slot
+        // centres (east 0°, south 90°, west 180°, northwest
+        // 225°, north 270°); the ring is schematic, like the
+        // frontlines, and the ±10 km warning below covers it.
+        if (adenPlace != null) {
+            val cx = x(adenPlace.lon)
+            val cy = y(adenPlace.lat)
+            val rx = (0.9 / (maxLon - minLon) * size.width).toFloat()
+            val ry = (0.9 / (maxLat - minLat) * size.height).toFloat()
+            val slotArc = mapOf(
+                "east" to (315f to 90f),
+                "south" to (45f to 90f),
+                "west" to (135f to 67.5f),
+                "northwest" to (202.5f to 45f),
+                "north" to (247.5f to 67.5f),
+            )
+            val dash = PathEffect.dashPathEffect(floatArrayOf(14f, 10f), 0f)
+            for (segment in doc?.aden?.ringSegments ?: emptyList()) {
+                val (start, sweep) = slotArc[segment.slot] ?: continue
+                val ringColor = when (segment.statusKind) {
+                    "threat" -> Color(0xFFB3261E)
+                    "contested" -> Color(0xFFEF6C00)
+                    "open" -> Color(0xFF2E7D32)
+                    else -> Color(0xFF757575)
+                }
+                drawArc(
+                    color = ringColor,
+                    startAngle = start,
+                    sweepAngle = sweep,
+                    useCenter = false,
+                    topLeft = Offset(cx - rx, cy - ry),
+                    size = Size(rx * 2f, ry * 2f),
+                    style = Stroke(width = 4f, pathEffect = dash),
+                )
+            }
+            // Aden itself gets a larger ringed dot so the city
+            // is findable at a glance.
+            drawCircle(
+                color = Color(0xFFB3261E),
+                radius = 9f,
+                center = Offset(cx, cy),
+                style = Stroke(width = 3f),
+            )
+        }
+        // Labels: Aden + key points, drawn above their dots.
+        if (labelPlaces.isNotEmpty()) {
+            drawIntoCanvas { canvas ->
+                val paint = Paint().apply {
+                    textSize = 34f
+                    color = labelColor
+                    textAlign = Paint.Align.CENTER
+                    isFakeBoldText = true
+                }
+                for ((name, latLon) in labelPlaces) {
+                    canvas.nativeCanvas.drawText(
+                        name,
+                        x(latLon.second),
+                        y(latLon.first) - 16f,
+                        paint,
+                    )
+                }
+            }
+        }
     }
-    // The ±10 km warning is rendered by the caller directly
-    // under this map (StatusMapTab), never anywhere else.
+    // Legend, always under the map (the ±10 km warning is
+    // rendered by the caller directly under this map, never
+    // anywhere else).
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+        text = stringResource(R.string.yemen_map_legend),
+        fontFamily = EcoFontFamily,
+        fontSize = 13.sp * fontScale,
+        fontWeight = FontWeight.Bold,
+    )
+    Spacer(modifier = Modifier.height(4.dp))
+    val legendFactions = listOf("houthi", "govt", "contested", "aqap", "stc", "unknown")
+        .filter { faction -> places.any { it.faction == faction } }
+    for (faction in legendFactions) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(12.dp)
+                    .background(
+                        factionColor(faction),
+                        androidx.compose.foundation.shape.CircleShape,
+                    ),
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = factionLabel(faction),
+                fontFamily = EcoFontFamily,
+                fontSize = 12.sp * fontScale,
+            )
+        }
+        Spacer(modifier = Modifier.height(2.dp))
+    }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .width(24.dp)
+                .height(3.dp)
+                .background(Color(0xFFFF7A45)),
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = stringResource(R.string.yemen_map_frontline),
+            fontFamily = EcoFontFamily,
+            fontSize = 12.sp * fontScale,
+        )
+    }
+    Spacer(modifier = Modifier.height(2.dp))
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .width(24.dp)
+                .height(3.dp)
+                .background(Color(0xFFB3261E)),
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = stringResource(R.string.yemen_map_arrow),
+            fontFamily = EcoFontFamily,
+            fontSize = 12.sp * fontScale,
+        )
+    }
+    Spacer(modifier = Modifier.height(2.dp))
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .size(10.dp)
+                .background(Color(0xFF1565C0)),
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = stringResource(R.string.yemen_map_unit),
+            fontFamily = EcoFontFamily,
+            fontSize = 12.sp * fontScale,
+        )
+    }
+    Spacer(modifier = Modifier.height(2.dp))
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(
+            modifier = Modifier
+                .width(24.dp)
+                .height(3.dp)
+                .background(Color(0xFF2E7D32)),
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = stringResource(R.string.yemen_map_aden_ring),
+            fontFamily = EcoFontFamily,
+            fontSize = 12.sp * fontScale,
+        )
+    }
 }
 
 @Composable
@@ -690,6 +1029,116 @@ private fun AdenTab(
         Text(text = aden.crossCheckSummaryFa, fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale)
         Spacer(modifier = Modifier.height(8.dp))
     }
+    // v5.6 (R4): the notes that were parsed but never shown.
+    if (aden.seenNoteFa.isNotBlank()) {
+        SectionTitle(stringResource(R.string.yemen_aden_seen_note), fontScale)
+        Text(text = aden.seenNoteFa, fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale)
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+    if (aden.taizNoteFa.isNotBlank()) {
+        SectionTitle(stringResource(R.string.yemen_aden_taiz_note), fontScale)
+        Text(text = aden.taizNoteFa, fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale)
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+    // v5.6 (R4): the Aden investigation sections the app used
+    // to drop entirely — images, cross-check table, official
+    // channels, social posts, amplifiers. All verbatim from the
+    // dashboard via yemen.json; nothing is fetched or rendered
+    // as an image (names + descriptions only, no tiles).
+    if (aden.images.isNotEmpty()) {
+        SectionTitle(stringResource(R.string.yemen_aden_images), fontScale)
+        for (image in aden.images) {
+            Text(text = image.name, fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale, fontWeight = FontWeight.Bold)
+            if (image.originFa.isNotBlank()) {
+                Text(text = image.originFa, fontFamily = EcoFontFamily, fontSize = 12.sp * fontScale)
+            }
+            if (image.showsFa.isNotBlank()) {
+                Text(text = image.showsFa, fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale)
+            }
+            if (image.verdictFa.isNotBlank()) {
+                Text(text = image.verdictFa, fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale)
+            }
+            if (image.url.isNotBlank()) {
+                Text(text = image.url, fontFamily = EcoFontFamily, fontSize = 12.sp * fontScale)
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+    if (aden.crossCheck.isNotEmpty()) {
+        SectionTitle(stringResource(R.string.yemen_aden_cross_check), fontScale)
+        for (row in aden.crossCheck) {
+            Text(
+                text = "${row.dateFa} • ${row.source}",
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(text = row.saysFa, fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+    if (aden.channelsOfficial.isNotEmpty()) {
+        SectionTitle(stringResource(R.string.yemen_aden_channels_official), fontScale)
+        for (channel in aden.channelsOfficial) {
+            Text(
+                text = "${channel.name} ${channel.handle}".trim(),
+                fontFamily = EcoFontFamily,
+                fontSize = 14.sp * fontScale,
+                fontWeight = FontWeight.Bold,
+            )
+            if (channel.kindFa.isNotBlank()) {
+                Text(text = channel.kindFa, fontFamily = EcoFontFamily, fontSize = 12.sp * fontScale)
+            }
+            Text(text = channel.bodyFa, fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale)
+            if (channel.verdictFa.isNotBlank()) {
+                Text(text = channel.verdictFa, fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale)
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+    if (aden.socialPosts.isNotEmpty()) {
+        SectionTitle(stringResource(R.string.yemen_aden_social_posts), fontScale)
+        for (post in aden.socialPosts) {
+            Text(text = post.name, fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale, fontWeight = FontWeight.Bold)
+            Text(
+                text = "${post.kindFa} • ${post.dateFa}",
+                fontFamily = EcoFontFamily,
+                fontSize = 12.sp * fontScale,
+            )
+            Text(text = post.bodyFa, fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale)
+            if (post.url.isNotBlank()) {
+                Text(text = post.url, fontFamily = EcoFontFamily, fontSize = 12.sp * fontScale)
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+    if (aden.amplifiers.isNotEmpty()) {
+        SectionTitle(stringResource(R.string.yemen_aden_amplifiers), fontScale)
+        for (amp in aden.amplifiers) {
+            Text(text = amp.name, fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale, fontWeight = FontWeight.Bold)
+            if (amp.dateFa.isNotBlank()) {
+                Text(text = amp.dateFa, fontFamily = EcoFontFamily, fontSize = 12.sp * fontScale)
+            }
+            Text(text = amp.bodyFa, fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale)
+            if (amp.url.isNotBlank()) {
+                Text(text = amp.url, fontFamily = EcoFontFamily, fontSize = 12.sp * fontScale)
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+    // The Aden investigation's own source list (28) — the
+    // Timeline tab shows only the document-level list (25).
+    if (aden.sources.isNotEmpty()) {
+        SectionTitle(stringResource(R.string.yemen_sources), fontScale)
+        for (source in aden.sources) {
+            Text(text = source.label, fontFamily = EcoFontFamily, fontSize = 12.sp * fontScale)
+            if (source.url.isNotBlank()) {
+                Text(text = source.url, fontFamily = EcoFontFamily, fontSize = 12.sp * fontScale)
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+    }
     if (aden.openQuestions.isNotEmpty()) {
         SectionTitle(stringResource(R.string.yemen_open_questions), fontScale)
         for (q in aden.openQuestions) {
@@ -823,8 +1272,30 @@ private fun TimelineTab(
 }
 
 @Composable
-private fun ArchiveTab(doc: YemenDoc?, fontScale: Float) {
-    SectionTitle(stringResource(R.string.yemen_snapshots), fontScale)
+private fun ArchiveTab(
+    doc: YemenDoc?,
+    repo: EdgeRepository,
+    fontScale: Float,
+) {
+    val scope = rememberCoroutineScope()
+    // v5.6 (R4): local snapshots, from Room — create (optional
+    // label), view frozen points, delete. The dashboard's own
+    // snapshot list (from yemen.json) renders FIRST, above.
+    val localSnapshots by repo.yemenDao.localSnapshotsFlow()
+        .collectAsState(initial = emptyList())
+    var label by remember { mutableStateOf("") }
+    var creating by remember { mutableStateOf(false) }
+    var createdNotice by remember { mutableStateOf(false) }
+    var expandedId by remember { mutableStateOf<Long?>(null) }
+    val expandedPlaces by repo.yemenDao
+        .snapshotPlacesFlow(expandedId ?: -1L)
+        .collectAsState(initial = emptyList())
+
+    // Dashboard snapshots (from yemen.json): the v5 snapshot is
+    // the first archive entry — label "نسخهٔ ۵ — ارتقای رابط
+    // کاربری و آرشیو نسخه‌ها (۱۷ نوامبر ۲۰۲۶)", 90 places,
+    // 24 events.
+    SectionTitle(stringResource(R.string.yemen_archive_dashboard), fontScale)
     for (snap in doc?.snapshots ?: emptyList()) {
         if (snap.label.isNotBlank()) {
             Text(text = snap.label, fontFamily = EcoFontFamily, fontSize = 14.sp * fontScale, fontWeight = FontWeight.Bold)
@@ -859,6 +1330,181 @@ private fun ArchiveTab(doc: YemenDoc?, fontScale: Float) {
             fontSize = 14.sp * fontScale,
         )
     }
+    Spacer(modifier = Modifier.height(12.dp))
+    // Dashboard version history (v1–v5, from the dashboard
+    // artifact's own history — nothing invented).
+    SectionTitle(stringResource(R.string.yemen_archive_versions), fontScale)
+    for (res in listOf(
+        R.string.yemen_archive_v1,
+        R.string.yemen_archive_v2,
+        R.string.yemen_archive_v3,
+        R.string.yemen_archive_v4,
+        R.string.yemen_archive_v5,
+    )) {
+        Text(
+            text = stringResource(res),
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+    }
+    Spacer(modifier = Modifier.height(12.dp))
+    // Local snapshots: create / view frozen / delete.
+    SectionTitle(stringResource(R.string.yemen_archive_local), fontScale)
+    TextField(
+        value = label,
+        onValueChange = { label = it },
+        label = {
+            Text(
+                text = stringResource(R.string.yemen_archive_label_hint),
+                fontFamily = EcoFontFamily,
+                fontSize = 12.sp * fontScale,
+            )
+        },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth(),
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    Button(
+        onClick = {
+            if (!creating) {
+                creating = true
+                createdNotice = false
+                scope.launch {
+                    try {
+                        val id = repo.createYemenSnapshot(label)
+                        if (id >= 0) {
+                            label = ""
+                            createdNotice = true
+                        }
+                    } finally {
+                        creating = false
+                    }
+                }
+            }
+        },
+        enabled = !creating,
+        modifier = Modifier.heightIn(min = 48.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.yemen_archive_create),
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+        )
+    }
+    if (createdNotice) {
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = stringResource(R.string.yemen_archive_created),
+            fontFamily = EcoFontFamily,
+            fontSize = 12.sp * fontScale,
+        )
+    }
+    Spacer(modifier = Modifier.height(12.dp))
+    if (localSnapshots.isEmpty()) {
+        Text(
+            text = stringResource(R.string.yemen_archive_empty),
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+        )
+    }
+    for (snap in localSnapshots) {
+        val title = snap.label.ifBlank {
+            Jalali.formatShamsiDateTime(snap.createdAtEpoch)
+        }
+        Text(
+            text = title,
+            fontFamily = EcoFontFamily,
+            fontSize = 14.sp * fontScale,
+            fontWeight = FontWeight.Bold,
+        )
+        Text(
+            text = stringResource(
+                R.string.yemen_snapshot_line,
+                Jalali.formatShamsiDateTime(snap.createdAtEpoch),
+                snap.placesCount.toString().toPersianDigits(),
+                snap.eventsCount.toString().toPersianDigits(),
+            ),
+            fontFamily = EcoFontFamily,
+            fontSize = 12.sp * fontScale,
+        )
+        val localFactionParts = mutableListOf<String>()
+        for ((faction, count) in snapshotCounts(snap.countsJson)) {
+            localFactionParts.add("${factionLabel(faction)} ${count.toString().toPersianDigits()}")
+        }
+        val localFactionLine = localFactionParts.joinToString(" • ")
+        if (localFactionLine.isNotBlank()) {
+            Text(text = localFactionLine, fontFamily = EcoFontFamily, fontSize = 12.sp * fontScale)
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(
+                onClick = {
+                    expandedId = if (expandedId == snap.id) null else snap.id
+                },
+                modifier = Modifier.heightIn(min = 48.dp),
+            ) {
+                Text(
+                    text = stringResource(
+                        if (expandedId == snap.id) R.string.yemen_archive_hide
+                        else R.string.yemen_archive_view,
+                    ),
+                    fontFamily = EcoFontFamily,
+                    fontSize = 13.sp * fontScale,
+                )
+            }
+            OutlinedButton(
+                onClick = {
+                    if (expandedId == snap.id) expandedId = null
+                    scope.launch { repo.deleteYemenSnapshot(snap.id) }
+                },
+                modifier = Modifier.heightIn(min = 48.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.yemen_archive_delete),
+                    fontFamily = EcoFontFamily,
+                    fontSize = 13.sp * fontScale,
+                )
+            }
+        }
+        // Frozen view: the places as they were when the
+        // snapshot was created — never re-read from live Room.
+        if (expandedId == snap.id) {
+            Spacer(modifier = Modifier.height(8.dp))
+            for (place in expandedPlaces) {
+                Text(
+                    text = "${place.nameFa} — ${factionLabel(place.faction)}",
+                    fontFamily = EcoFontFamily,
+                    fontSize = 13.sp * fontScale,
+                )
+                if (place.governorateFa.isNotBlank()) {
+                    Text(
+                        text = place.governorateFa,
+                        fontFamily = EcoFontFamily,
+                        fontSize = 12.sp * fontScale,
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+            }
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+    }
+}
+
+/** Parse a local snapshot's countsJson ([{"faction","count"}])
+ * back to pairs. Malformed content degrades to empty, never a
+ * crash — the counts line simply does not render. */
+private fun snapshotCounts(json: String): List<Pair<String, Int>> {
+    val out = mutableListOf<Pair<String, Int>>()
+    try {
+        val arr = JSONArray(json)
+        for (i in 0 until arr.length()) {
+            val o = arr.getJSONObject(i)
+            out.add(o.optString("faction", "") to o.optInt("count", 0))
+        }
+    } catch (_: Exception) {
+    }
+    return out
 }
 
 @Composable

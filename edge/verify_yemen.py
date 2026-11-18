@@ -151,6 +151,48 @@ def main():
           "aden ring_segments == 5")
     check(bool(aden.get("verdict", {}).get("title_fa")),
           "aden verdict present")
+    # v5.6 (R4): the Aden investigation sections the app used to
+    # drop must travel verbatim from the snapshot.
+    for key, want in (("images", 7), ("cross_check", 7),
+                      ("channels_official", 5), ("social_posts", 9),
+                      ("amplifiers", 4), ("sources", 28)):
+        check(len(aden.get(key, [])) == want,
+              "aden.%s == %d (got %r)"
+              % (key, want, len(aden.get(key, []))))
+    snap_aden = snap.get("aden", {})
+    # Field-for-field verbatim check: snapshot camelCase -> doc
+    # snake_case, same order, same values.
+    _aden_maps = {
+        "images": (("name", "name"), ("origin_fa", "originFa"),
+                   ("shows_fa", "showsFa"), ("verdict_fa", "verdictFa"),
+                   ("url", "url")),
+        "cross_check": (("date_fa", "dateFa"), ("says_fa", "saysFa"),
+                        ("source", "source")),
+        "channels_official": (("name", "name"), ("handle", "handle"),
+                              ("kind_fa", "kindFa"), ("body_fa", "bodyFa"),
+                              ("verdict_fa", "verdictFa")),
+        "social_posts": (("name", "name"), ("kind_fa", "kindFa"),
+                         ("date_fa", "dateFa"), ("body_fa", "bodyFa"),
+                         ("url", "url")),
+        "amplifiers": (("name", "name"), ("date_fa", "dateFa"),
+                       ("body_fa", "bodyFa"), ("url", "url")),
+        "sources": (("label", "label"), ("url", "url")),
+    }
+    for key, snap_key in (("images", "images"),
+                          ("cross_check", "crossCheck"),
+                          ("channels_official", "channelsOfficial"),
+                          ("social_posts", "socialPosts"),
+                          ("amplifiers", "amplifiers"),
+                          ("sources", "sources")):
+        pairs = _aden_maps[key]
+        snap_items = snap_aden.get(snap_key, [])
+        doc_items = aden.get(key, [])
+        verbatim = len(snap_items) == len(doc_items) and all(
+            all(d.get(dk, "") == s.get(sk, "") for dk, sk in pairs)
+            for d, s in zip(doc_items, snap_items)
+        )
+        check(verbatim, "aden.%s verbatim from snapshot %s (%d items)"
+              % (key, snap_key, len(snap_items)))
     check(bool(doc.get("frontline_warning_fa")),
           "frontline_warning_fa present")
 

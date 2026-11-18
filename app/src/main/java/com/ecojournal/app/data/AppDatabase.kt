@@ -120,7 +120,10 @@ data class YemenFrontlineEntity(
 )
 
 /** Aden verdict, single row (id = "aden"). Ring, timeline, layers
- * and the rest are verbatim JSON columns parsed at render time. */
+ * and the rest are verbatim JSON columns parsed at render time.
+ * v5.6 (R4): five more verbatim JSON columns for the Aden
+ * investigation sections (images, cross-check, official channels,
+ * social posts, amplifiers) — added by MIGRATION_11_12. */
 @Entity(tableName = "yemen_aden")
 data class YemenAdenEntity(
     @PrimaryKey val id: String,
@@ -138,6 +141,50 @@ data class YemenAdenEntity(
     val seenNoteFa: String,
     val taizNoteFa: String,
     val openQuestionsJson: String,
+    val imagesJson: String = "[]",
+    val crossCheckJson: String = "[]",
+    val channelsOfficialJson: String = "[]",
+    val socialPostsJson: String = "[]",
+    val amplifiersJson: String = "[]",
+)
+
+/**
+ * v5.6 (R4): LOCAL Yemen snapshots — a frozen copy of the
+ * current Room state, created on the phone (optional label),
+ * viewable frozen and deletable. This is NOT the dashboard's
+ * snapshot list (that travels in yemen.json and renders first
+ * in the archive); a local snapshot freezes the 90 control
+ * points as they were when the user tapped "create". Places
+ * live in [YemenSnapshotPlaceEntity], keyed by snapshot id.
+ * [countsJson] is a verbatim JSON array of
+ * {"faction": ..., "count": ...} pairs.
+ */
+@Entity(tableName = "yemen_snapshots")
+data class YemenLocalSnapshotEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val label: String,
+    val createdAtEpoch: Long,
+    val placesCount: Int,
+    val eventsCount: Int,
+    val headlineFa: String,
+    val countsJson: String,
+)
+
+@Entity(
+    tableName = "yemen_snapshot_places",
+    primaryKeys = ["snapshotId", "appKey"],
+)
+data class YemenSnapshotPlaceEntity(
+    val snapshotId: Long,
+    val appKey: String,
+    val nameFa: String,
+    val governorateFa: String,
+    val lat: Double,
+    val lon: Double,
+    val faction: String,
+    val controlLabel: String,
+    val confidence: String,
+    val note: String,
 )
 
 /** Yemen sync bookkeeping, single row (key = "yemen").
@@ -242,6 +289,28 @@ interface YemenDao {
 
     @Query("DELETE FROM yemen_frontlines")
     suspend fun deleteAllFrontlines()
+
+    // v5.6 (R4): local snapshots — freeze / list / view / delete.
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSnapshot(snapshot: YemenLocalSnapshotEntity): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSnapshotPlaces(places: List<YemenSnapshotPlaceEntity>)
+
+    @Query("SELECT * FROM yemen_snapshots ORDER BY createdAtEpoch DESC")
+    fun localSnapshotsFlow(): Flow<List<YemenLocalSnapshotEntity>>
+
+    @Query("SELECT * FROM yemen_snapshot_places WHERE snapshotId = :snapshotId ORDER BY nameFa ASC")
+    fun snapshotPlacesFlow(snapshotId: Long): Flow<List<YemenSnapshotPlaceEntity>>
+
+    @Query("SELECT COUNT(*) FROM yemen_snapshots")
+    suspend fun localSnapshotCount(): Int
+
+    @Query("DELETE FROM yemen_snapshots WHERE id = :snapshotId")
+    suspend fun deleteSnapshot(snapshotId: Long)
+
+    @Query("DELETE FROM yemen_snapshot_places WHERE snapshotId = :snapshotId")
+    suspend fun deleteSnapshotPlaces(snapshotId: Long)
 }
 
 /** GROUP BY result holder for yemen_places faction counts. */
@@ -249,6 +318,46 @@ data class YemenFactionCount(
     val faction: String,
     val c: Int,
 )
+
+// Version 11 -> 12 migration (v5.6 Yemen-tab fix).
+// Additive only:
+//  * five new verbatim-JSON columns on yemen_aden (Aden
+//    investigation sections: images, cross-check, official
+//    channels, social posts, amplifiers), all default '[]' so
+//    the existing Aden row reads as "sections absent" until
+//    the next seed/sync fills them;
+//  * two new tables (yemen_snapshots, yemen_snapshot_places)
+//    for local snapshots, which start empty by design.
+// No existing table is altered beyond the new columns and no
+// row is touched, so a v11 install keeps its full Yemen cache,
+// invite state and all broadcast messages; the Aden row is
+// refreshed from the bundled seed on the next launch
+// (BUNDLED_SEED_VERSION 3) and from the edge after that.
+val MIGRATION_11_12: Migration = object : Migration(11, 12) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE `yemen_aden` ADD COLUMN `imagesJson` TEXT NOT NULL DEFAULT '[]'")
+        db.execSQL("ALTER TABLE `yemen_aden` ADD COLUMN `crossCheckJson` TEXT NOT NULL DEFAULT '[]'")
+        db.execSQL("ALTER TABLE `yemen_aden` ADD COLUMN `channelsOfficialJson` TEXT NOT NULL DEFAULT '[]'")
+        db.execSQL("ALTER TABLE `yemen_aden` ADD COLUMN `socialPostsJson` TEXT NOT NULL DEFAULT '[]'")
+        db.execSQL("ALTER TABLE `yemen_aden` ADD COLUMN `amplifiersJson` TEXT NOT NULL DEFAULT '[]'")
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `yemen_snapshots` (" +
+                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "`label` TEXT NOT NULL, `createdAtEpoch` INTEGER NOT NULL, " +
+                "`placesCount` INTEGER NOT NULL, `eventsCount` INTEGER NOT NULL, " +
+                "`headlineFa` TEXT NOT NULL, `countsJson` TEXT NOT NULL)"
+        )
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `yemen_snapshot_places` (" +
+                "`snapshotId` INTEGER NOT NULL, `appKey` TEXT NOT NULL, " +
+                "`nameFa` TEXT NOT NULL, `governorateFa` TEXT NOT NULL, " +
+                "`lat` REAL NOT NULL, `lon` REAL NOT NULL, " +
+                "`faction` TEXT NOT NULL, `controlLabel` TEXT NOT NULL, " +
+                "`confidence` TEXT NOT NULL, `note` TEXT NOT NULL, " +
+                "PRIMARY KEY(`snapshotId`, `appKey`))"
+        )
+    }
+}
 
 // Version 10 -> 11 migration (Phase 6, v5.5 signed broadcast).
 // Additive only: four new columns on broadcast_messages (v2
@@ -775,12 +884,14 @@ val MIGRATION_1_2: Migration = object : Migration(1, 2) {
         YemenFrontlineEntity::class,
         YemenAdenEntity::class,
         YemenMetaEntity::class,
+        YemenLocalSnapshotEntity::class,
+        YemenSnapshotPlaceEntity::class,
         BroadcastMessageEntity::class,
         BroadcastMemberEntity::class,
         BroadcastSenderStateEntity::class,
         BroadcastRejectCountEntity::class,
     ],
-    version = 11,
+    version = 12,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {

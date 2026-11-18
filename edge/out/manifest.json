@@ -1,7 +1,7 @@
 {
  "version": 4,
- "generated_at_utc": "2026-11-17T21:39:10.179010+00:00",
- "generator": "edge/generate_yemen.py (v5.2, LAB ONLY)",
+ "generated_at_utc": "2026-11-18T07:31:32.812266+00:00",
+ "generator": "edge/generate_yemen.py (v5.6, LAB ONLY)",
  "sections": {
   "articles": {
    "hash": "12ee88eb00298b8c364c1bd39c93061a391ebf17c633ff0352e71ea34c340bbf",
@@ -10181,8 +10181,8 @@
   "yemen": {
    "file": "yemen.json",
    "count": 90,
-   "hash": "f85d5398db4d612cecf47040400832ed7fa90b560ead4bc9cae1187641090975",
-   "file_sha256": "4490a5cfc51c85bcd43d680de385a0d6a900323600718cb2ce3357ba68ba60a0",
+   "hash": "fcd61c83bd45c2e45e2aea3255b800b2a76def20369d0b94840a87460670747f",
+   "file_sha256": "903ab279c06d11798b36da6d0b2c9c49c7d8f561743f9b3d67bd36c150b3ef4f",
    "schema_version": 1,
    "generated_at_utc": "2026-11-17T07:29:23.236Z",
    "update_cadence_hours": 24,
