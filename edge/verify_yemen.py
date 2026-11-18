@@ -23,6 +23,15 @@ Checks:
 
 Usage:
   python3 edge/verify_yemen.py [--dir DIR] [--snapshot PATH]
+  python3 edge/verify_yemen.py --no-snapshot [--dir DIR]
+
+--no-snapshot (v6.0, for CI): the lab dashboard snapshot is NOT in the
+repo and must never be committed, so CI cannot run the snapshot
+comparisons (as_of, human_stats verbatim, Aden verbatim). This mode
+skips exactly those checks and still runs every repo-self-contained
+check: counts, faction counts, app_keys, Aden section counts, seed
+byte-identity, manifest. The full check (with snapshot) still runs
+in the lab before any edge regeneration.
 """
 
 import argparse
@@ -68,6 +77,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dir", default=os.path.join(SCRIPT_DIR, "out"))
     ap.add_argument("--snapshot", default=DEFAULT_SNAPSHOT)
+    ap.add_argument("--no-snapshot", action="store_true",
+                    help="skip snapshot comparisons (CI: snapshot is lab-only)")
     args = ap.parse_args()
 
     fails = []
@@ -79,8 +90,10 @@ def main():
         else:
             fails.append(msg)
 
-    with open(args.snapshot, encoding="utf-8") as f:
-        snap = json.load(f)
+    snap = None
+    if not args.no_snapshot:
+        with open(args.snapshot, encoding="utf-8") as f:
+            snap = json.load(f)
     edge_path = os.path.join(args.dir, "yemen.json")
     # v6.0 (Flutter rebuild): the bundled seed lives in assets/seed/.
     seed_path = os.path.join(APP_ROOT, "assets", "seed", "yemen.json")
@@ -91,8 +104,11 @@ def main():
         doc = json.load(f)
 
     check(doc.get("schema_version") == 1, "schema_version == 1")
-    check(doc.get("as_of") == snap["stateUpdatedAt"],
-          "as_of == snapshot stateUpdatedAt (%s)" % snap["stateUpdatedAt"])
+    if snap is not None:
+        check(doc.get("as_of") == snap["stateUpdatedAt"],
+              "as_of == snapshot stateUpdatedAt (%s)" % snap["stateUpdatedAt"])
+    else:
+        oks.append("as_of check skipped (--no-snapshot)")
     counts = doc.get("counts", {})
     for key, want in (("places", 90), ("events", 24), ("frontlines", 8),
                       ("arrows", 9), ("unit_positions", 12),
@@ -137,10 +153,13 @@ def main():
     check(not bad_events, "all event app_keys recompute, unique"
           + ("" if not bad_events else " — bad: %r" % bad_events[:5]))
 
-    snap_stats = {s["label"]: s["value"] for s in snap["humanStats"]}
-    doc_stats = {s["label"]: s["value"] for s in doc.get("human_stats", [])}
-    check(doc_stats == snap_stats,
-          "human_stats verbatim strings from snapshot")
+    if snap is not None:
+        snap_stats = {s["label"]: s["value"] for s in snap["humanStats"]}
+        doc_stats = {s["label"]: s["value"] for s in doc.get("human_stats", [])}
+        check(doc_stats == snap_stats,
+              "human_stats verbatim strings from snapshot")
+    else:
+        oks.append("human_stats verbatim check skipped (--no-snapshot)")
     check(all(isinstance(s.get("value"), str)
               for s in doc.get("human_stats", [])),
           "human_stats values are all strings")
@@ -158,7 +177,7 @@ def main():
         check(len(aden.get(key, [])) == want,
               "aden.%s == %d (got %r)"
               % (key, want, len(aden.get(key, []))))
-    snap_aden = snap.get("aden", {})
+    snap_aden = snap.get("aden", {}) if snap is not None else None
     # Field-for-field verbatim check: snapshot camelCase -> doc
     # snake_case, same order, same values.
     _aden_maps = {
@@ -177,12 +196,12 @@ def main():
                        ("body_fa", "bodyFa"), ("url", "url")),
         "sources": (("label", "label"), ("url", "url")),
     }
-    for key, snap_key in (("images", "images"),
+    for key, snap_key in ((("images", "images"),
                           ("cross_check", "crossCheck"),
                           ("channels_official", "channelsOfficial"),
                           ("social_posts", "socialPosts"),
                           ("amplifiers", "amplifiers"),
-                          ("sources", "sources")):
+                          ("sources", "sources")) if snap_aden is not None else []):
         pairs = _aden_maps[key]
         snap_items = snap_aden.get(snap_key, [])
         doc_items = aden.get(key, [])

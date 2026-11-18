@@ -54,10 +54,13 @@ jobs:
           echo "$DEBUG_KEYSTORE_BASE64" | base64 -d > android/app/debug.keystore
           ls -l android/app/debug.keystore
 
+      # --no-snapshot: the lab dashboard snapshot is NOT in the repo
+      # (lab-only, never committed), so CI skips exactly the snapshot
+      # comparisons and still runs every repo-self-contained check
+      # (counts, app_keys, Aden counts, seed byte-identity, manifest).
+      # The full check runs in the lab before any edge regeneration.
       - name: Verify Yemen data (edge contract)
-        run: |
-          python3 edge/verify_yemen.py
-          python3 edge/generate_yemen.py --check-only
+        run: python3 edge/verify_yemen.py --no-snapshot
 
       - name: Analyze + test
         run: |
