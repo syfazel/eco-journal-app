@@ -102,21 +102,26 @@ jobs:
       # certificate, ~45-50 MB. Limitation: it installs only on arm64
       # devices (all modern phones, including the user's). The fat APK
       # above stays the all-ABI verification build.
+      # NOTE: --split-per-abi, not --target-platform: a second
+      # --target-platform build in the same build dir re-packages the
+      # fat build's stale ABIs (run 44421823161: still 144,693,592 B).
+      # The split build writes a genuinely arm64-only APK.
       - name: Build served debug APK (arm64 only)
-        run: flutter build apk --debug --target-platform android-arm64
+        run: flutter build apk --debug --split-per-abi
 
       - name: Verify served APK identity + signing
         run: |
+          APK=build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk
           AAPT="$ANDROID_SDK_ROOT/build-tools/$(ls "$ANDROID_SDK_ROOT/build-tools" | sort -V | tail -1)/aapt"
           APKSIGNER="$ANDROID_SDK_ROOT/build-tools/$(ls "$ANDROID_SDK_ROOT/build-tools" | sort -V | tail -1)/apksigner"
-          "$AAPT" dump badging build/app/outputs/flutter-apk/app-debug.apk | grep -E "package:|application-label"
-          "$APKSIGNER" verify --print-certs build/app/outputs/flutter-apk/app-debug.apk
-          FPRINT=$("$APKSIGNER" verify --print-certs build/app/outputs/flutter-apk/app-debug.apk | grep "SHA-256 digest" | awk '{print $NF}')
+          "$AAPT" dump badging "$APK" | grep -E "package:|application-label"
+          "$APKSIGNER" verify --print-certs "$APK"
+          FPRINT=$("$APKSIGNER" verify --print-certs "$APK" | grep "SHA-256 digest" | awk '{print $NF}')
           if [ "$FPRINT" != "45220b1509e14db5fd9a8e42220547ea94da48bdc4a4ccc5fc2f1bcb9968fd40" ]; then
             echo "REFUSED: served APK certificate fingerprint does not match the 5.6 shared debug keystore." >&2
             exit 1
           fi
-          SIZE=$(stat -c%s build/app/outputs/flutter-apk/app-debug.apk)
+          SIZE=$(stat -c%s "$APK")
           echo "served apk size bytes=$SIZE"
           if [ "$SIZE" -ge 104857600 ]; then
             echo "REFUSED: served APK is $SIZE bytes (>= 100 MB GitHub file limit)." >&2
@@ -132,20 +137,20 @@ jobs:
       - name: Generate + verify version.json (identity only)
         run: |
           python3 edge/version_manifest.py generate \
-            --apk build/app/outputs/flutter-apk/app-debug.apk \
+            --apk build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk \
             --apk-url https://syfazel.github.io/eco-journal-app/app-debug-v6.0.apk \
             --changelog "نسخهٔ ۶٫۰ (بازسازی کامل با فلاتر): فقط یمن — نقشهٔ درگیری، جبهه‌ها، بررسی عدن، پرونده‌ها، گاه‌شمار و آرشیو. بدون پیام‌رسانی و بدون کد دعوت. رفع یخ‌زدگی تب یمن: همهٔ کارهای شبکه و پردازش داده خارج از نخ اصلی انجام می‌شود." \
             --mandatory \
             --out version-6.0.json
           python3 edge/version_manifest.py verify \
-            --apk build/app/outputs/flutter-apk/app-debug.apk \
+            --apk build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk \
             --manifest version-6.0.json --identity-only
 
       - name: Upload served debug APK (arm64)
         uses: actions/upload-artifact@v4
         with:
           name: eco-journal-yemen-v6-apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          path: build/app/outputs/flutter-apk/app-arm64-v8a-debug.apk
 
       - name: Upload generated version.json
         uses: actions/upload-artifact@v4
