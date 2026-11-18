@@ -40,9 +40,14 @@ import json
 import os
 import sys
 
+# v6.0: repo root derived from this script's location, never from a
+# hard-coded lab path — the hard-coded ~/workspace/... path broke CI
+# (run 44420211645: the runner has no such directory). The lab snapshot
+# default below is the ONLY lab-only path left, and it is only used
+# when --snapshot is given explicitly / without --no-snapshot.
 HOME = os.path.expanduser("~")
-APP_ROOT = os.path.join(HOME, "workspace", "goals", "eco-journal", "app")
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+APP_ROOT = os.path.dirname(SCRIPT_DIR)
 DEFAULT_SNAPSHOT = os.path.join(
     HOME, "workspace", "goals", "eco-journal",
     "hidden_files", "yemen-dashboard-v5-20261118.json",
