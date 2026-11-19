@@ -24,6 +24,8 @@ void main() {
     expect(find.text('فیدهای انصارالله'), findsOneWidget);
     // v6.1.0: the archive is gone from the app entirely.
     expect(find.text('آرشیو'), findsNothing);
+    // v6.2.0: sidebar footer shows the manual update check.
+    expect(find.text('بررسی نسخهٔ تازه'), findsOneWidget);
     // Front switcher: Yemen active, Ukraine coming-soon scaffold.
     expect(find.text('یمن'), findsWidgets);
     expect(find.text('اوکراین — به‌زودی'), findsOneWidget);

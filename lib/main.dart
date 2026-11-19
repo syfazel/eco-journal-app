@@ -1,8 +1,19 @@
-// ECO JOURNAL — Yemen only, v6.1.0/code 14. Flutter/Dart rebuild.
+// ECO JOURNAL — Yemen only, v6.2.0/code 15. Flutter/Dart rebuild.
 //
 // ONE feature: the Yemen dashboard. No messaging, no invite gate, no
 // broadcast packets, no shared password, no other sections, no FCM,
 // no channel posts, no cron. No archive (removed in v6.1.0).
+//
+// v6.2.0: IN-APP UPDATE CHECK (the v6.0/v6.1 bug — neither could ever
+// notify the user of a newer version; the old Kotlin AppUpdateWorker
+// was dropped in the rebuild). After the bundled seed renders, the app
+// fetches version.json in the background, compares version_code with
+// the running code (package_info_plus, never hard-coded) and shows an
+// update dialog when a newer version exists; mandatory = no dismiss.
+// «دانلود و نصب» downloads the APK (SHA-256 verified) and opens the
+// SYSTEM installer via a FileProvider intent — see app_update.dart.
+// The side sidebar footer shows the installed version and a manual
+// «بررسی نسخهٔ تازه» control that runs the same check on demand.
 //
 // ANTI-FREEZE DESIGN (the v5.6 freeze was blocking network I/O + a ~249 KB
 // JSON parse on the UI thread, behind a shared mutex):
@@ -28,7 +39,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
+import 'app_update.dart';
 import 'fronts.dart';
 import 'jalali.dart';
 import 'repository.dart';
@@ -128,6 +141,13 @@ class _YemenHomeState extends State<YemenHome> {
   int _selectedIndex = 0;
   FrontRegistry? _registry;
 
+  // -- In-app update check (v6.2.0). The installed version label shown
+  // in the sidebar footer; the launch check runs once, AFTER the seed
+  // has rendered, and never blocks the Yemen tab.
+  String _appVersionLabel = 'نسخهٔ —';
+  bool _checkingUpdate = false;
+  bool _updateDialogShown = false;
+
   // -- The ONE update path. Every state change in this screen goes here.
   void _update(YemenState next) {
     if (!mounted) return;
@@ -138,6 +158,7 @@ class _YemenHomeState extends State<YemenHome> {
   void initState() {
     super.initState();
     _loadRegistry();
+    _loadAppVersion();
     _loadInitial();
     // 24 h background refresh: a plain timer that only starts a
     // background fetch. It shares nothing with the UI refresh path.
@@ -160,6 +181,143 @@ class _YemenHomeState extends State<YemenHome> {
     setState(() => _registry = registry);
   }
 
+  /// Installed version for the sidebar footer (e.g. «نسخهٔ ۶٫۲٫۰ —
+  /// کد ۱۵»), from the platform — never hard-coded. A failure leaves
+  /// the placeholder; the version is informational, never a gate.
+  Future<void> _loadAppVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (!mounted) return;
+      setState(() =>
+          _appVersionLabel = 'نسخهٔ ${info.version} — کد ${info.buildNumber}');
+    } catch (_) {
+      // Placeholder stays; nothing depends on this label.
+    }
+  }
+
+  /// Runs the update check. Launch (`manual: false`) is fire-and-forget
+  /// after the seed renders and stays SILENT on failure (a launch
+  /// failure must never nag); the manual sidebar control reports
+  /// "no update" and failures in Persian, with a retry action.
+  Future<void> _checkForUpdate({required bool manual}) async {
+    if (_checkingUpdate) return;
+    if (!mounted) return;
+    setState(() => _checkingUpdate = true);
+    try {
+      final manifest = await AppUpdateChecker().check();
+      if (!mounted) return;
+      if (manifest == null) {
+        if (manual) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('نسخهٔ تازه‌ای نیست — شما جدیدترین نسخه را دارید.'),
+            ),
+          );
+        }
+        return;
+      }
+      _showUpdateDialog(manifest);
+    } catch (e) {
+      if (!mounted) return;
+      if (manual) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(appUpdatePersianError(e)),
+            action: SnackBarAction(
+              label: 'تلاش دوباره',
+              onPressed: () => _checkForUpdate(manual: true),
+            ),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _checkingUpdate = false);
+    }
+  }
+
+  /// Update dialog. Mandatory = no dismiss (barrier + back button both
+  /// blocked, no «بعداً» button). «دانلود و نصب» downloads the APK
+  /// (SHA-256 verified) and opens the SYSTEM installer; a failure shows
+  /// a Persian error inside the dialog with a retry button.
+  void _showUpdateDialog(AppUpdateManifest manifest) {
+    if (_updateDialogShown) return;
+    _updateDialogShown = true;
+    var downloading = false;
+    String? errorFa;
+    showDialog<void>(
+      context: context,
+      barrierDismissible: !manifest.mandatory,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => PopScope(
+          canPop: !manifest.mandatory,
+          child: AlertDialog(
+            title: Text('نسخهٔ تازه: ${manifest.versionName}'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (manifest.changelogFa.isNotEmpty)
+                  Text(manifest.changelogFa,
+                      style: const TextStyle(height: 1.8)),
+                if (manifest.mandatory) ...[
+                  const SizedBox(height: 12),
+                  const Text(
+                    'این نسخه اجباری است؛ برای ادامه باید نصب شود.',
+                    style: TextStyle(fontWeight: FontWeight.bold, height: 1.8),
+                  ),
+                ],
+                if (downloading) ...[
+                  const SizedBox(height: 16),
+                  const LinearProgressIndicator(),
+                  const SizedBox(height: 8),
+                  const Text('در حال دانلود نسخهٔ تازه…',
+                      style: TextStyle(height: 1.8)),
+                ],
+                if (errorFa != null) ...[
+                  const SizedBox(height: 12),
+                  Text(errorFa!,
+                      style: TextStyle(
+                        height: 1.8,
+                        color: Theme.of(context).colorScheme.error,
+                      )),
+                ],
+              ],
+            ),
+            actions: [
+              if (!manifest.mandatory)
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: const Text('بعداً'),
+                ),
+              FilledButton(
+                onPressed: downloading
+                    ? null
+                    : () async {
+                        setDialogState(() {
+                          downloading = true;
+                          errorFa = null;
+                        });
+                        try {
+                          await AppUpdateInstaller().downloadAndInstall(manifest);
+                          if (dialogContext.mounted) {
+                            Navigator.of(dialogContext).pop();
+                          }
+                        } catch (e) {
+                          setDialogState(() {
+                            downloading = false;
+                            errorFa = appUpdatePersianError(e);
+                          });
+                        }
+                      },
+                child: Text(errorFa != null ? 'تلاش دوباره' : 'دانلود و نصب'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ).whenComplete(() => _updateDialogShown = false);
+  }
+
   /// The active front — Yemen, the only active front in the registry.
   Front? get _activeFront => _registry?.byId('yemen');
 
@@ -175,6 +333,9 @@ class _YemenHomeState extends State<YemenHome> {
         loadingSeed: false,
         clearError: true,
       ));
+      // Update check AFTER the seed has rendered — background only,
+      // never a gate on the Yemen tab (v6.2.0).
+      _checkForUpdate(manual: false);
     } catch (e) {
       _update(_state.copyWith(
         loadingSeed: false,
@@ -263,6 +424,9 @@ class _YemenHomeState extends State<YemenHome> {
             registry: _registry,
             onSelect: (i) => setState(() => _selectedIndex = i),
             onComingSoonFront: _onComingSoonFront,
+            appVersionLabel: _appVersionLabel,
+            checkingUpdate: _checkingUpdate,
+            onCheckUpdate: () => _checkForUpdate(manual: true),
           ),
           const VerticalDivider(width: 1),
           Expanded(
@@ -339,12 +503,18 @@ class _SideRail extends StatelessWidget {
   final FrontRegistry? registry;
   final ValueChanged<int> onSelect;
   final ValueChanged<Front> onComingSoonFront;
+  final String appVersionLabel;
+  final bool checkingUpdate;
+  final VoidCallback onCheckUpdate;
 
   const _SideRail({
     required this.selectedIndex,
     required this.registry,
     required this.onSelect,
     required this.onComingSoonFront,
+    required this.appVersionLabel,
+    required this.checkingUpdate,
+    required this.onCheckUpdate,
   });
 
   static const _sections = [
@@ -377,6 +547,45 @@ class _SideRail extends StatelessWidget {
       leading: _FrontSwitcher(
         registry: registry,
         onComingSoonFront: onComingSoonFront,
+      ),
+      // v6.2.0 footer: installed version (so the user can confirm it
+      // without Android Settings) + manual update check.
+      trailing: SizedBox(
+        width: 96,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(6, 8, 6, 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Divider(),
+              Text(
+                appVersionLabel,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 11,
+                  height: 1.6,
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 4),
+              TextButton.icon(
+                onPressed: checkingUpdate ? null : onCheckUpdate,
+                icon: checkingUpdate
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.system_update, size: 18),
+                label: const Text(
+                  'بررسی نسخهٔ تازه',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 11, height: 1.6),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
       destinations: [
         for (var i = 0; i < _sections.length; i++)
