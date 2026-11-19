@@ -1,8 +1,8 @@
-// ECO JOURNAL — Yemen only, v6.0.0/code 13. Flutter/Dart rebuild.
+// ECO JOURNAL — Yemen only, v6.1.0/code 14. Flutter/Dart rebuild.
 //
 // ONE feature: the Yemen dashboard. No messaging, no invite gate, no
 // broadcast packets, no shared password, no other sections, no FCM,
-// no channel posts, no cron.
+// no channel posts, no cron. No archive (removed in v6.1.0).
 //
 // ANTI-FREEZE DESIGN (the v5.6 freeze was blocking network I/O + a ~249 KB
 // JSON parse on the UI thread, behind a shared mutex):
@@ -13,16 +13,23 @@
 //    for parsing (see repository.dart). The build method never awaits.
 //  * The bundled seed renders IMMEDIATELY on first launch, even with no
 //    network; live refresh is a background replacement, never a gate.
-//  * No database, no workers, no mutex: snapshots are plain JSON files,
-//    and the 24 h refresh is a plain Timer that only fires a background
-//    fetch — it can never block a manual tap.
+//  * No database, no workers, no mutex: the 24 h refresh is a plain
+//    Timer that only fires a background fetch — it can never block a
+//    manual tap.
 //  * The instant-update button is the only refresh trigger on the UI,
 //    and it only flips state flags; the work happens in futures.
+//
+// v6.1.0: real map (flutter_map + OSM tiles + bundled governorates),
+// circular side NavigationRail (RTL), generic front registry
+// (Yemen active, Ukraine coming-soon scaffold), Ansarullah feeds tab,
+// classified timeline. Sourcing: Ansarullah sources ONLY —
+// government-force sources are never used (see edge/SOURCING-RULES.md).
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'fronts.dart';
 import 'jalali.dart';
 import 'repository.dart';
 import 'sections.dart';
@@ -33,56 +40,46 @@ void main() => runApp(const YemenApp());
 /// The single state object. Immutable; replaced wholesale on every update.
 class YemenState {
   final YemenDoc? doc;
-  final String? rawJson;
-  final String source; // 'seed' | 'cache' | 'live' | 'snapshot'
+  final String source; // 'seed' | 'cache' | 'live'
   final DateTime? fetchedAt;
   final bool loadingSeed;
   final bool refreshing;
   final String? errorFa;
-  final List<SnapshotMeta> snapshots;
 
   const YemenState({
     required this.doc,
-    required this.rawJson,
     required this.source,
     required this.fetchedAt,
     required this.loadingSeed,
     required this.refreshing,
     required this.errorFa,
-    required this.snapshots,
   });
 
   factory YemenState.initial() => const YemenState(
         doc: null,
-        rawJson: null,
         source: 'seed',
         fetchedAt: null,
         loadingSeed: true,
         refreshing: false,
         errorFa: null,
-        snapshots: [],
       );
 
   YemenState copyWith({
     YemenDoc? doc,
-    String? rawJson,
     String? source,
     DateTime? fetchedAt,
     bool? loadingSeed,
     bool? refreshing,
     String? errorFa,
     bool clearError = false,
-    List<SnapshotMeta>? snapshots,
   }) =>
       YemenState(
         doc: doc ?? this.doc,
-        rawJson: rawJson ?? this.rawJson,
         source: source ?? this.source,
         fetchedAt: fetchedAt ?? this.fetchedAt,
         loadingSeed: loadingSeed ?? this.loadingSeed,
         refreshing: refreshing ?? this.refreshing,
         errorFa: clearError ? null : (errorFa ?? this.errorFa),
-        snapshots: snapshots ?? this.snapshots,
       );
 
   /// Stale when the document itself is older than 24 h.
@@ -128,6 +125,8 @@ class YemenHome extends StatefulWidget {
 class _YemenHomeState extends State<YemenHome> {
   YemenState _state = YemenState.initial();
   Timer? _dayTimer;
+  int _selectedIndex = 0;
+  FrontRegistry? _registry;
 
   // -- The ONE update path. Every state change in this screen goes here.
   void _update(YemenState next) {
@@ -138,6 +137,7 @@ class _YemenHomeState extends State<YemenHome> {
   @override
   void initState() {
     super.initState();
+    _loadRegistry();
     _loadInitial();
     // 24 h background refresh: a plain timer that only starts a
     // background fetch. It shares nothing with the UI refresh path.
@@ -154,16 +154,22 @@ class _YemenHomeState extends State<YemenHome> {
     super.dispose();
   }
 
+  Future<void> _loadRegistry() async {
+    final registry = await loadFrontRegistry();
+    if (!mounted) return;
+    setState(() => _registry = registry);
+  }
+
+  /// The active front — Yemen, the only active front in the registry.
+  Front? get _activeFront => _registry?.byId('yemen');
+
   /// Seed first (local asset — fast, offline-safe), then cache, then live.
   /// Each step replaces the state once; the UI never waits on the network.
   Future<void> _loadInitial() async {
-    final snapshots = await YemenRepository.listSnapshots();
-    _update(_state.copyWith(snapshots: snapshots));
     try {
       final seed = await YemenRepository.loadSeed();
       _update(_state.copyWith(
         doc: seed.doc,
-        rawJson: seed.rawJson,
         source: 'seed',
         fetchedAt: DateTime.now().toUtc(),
         loadingSeed: false,
@@ -184,7 +190,6 @@ class _YemenHomeState extends State<YemenHome> {
                     DateTime.fromMillisecondsSinceEpoch(0))) {
       _update(_state.copyWith(
         doc: cache.doc,
-        rawJson: cache.rawJson,
         source: 'cache',
         fetchedAt: DateTime.now().toUtc(),
       ));
@@ -204,7 +209,6 @@ class _YemenHomeState extends State<YemenHome> {
       final live = await YemenRepository.fetchLive();
       _update(_state.copyWith(
         doc: live.doc,
-        rawJson: live.rawJson,
         source: 'live',
         fetchedAt: DateTime.now().toUtc(),
         refreshing: false,
@@ -232,105 +236,329 @@ class _YemenHomeState extends State<YemenHome> {
     return 'به‌روزرسانی ناموفق بود. دوباره تلاش کنید.';
   }
 
-  Future<void> _createSnapshot() async {
-    final doc = _state.doc;
-    final raw = _state.rawJson;
-    if (doc == null || raw == null) return;
-    final updated = await YemenRepository.createSnapshot(doc, raw);
-    _update(_state.copyWith(snapshots: updated));
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('اسنپ‌شات ساخته شد.')),
-      );
-    }
-  }
-
-  Future<void> _viewSnapshot(SnapshotMeta meta) async {
-    final loaded = await YemenRepository.loadSnapshot(meta.fileName);
-    if (loaded == null) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('خواندن اسنپ‌شات ناموفق بود.')),
-        );
-      }
-      return;
-    }
-    if (!mounted) return;
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => SnapshotPage(doc: loaded.doc, meta: meta),
+  void _onComingSoonFront(Front front) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '${front.nameFa} — به‌زودی؛ ${front.noteFa ?? 'داده‌ای هنوز گردآوری نشده است.'}',
+        ),
       ),
     );
-  }
-
-  Future<void> _deleteSnapshot(SnapshotMeta meta) async {
-    final updated = await YemenRepository.deleteSnapshot(meta.fileName);
-    _update(_state.copyWith(snapshots: updated));
   }
 
   @override
   Widget build(BuildContext context) {
     final state = _state;
-    return DefaultTabController(
-      length: 6,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('ECO JOURNAL — یمن'),
-          bottom: const TabBar(
-            isScrollable: true,
-            tabs: [
-              Tab(text: 'وضعیت و نقشه'),
-              Tab(text: 'جبهه‌ها'),
-              Tab(text: 'عدن'),
-              Tab(text: 'پرونده‌ها'),
-              Tab(text: 'گاه‌شمار و منابع'),
-              Tab(text: 'آرشیو'),
-            ],
+    final front = _activeFront;
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ECO JOURNAL — یمن'),
+      ),
+      // RTL: the Row's first child (the rail) lands on the RIGHT side,
+      // which is the correct side for a Persian RTL layout.
+      body: Row(
+        children: [
+          _SideRail(
+            selectedIndex: _selectedIndex,
+            registry: _registry,
+            onSelect: (i) => setState(() => _selectedIndex = i),
+            onComingSoonFront: _onComingSoonFront,
           ),
-        ),
-        body: Column(
-          children: [
-            _RefreshBar(state: state, onRefresh: () => _refresh(manual: true)),
-            Expanded(
-              child: state.loadingSeed
-                  ? const Center(
-                      child: Text(
-                        'ECO JOURNAL — یمن\nدر حال آماده‌سازی…',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(height: 1.8),
-                      ),
-                    )
-                  : state.doc == null
-                      ? _SeedErrorView(
-                          errorFa: state.errorFa,
-                          onRetry: () => _loadInitial(),
+          const VerticalDivider(width: 1),
+          Expanded(
+            child: Column(
+              children: [
+                _RefreshBar(
+                    state: state, onRefresh: () => _refresh(manual: true)),
+                Expanded(
+                  child: state.loadingSeed || front == null
+                      ? const Center(
+                          child: Text(
+                            'ECO JOURNAL — یمن\nدر حال آماده‌سازی…',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(height: 1.8),
+                          ),
                         )
-                      : TabBarView(
-                          children: [
-                            StatusTab(state.doc!),
-                            FrontlinesTab(state.doc!),
-                            AdenTab(state.doc!),
-                            DossiersTab(state.doc!),
-                            TimelineTab(state.doc!),
-                            ArchiveTab(
-                              snapshots: state.snapshots,
-                              onCreateSnapshot: _createSnapshot,
-                              onViewSnapshot: _viewSnapshot,
-                              onDeleteSnapshot: _deleteSnapshot,
+                      : state.doc == null
+                          ? _SeedErrorView(
+                              errorFa: state.errorFa,
+                              onRetry: () => _loadInitial(),
+                            )
+                          : _SectionBody(
+                              index: _selectedIndex,
+                              doc: state.doc!,
+                              front: front,
                             ),
-                          ],
-                        ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
+class _SectionBody extends StatelessWidget {
+  final int index;
+  final YemenDoc doc;
+  final Front front;
+  const _SectionBody({
+    required this.index,
+    required this.doc,
+    required this.front,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    switch (index) {
+      case 0:
+        return StatusTab(doc, front: front);
+      case 1:
+        return FrontlinesTab(doc);
+      case 2:
+        return AdenTab(doc);
+      case 3:
+        return DossiersTab(doc);
+      case 4:
+        return TimelineTab(doc);
+      case 5:
+        return FeedsTab(doc);
+      default:
+        return StatusTab(doc, front: front);
+    }
+  }
+}
+
+/// Side NavigationRail: each section is a circular button (icon inside
+/// a circle, Persian label under it). Selected = filled circle + accent
+/// ring; unselected = outlined circle. The front switcher sits above
+/// the sections as the rail's leading widget.
+class _SideRail extends StatelessWidget {
+  final int selectedIndex;
+  final FrontRegistry? registry;
+  final ValueChanged<int> onSelect;
+  final ValueChanged<Front> onComingSoonFront;
+
+  const _SideRail({
+    required this.selectedIndex,
+    required this.registry,
+    required this.onSelect,
+    required this.onComingSoonFront,
+  });
+
+  static const _sections = [
+    ('وضعیت و نقشه', Icons.map_outlined, Icons.map),
+    ('جبهه‌ها', Icons.flag_outlined, Icons.flag),
+    ('عدن', Icons.location_city_outlined, Icons.location_city),
+    ('پرونده‌ها', Icons.folder_open_outlined, Icons.folder_open),
+    ('گاه‌شمار و منابع', Icons.history_outlined, Icons.history),
+    ('فیدهای انصارالله', Icons.rss_feed_outlined, Icons.rss_feed),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return NavigationRail(
+      minWidth: 100,
+      scrollable: true, // 6 sections + front switcher exceed short screens
+      labelType: NavigationRailLabelType.all,
+      selectedIndex: selectedIndex,
+      onDestinationSelected: onSelect,
+      selectedLabelTextStyle: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+        color: scheme.primary,
+      ),
+      unselectedLabelTextStyle: TextStyle(
+        fontSize: 12,
+        color: scheme.onSurfaceVariant,
+      ),
+      leading: _FrontSwitcher(
+        registry: registry,
+        onComingSoonFront: onComingSoonFront,
+      ),
+      destinations: [
+        for (var i = 0; i < _sections.length; i++)
+          NavigationRailDestination(
+            icon: _CircleIcon(
+              icon: _sections[i].$2,
+              selected: false,
+            ),
+            selectedIcon: _CircleIcon(
+              icon: _sections[i].$3,
+              selected: true,
+            ),
+            label: Text(_sections[i].$1, textAlign: TextAlign.center),
+          ),
+      ],
+    );
+  }
+}
+
+/// Circular section button: icon inside a circle. Selected state is a
+/// filled circle with an accent ring; unselected is an outlined circle.
+class _CircleIcon extends StatelessWidget {
+  final IconData icon;
+  final bool selected;
+  const _CircleIcon({required this.icon, required this.selected});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: selected
+            ? scheme.primary
+            : scheme.surfaceContainerHighest,
+        border: Border.all(
+          color: selected ? scheme.primary : scheme.outlineVariant,
+          width: selected ? 2.5 : 1.5,
+        ),
+        boxShadow: selected
+            ? [
+                BoxShadow(
+                  color: scheme.primary.withValues(alpha: 0.35),
+                  blurRadius: 8,
+                  spreadRadius: 1,
+                ),
+              ]
+            : null,
+      ),
+      child: Icon(
+        icon,
+        size: 24,
+        color: selected ? scheme.onPrimary : scheme.onSurfaceVariant,
+      ),
+    );
+  }
+}
+
+/// Front switcher (rail leading): the active front (Yemen) + the
+/// prepared Ukraine scaffold — disabled, «به‌زودی», no data.
+class _FrontSwitcher extends StatelessWidget {
+  final FrontRegistry? registry;
+  final ValueChanged<Front> onComingSoonFront;
+  const _FrontSwitcher({
+    required this.registry,
+    required this.onComingSoonFront,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final fronts = registry?.fronts ?? const <Front>[];
+    // NavigationRail lays out `leading` with unbounded width, so the
+    // switcher needs its own fixed width (the rail is 100 wide).
+    return SizedBox(
+      width: 96,
+      child: Padding(
+      padding: const EdgeInsets.fromLTRB(6, 12, 6, 8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'جبهه',
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 6),
+          for (final front in fronts)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: front.isActive
+                  ? _FrontChip(
+                      label: front.nameFa,
+                      enabled: true,
+                      selected: true,
+                      onTap: null,
+                    )
+                  : _FrontChip(
+                      label: '${front.nameFa} — به‌زودی',
+                      enabled: false,
+                      selected: false,
+                      onTap: () => onComingSoonFront(front),
+                    ),
+            ),
+          if (fronts.any((f) => !f.isActive))
+            Text(
+              'داده‌ای هنوز گردآوری نشده است.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 10,
+                height: 1.5,
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+        ],
+      ),
+      ),
+    );
+  }
+}
+
+class _FrontChip extends StatelessWidget {
+  final String label;
+  final bool enabled;
+  final bool selected;
+  final VoidCallback? onTap;
+  const _FrontChip({
+    required this.label,
+    required this.enabled,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final chip = Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+      decoration: BoxDecoration(
+        color: selected
+            ? scheme.primaryContainer
+            : scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: selected ? scheme.primary : scheme.outlineVariant,
+          width: selected ? 2 : 1,
+        ),
+      ),
+      child: Text(
+        label,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+          color: enabled ? scheme.onSurface : scheme.onSurfaceVariant,
+        ),
+      ),
+    );
+    if (!enabled || onTap == null) {
+      return Opacity(
+        opacity: enabled ? 1 : 0.75,
+        child: onTap == null
+            ? chip
+            : InkWell(
+                onTap: onTap,
+                borderRadius: BorderRadius.circular(20),
+                child: chip,
+              ),
+      );
+    }
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: chip,
+    );
+  }
+}
+
 /// Full-width instant-update button + last-refresh time (Jalali) +
-/// staleness label + Persian error with retry. Shown on every tab.
+/// staleness label + Persian error with retry. Shown on every section.
 class _RefreshBar extends StatelessWidget {
   final YemenState state;
   final VoidCallback onRefresh;
@@ -416,8 +644,6 @@ class _RefreshBar extends StatelessWidget {
         return 'زنده';
       case 'cache':
         return 'حافظهٔ محلی';
-      case 'snapshot':
-        return 'اسنپ‌شات';
       default:
         return 'بذر داخلی (آفلاین)';
     }

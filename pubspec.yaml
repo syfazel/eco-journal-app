@@ -1,13 +1,13 @@
 name: ecojournal_yemen
-description: "ECO JOURNAL — Yemen only (v6.0.0). Single-feature dashboard: Yemen conflict map, frontlines, Aden investigation, dossiers, timeline, archive. No messaging, no invite gate."
+description: "ECO JOURNAL — Yemen only (v6.1.0). Single-feature dashboard: real Yemen map with governorate boundaries, frontlines, Aden investigation, dossiers, classified timeline, Ansarullah feeds. No archive, no messaging, no invite gate."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 # Single source of truth for the app version. edge/version_manifest.py
-# reads this file (version: 6.0.0+13 -> versionName 6.0.0, versionCode 13).
+# reads this file (version: 6.1.0+14 -> versionName 6.1.0, versionCode 14).
 # Never type the version anywhere else.
-version: 6.0.0+13
+version: 6.1.0+14
 
 environment:
   sdk: ^3.9.2
@@ -19,6 +19,10 @@ dependencies:
     sdk: flutter
   path_provider: ^2.1.5
   cupertino_icons: ^1.0.8
+  flutter_map: ^8.3.2
+  flutter_map_cache: ^2.1.2
+  latlong2: ^0.10.1
+  dio_cache_interceptor: ^4.0.7
 
 dev_dependencies:
   flutter_test:
@@ -32,8 +36,16 @@ flutter:
   # edge/generate_yemen.py. The app renders from this seed immediately on
   # first launch, even with no network. Seed and edge must stay
   # byte-identical (checked by edge/verify_yemen.py and by CI).
+  #
+  # Bundled GeoJSON: Yemen governorates (ADM1) + country outline, HDX
+  # COD-AB (OCHA / CSO Yemen), CC BY-IGO — see assets/geo/README.md.
+  # The front registry (edge/fronts.json) is bundled so the app renders
+  # its fronts from config, not from hard-coded UI.
   assets:
     - assets/seed/yemen.json
+    - assets/geo/yemen-adm1.geojson
+    - assets/geo/yemen-outline.geojson
+    - edge/fronts.json
 
   # Vazirmatn (SIL OFL) — Persian UI font, bundled so the UI does not
   # depend on any network font fetch.

@@ -1,0 +1,47 @@
+{
+ "fronts": [
+  {
+   "data_file": "yemen.json",
+   "feed_channels": [
+    "army21ye",
+    "MilitaryMediaY",
+    "Almasirah_En"
+   ],
+   "geojson": "assets/geo/yemen-adm1.geojson",
+   "id": "yemen",
+   "map": {
+    "center": [
+     15.55,
+     47.5
+    ],
+    "max_zoom": 12,
+    "min_zoom": 5,
+    "zoom": 6
+   },
+   "name_en": "Yemen",
+   "name_fa": "یمن",
+   "status": "active",
+   "taxonomy_version": 1
+  },
+  {
+   "data_file": null,
+   "feed_channels": [],
+   "geojson": null,
+   "id": "ukraine",
+   "map": {
+    "center": [
+     48.38,
+     31.17
+    ],
+    "max_zoom": 12,
+    "min_zoom": 5,
+    "zoom": 6
+   },
+   "name_en": "Ukraine",
+   "name_fa": "اوکراین",
+   "note_fa": "به‌زودی — داده‌ای هنوز گردآوری نشده است",
+   "status": "coming_soon"
+  }
+ ],
+ "version": 1
+}

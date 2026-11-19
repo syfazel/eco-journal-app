@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ECO JOURNAL Yemen edge generator — v5.6.0, LAB ONLY.
+"""ECO JOURNAL Yemen edge generator — v6.1.0 data revision, LAB ONLY.
 
 Reads the verified live-dashboard snapshot
 (~/workspace/goals/eco-journal/hidden_files/yemen-dashboard-v5-20261118.json,
@@ -26,9 +26,21 @@ SHA-256 recomputed) so the v5.1 edge-contract verifier still holds.
 
 Usage:
   python3 edge/generate_yemen.py [--snapshot PATH] [--check-only]
+  python3 edge/generate_yemen.py --feeds-file edge/out/feeds.json
+  python3 edge/generate_yemen.py --no-feeds
 --check-only prints the counts and exits without writing.
 
-Python standard library only. No network access.
+Python standard library only. Network access: only the optional
+live feed fetch (edge/fetch_feeds.py); with --no-feeds or
+--feeds-file the generator makes no network calls at all.
+
+v6.1.0 data revision: after the field-for-field mapping, the
+generator applies edge/sourcing.py — Yasin's government-source
+removal (Tier A/B/C) + the event taxonomy (taxonomy_version 1) —
+attaches the live Ansarullah feeds (edge/fetch_feeds.py) and mirrors
+the front registry (edge/fronts.json) into the document. The counts
+below are the POST-removal counts. The full removal log is written
+to edge/out/removal-log.json next to yemen.json.
 """
 
 import argparse
@@ -37,6 +49,16 @@ import json
 import os
 import sys
 from datetime import datetime, timezone
+
+# v6.1.0: sourcing transform (gov-source removal + taxonomy) and the
+# feeds fetcher live next to this script; sys.path[0] is the script
+# directory when run as `python3 edge/generate_yemen.py`, so these
+# imports resolve both in the lab and in CI.
+import sourcing
+try:
+    import fetch_feeds
+except ImportError:  # pragma: no cover - feeds degrade, never fail
+    fetch_feeds = None
 
 # v6.0: repo root derived from this script's location, never from a
 # hard-coded lab path — the hard-coded ~/workspace/... path broke CI
@@ -52,6 +74,8 @@ DEFAULT_SNAPSHOT = os.path.join(
 )
 OUT_DIR = os.path.join(SCRIPT_DIR, "out")
 EDGE_YEMEN = os.path.join(OUT_DIR, "yemen.json")
+REMOVAL_LOG = os.path.join(OUT_DIR, "removal-log.json")
+FRONTS_PATH = os.path.join(SCRIPT_DIR, "fronts.json")
 # v6.0 (Flutter rebuild): the bundled seed lives in the Flutter assets
 # directory. The old Kotlin path app/src/main/assets/seed/ is gone.
 SEED_YEMEN = os.path.join(APP_ROOT, "assets", "seed", "yemen.json")
@@ -179,6 +203,8 @@ def build_yemen_doc(snap):
             "waypoints": [
                 {"lat": w["lat"], "lon": w["lon"],
                  "name_fa": w.get("nameFa", ""),
+                 "note_fa": w.get("noteFa", ""),
+                 "uncertain": bool(w.get("uncertain", False)),
                  "in_line": bool(w.get("inLine", False))}
                 for w in f.get("waypoints") or []
             ],
@@ -419,22 +445,101 @@ def build_yemen_doc(snap):
     return doc
 
 
+def _degraded_feeds(reason):
+    """Feeds section when no live fetch happened: every channel
+    listed as unavailable, never a failure of the whole run."""
+    return {
+        "fetched_at_utc": datetime.now(timezone.utc).isoformat(),
+        "items": [],
+        "unavailable": [
+            {"channel": spec["channel"],
+             "channel_title_fa": spec["channel_title_fa"],
+             "available": False, "error": reason}
+            for spec in (fetch_feeds.CHANNELS if fetch_feeds is not None
+                         else [])],
+    }
+
+
+def load_feeds(args):
+    if args.no_feeds:
+        return _degraded_feeds("feeds disabled (--no-feeds)")
+    if args.feeds_file:
+        with open(args.feeds_file, encoding="utf-8") as f:
+            feeds = json.load(f)
+        if not isinstance(feeds.get("items"), list):
+            raise ValueError("feeds file %s has no items list"
+                             % args.feeds_file)
+        return feeds
+    if fetch_feeds is None:
+        return _degraded_feeds("fetch_feeds module unavailable")
+    try:
+        return fetch_feeds.fetch_all(timeout=25)
+    except Exception as exc:  # noqa: BLE001 — feeds degrade, never fail
+        return _degraded_feeds("%s: %s" % (type(exc).__name__, exc))
+
+
+def load_fronts(path):
+    with open(path, encoding="utf-8") as f:
+        fronts_doc = json.load(f)
+    fronts = fronts_doc.get("fronts", [])
+    by_id = {f.get("id"): f for f in fronts}
+    yemen = by_id.get("yemen")
+    ukraine = by_id.get("ukraine")
+    if (yemen is None or yemen.get("status") != "active"
+            or yemen.get("data_file") != "yemen.json"):
+        raise ValueError("fronts registry: yemen front must be active "
+                         "with data_file yemen.json")
+    if (ukraine is None or ukraine.get("status") != "coming_soon"
+            or ukraine.get("data_file") is not None):
+        raise ValueError("fronts registry: ukraine front must be a "
+                         "coming_soon scaffold with no data_file")
+    return fronts_doc
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--snapshot", default=DEFAULT_SNAPSHOT)
     ap.add_argument("--check-only", action="store_true")
+    ap.add_argument("--feeds-file", default=None,
+                    help="use a pre-fetched feeds JSON instead of live fetch")
+    ap.add_argument("--no-feeds", action="store_true",
+                    help="skip the live feed fetch (degraded feeds section)")
+    ap.add_argument("--fronts", default=FRONTS_PATH)
     args = ap.parse_args()
 
     with open(args.snapshot, encoding="utf-8") as f:
         snap = json.load(f)
     doc = build_yemen_doc(snap)
 
-    # Hard counts from the audit (§4.1) — the generator refuses
-    # to write a document that disagrees with the snapshot.
+    # Pre-transform counts: the mapping must still be field-for-field
+    # against the snapshot (audit §4.1) before any removal is applied.
+    pre = doc["counts"]
+    expected_pre = {"places": 90, "events": 24, "frontlines": 8,
+                    "arrows": 9, "unit_positions": 12, "forces": 7,
+                    "sources": 25}
+    for key, want in expected_pre.items():
+        if pre[key] != want:
+            print("REFUSED: pre-transform %s count %d != expected %d"
+                  % (key, pre[key], want), file=sys.stderr)
+            return 1
+
+    # v6.1.0 data revision: government-source removal, taxonomy,
+    # feeds, front registry.
+    removal_log = sourcing.apply_sourcing_rules(doc)
+    sourcing.apply_taxonomy(doc)
+    doc["feeds"] = load_feeds(args)
+    doc["fronts"] = load_fronts(args.fronts)
+    bad = sourcing.check_no_forbidden_strings(doc)
+    if bad:
+        print("REFUSED: forbidden government-source strings survive: %r"
+              % (bad,), file=sys.stderr)
+        return 1
+
+    # Hard counts — POST-removal (see edge/SOURCING-RULES.md).
     counts = doc["counts"]
-    expected = {"places": 90, "events": 24, "frontlines": 8,
-                "arrows": 9, "unit_positions": 12, "forces": 7,
-                "sources": 25}
+    expected = {"places": 90, "events": 20, "frontlines": 8,
+                "arrows": 8, "unit_positions": 10, "forces": 7,
+                "sources": 18}
     for key, want in expected.items():
         if counts[key] != want:
             print("REFUSED: %s count %d != expected %d"
@@ -450,9 +555,13 @@ def main():
         print("REFUSED: aden ring segments %d != 5"
               % len(doc["aden"]["ring_segments"]), file=sys.stderr)
         return 1
-    for key, want in (("images", 7), ("cross_check", 7),
+    if len(doc["aden"]["timeline"]) != 7:
+        print("REFUSED: aden timeline %d != 7"
+              % len(doc["aden"]["timeline"]), file=sys.stderr)
+        return 1
+    for key, want in (("images", 6), ("cross_check", 7),
                       ("channels_official", 5), ("social_posts", 9),
-                      ("amplifiers", 4), ("sources", 28)):
+                      ("amplifiers", 4), ("sources", 23)):
         got = len(doc["aden"][key])
         if got != want:
             print("REFUSED: aden %s %d != expected %d"
@@ -464,6 +573,13 @@ def main():
     if len({e["app_key"] for e in doc["events"]}) != len(doc["events"]):
         print("REFUSED: duplicate event app_key", file=sys.stderr)
         return 1
+    # Taxonomy completeness: every event classified, front set.
+    for e in doc["events"]:
+        if e.get("front") != "yemen" or not e.get("event_type") \
+                or not e.get("confidence"):
+            print("REFUSED: event %r missing taxonomy" % e.get("external_id"),
+                  file=sys.stderr)
+            return 1
 
     text = json.dumps(doc, ensure_ascii=False, indent=1) + "\n"
     doc_hash = section_hash(doc)
@@ -475,6 +591,29 @@ def main():
     print("faction_counts:", json.dumps(doc["faction_counts"],
                                         ensure_ascii=False, sort_keys=True))
     print("as_of:", doc["as_of"], "hash:", doc_hash)
+    removed = [r for r in removal_log if r["action"] == "removed"]
+    nulled = [r for r in removal_log if r["action"] == "source_nulled"]
+    print("gov-removal: %d items removed entirely, %d sources nulled, "
+          "%d log entries" % (len(removed), len(nulled), len(removal_log)))
+    feeds = doc["feeds"]
+    print("feeds: %d items (%s), unavailable: %d"
+          % (len(feeds["items"]),
+             ", ".join("%s=%d" % (ch, sum(1 for it in feeds["items"]
+                                          if it["channel"] == ch))
+                       for ch in ("army21ye", "MilitaryMediaY",
+                                  "Almasirah_En")),
+             len(feeds["unavailable"])))
+    print("taxonomy: %s" % json.dumps(
+        {t: sum(1 for e in doc["events"] if e["event_type"] == t)
+         for t in sorted({e["event_type"] for e in doc["events"]})},
+        ensure_ascii=False, sort_keys=True))
+    print("taxonomy confidence: %s" % json.dumps(
+        {c: sum(1 for e in doc["events"] if e["confidence"] == c)
+         for c in sorted({e["confidence"] for e in doc["events"]})},
+        ensure_ascii=False, sort_keys=True))
+    print("tier-c mentions kept (documented): %s"
+          % json.dumps(sourcing.remaining_tier_c_mentions(doc),
+                       ensure_ascii=False, sort_keys=True))
     if args.check_only:
         print("check-only: counts verified, nothing written")
         return 0
@@ -482,6 +621,8 @@ def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     with open(EDGE_YEMEN, "w", encoding="utf-8") as f:
         f.write(text)
+    with open(REMOVAL_LOG, "w", encoding="utf-8") as f:
+        json.dump(removal_log, f, ensure_ascii=False, indent=1)
     os.makedirs(os.path.dirname(SEED_YEMEN), exist_ok=True)
     with open(SEED_YEMEN, "w", encoding="utf-8") as f:
         f.write(text)
@@ -503,7 +644,7 @@ def main():
     generated_at_utc = datetime.now(timezone.utc).isoformat()
     manifest["version"] = MANIFEST_VERSION
     manifest["generated_at_utc"] = generated_at_utc
-    manifest["generator"] = "edge/generate_yemen.py (v6.0, LAB ONLY)"
+    manifest["generator"] = "edge/generate_yemen.py (v6.1.0-data, LAB ONLY)"
     manifest.setdefault("sections", {})["yemen"] = {
         "file": "yemen.json",
         "count": counts["places"],
@@ -527,7 +668,7 @@ def main():
         health["manifest_version"] = MANIFEST_VERSION
         health["manifest_generated_at_utc"] = generated_at_utc
         health["generated_at_utc"] = generated_at_utc
-        health["generator"] = "edge/generate_yemen.py (v6.0, LAB ONLY)"
+        health["generator"] = "edge/generate_yemen.py (v6.1.0-data, LAB ONLY)"
         health.setdefault("sections", {})["yemen"] = {
             "count": counts["places"],
             "hash": doc_hash,

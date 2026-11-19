@@ -7,18 +7,26 @@ import 'package:ecojournal_yemen/yemen.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('seed renders: title, refresh button, map tab',
+  testWidgets('seed renders: title, refresh button, rail sections',
       (WidgetTester tester) async {
     await tester.pumpWidget(const YemenApp());
     // Let the seed asset load + isolate parse land (bounded pumps).
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 15; i++) {
       await tester.pump(const Duration(milliseconds: 300));
       if (find.text('به‌روزرسانی لحظه‌ای').evaluate().isNotEmpty) break;
     }
     expect(find.text('به‌روزرسانی لحظه‌ای'), findsOneWidget);
     expect(find.text('وضعیت و نقشه'), findsOneWidget);
+    expect(find.text('جبهه‌ها'), findsOneWidget);
     expect(find.text('عدن'), findsOneWidget);
-    expect(find.text('آرشیو'), findsOneWidget);
+    expect(find.text('پرونده‌ها'), findsOneWidget);
+    expect(find.text('گاه‌شمار و منابع'), findsOneWidget);
+    expect(find.text('فیدهای انصارالله'), findsOneWidget);
+    // v6.1.0: the archive is gone from the app entirely.
+    expect(find.text('آرشیو'), findsNothing);
+    // Front switcher: Yemen active, Ukraine coming-soon scaffold.
+    expect(find.text('یمن'), findsWidgets);
+    expect(find.text('اوکراین — به‌زودی'), findsOneWidget);
   });
 
   test('parseYemenDoc counts match the dashboard v5 contract', () async {
@@ -48,5 +56,8 @@ void main() {
     expect(doc.places.first.nameFa, 'شهر عدن');
     expect(doc.aden.verdict.title, 'حکم');
     expect(doc.frontlineWarningFa, 'هشدار');
+    // Missing optional blocks fall back to empty, never crash.
+    expect(doc.feeds.items, isEmpty);
+    expect(doc.taxonomyVersion, 1);
   });
 }

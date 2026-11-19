@@ -136,14 +136,50 @@ class YemenEvent {
   final String sourceName;
   final String sourceUrl;
   final int corroboration;
+  // Event taxonomy v1 (see edge/SOURCING-RULES.md): every event carries
+  // an event_type, a confidence tier and a front id. Unknown values fall
+  // back to '' and are shown unclassified — never invented.
+  final String eventType;
+  final String confidence;
+  final String front;
   YemenEvent.fromJson(Map<String, dynamic> j)
       : eventDate = _s(j['event_date']),
         titleFa = _s(j['title_fa']),
         detailFa = _s(j['detail_fa']),
         sourceName = _s(j['source_name']),
         sourceUrl = _s(j['source_url']),
-        corroboration = _i(j['corroboration']);
+        corroboration = _i(j['corroboration']),
+        eventType = _s(j['event_type']),
+        confidence = _s(j['confidence']),
+        front = _s(j['front'], 'yemen');
 }
+
+/// Event-type taxonomy (v1) — Persian labels used by the timeline UI.
+/// Keys are the exact `event_type` values in yemen.json.
+const Map<String, String> eventTypeLabelsFa = {
+  'advance': 'پیشروی',
+  'retreat': 'عقب‌نشینی',
+  'airstrike': 'حمله هوایی',
+  'missile_drone': 'موشکی/پهپادی',
+  'clash': 'درگیری',
+  'claim': 'ادعا',
+  'siege': 'محاصره',
+  'humanitarian': 'بشردوستانه',
+};
+
+/// Confidence tiers (v1) — the degree of Ansarullah attestation, NOT a
+/// truth grade. Persian labels used by the timeline UI.
+const Map<String, String> eventConfidenceLabelsFa = {
+  'ansarullah-confirmed': 'تأییدشده انصارالله',
+  'ansarullah-reported': 'گزارش انصارالله',
+  'unverified': 'تأییدنشده',
+};
+
+/// Front ids -> Persian labels (fronts come from the front registry).
+const Map<String, String> frontLabelsFa = {
+  'yemen': 'یمن',
+  'ukraine': 'اوکراین',
+};
 
 class TitleBody {
   final String title;
@@ -365,6 +401,89 @@ class Force {
         body = _s(j['body']);
 }
 
+/// One Ansarullah feed post, verbatim from yemen.json `feeds.items`.
+/// `textFa` is the original Arabic text, unedited. `tier` is always
+/// `ansarullah-official` — nothing else is ever admitted here.
+class FeedItem {
+  final String id;
+  final String channel;
+  final String channelTitleFa;
+  final String authorFa;
+  final String publishedAt;
+  final String textFa;
+  final String url;
+  final String tier;
+  FeedItem.fromJson(Map<String, dynamic> j)
+      : id = _s(j['id']),
+        channel = _s(j['channel']),
+        channelTitleFa = _s(j['channel_title_fa']),
+        authorFa = _s(j['author_fa']),
+        publishedAt = _s(j['published_at']),
+        textFa = _s(j['text_fa']),
+        url = _s(j['url']),
+        tier = _s(j['tier']);
+
+  DateTime? get publishedAtDt => DateTime.tryParse(publishedAt);
+}
+
+/// A channel that could not be fetched, with the reason (from
+/// yemen.json `feeds.unavailable`). Shown as unavailable, never faked.
+class UnavailableFeed {
+  final String channel;
+  final String error;
+  UnavailableFeed.fromJson(Map<String, dynamic> j)
+      : channel = _s(j['channel']),
+        error = _s(j['error']);
+}
+
+class FeedsData {
+  final String fetchedAtUtc;
+  final List<FeedItem> items;
+  final List<UnavailableFeed> unavailable;
+  const FeedsData({
+    required this.fetchedAtUtc,
+    required this.items,
+    required this.unavailable,
+  });
+
+  factory FeedsData.fromJson(Map<String, dynamic> j) => FeedsData(
+        fetchedAtUtc: _s(j['fetched_at_utc']),
+        items:
+            _l(j['items']).map((e) => FeedItem.fromJson(_m(e))).toList(),
+        unavailable: _l(j['unavailable'])
+            .map((e) => UnavailableFeed.fromJson(_m(e)))
+            .toList(),
+      );
+
+  factory FeedsData.empty() =>
+      const FeedsData(fetchedAtUtc: '', items: [], unavailable: []);
+
+  DateTime? get fetchedAt => DateTime.tryParse(fetchedAtUtc);
+
+  /// Items grouped by channel handle, newest first inside each group.
+  Map<String, List<FeedItem>> get byChannel {
+    final out = <String, List<FeedItem>>{};
+    for (final item in items) {
+      (out[item.channel] ??= []).add(item);
+    }
+    for (final list in out.values) {
+      list.sort((a, b) =>
+          (b.publishedAtDt ?? DateTime.fromMillisecondsSinceEpoch(0))
+              .compareTo(
+                  a.publishedAtDt ?? DateTime.fromMillisecondsSinceEpoch(0)));
+    }
+    return out;
+  }
+}
+
+/// Persian channel labels for the Ansarullah feed channels, in the
+/// order they are shown in the feeds tab.
+const Map<String, String> feedChannelLabelsFa = {
+  'army21ye': 'یحیی سریع — سخنگوی نیروهای مسلح یمن',
+  'MilitaryMediaY': 'رسانهٔ نظامی یمن',
+  'Almasirah_En': 'المسیره انگلیسی',
+};
+
 /// The whole Yemen document — one immutable object, one update path.
 class YemenDoc {
   final String generatedAtUtc;
@@ -388,6 +507,8 @@ class YemenDoc {
   final List<KeyPoint> keyPoints;
   final List<String> openQuestions;
   final List<TitleBody> disagreements;
+  final int taxonomyVersion;
+  final FeedsData feeds;
 
   YemenDoc.fromJson(Map<String, dynamic> j)
       : generatedAtUtc = _s(j['generated_at_utc']),
@@ -434,7 +555,11 @@ class YemenDoc {
             _l(j['open_questions']).map((e) => e.toString()).toList(),
         disagreements = _l(j['disagreements'])
             .map((e) => TitleBody.fromJson(_m(e)))
-            .toList();
+            .toList(),
+        taxonomyVersion = _i(j['taxonomy_version'], 1),
+        feeds = j['feeds'] is Map
+            ? FeedsData.fromJson(_m(j['feeds']))
+            : FeedsData.empty();
 
   DateTime? get generatedAt => DateTime.tryParse(generatedAtUtc);
 }

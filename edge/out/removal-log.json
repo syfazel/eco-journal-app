@@ -1,0 +1,230 @@
+[
+ {
+  "section": "headline",
+  "id": "headline_fa",
+  "action": "reworded",
+  "reason": "removed government-claim sentences (30 Oct Hayfan/Jawf claims, 13 Oct airstrike claim); 70 km figure replaced with AFP 60 km"
+ },
+ {
+  "section": "sources",
+  "id": "Yemeni government forces seize district by Bab el-Mandeb",
+  "action": "removed",
+  "reason": "Tier A/B/C: government-claim relay / aligned outlet whose item is independently supported"
+ },
+ {
+  "section": "sources",
+  "id": "Saudi Arabia Changes Joint Forces Command",
+  "action": "removed",
+  "reason": "Tier A/B/C: government-claim relay / aligned outlet whose item is independently supported"
+ },
+ {
+  "section": "sources",
+  "id": "201 Houthis neutralized",
+  "action": "removed",
+  "reason": "Tier A/B/C: government-claim relay / aligned outlet whose item is independently supported"
+ },
+ {
+  "section": "sources",
+  "id": "Saudi Arabia replaces military commander",
+  "action": "removed",
+  "reason": "Tier A/B/C: government-claim relay / aligned outlet whose item is independently supported"
+ },
+ {
+  "section": "sources",
+  "id": "Government claims al-Jawf mountain range",
+  "action": "removed",
+  "reason": "Tier A/B/C: government-claim relay / aligned outlet whose item is independently supported"
+ },
+ {
+  "section": "sources",
+  "id": "South24 — Southern Forces Shift from Bab Al-Mandeb",
+  "action": "removed",
+  "reason": "Tier A/B/C: government-claim relay / aligned outlet whose item is independently supported"
+ },
+ {
+  "section": "sources",
+  "id": "Sheba Intelligence — Houthi Offensive in Lahj",
+  "action": "removed",
+  "reason": "Tier A/B/C: government-claim relay / aligned outlet whose item is independently supported"
+ },
+ {
+  "section": "events",
+  "id": 18,
+  "action": "removed",
+  "reason": "Tier A/B: Saudi command change — government announcement"
+ },
+ {
+  "section": "events",
+  "id": 5,
+  "action": "removed",
+  "reason": "Tier B: Operation Yemen Dawn — government-claim-only, relayed by Reuters/South24"
+ },
+ {
+  "section": "events",
+  "id": 21,
+  "action": "removed",
+  "reason": "Tier C: Iranian-commander claim — Sheba sole evidence"
+ },
+ {
+  "section": "events",
+  "id": 22,
+  "action": "removed",
+  "reason": "Tier C: Hayfan/Jawf claims — Sheba sole evidence"
+ },
+ {
+  "section": "events",
+  "id": 20,
+  "action": "source_nulled",
+  "reason": "only source was a government-force source"
+ },
+ {
+  "section": "events",
+  "id": 20,
+  "action": "reworded",
+  "reason": "70 km figure kept only with an explicit unverified caveat; title no longer states it as fact"
+ },
+ {
+  "section": "events",
+  "id": "3/4/11/12/13/15/16/19",
+  "action": "reworded",
+  "reason": "stripped Tier A/B/C attributions and government-claim sentences"
+ },
+ {
+  "section": "places",
+  "id": 49,
+  "action": "source_nulled",
+  "reason": "only source was a government-force source"
+ },
+ {
+  "section": "places",
+  "id": 50,
+  "action": "source_nulled",
+  "reason": "only source was a government-force source"
+ },
+ {
+  "section": "places",
+  "id": 56,
+  "action": "source_nulled",
+  "reason": "only source was a government-force source"
+ },
+ {
+  "section": "places",
+  "id": 73,
+  "action": "source_nulled",
+  "reason": "only source was a government-force source"
+ },
+ {
+  "section": "places",
+  "id": "31/40/41/46/48/62/63/67",
+  "action": "reworded",
+  "reason": "stripped Tier C attributions; independent evidence also supports these places"
+ },
+ {
+  "section": "claims.contested",
+  "id": "طارق صالح و مقاومت ملی",
+  "action": "removed",
+  "reason": "Tier A/B/C: government claim with no independent evidence"
+ },
+ {
+  "section": "claims.contested",
+  "id": "اردوگاه خرز در ۱۲ نوامبر",
+  "action": "removed",
+  "reason": "Tier A/B/C: government claim with no independent evidence"
+ },
+ {
+  "section": "claims.contested",
+  "id": "پهپادهای مکه و مدینه",
+  "action": "removed",
+  "reason": "Tier A/B/C: government claim with no independent evidence"
+ },
+ {
+  "section": "claims.contested",
+  "id": "ادعای تلفات دولت: ۹۰۶ عملیات و «خنثی‌سازی» ۲۰۱ حوثی در ۲۴ ساعت",
+  "action": "removed",
+  "reason": "Tier A/B/C: government claim with no independent evidence"
+ },
+ {
+  "section": "claims",
+  "id": "confirmed/contested",
+  "action": "reworded",
+  "reason": "stripped Tier C attributions and the Saudi coalition interception claim"
+ },
+ {
+  "section": "frontlines",
+  "id": "lahj-bbm/taiz/marib-jawf/hodeidah/bayda/saada",
+  "action": "reworded",
+  "reason": "stripped Tier A/B/C sources and government-claim sentences; dhale and abyan unchanged (no government-claim source)"
+ },
+ {
+  "section": "advance_arrows",
+  "id": "arr-govt-maraziq",
+  "action": "removed",
+  "reason": "Tier C: ~15 km advance toward Bir al-Maraziq — Sheba sole evidence for a government claim"
+ },
+ {
+  "section": "unit_positions",
+  "id": "نیروهای سپر میهن (سپر ملی)",
+  "action": "removed",
+  "reason": "Tier B: 17 Nov al-Mahawila claim — government-claim-only, relayed by Al Jazeera, unverified"
+ },
+ {
+  "section": "unit_positions",
+  "id": "نیروهای دفاع شبوه و یگان‌های منطقهٔ سبأ",
+  "action": "removed",
+  "reason": "Tier A/B: Bayda operations — Arab News relay of government strike claims (877/703)"
+ },
+ {
+  "section": "aden.timeline",
+  "id": "2026-11-17",
+  "action": "removed",
+  "reason": "Tier B: 661-attacks claim — government-claim-only, relayed by Al Jazeera"
+ },
+ {
+  "section": "aden.contradictions",
+  "id": "4. government figures",
+  "action": "removed",
+  "reason": "Tier A/B: government operations/casualty figures (20,000 / 661 / 48,576) — unverified government claims"
+ },
+ {
+  "section": "aden.images",
+  "id": "Sheba map 25 Oct",
+  "action": "removed",
+  "reason": "Tier C: Sheba map — sole evidence for the government-control depiction; already judged outdated in its own verdict"
+ },
+ {
+  "section": "aden.sources",
+  "id": "5. South24",
+  "action": "removed",
+  "reason": "Tier A/B/C: government-claim relay / aligned outlet"
+ },
+ {
+  "section": "aden.sources",
+  "id": "6. South24",
+  "action": "removed",
+  "reason": "Tier A/B/C: government-claim relay / aligned outlet"
+ },
+ {
+  "section": "aden.sources",
+  "id": "7. Sheba",
+  "action": "removed",
+  "reason": "Tier A/B/C: government-claim relay / aligned outlet"
+ },
+ {
+  "section": "aden.sources",
+  "id": "11. Al Jazeera — «ارتش یمن از ۶۶۱ حمله",
+  "action": "removed",
+  "reason": "Tier A/B/C: government-claim relay / aligned outlet"
+ },
+ {
+  "section": "aden.sources",
+  "id": "17. Shafaq",
+  "action": "removed",
+  "reason": "Tier A/B/C: government-claim relay / aligned outlet"
+ },
+ {
+  "section": "aden",
+  "id": "timeline/cross-check/sources",
+  "action": "reworded",
+  "reason": "removed the 661-attacks timeline entry and all Tier A/B/C attributions; sources renumbered"
+ }
+]

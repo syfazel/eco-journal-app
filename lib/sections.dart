@@ -1,11 +1,16 @@
-// The six tabs. Pure widgets: they receive a YemenDoc (and, for the
-// archive, snapshot callbacks) and render it. No I/O, no timers, no state
-// of their own beyond expansion tiles.
+// The sections. Pure widgets: they receive a YemenDoc and render it.
+// No I/O, no timers, no state of their own beyond expansion tiles and
+// the timeline's filter chips.
+//
+// Sourcing: Ansarullah sources ONLY (Al-Masirah, Yahya Saree, military
+// media, Ansarullah channels). Government-force sources are never used
+// and must never be added back — see edge/SOURCING-RULES.md.
 import 'package:flutter/material.dart';
 
+import 'fronts.dart';
 import 'jalali.dart';
-import 'map_painter.dart';
-import 'repository.dart';
+import 'map_painter.dart' show MapLegend;
+import 'real_map.dart';
 import 'yemen.dart';
 
 // ---------------------------------------------------------------------------
@@ -74,6 +79,7 @@ Widget countChips(YemenDoc doc) {
     ('پیکان پیشروی', doc.counts['arrows'] ?? doc.arrows.length),
     ('موضع یگان', doc.counts['unit_positions'] ?? doc.units.length),
     ('منبع', doc.counts['sources'] ?? doc.sources.length),
+    ('فید انصارالله', doc.feeds.items.length),
   ];
   return Wrap(
     spacing: 8,
@@ -96,7 +102,8 @@ Widget countChips(YemenDoc doc) {
 
 class StatusTab extends StatelessWidget {
   final YemenDoc doc;
-  const StatusTab(this.doc, {super.key});
+  final Front front;
+  const StatusTab(this.doc, {required this.front, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -110,22 +117,17 @@ class StatusTab extends StatelessWidget {
         const SizedBox(height: 12),
         countChips(doc),
         const SectionTitle('نقشهٔ درگیری'),
-        AspectRatio(
-          aspectRatio: 13 / 8,
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.black26),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: CustomPaint(
-              painter: YemenMapPainter(doc),
-              child: const SizedBox.expand(),
-            ),
-          ),
-        ),
+        // Real map (flutter_map + OSM tiles + bundled governorates).
+        // Falls back to the schematic painter only if tiles are
+        // unreachable — see real_map.dart.
+        RealMapWidget(doc: doc, front: front),
         const SizedBox(height: 10),
         const MapLegend(),
+        const SizedBox(height: 6),
+        const Text(
+          'مرز استان‌ها: OCHA HDX COD-AB، سازمان مرکزی آمار یمن (CC BY-IGO) — نمایش، نه مرز قانونی.',
+          style: TextStyle(fontSize: 12, height: 1.6),
+        ),
         const SizedBox(height: 10),
         // The ±10 km warning is ALWAYS under the map (researcher's caveat).
         Container(
@@ -253,20 +255,20 @@ class AdenTab extends StatelessWidget {
             title: '${seg.directionFa} — ${seg.statusFa}',
             body: seg.bodyFa,
           ),
-        const SectionTitle('تصاویر بررسی‌شده (۷)'),
+        SectionTitle('تصاویر بررسی‌شده (${toPersianDigitsInt(aden.images.length)})'),
         for (final img in aden.images)
           BodyCard(
             title: img.name,
             body: 'نشان می‌دهد: ${img.showsFa}\n\nحکم: ${img.verdictFa}',
             footer: 'منشأ: ${img.originFa}',
           ),
-        const SectionTitle('راستی‌آزمایی متقابل (۷)'),
+        SectionTitle('راستی‌آزمایی متقابل (${toPersianDigitsInt(aden.crossCheck.length)})'),
         Text(aden.crossCheckSummaryFa,
             style: const TextStyle(height: 1.7)),
         const SizedBox(height: 8),
         for (final c in aden.crossCheck)
           BodyCard(title: '${c.dateFa} — ${c.source}', body: c.saysFa),
-        const SectionTitle('کانال‌های رسمی (۵)'),
+        SectionTitle('کانال‌های رسمی (${toPersianDigitsInt(aden.channels.length)})'),
         Text(aden.channelsMethodFa, style: const TextStyle(height: 1.7)),
         const SizedBox(height: 8),
         for (final ch in aden.channels)
@@ -275,14 +277,14 @@ class AdenTab extends StatelessWidget {
             body: '${ch.bodyFa}\n\nحکم: ${ch.verdictFa}',
             footer: ch.kindFa,
           ),
-        const SectionTitle('پست‌های شبکه‌های اجتماعی (۹)'),
+        SectionTitle('پست‌های شبکه‌های اجتماعی (${toPersianDigitsInt(aden.socialPosts.length)})'),
         for (final p in aden.socialPosts)
           BodyCard(
             title: '${p.name} — ${p.dateFa}',
             body: p.bodyFa,
             footer: '${p.kindFa}${p.url.isNotEmpty ? '\n${p.url}' : ''}',
           ),
-        const SectionTitle('تقویت‌کننده‌ها (۴)'),
+        SectionTitle('تقویت‌کننده‌ها (${toPersianDigitsInt(aden.amplifiers.length)})'),
         for (final a in aden.amplifiers)
           BodyCard(
             title: '${a.name} — ${a.dateFa}',
@@ -305,7 +307,7 @@ class AdenTab extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 4),
             child: Text('• $k', style: const TextStyle(height: 1.7)),
           ),
-        const SectionTitle('منابع عدن (۲۸)'),
+        SectionTitle('منابع عدن (${toPersianDigitsInt(aden.sources.length)})'),
         for (final s in aden.sources)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -388,28 +390,118 @@ class DossiersTab extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Tab 5 — timeline + sources
+// Tab 5 — timeline + sources, classified by the event taxonomy (v1).
+// No flat ungrouped list: group headers per front, filter chips for
+// event type and confidence tier, newest first. Every event card shows
+// its type badge, confidence badge, front label and time.
 // ---------------------------------------------------------------------------
 
-class TimelineTab extends StatelessWidget {
+class TimelineTab extends StatefulWidget {
   final YemenDoc doc;
   const TimelineTab(this.doc, {super.key});
 
   @override
+  State<TimelineTab> createState() => _TimelineTabState();
+}
+
+class _TimelineTabState extends State<TimelineTab> {
+  String? _selectedType; // null = همه
+  String? _selectedConfidence; // null = همه
+
+  @override
   Widget build(BuildContext context) {
+    final doc = widget.doc;
     final events = List<YemenEvent>.from(doc.events)
       ..sort((a, b) => b.eventDate.compareTo(a.eventDate));
+
+    final typesPresent =
+        events.map((e) => e.eventType).toSet().toList()..sort();
+    final confidencesPresent =
+        events.map((e) => e.confidence).toSet().toList()..sort();
+
+    final filtered = events.where((e) {
+      if (_selectedType != null && e.eventType != _selectedType) {
+        return false;
+      }
+      if (_selectedConfidence != null &&
+          e.confidence != _selectedConfidence) {
+        return false;
+      }
+      return true;
+    }).toList();
+
+    // Group the filtered events by front (all current events are Yemen;
+    // the grouping stays so a future front slots in with no UI change).
+    final byFront = <String, List<YemenEvent>>{};
+    for (final e in filtered) {
+      (byFront[e.front] ??= []).add(e);
+    }
+    final frontIds = byFront.keys.toList()..sort();
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         const SectionTitle('گاه‌شمار رویدادها'),
-        for (final e in events)
-          BodyCard(
-            title: '${e.eventDate} — ${e.titleFa}',
-            body: e.detailFa,
-            footer:
-                'منبع: ${e.sourceName}${e.corroboration > 1 ? ' — تأیید از ${toPersianDigitsInt(e.corroboration)} منبع' : ''}${e.sourceUrl.isNotEmpty ? '\n${e.sourceUrl}' : ''}',
+        const Text(
+          'دسته‌بندی رویدادها بر پایهٔ نوع و درجهٔ گواهی انصارالله است؛ «تأییدشده» یعنی بیانیهٔ رسمی انصارالله آن را گفته است.',
+          style: TextStyle(height: 1.7),
+        ),
+        const SizedBox(height: 12),
+        const Text('نوع رویداد:',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 6),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            _filterChip('همه', _selectedType == null, () {
+              setState(() => _selectedType = null);
+            }),
+            for (final t in typesPresent)
+              _filterChip(
+                eventTypeLabelsFa[t] ?? t,
+                _selectedType == t,
+                () => setState(() => _selectedType = t),
+              ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        const Text('درجهٔ گواهی:',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 6),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            _filterChip('همه', _selectedConfidence == null, () {
+              setState(() => _selectedConfidence = null);
+            }),
+            for (final c in confidencesPresent)
+              _filterChip(
+                eventConfidenceLabelsFa[c] ?? c,
+                _selectedConfidence == c,
+                () => setState(() => _selectedConfidence = c),
+              ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        if (filtered.isEmpty)
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                'با این پالایه‌ها رویدادی نیست.',
+                style: TextStyle(height: 1.7),
+              ),
+            ),
           ),
+        for (final frontId in frontIds) ...[
+          _frontGroupHeader(
+            frontId,
+            byFront[frontId]!.length,
+          ),
+          for (final e in byFront[frontId]!) _EventCard(event: e),
+        ],
         const SectionTitle('گاه‌شمار عدن'),
         for (final t in doc.aden.timeline)
           BodyCard(
@@ -417,7 +509,7 @@ class TimelineTab extends StatelessWidget {
             body: t.bodyFa,
             footer: 'لایه: ${t.layer} — منبع: ${t.sourceFa}',
           ),
-        const SectionTitle('منابع (۲۵)'),
+        SectionTitle('منابع (${toPersianDigitsInt(doc.sources.length)})'),
         for (final s in doc.sources)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
@@ -429,137 +521,241 @@ class TimelineTab extends StatelessWidget {
       ],
     );
   }
+
+  Widget _filterChip(String label, bool selected, VoidCallback onTap) {
+    return FilterChip(
+      label: Text(label),
+      selected: selected,
+      onSelected: (_) => onTap(),
+    );
+  }
+
+  Widget _frontGroupHeader(String frontId, int count) {
+    final label = frontLabelsFa[frontId] ?? frontId;
+    return Container(
+      margin: const EdgeInsets.only(top: 8, bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        'جبههٔ $label — ${toPersianDigitsInt(count)} رویداد',
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+      ),
+    );
+  }
 }
 
-// ---------------------------------------------------------------------------
-// Tab 6 — archive: local snapshots + dashboard version history v1–v5
-// ---------------------------------------------------------------------------
-
-class ArchiveTab extends StatelessWidget {
-  final List<SnapshotMeta> snapshots;
-  final VoidCallback onCreateSnapshot;
-  final void Function(SnapshotMeta) onViewSnapshot;
-  final void Function(SnapshotMeta) onDeleteSnapshot;
-  const ArchiveTab({
-    required this.snapshots,
-    required this.onCreateSnapshot,
-    required this.onViewSnapshot,
-    required this.onDeleteSnapshot,
-    super.key,
-  });
+class _EventCard extends StatelessWidget {
+  final YemenEvent event;
+  const _EventCard({required this.event});
 
   @override
   Widget build(BuildContext context) {
+    final typeLabel = eventTypeLabelsFa[event.eventType] ?? 'دسته‌بندی‌نشده';
+    final confLabel =
+        eventConfidenceLabelsFa[event.confidence] ?? 'تأییدنشده';
+    final frontLabel = frontLabelsFa[event.front] ?? event.front;
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              event.titleFa,
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 15, height: 1.6),
+            ),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                Chip(
+                  label: Text(typeLabel,
+                      style: const TextStyle(fontSize: 12)),
+                  visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                Chip(
+                  label: Text(confLabel,
+                      style: const TextStyle(fontSize: 12)),
+                  visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                Chip(
+                  label: Text('جبههٔ $frontLabel',
+                      style: const TextStyle(fontSize: 12)),
+                  visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                Chip(
+                  label: Text(event.eventDate,
+                      style: const TextStyle(fontSize: 12)),
+                  visualDensity: VisualDensity.compact,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(event.detailFa, style: const TextStyle(height: 1.7)),
+            const SizedBox(height: 6),
+            Text(
+              'منبع: ${event.sourceName}${event.corroboration > 1 ? ' — تأیید از ${toPersianDigitsInt(event.corroboration)} منبع' : ''}${event.sourceUrl.isNotEmpty ? '\n${event.sourceUrl}' : ''}',
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.secondary,
+                height: 1.6,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Tab 6 — Ansarullah feeds: verbatim posts from the three official
+// Ansarullah channels, grouped by channel, newest first. Nothing is
+// invented; a channel that could not be fetched is shown as
+// unavailable with its reason.
+// ---------------------------------------------------------------------------
+
+class FeedsTab extends StatelessWidget {
+  final YemenDoc doc;
+  const FeedsTab(this.doc, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final feeds = doc.feeds;
+    final byChannel = feeds.byChannel;
+    // Fixed channel order (registry order), then any extra channel.
+    final orderedChannels = <String>[
+      for (final ch in feedChannelLabelsFa.keys)
+        if (byChannel.containsKey(ch)) ch,
+      for (final ch in byChannel.keys)
+        if (!feedChannelLabelsFa.containsKey(ch)) ch,
+    ];
+    final fetchedAt = feeds.fetchedAt;
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        const SectionTitle('اسنپ‌شات‌های محلی'),
-        const Text(
-          'هر اسنپ‌شات، وضعیت فعلی را همان‌طور که هست منجمد می‌کند و به‌صورت یک فایل JSON ساده روی گوشی ذخیره می‌شود؛ بدون پایگاه داده.',
-          style: TextStyle(height: 1.7),
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          width: double.infinity,
-          child: FilledButton.icon(
-            onPressed: onCreateSnapshot,
-            icon: const Icon(Icons.camera_alt_outlined),
-            label: const Text('ساختن اسنپ‌شات از وضعیت فعلی'),
-          ),
+        const SectionTitle('فیدهای انصارالله'),
+        Text(
+          fetchedAt == null
+              ? 'پست‌های رسمی انصارالله — متن‌ها بی‌کم‌وکاست و به زبان اصلی‌اند.'
+              : 'پست‌های رسمی انصارالله — آخرین خوانش: ${formatJalali(fetchedAt, withTime: true)} — متن‌ها بی‌کم‌وکاست و به زبان اصلی‌اند.',
+          style: const TextStyle(height: 1.7),
         ),
         const SizedBox(height: 8),
-        if (snapshots.isEmpty)
+        if (feeds.items.isEmpty)
           const Card(
             child: Padding(
               padding: EdgeInsets.all(16),
-              child: Text('هنوز اسنپ‌شاتی ساخته نشده است.',
-                  style: TextStyle(height: 1.7)),
+              child: Text(
+                'هنوز فیدی خوانده نشده است.',
+                style: TextStyle(height: 1.7),
+              ),
             ),
           ),
-        for (final s in snapshots)
+        for (final u in feeds.unavailable)
           Card(
+            color: Colors.orange.shade50,
             margin: const EdgeInsets.symmetric(vertical: 4),
             child: ListTile(
-              title: Text(s.labelFa),
+              leading: const Icon(Icons.cloud_off_outlined),
+              title: Text(feedChannelLabelsFa[u.channel] ?? u.channel),
               subtitle: Text(
-                formatJalali(
-                    DateTime.tryParse(s.createdAtUtc) ?? DateTime.now(),
-                    withTime: true),
+                'در دسترس نیست: ${u.error}',
                 style: const TextStyle(height: 1.6),
               ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.visibility_outlined),
-                    tooltip: 'مشاهدهٔ نقاط منجمدشده',
-                    onPressed: () => onViewSnapshot(s),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    tooltip: 'حذف',
-                    onPressed: () => onDeleteSnapshot(s),
-                  ),
-                ],
-              ),
             ),
           ),
-        const SectionTitle('تاریخچهٔ نسخه‌های داشبورد'),
-        for (final v in _dashboardVersions)
-          Card(
-            margin: const EdgeInsets.symmetric(vertical: 4),
-            child: ListTile(
-              leading: CircleAvatar(child: Text(toPersianDigitsInt(v.$1))),
-              title: Text(v.$2),
-              subtitle: Text(v.$3, style: const TextStyle(height: 1.6)),
+        for (final channel in orderedChannels) ...[
+          Container(
+            margin: const EdgeInsets.only(top: 12, bottom: 8),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '${feedChannelLabelsFa[channel] ?? channel} — ${toPersianDigitsInt(byChannel[channel]!.length)} پست',
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
             ),
           ),
+          for (final item in byChannel[channel]!) _FeedCard(item: item),
+        ],
       ],
     );
   }
 }
 
-/// Dashboard version history — editorial record from v5, nothing invented.
-/// (Only v5 carries a date in the source data; the earlier versions are
-/// listed without dates rather than guessing them.)
-const List<(int, String, String)> _dashboardVersions = [
-  (1, 'نسخهٔ ۱ — ساخت داشبورد', 'اولین نسخهٔ داشبورد یمن.'),
-  (2, 'نسخهٔ ۲ — ادغام سه فضا', 'ادغام سه فضای جداگانه در یک داشبورد.'),
-  (3, 'نسخهٔ ۳ — مرزهای درگیری', 'افزودن مرزها و خطوط درگیری به نقشه.'),
-  (4, 'نسخهٔ ۴ — تب عدن', 'افزودن تب بررسی عدن.'),
-  (
-    5,
-    'نسخهٔ ۵ — ارتقای رابط کاربری و آرشیو نسخه‌ها',
-    '۱۷ نوامبر ۲۰۲۶ — ارتقای رابط کاربری و افزودن آرشیو نسخه‌ها.'
-  ),
-];
-
-// ---------------------------------------------------------------------------
-// Snapshot viewer — a frozen document, read-only.
-// ---------------------------------------------------------------------------
-
-class SnapshotPage extends StatelessWidget {
-  final YemenDoc doc;
-  final SnapshotMeta meta;
-  const SnapshotPage({required this.doc, required this.meta, super.key});
+class _FeedCard extends StatelessWidget {
+  final FeedItem item;
+  const _FeedCard({required this.item});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(meta.labelFa)),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            color: Colors.amber.shade100,
-            child: Text(
-              'اسنپ‌شات منجمدشده — ${formatJalali(DateTime.tryParse(meta.createdAtUtc) ?? DateTime.now(), withTime: true)} — این نما فقط خواندنی است و با به‌روزرسانی زنده تغییر نمی‌کند.',
-              style: const TextStyle(height: 1.7),
+    final published = item.publishedAtDt;
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    item.authorFa.isNotEmpty
+                        ? item.authorFa
+                        : item.channelTitleFa,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                if (published != null)
+                  Text(
+                    formatJalali(published, withTime: true),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+              ],
             ),
-          ),
-          Expanded(child: StatusTab(doc)),
-        ],
+            const SizedBox(height: 4),
+            Text(
+              item.channelTitleFa,
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            SelectableText(
+              item.textFa,
+              style: const TextStyle(height: 1.8),
+            ),
+            if (item.url.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              SelectableText(
+                item.url,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
