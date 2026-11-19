@@ -1,4 +1,4 @@
-# ECO JOURNAL — Yemen only, v6.1.0/code 14 (Flutter rebuild).
+# ECO JOURNAL — Yemen only, v6.2.0/code 15 (Flutter rebuild).
 # Builds the debug APK and signs it with the ONE shared debug keystore
 # (restored from the DEBUG_KEYSTORE_BASE64 secret), exactly as the 5.6
 # Kotlin app did. The certificate fingerprint MUST be
@@ -9,13 +9,13 @@
 # G-CI-5(d): FAIL if the secret is absent — never silently fall back to
 # an ephemeral runner key.
 #
-# Runs on push to the yemen-6.1 branch and on workflow_dispatch.
+# Runs on push to the yemen-6.2 branch and on workflow_dispatch.
 # It does NOT publish to main or to Pages (that is a separate step).
 name: Build Yemen app (Flutter)
 
 on:
   push:
-    branches: [yemen-6.1]
+    branches: [yemen-6.2]
   workflow_dispatch:
 
 jobs:
@@ -76,7 +76,7 @@ jobs:
           AAPT="$ANDROID_SDK_ROOT/build-tools/$(ls "$ANDROID_SDK_ROOT/build-tools" | sort -V | tail -1)/aapt"
           "$AAPT" dump badging build/app/outputs/flutter-apk/app-debug.apk | grep -E "package:|application-label"
 
-      # The update-safety invariant: the v6.1 APK must carry the exact 5.6
+      # The update-safety invariant: the v6.2 APK must carry the exact 5.6
       # signing certificate, or Android refuses to update over 5.6.
       - name: Verify signing certificate fingerprint
         run: |
@@ -92,13 +92,13 @@ jobs:
       - name: Upload fat debug APK (all ABIs, verification only)
         uses: actions/upload-artifact@v4
         with:
-          name: eco-journal-yemen-v6.1-apk-fat
+          name: eco-journal-yemen-v6.2-apk-fat
           path: build/app/outputs/flutter-apk/app-debug.apk
 
       # SERVED APK: arm64-only. The fat debug APK is 138 MB — GitHub
       # rejects any file over 100 MB, so it can never be committed to
       # edge/out/ for Pages to serve (push rejected 2026-11-19). The
-      # arm64-only build is the same app, same versionCode 14, same
+      # arm64-only build is the same app, same versionCode 15, same
       # signing certificate, ~45-50 MB. Limitation: it installs only on
       # arm64 devices (all modern phones, including the user's). The
       # fat APK above stays the all-ABI verification build.
@@ -145,22 +145,22 @@ jobs:
         run: |
           python3 edge/version_manifest.py generate \
             --apk build/app/outputs/flutter-apk/app-debug.apk \
-            --apk-url https://syfazel.github.io/eco-journal-app/app-debug-v6.1.apk \
-            --changelog "نسخهٔ ۶٫۱: نقشهٔ واقعی یمن با مرزهای استان‌ها و تایل‌های OpenStreetMap، تب‌های دایره‌ای در سایدبار کناری، فیدهای انصارالله (بیانیه‌های یحیی سریع، رسانهٔ نظامی، المسیره)، طبقه‌بندی تمیز رویدادها، معماری جبههٔ عمومی (اوکراین به‌زودی). منابع نیروهای دولتی عدن حذف شد. بخش آرشیو از اپ حذف شد." \
+            --apk-url https://syfazel.github.io/eco-journal-app/app-debug-v6.2.apk \
+            --changelog "نسخهٔ ۶٫۲: بررسی نسخهٔ تازه در داخل برنامه — پس از باز شدن تب یمن، برنامه نسخهٔ تازه را بررسی می‌کند و در صورت وجود نسخهٔ جدید، پنجرهٔ به‌روزرسانی با دکمهٔ «دانلود و نصب» نشان می‌دهد (نصب از طریق نصب‌کنندهٔ سیستم اندروید). در پایین سایدبار هم نسخهٔ نصب‌شده و دکمهٔ «بررسی نسخهٔ تازه» اضافه شد." \
             --mandatory \
-            --out version-6.1.json
+            --out version-6.2.json
           python3 edge/version_manifest.py verify \
             --apk build/app/outputs/flutter-apk/app-debug.apk \
-            --manifest version-6.1.json --identity-only
+            --manifest version-6.2.json --identity-only
 
       - name: Upload served debug APK (arm64)
         uses: actions/upload-artifact@v4
         with:
-          name: eco-journal-yemen-v6.1-apk
+          name: eco-journal-yemen-v6.2-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
 
       - name: Upload generated version.json
         uses: actions/upload-artifact@v4
         with:
-          name: eco-journal-yemen-v6.1-version-json
-          path: version-6.1.json
+          name: eco-journal-yemen-v6.2-version-json
+          path: version-6.2.json

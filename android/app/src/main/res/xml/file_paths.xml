@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- v6.2.0: FileProvider paths for the in-app update installer.
+     The downloaded APK lives in the app temp dir (cache-path); the
+     provider hands the system installer a content:// URI for it. -->
+<paths>
+    <cache-path name="update" path="." />
+    <external-cache-path name="update-external" path="." />
+</paths>

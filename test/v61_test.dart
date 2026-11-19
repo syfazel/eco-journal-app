@@ -200,9 +200,9 @@ void main() {
     }
   });
 
-  test('version is 6.1.0+14, single source of truth', () {
+  test('version is 6.2.0+15, single source of truth', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();
-    expect(pubspec, contains('version: 6.1.0+14'));
+    expect(pubspec, contains('version: 6.2.0+15'));
     expect(pubspec, contains('flutter_map: ^8.3.2'));
     expect(pubspec, contains('flutter_map_cache: ^2.1.2'));
     expect(pubspec, contains('assets/geo/yemen-adm1.geojson'));

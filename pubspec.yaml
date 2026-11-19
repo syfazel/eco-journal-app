@@ -1,13 +1,13 @@
 name: ecojournal_yemen
-description: "ECO JOURNAL — Yemen only (v6.1.0). Single-feature dashboard: real Yemen map with governorate boundaries, frontlines, Aden investigation, dossiers, classified timeline, Ansarullah feeds. No archive, no messaging, no invite gate."
+description: "ECO JOURNAL — Yemen only (v6.2.0). Single-feature dashboard: real Yemen map with governorate boundaries, frontlines, Aden investigation, dossiers, classified timeline, Ansarullah feeds. No archive, no messaging, no invite gate."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 # Single source of truth for the app version. edge/version_manifest.py
-# reads this file (version: 6.1.0+14 -> versionName 6.1.0, versionCode 14).
+# reads this file (version: 6.2.0+15 -> versionName 6.2.0, versionCode 15).
 # Never type the version anywhere else.
-version: 6.1.0+14
+version: 6.2.0+15
 
 environment:
   sdk: ^3.9.2
@@ -23,6 +23,8 @@ dependencies:
   flutter_map_cache: ^2.1.2
   latlong2: ^0.10.1
   dio_cache_interceptor: ^4.0.7
+  package_info_plus: ^9.0.1
+  crypto: ^3.0.8
 
 dev_dependencies:
   flutter_test:
